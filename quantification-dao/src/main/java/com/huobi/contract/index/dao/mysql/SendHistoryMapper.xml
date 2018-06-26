@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.contract.index.dao.SendHistoryMapper">
+	
+    <select id="getEmailInfo" parameterType = "com.huobi.contract.index.entity.EmailRequest"
+            resultType = "com.huobi.contract.index.entity.EmailResponse"> 
+      SELECT * FROM email_send_history WHERE status = #{status}
+    </select>
+    
+    <select id="getSmsInfo" parameterType = "com.huobi.contract.index.entity.SmsRequest"
+            resultType = "com.huobi.contract.index.entity.SmsResponse">
+      SELECT * FROM sms_send_history WHERE status = #{status} 
+    </select>
+    
+    <update id="setEmailStatus" parameterType="com.huobi.contract.index.entity.EmailRequest"> 
+		update  email_send_history set  status = #{status}	where email_id= #{emailId} 
+	</update>
+	
+	<update id="setSmsStatus" parameterType="com.huobi.contract.index.entity.SmsRequest"> 
+		update  sms_send_history set  status = #{status} ,deal_times = #{dealTimes}	where sms_id= #{smsId} 
+	</update>
+	
+	<update id="setSmsStatusBack" parameterType="com.huobi.contract.index.entity.SmsRequest"> 
+		update  sms_send_history set  status = #{status} where sms_id= #{smsId} 
+	</update>
+	
+</mapper>
+

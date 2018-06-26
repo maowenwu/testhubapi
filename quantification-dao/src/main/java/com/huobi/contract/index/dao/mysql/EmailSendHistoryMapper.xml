@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.EmailSendHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.EmailSendHistory" >
+    <id column="email_id" property="emailId" jdbcType="BIGINT" />
+    <result column="email_from" property="emailFrom" jdbcType="VARCHAR" />
+    <result column="email_to" property="emailTo" jdbcType="VARCHAR" />
+    <result column="email_cc" property="emailCc" jdbcType="VARCHAR" />
+    <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="email_type" property="emailType" jdbcType="TINYINT" />
+    <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
+    <result column="subject" property="subject" jdbcType="LONGVARBINARY" />
+    <result column="content" property="content" jdbcType="LONGVARBINARY" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    email_id, email_from, email_to, email_cc, input_time, send_time, status, email_type, 
+    error_msg
+  </sql>
+  <sql id="Blob_Column_List" >
+    subject, content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from email_send_history
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from email_send_history
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.contract.index.entity.EmailSendHistory" >
+    insert into email_send_history (email_id, email_from, email_to, 
+      email_cc, input_time, send_time, 
+      status, email_type, error_msg, 
+      subject, content)
+    values (#{emailId,jdbcType=BIGINT}, #{emailFrom,jdbcType=VARCHAR}, #{emailTo,jdbcType=VARCHAR}, 
+      #{emailCc,jdbcType=VARCHAR}, #{inputTime,jdbcType=TIMESTAMP}, #{sendTime,jdbcType=TIMESTAMP}, 
+      #{status,jdbcType=VARCHAR}, #{emailType,jdbcType=TINYINT}, #{errorMsg,jdbcType=VARCHAR}, 
+      #{subject,jdbcType=LONGVARBINARY}, #{content,jdbcType=LONGVARBINARY})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.EmailSendHistory" >
+    insert into email_send_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="emailId != null" >
+        email_id,
+      </if>
+      <if test="emailFrom != null" >
+        email_from,
+      </if>
+      <if test="emailTo != null" >
+        email_to,
+      </if>
+      <if test="emailCc != null" >
+        email_cc,
+      </if>
+      <if test="inputTime != null" >
+        input_time,
+      </if>
+      <if test="sendTime != null" >
+        send_time,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="emailType != null" >
+        email_type,
+      </if>
+      <if test="errorMsg != null" >
+        error_msg,
+      </if>
+      <if test="subject != null" >
+        subject,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="emailId != null" >
+        #{emailId,jdbcType=BIGINT},
+      </if>
+      <if test="emailFrom != null" >
+        #{emailFrom,jdbcType=VARCHAR},
+      </if>
+      <if test="emailTo != null" >
+        #{emailTo,jdbcType=VARCHAR},
+      </if>
+      <if test="emailCc != null" >
+        #{emailCc,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendTime != null" >
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="emailType != null" >
+        #{emailType,jdbcType=TINYINT},
+      </if>
+      <if test="errorMsg != null" >
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        #{subject,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARBINARY},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.contract.index.entity.EmailSendHistory" >
+    update email_send_history
+    <set >
+      <if test="emailFrom != null" >
+        email_from = #{emailFrom,jdbcType=VARCHAR},
+      </if>
+      <if test="emailTo != null" >
+        email_to = #{emailTo,jdbcType=VARCHAR},
+      </if>
+      <if test="emailCc != null" >
+        email_cc = #{emailCc,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        input_time = #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sendTime != null" >
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="emailType != null" >
+        email_type = #{emailType,jdbcType=TINYINT},
+      </if>
+      <if test="errorMsg != null" >
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="subject != null" >
+        subject = #{subject,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARBINARY},
+      </if>
+    </set>
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.huobi.contract.index.entity.EmailSendHistory" >
+    update email_send_history
+    set email_from = #{emailFrom,jdbcType=VARCHAR},
+      email_to = #{emailTo,jdbcType=VARCHAR},
+      email_cc = #{emailCc,jdbcType=VARCHAR},
+      input_time = #{inputTime,jdbcType=TIMESTAMP},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      email_type = #{emailType,jdbcType=TINYINT},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
+      subject = #{subject,jdbcType=LONGVARBINARY},
+      content = #{content,jdbcType=LONGVARBINARY}
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.EmailSendHistory" >
+    update email_send_history
+    set email_from = #{emailFrom,jdbcType=VARCHAR},
+      email_to = #{emailTo,jdbcType=VARCHAR},
+      email_cc = #{emailCc,jdbcType=VARCHAR},
+      input_time = #{inputTime,jdbcType=TIMESTAMP},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=VARCHAR},
+      email_type = #{emailType,jdbcType=TINYINT},
+      error_msg = #{errorMsg,jdbcType=VARCHAR}
+    where email_id = #{emailId,jdbcType=BIGINT}
+  </update>
+</mapper>

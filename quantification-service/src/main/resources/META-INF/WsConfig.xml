@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     ">
+
+    <bean class="com.huobi.contract.index.ws.bitfinex.BCHUSDWebSocketClient"/>
+    <bean class="com.huobi.contract.index.ws.bitfinex.BTCUSDWebSocketClient"/>
+    <bean class="com.huobi.contract.index.ws.bitfinex.EOSUSDWebSocketClient"/>
+    <bean class="com.huobi.contract.index.ws.bitfinex.ETCUSDWebSocketClient"/>
+    <bean class="com.huobi.contract.index.ws.bitfinex.ETHUSDWebSocketClient"/>
+    <bean class="com.huobi.contract.index.ws.bitfinex.LTCUSDWebSocketClient"/>
+    <bean class="com.huobi.contract.index.ws.bitfinex.XRPUSDWebSocketClient"/>
+
+    <bean class="com.huobi.contract.index.ws.bitstamp.BTCUSDPusher"/>
+    <bean class="com.huobi.contract.index.ws.bitstamp.ETHUSDPusher"/>
+    <bean class="com.huobi.contract.index.ws.bitstamp.LTCUSDPusher"/>
+
+    <bean class="com.huobi.contract.index.ws.gdax.BTCUSDGdaxWSClient"/>
+    <bean class="com.huobi.contract.index.ws.gdax.ETHUSDGdaxWSClient"/>
+    <bean class="com.huobi.contract.index.ws.gdax.LTCUSDGdaxWSClient"/>
+
+    <bean class="com.huobi.contract.index.ws.gemini.BTCUSDGeminiWSClient"/>
+    <bean class="com.huobi.contract.index.ws.gemini.ETHUSDGeminiWSClient"/>
+
+    <bean class="com.huobi.contract.index.ws.huobi.BCHUSDHuobiWSClient"/>
+    <bean class="com.huobi.contract.index.ws.huobi.EOSUSDHuobiWSClient"/>
+    <bean class="com.huobi.contract.index.ws.huobi.ETCUSDHuobiWSClient"/>
+    <bean class="com.huobi.contract.index.ws.huobi.XRPUSDHuobiWSClient"/>
+
+    <bean class="com.huobi.contract.index.ws.poloniex.PoloniexWSSClient"/>
+</beans>

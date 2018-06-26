@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.IpUsageRecordMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.IpUsageRecord" >
+    <id column="seq_id" property="seqId" jdbcType="BIGINT" />
+    <result column="exchange_id" property="exchangeId" jdbcType="BIGINT" />
+    <result column="ip_addr" property="ipAddr" jdbcType="VARCHAR" />
+    <result column="req_url" property="reqUrl" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="is_ip_unfreeze" property="isIpUnfreeze" jdbcType="SMALLINT" />
+    <result column="status_code" property="statusCode" jdbcType="INTEGER" />
+    <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="IpPoolMap" type="com.huobi.contract.index.entity.IpPool" >
+    <id column="seq_id" property="seqId" jdbcType="BIGINT" />
+    <result column="pool_name" property="poolName" jdbcType="VARCHAR" />
+    <result column="proxy_type" property="proxyType" jdbcType="TINYINT" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="port" property="port" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="TINYINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="passwd" property="passwd" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="input_by" property="inputBy" jdbcType="VARCHAR" />
+    <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+    <result column="updator" property="updator" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+	<resultMap id="ExchangeIpPoolMap" type="com.huobi.contract.index.dto.ExchangeIpPool">
+		<result column="exchange_id" property="exchangeId" jdbcType="BIGINT" />
+		<result column="grab_interval_time" property="grabIntervalTime" jdbcType="BIGINT" />
+		<result column="ip_unfreeze_time" property="ipUnfreezeTime" jdbcType="BIGINT" />
+		<collection property="ipPoolList" resultMap="IpPoolMap"></collection>
+	</resultMap>
+  <sql id="Base_Column_List">
+    seq_id, exchange_id, ip_addr, req_url, status, is_ip_unfreeze, status_code, error_msg, 
+    remark, input_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ip_usage_record
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </select>
+	<!-- -->
+  <select id="listLatestUnfreezeIp" resultMap="ExchangeIpPoolMap">
+    select exchange_id,ip_addr as ip,max(input_time) as input_time from ip_usage_record where is_ip_unfreeze = 1 GROUP BY exchange_id,ip_addr;
+  </select>
+	<select id="getLatestUseRecordByExchangeIdIp" resultMap="BaseResultMap">
+		select <include refid="Base_Column_List" />
+		from ip_usage_record r
+		where r.exchange_id = #{exchangeId,jdbcType=BIGINT} and r.ip_addr = #{ipAddr,jdbcType=VARCHAR} ORDER BY input_time desc limit 1
+	</select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ip_usage_record
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.contract.index.entity.IpUsageRecord" >
+    insert into ip_usage_record (seq_id, exchange_id, ip_addr, 
+      req_url, status, is_ip_unfreeze, 
+      status_code, error_msg, remark, 
+      input_time)
+    values (#{seqId,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{ipAddr,jdbcType=VARCHAR}, 
+      #{reqUrl,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, #{isIpUnfreeze,jdbcType=SMALLINT},
+      #{statusCode,jdbcType=INTEGER}, #{errorMsg,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{inputTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.IpUsageRecord" >
+    insert into ip_usage_record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        seq_id,
+      </if>
+      <if test="exchangeId != null" >
+        exchange_id,
+      </if>
+      <if test="ipAddr != null" >
+        ip_addr,
+      </if>
+      <if test="reqUrl != null" >
+        req_url,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isIpUnfreeze != null" >
+        is_ip_unfreeze,
+      </if>
+      <if test="statusCode != null" >
+        status_code,
+      </if>
+      <if test="errorMsg != null" >
+        error_msg,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="inputTime != null" >
+        input_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        #{seqId,jdbcType=BIGINT},
+      </if>
+      <if test="exchangeId != null" >
+        #{exchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="ipAddr != null" >
+        #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="reqUrl != null" >
+        #{reqUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="isIpUnfreeze != null" >
+        #{isIpUnfreeze,jdbcType=SMALLINT},
+      </if>
+      <if test="statusCode != null" >
+        #{statusCode,jdbcType=INTEGER},
+      </if>
+      <if test="errorMsg != null" >
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.contract.index.entity.IpUsageRecord" >
+    update ip_usage_record
+    <set >
+      <if test="exchangeId != null" >
+        exchange_id = #{exchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="ipAddr != null" >
+        ip_addr = #{ipAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="reqUrl != null" >
+        req_url = #{reqUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="isIpUnfreeze != null" >
+        is_ip_unfreeze = #{isIpUnfreeze,jdbcType=SMALLINT},
+      </if>
+      <if test="statusCode != null" >
+        status_code = #{statusCode,jdbcType=INTEGER},
+      </if>
+      <if test="errorMsg != null" >
+        error_msg = #{errorMsg,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        input_time = #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.IpUsageRecord" >
+    update ip_usage_record
+    set exchange_id = #{exchangeId,jdbcType=BIGINT},
+      ip_addr = #{ipAddr,jdbcType=VARCHAR},
+      req_url = #{reqUrl,jdbcType=VARCHAR},
+      status = #{status,jdbcType=SMALLINT},
+      is_ip_unfreeze = #{isIpUnfreeze,jdbcType=SMALLINT},
+      status_code = #{statusCode,jdbcType=INTEGER},
+      error_msg = #{errorMsg,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      input_time = #{inputTime,jdbcType=TIMESTAMP}
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </update>
+</mapper>

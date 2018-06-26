@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.QuantificationKlineMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.index.entity.QuantificationKline" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="kline_exchange_id" property="klineExchangeId" jdbcType="BIGINT" />
+    <result column="kline_symbol" property="klineSymbol" jdbcType="VARCHAR" />
+    <result column="kline_period" property="klinePeriod" jdbcType="VARCHAR" />
+    <result column="kline_size" property="klineSize" jdbcType="BIGINT" />
+    <result column="kline_tick_id" property="klineTickId" jdbcType="BIGINT" />
+    <result column="kline_ts" property="klineTs" jdbcType="TIMESTAMP" />
+    <result column="kline_amount" property="klineAmount" jdbcType="DOUBLE" />
+    <result column="kline_count" property="klineCount" jdbcType="DOUBLE" />
+    <result column="kline_open" property="klineOpen" jdbcType="DECIMAL" />
+    <result column="kline_close" property="klineClose" jdbcType="DECIMAL" />
+    <result column="kline_low" property="klineLow" jdbcType="DECIMAL" />
+    <result column="kline_high" property="klineHigh" jdbcType="DECIMAL" />
+    <result column="kline_vol" property="klineVol" jdbcType="DECIMAL" />
+    <result column="kline_type" property="klineType" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, kline_exchange_id, kline_symbol, kline_period, kline_size, kline_tick_id, kline_ts, 
+    kline_amount, kline_count, kline_open, kline_close, kline_low, kline_high, kline_vol, 
+    kline_type
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from quantification_kline
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from quantification_kline
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.index.entity.QuantificationKline" >
+    insert into quantification_kline (id, kline_exchange_id, kline_symbol, 
+      kline_period, kline_size, kline_tick_id, 
+      kline_ts, kline_amount, kline_count, 
+      kline_open, kline_close, kline_low, 
+      kline_high, kline_vol, kline_type
+      )
+    values (#{id,jdbcType=BIGINT}, #{klineExchangeId,jdbcType=BIGINT}, #{klineSymbol,jdbcType=VARCHAR}, 
+      #{klinePeriod,jdbcType=VARCHAR}, #{klineSize,jdbcType=BIGINT}, #{klineTickId,jdbcType=BIGINT}, 
+      #{klineTs,jdbcType=TIMESTAMP}, #{klineAmount,jdbcType=DOUBLE}, #{klineCount,jdbcType=DOUBLE}, 
+      #{klineOpen,jdbcType=DECIMAL}, #{klineClose,jdbcType=DECIMAL}, #{klineLow,jdbcType=DECIMAL}, 
+      #{klineHigh,jdbcType=DECIMAL}, #{klineVol,jdbcType=DECIMAL}, #{klineType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.quantification.index.entity.QuantificationKline" >
+    insert into quantification_kline
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="klineExchangeId != null" >
+        kline_exchange_id,
+      </if>
+      <if test="klineSymbol != null" >
+        kline_symbol,
+      </if>
+      <if test="klinePeriod != null" >
+        kline_period,
+      </if>
+      <if test="klineSize != null" >
+        kline_size,
+      </if>
+      <if test="klineTickId != null" >
+        kline_tick_id,
+      </if>
+      <if test="klineTs != null" >
+        kline_ts,
+      </if>
+      <if test="klineAmount != null" >
+        kline_amount,
+      </if>
+      <if test="klineCount != null" >
+        kline_count,
+      </if>
+      <if test="klineOpen != null" >
+        kline_open,
+      </if>
+      <if test="klineClose != null" >
+        kline_close,
+      </if>
+      <if test="klineLow != null" >
+        kline_low,
+      </if>
+      <if test="klineHigh != null" >
+        kline_high,
+      </if>
+      <if test="klineVol != null" >
+        kline_vol,
+      </if>
+      <if test="klineType != null" >
+        kline_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="klineExchangeId != null" >
+        #{klineExchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="klineSymbol != null" >
+        #{klineSymbol,jdbcType=VARCHAR},
+      </if>
+      <if test="klinePeriod != null" >
+        #{klinePeriod,jdbcType=VARCHAR},
+      </if>
+      <if test="klineSize != null" >
+        #{klineSize,jdbcType=BIGINT},
+      </if>
+      <if test="klineTickId != null" >
+        #{klineTickId,jdbcType=BIGINT},
+      </if>
+      <if test="klineTs != null" >
+        #{klineTs,jdbcType=TIMESTAMP},
+      </if>
+      <if test="klineAmount != null" >
+        #{klineAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="klineCount != null" >
+        #{klineCount,jdbcType=DOUBLE},
+      </if>
+      <if test="klineOpen != null" >
+        #{klineOpen,jdbcType=DECIMAL},
+      </if>
+      <if test="klineClose != null" >
+        #{klineClose,jdbcType=DECIMAL},
+      </if>
+      <if test="klineLow != null" >
+        #{klineLow,jdbcType=DECIMAL},
+      </if>
+      <if test="klineHigh != null" >
+        #{klineHigh,jdbcType=DECIMAL},
+      </if>
+      <if test="klineVol != null" >
+        #{klineVol,jdbcType=DECIMAL},
+      </if>
+      <if test="klineType != null" >
+        #{klineType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.index.entity.QuantificationKline" >
+    update quantification_kline
+    <set >
+      <if test="klineExchangeId != null" >
+        kline_exchange_id = #{klineExchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="klineSymbol != null" >
+        kline_symbol = #{klineSymbol,jdbcType=VARCHAR},
+      </if>
+      <if test="klinePeriod != null" >
+        kline_period = #{klinePeriod,jdbcType=VARCHAR},
+      </if>
+      <if test="klineSize != null" >
+        kline_size = #{klineSize,jdbcType=BIGINT},
+      </if>
+      <if test="klineTickId != null" >
+        kline_tick_id = #{klineTickId,jdbcType=BIGINT},
+      </if>
+      <if test="klineTs != null" >
+        kline_ts = #{klineTs,jdbcType=TIMESTAMP},
+      </if>
+      <if test="klineAmount != null" >
+        kline_amount = #{klineAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="klineCount != null" >
+        kline_count = #{klineCount,jdbcType=DOUBLE},
+      </if>
+      <if test="klineOpen != null" >
+        kline_open = #{klineOpen,jdbcType=DECIMAL},
+      </if>
+      <if test="klineClose != null" >
+        kline_close = #{klineClose,jdbcType=DECIMAL},
+      </if>
+      <if test="klineLow != null" >
+        kline_low = #{klineLow,jdbcType=DECIMAL},
+      </if>
+      <if test="klineHigh != null" >
+        kline_high = #{klineHigh,jdbcType=DECIMAL},
+      </if>
+      <if test="klineVol != null" >
+        kline_vol = #{klineVol,jdbcType=DECIMAL},
+      </if>
+      <if test="klineType != null" >
+        kline_type = #{klineType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.index.entity.QuantificationKline" >
+    update quantification_kline
+    set kline_exchange_id = #{klineExchangeId,jdbcType=BIGINT},
+      kline_symbol = #{klineSymbol,jdbcType=VARCHAR},
+      kline_period = #{klinePeriod,jdbcType=VARCHAR},
+      kline_size = #{klineSize,jdbcType=BIGINT},
+      kline_tick_id = #{klineTickId,jdbcType=BIGINT},
+      kline_ts = #{klineTs,jdbcType=TIMESTAMP},
+      kline_amount = #{klineAmount,jdbcType=DOUBLE},
+      kline_count = #{klineCount,jdbcType=DOUBLE},
+      kline_open = #{klineOpen,jdbcType=DECIMAL},
+      kline_close = #{klineClose,jdbcType=DECIMAL},
+      kline_low = #{klineLow,jdbcType=DECIMAL},
+      kline_high = #{klineHigh,jdbcType=DECIMAL},
+      kline_vol = #{klineVol,jdbcType=DECIMAL},
+      kline_type = #{klineType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

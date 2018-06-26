@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.ExchangeGrabConfMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.ExchangeGrabConf" >
+    <id column="seq_id" property="seqId" jdbcType="BIGINT" />
+    <result column="proxy_type" property="proxyType" jdbcType="TINYINT" />
+    <result column="exchange_id" property="exchangeId" jdbcType="BIGINT" />
+    <result column="grab_interval_time" property="grabIntervalTime" jdbcType="BIGINT" />
+    <result column="ip_unfreeze_time" property="ipUnfreezeTime" jdbcType="BIGINT" />
+    <result column="is_valid" property="isValid" jdbcType="TINYINT" />
+    <result column="input_by" property="inputBy" jdbcType="VARCHAR" />
+    <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+    <result column="updator" property="updator" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    seq_id, proxy_type, exchange_id, grab_interval_time, ip_unfreeze_time, is_valid, 
+    input_by, input_time, updator, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from exchange_grab_conf
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </select>
+  <select id="getExchangeGrabConfByExchangeId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select  <include refid="Base_Column_List" />
+    from exchange_grab_conf
+    where exchange_id = #{exchangeId,jdbcType=BIGINT} and is_valid = 1;
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from exchange_grab_conf
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.contract.index.entity.ExchangeGrabConf" >
+    insert into exchange_grab_conf (seq_id, proxy_type, exchange_id, 
+      grab_interval_time, ip_unfreeze_time, is_valid, 
+      input_by, input_time, updator, 
+      update_time)
+    values (#{seqId,jdbcType=BIGINT}, #{proxyType,jdbcType=TINYINT}, #{exchangeId,jdbcType=BIGINT}, 
+      #{grabIntervalTime,jdbcType=BIGINT}, #{ipUnfreezeTime,jdbcType=BIGINT}, #{isValid,jdbcType=TINYINT}, 
+      #{inputBy,jdbcType=VARCHAR}, #{inputTime,jdbcType=TIMESTAMP}, #{updator,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.ExchangeGrabConf" >
+    insert into exchange_grab_conf
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        seq_id,
+      </if>
+      <if test="proxyType != null" >
+        proxy_type,
+      </if>
+      <if test="exchangeId != null" >
+        exchange_id,
+      </if>
+      <if test="grabIntervalTime != null" >
+        grab_interval_time,
+      </if>
+      <if test="ipUnfreezeTime != null" >
+        ip_unfreeze_time,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="inputBy != null" >
+        input_by,
+      </if>
+      <if test="inputTime != null" >
+        input_time,
+      </if>
+      <if test="updator != null" >
+        updator,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        #{seqId,jdbcType=BIGINT},
+      </if>
+      <if test="proxyType != null" >
+        #{proxyType,jdbcType=TINYINT},
+      </if>
+      <if test="exchangeId != null" >
+        #{exchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="grabIntervalTime != null" >
+        #{grabIntervalTime,jdbcType=BIGINT},
+      </if>
+      <if test="ipUnfreezeTime != null" >
+        #{ipUnfreezeTime,jdbcType=BIGINT},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=TINYINT},
+      </if>
+      <if test="inputBy != null" >
+        #{inputBy,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.contract.index.entity.ExchangeGrabConf" >
+    update exchange_grab_conf
+    <set >
+      <if test="proxyType != null" >
+        proxy_type = #{proxyType,jdbcType=TINYINT},
+      </if>
+      <if test="exchangeId != null" >
+        exchange_id = #{exchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="grabIntervalTime != null" >
+        grab_interval_time = #{grabIntervalTime,jdbcType=BIGINT},
+      </if>
+      <if test="ipUnfreezeTime != null" >
+        ip_unfreeze_time = #{ipUnfreezeTime,jdbcType=BIGINT},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=TINYINT},
+      </if>
+      <if test="inputBy != null" >
+        input_by = #{inputBy,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        input_time = #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        updator = #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.ExchangeGrabConf" >
+    update exchange_grab_conf
+    set proxy_type = #{proxyType,jdbcType=TINYINT},
+      exchange_id = #{exchangeId,jdbcType=BIGINT},
+      grab_interval_time = #{grabIntervalTime,jdbcType=BIGINT},
+      ip_unfreeze_time = #{ipUnfreezeTime,jdbcType=BIGINT},
+      is_valid = #{isValid,jdbcType=TINYINT},
+      input_by = #{inputBy,jdbcType=VARCHAR},
+      input_time = #{inputTime,jdbcType=TIMESTAMP},
+      updator = #{updator,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </update>
+</mapper>

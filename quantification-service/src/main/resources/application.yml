@@ -1,0 +1,13 @@
+#mysql和阿里druid配置
+spring:
+  rabbitmq:
+    host: 111.230.248.224
+    port: 5672
+    username: rabbitadmin
+    password: 123456
+    publisher-confirms: true
+    virtual-host: /
+
+    
+
+

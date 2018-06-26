@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.IpPoolMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.IpPool" >
+    <id column="seq_id" property="seqId" jdbcType="BIGINT" />
+    <result column="pool_name" property="poolName" jdbcType="VARCHAR" />
+    <result column="proxy_type" property="proxyType" jdbcType="TINYINT" />
+    <result column="ip" property="ip" jdbcType="VARCHAR" />
+    <result column="port" property="port" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="TINYINT" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="passwd" property="passwd" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="input_by" property="inputBy" jdbcType="VARCHAR" />
+    <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+    <result column="updator" property="updator" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="ExchangeIpPoolMap" type="com.huobi.contract.index.dto.ExchangeIpPool">
+    <result column="exchange_id" property="exchangeId" jdbcType="BIGINT" />
+    <result column="grab_interval_time" property="grabIntervalTime" jdbcType="BIGINT" />
+    <result column="ip_unfreeze_time" property="ipUnfreezeTime" jdbcType="BIGINT" />
+    <collection property="ipPoolList" resultMap="BaseResultMap"></collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    seq_id, pool_name, proxy_type, ip, port, is_valid, user_name, passwd, remark, input_by, 
+    input_time, updator, update_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from ip_pool
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </select>
+  <select id="listExchangeIp" resultMap="ExchangeIpPoolMap">
+    SELECT
+        c.exchange_id,
+        c.grab_interval_time,
+        c.ip_unfreeze_time,
+        i.proxy_type,
+        i.ip,
+        i.pool_name,
+        i.port,
+        i.user_name,
+        i.passwd,
+        i.input_time
+    FROM
+        exchange_grab_conf c
+        LEFT JOIN ip_pool i ON c.proxy_type = i.proxy_type
+        where c.is_valid = 1 and i.is_valid = 1
+    ORDER BY
+        exchange_id
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ip_pool
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.contract.index.entity.IpPool" >
+    insert into ip_pool (seq_id, pool_name, proxy_type, 
+      ip, port, is_valid, 
+      user_name, passwd, remark, 
+      input_by, input_time, updator, 
+      update_time)
+    values (#{seqId,jdbcType=BIGINT}, #{poolName,jdbcType=VARCHAR}, #{proxyType,jdbcType=TINYINT}, 
+      #{ip,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, #{isValid,jdbcType=TINYINT}, 
+      #{userName,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{inputBy,jdbcType=VARCHAR}, #{inputTime,jdbcType=TIMESTAMP}, #{updator,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.IpPool" >
+    insert into ip_pool
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        seq_id,
+      </if>
+      <if test="poolName != null" >
+        pool_name,
+      </if>
+      <if test="proxyType != null" >
+        proxy_type,
+      </if>
+      <if test="ip != null" >
+        ip,
+      </if>
+      <if test="port != null" >
+        port,
+      </if>
+      <if test="isValid != null" >
+        is_valid,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="passwd != null" >
+        passwd,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="inputBy != null" >
+        input_by,
+      </if>
+      <if test="inputTime != null" >
+        input_time,
+      </if>
+      <if test="updator != null" >
+        updator,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="seqId != null" >
+        #{seqId,jdbcType=BIGINT},
+      </if>
+      <if test="poolName != null" >
+        #{poolName,jdbcType=VARCHAR},
+      </if>
+      <if test="proxyType != null" >
+        #{proxyType,jdbcType=TINYINT},
+      </if>
+      <if test="ip != null" >
+        #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        #{port,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        #{isValid,jdbcType=TINYINT},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null" >
+        #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="inputBy != null" >
+        #{inputBy,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.contract.index.entity.IpPool" >
+    update ip_pool
+    <set >
+      <if test="poolName != null" >
+        pool_name = #{poolName,jdbcType=VARCHAR},
+      </if>
+      <if test="proxyType != null" >
+        proxy_type = #{proxyType,jdbcType=TINYINT},
+      </if>
+      <if test="ip != null" >
+        ip = #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="port != null" >
+        port = #{port,jdbcType=INTEGER},
+      </if>
+      <if test="isValid != null" >
+        is_valid = #{isValid,jdbcType=TINYINT},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="passwd != null" >
+        passwd = #{passwd,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="inputBy != null" >
+        input_by = #{inputBy,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        input_time = #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updator != null" >
+        updator = #{updator,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.IpPool" >
+    update ip_pool
+    set pool_name = #{poolName,jdbcType=VARCHAR},
+      proxy_type = #{proxyType,jdbcType=TINYINT},
+      ip = #{ip,jdbcType=VARCHAR},
+      port = #{port,jdbcType=INTEGER},
+      is_valid = #{isValid,jdbcType=TINYINT},
+      user_name = #{userName,jdbcType=VARCHAR},
+      passwd = #{passwd,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      input_by = #{inputBy,jdbcType=VARCHAR},
+      input_time = #{inputTime,jdbcType=TIMESTAMP},
+      updator = #{updator,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where seq_id = #{seqId,jdbcType=BIGINT}
+  </update>
+</mapper>

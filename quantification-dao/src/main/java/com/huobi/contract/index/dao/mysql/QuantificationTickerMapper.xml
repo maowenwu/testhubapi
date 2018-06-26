@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.QuantificationTickerMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.index.entity.QuantificationTicker" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="ticker_exchange_id" property="tickerExchangeId" jdbcType="BIGINT" />
+    <result column="ticker_status" property="tickerStatus" jdbcType="VARCHAR" />
+    <result column="ticker_ts" property="tickerTs" jdbcType="BIGINT" />
+    <result column="ticker_ch" property="tickerCh" jdbcType="VARCHAR" />
+    <result column="tick_id" property="tickId" jdbcType="BIGINT" />
+    <result column="ticker_amount" property="tickerAmount" jdbcType="DOUBLE" />
+    <result column="ticker_count" property="tickerCount" jdbcType="DOUBLE" />
+    <result column="ticker_open" property="tickerOpen" jdbcType="DECIMAL" />
+    <result column="ticker_close" property="tickerClose" jdbcType="DECIMAL" />
+    <result column="ticker_low" property="tickerLow" jdbcType="DECIMAL" />
+    <result column="ticker_high" property="tickerHigh" jdbcType="DECIMAL" />
+    <result column="ticker_vol" property="tickerVol" jdbcType="DOUBLE" />
+    <result column="ticker_bid_price" property="tickerBidPrice" jdbcType="DECIMAL" />
+    <result column="ticker_bid_amount" property="tickerBidAmount" jdbcType="DOUBLE" />
+    <result column="ticker_ask_price" property="tickerAskPrice" jdbcType="DECIMAL" />
+    <result column="ticker_ask_amount" property="tickerAskAmount" jdbcType="DOUBLE" />
+    <result column="date_update" property="dateUpdate" jdbcType="TIMESTAMP" />
+    <result column="ticker_type" property="tickerType" jdbcType="VARCHAR" />
+    <result column="ticker_symbol" property="tickerSymbol" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ticker_exchange_id, ticker_status, ticker_ts, ticker_ch, tick_id, ticker_amount, 
+    ticker_count, ticker_open, ticker_close, ticker_low, ticker_high, ticker_vol, ticker_bid_price, 
+    ticker_bid_amount, ticker_ask_price, ticker_ask_amount, date_update, ticker_type, 
+    ticker_symbol
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from quantification_ticker
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from quantification_ticker
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.index.entity.QuantificationTicker" >
+    insert into quantification_ticker (id, ticker_exchange_id, ticker_status, 
+      ticker_ts, ticker_ch, tick_id, 
+      ticker_amount, ticker_count, ticker_open, 
+      ticker_close, ticker_low, ticker_high, 
+      ticker_vol, ticker_bid_price, ticker_bid_amount, 
+      ticker_ask_price, ticker_ask_amount, date_update, 
+      ticker_type, ticker_symbol)
+    values (#{id,jdbcType=BIGINT}, #{tickerExchangeId,jdbcType=BIGINT}, #{tickerStatus,jdbcType=VARCHAR}, 
+      #{tickerTs,jdbcType=BIGINT}, #{tickerCh,jdbcType=VARCHAR}, #{tickId,jdbcType=BIGINT}, 
+      #{tickerAmount,jdbcType=DOUBLE}, #{tickerCount,jdbcType=DOUBLE}, #{tickerOpen,jdbcType=DECIMAL}, 
+      #{tickerClose,jdbcType=DECIMAL}, #{tickerLow,jdbcType=DECIMAL}, #{tickerHigh,jdbcType=DECIMAL}, 
+      #{tickerVol,jdbcType=DOUBLE}, #{tickerBidPrice,jdbcType=DECIMAL}, #{tickerBidAmount,jdbcType=DOUBLE}, 
+      #{tickerAskPrice,jdbcType=DECIMAL}, #{tickerAskAmount,jdbcType=DOUBLE}, #{dateUpdate,jdbcType=TIMESTAMP}, 
+      #{tickerType,jdbcType=VARCHAR}, #{tickerSymbol,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.quantification.index.entity.QuantificationTicker" >
+    insert into quantification_ticker
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="tickerExchangeId != null" >
+        ticker_exchange_id,
+      </if>
+      <if test="tickerStatus != null" >
+        ticker_status,
+      </if>
+      <if test="tickerTs != null" >
+        ticker_ts,
+      </if>
+      <if test="tickerCh != null" >
+        ticker_ch,
+      </if>
+      <if test="tickId != null" >
+        tick_id,
+      </if>
+      <if test="tickerAmount != null" >
+        ticker_amount,
+      </if>
+      <if test="tickerCount != null" >
+        ticker_count,
+      </if>
+      <if test="tickerOpen != null" >
+        ticker_open,
+      </if>
+      <if test="tickerClose != null" >
+        ticker_close,
+      </if>
+      <if test="tickerLow != null" >
+        ticker_low,
+      </if>
+      <if test="tickerHigh != null" >
+        ticker_high,
+      </if>
+      <if test="tickerVol != null" >
+        ticker_vol,
+      </if>
+      <if test="tickerBidPrice != null" >
+        ticker_bid_price,
+      </if>
+      <if test="tickerBidAmount != null" >
+        ticker_bid_amount,
+      </if>
+      <if test="tickerAskPrice != null" >
+        ticker_ask_price,
+      </if>
+      <if test="tickerAskAmount != null" >
+        ticker_ask_amount,
+      </if>
+      <if test="dateUpdate != null" >
+        date_update,
+      </if>
+      <if test="tickerType != null" >
+        ticker_type,
+      </if>
+      <if test="tickerSymbol != null" >
+        ticker_symbol,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="tickerExchangeId != null" >
+        #{tickerExchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="tickerStatus != null" >
+        #{tickerStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="tickerTs != null" >
+        #{tickerTs,jdbcType=BIGINT},
+      </if>
+      <if test="tickerCh != null" >
+        #{tickerCh,jdbcType=VARCHAR},
+      </if>
+      <if test="tickId != null" >
+        #{tickId,jdbcType=BIGINT},
+      </if>
+      <if test="tickerAmount != null" >
+        #{tickerAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerCount != null" >
+        #{tickerCount,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerOpen != null" >
+        #{tickerOpen,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerClose != null" >
+        #{tickerClose,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerLow != null" >
+        #{tickerLow,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerHigh != null" >
+        #{tickerHigh,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerVol != null" >
+        #{tickerVol,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerBidPrice != null" >
+        #{tickerBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerBidAmount != null" >
+        #{tickerBidAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerAskPrice != null" >
+        #{tickerAskPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerAskAmount != null" >
+        #{tickerAskAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="dateUpdate != null" >
+        #{dateUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tickerType != null" >
+        #{tickerType,jdbcType=VARCHAR},
+      </if>
+      <if test="tickerSymbol != null" >
+        #{tickerSymbol,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.index.entity.QuantificationTicker" >
+    update quantification_ticker
+    <set >
+      <if test="tickerExchangeId != null" >
+        ticker_exchange_id = #{tickerExchangeId,jdbcType=BIGINT},
+      </if>
+      <if test="tickerStatus != null" >
+        ticker_status = #{tickerStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="tickerTs != null" >
+        ticker_ts = #{tickerTs,jdbcType=BIGINT},
+      </if>
+      <if test="tickerCh != null" >
+        ticker_ch = #{tickerCh,jdbcType=VARCHAR},
+      </if>
+      <if test="tickId != null" >
+        tick_id = #{tickId,jdbcType=BIGINT},
+      </if>
+      <if test="tickerAmount != null" >
+        ticker_amount = #{tickerAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerCount != null" >
+        ticker_count = #{tickerCount,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerOpen != null" >
+        ticker_open = #{tickerOpen,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerClose != null" >
+        ticker_close = #{tickerClose,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerLow != null" >
+        ticker_low = #{tickerLow,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerHigh != null" >
+        ticker_high = #{tickerHigh,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerVol != null" >
+        ticker_vol = #{tickerVol,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerBidPrice != null" >
+        ticker_bid_price = #{tickerBidPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerBidAmount != null" >
+        ticker_bid_amount = #{tickerBidAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="tickerAskPrice != null" >
+        ticker_ask_price = #{tickerAskPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="tickerAskAmount != null" >
+        ticker_ask_amount = #{tickerAskAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="dateUpdate != null" >
+        date_update = #{dateUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="tickerType != null" >
+        ticker_type = #{tickerType,jdbcType=VARCHAR},
+      </if>
+      <if test="tickerSymbol != null" >
+        ticker_symbol = #{tickerSymbol,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.index.entity.QuantificationTicker" >
+    update quantification_ticker
+    set ticker_exchange_id = #{tickerExchangeId,jdbcType=BIGINT},
+      ticker_status = #{tickerStatus,jdbcType=VARCHAR},
+      ticker_ts = #{tickerTs,jdbcType=BIGINT},
+      ticker_ch = #{tickerCh,jdbcType=VARCHAR},
+      tick_id = #{tickId,jdbcType=BIGINT},
+      ticker_amount = #{tickerAmount,jdbcType=DOUBLE},
+      ticker_count = #{tickerCount,jdbcType=DOUBLE},
+      ticker_open = #{tickerOpen,jdbcType=DECIMAL},
+      ticker_close = #{tickerClose,jdbcType=DECIMAL},
+      ticker_low = #{tickerLow,jdbcType=DECIMAL},
+      ticker_high = #{tickerHigh,jdbcType=DECIMAL},
+      ticker_vol = #{tickerVol,jdbcType=DOUBLE},
+      ticker_bid_price = #{tickerBidPrice,jdbcType=DECIMAL},
+      ticker_bid_amount = #{tickerBidAmount,jdbcType=DOUBLE},
+      ticker_ask_price = #{tickerAskPrice,jdbcType=DECIMAL},
+      ticker_ask_amount = #{tickerAskAmount,jdbcType=DOUBLE},
+      date_update = #{dateUpdate,jdbcType=TIMESTAMP},
+      ticker_type = #{tickerType,jdbcType=VARCHAR},
+      ticker_symbol = #{tickerSymbol,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

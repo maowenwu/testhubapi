@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.contract.index.dao.ContractPriceIndexMapper">
+    <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.ContractPriceIndex" >
+        <id column="id" property="id" jdbcType="BIGINT" />
+        <result column="index_symbol" property="indexSymbol" jdbcType="VARCHAR" />
+        <result column="index_price" property="indexPrice" jdbcType="DECIMAL" />
+        <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="is_weight_change" property="isWeightChange" jdbcType="TINYINT" />
+        <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="hisTimePointPriceMap" type="com.huobi.contract.index.facade.entity.ExchangePrice">
+        <result column="value" property="value" jdbcType="DECIMAL"/>
+        <result column="time_point" property="timePoint" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="SymbolPriceDiffScaleAvgMap" type="com.huobi.contract.index.dto.SymbolPriceDiffScaleAvg">
+        <result column="index_symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="scale" property="scale" jdbcType="DECIMAL"/>
+    </resultMap>
+    <sql id="Base_Column_List" >
+    id, index_symbol, index_price, input_time, remark, is_weight_change, last_time
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_price_index
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <!--获取指定币对的最新信息-->
+    <select id="getLastIndex" resultMap="BaseResultMap" parameterType="java.lang.String">
+      select
+        <include refid="Base_Column_List"/>
+        from contract_price_index WHERE index_symbol = #{indexSymbol}
+        order by last_time desc limit 1
+    </select>
+    <!--获取指定币对的最新价格信息-->
+    <select id="selectByIndexSymbol" parameterType="java.lang.String" resultType="java.math.BigDecimal">
+      SELECT ci.index_price FROM contract_price_index ci WHERE ci.index_symbol = #{indexSymbol}
+      order by input_time desc limit 1
+    </select>
+    <!--获取最新的价格信息-->
+    <select id="listContractIndexPrice">
+
+    </select>
+    <select id="getHisTimePointPrice" parameterType="com.huobi.contract.index.entity.HisPriceTimePointQueryBean" resultMap="hisTimePointPriceMap">
+        SET @beginDate = #{beginTime};
+        SELECT
+            s.value,
+            a.time_point
+        FROM
+            (
+        SELECT
+            DATE_FORMAT( @tempMinute, '%Y-%m-%d %H:%i' ) AS time_point,
+            @tempMinute := DATE_ADD( @tempMinute, INTERVAL #{interval} SECOND )
+        FROM
+            ( SELECT * FROM contract_price_index_his LIMIT #{pointMount} ) f
+            LEFT JOIN ( SELECT @tempMinute := @beginDate ) b ON 1 = 1
+            ) a
+            LEFT JOIN (
+        SELECT
+            cast( AVG( index_price ) AS DECIMAL ( 10, 4 ) ) AS value,
+            DATE_FORMAT( input_time, '%Y-%m-%d %H:%i' ) AS time
+        FROM
+            contract_price_index
+        WHERE
+            index_symbol = #{symbol}
+        GROUP BY
+        time
+        ) s ON a.time_point = s.time
+
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from contract_price_index
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+
+    <select id="listIndexPriceWithOkexDiffScale" resultMap="SymbolPriceDiffScaleAvgMap">
+      SELECT
+        t.index_symbol,
+        CONVERT ( avg( t.diff / t.min_price ), DECIMAL ( 10, 8 ) ) AS scale
+        FROM
+        (
+        SELECT
+            ci.index_symbol,
+            ci.time,
+            abs( ci.index_price - ok.index_price ) AS diff,
+        CASE
+                WHEN ci.index_price > ok.index_price THEN
+                ok.index_price ELSE ci.index_price
+            END min_price
+        FROM
+        (
+        SELECT
+            i.id,
+            i.index_symbol,
+            i.index_price,
+            s.time
+        FROM
+            ( SELECT index_symbol, max( id ) AS id, DATE_FORMAT( input_time, '%Y-%m-%d %H:%i' ) AS time FROM contract_price_index
+            where input_time BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+        GROUP BY time, index_symbol ) s
+            LEFT JOIN contract_price_index i ON s.id = i.id
+        ) ci
+        LEFT JOIN (
+        SELECT
+            i.id,
+            i.index_symbol,
+            i.index_price,
+            s.time
+        FROM
+            ( SELECT index_symbol, max( id ) AS id, DATE_FORMAT( input_time, '%Y-%m-%d %H:%i' ) AS time FROM contract_price_index_okex
+            where input_time BETWEEN #{startTime,jdbcType=VARCHAR} and #{endTime,jdbcType=VARCHAR}
+            GROUP BY time, index_symbol ) s
+            LEFT JOIN contract_price_index_okex i ON s.id = i.id
+        ) ok ON ci.time = ok.time
+        AND ci.index_symbol = ok.index_symbol
+        ) t
+        GROUP BY
+        t.index_symbol
+    </select>
+
+    <insert id="insert" parameterType="com.huobi.contract.index.entity.ContractPriceIndex" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+    insert into contract_price_index (id, index_symbol, index_price, 
+      input_time, remark, is_weight_change,
+      last_time)
+    values (#{id,jdbcType=BIGINT}, #{indexSymbol,jdbcType=VARCHAR}, #{indexPrice,jdbcType=DECIMAL},
+      #{inputTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{isWeightChange,jdbcType=TINYINT},
+      #{lastTime,jdbcType=TIMESTAMP})
+  </insert>
+    <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.ContractPriceIndex" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into contract_price_index
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                id,
+            </if>
+            <if test="indexSymbol != null" >
+                index_symbol,
+            </if>
+            <if test="indexPrice != null" >
+                index_price,
+            </if>
+            <if test="inputTime != null" >
+                input_time,
+            </if>
+            <if test="remark != null" >
+                remark,
+            </if>
+            <if test="isWeightChange != null" >
+                is_weight_change,
+            </if>
+            <if test="lastTime != null" >
+                last_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="id != null" >
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="indexSymbol != null" >
+                #{indexSymbol,jdbcType=VARCHAR},
+            </if>
+            <if test="indexPrice != null" >
+                #{indexPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="inputTime != null" >
+                #{inputTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null" >
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isWeightChange != null" >
+                #{isWeightChange,jdbcType=TINYINT},
+            </if>
+            <if test="lastTime != null" >
+                #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.contract.index.entity.ContractPriceIndex">
+        update contract_price_index
+        <set >
+            <if test="indexSymbol != null" >
+                index_symbol = #{indexSymbol,jdbcType=VARCHAR},
+            </if>
+            <if test="indexPrice != null" >
+                index_price = #{indexPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="inputTime != null" >
+                input_time = #{inputTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null" >
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="isWeightChange != null" >
+                is_weight_change = #{isWeightChange,jdbcType=TINYINT},
+            </if>
+            <if test="lastTime != null" >
+                last_time = #{lastTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.ContractPriceIndex">
+    update contract_price_index
+    set index_symbol = #{indexSymbol,jdbcType=VARCHAR},
+      index_price = #{indexPrice,jdbcType=DECIMAL},
+      input_time = #{inputTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      is_weight_change = #{isWeightChange,jdbcType=TINYINT},
+      last_time = #{lastTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

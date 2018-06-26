@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:job="http://www.dangdang.com/schema/ddframe/job"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.dangdang.com/schema/ddframe/job
+                        http://www.dangdang.com/schema/ddframe/job/job.xsd">
+
+	<!-- 阿里云配置 end -->
+     <bean id="regCenter" class="com.dangdang.ddframe.reg.zookeeper.ZookeeperRegistryCenter" init-method="init">
+        <constructor-arg>
+            <bean class="com.dangdang.ddframe.reg.zookeeper.ZookeeperConfiguration">
+                <property name="serverLists" value="${dubbo.registry.address}" />
+                <property name="namespace" value="job/contract-index2" />
+                <property name="baseSleepTimeMilliseconds" value="1000" />
+                <property name="maxSleepTimeMilliseconds" value="3000" />
+                <property name="maxRetries" value="3" />
+            </bean>
+        </constructor-arg>
+    </bean>
+	
+   <!--&lt;!&ndash;短信发送&ndash;&gt;-->
+   <!--<job:simple id="smsWaitingJob" class="com.huobi.contract.index.taskjob.alert.message.SmsWaitingJob" registry-center-ref="regCenter" cron="0/15 * * * * ?"   sharding-total-count="1" overwrite="true"/>  -->
+   <!--&lt;!&ndash;重发短信&ndash;&gt;-->
+   <!--<job:simple id="smsRetryJob" class="com.huobi.contract.index.taskjob.alert.message.SmsRetryJob" registry-center-ref="regCenter" cron="0/15 * * * * ?"   sharding-total-count="1" overwrite="true"/>  -->
+   <!--&lt;!&ndash;邮件发送&ndash;&gt;-->
+   <!--<job:simple id="emailSendJob" class="com.huobi.contract.index.taskjob.alert.message.EmailSendJob" registry-center-ref="regCenter" cron="0/15 * * * * ?"   sharding-total-count="1" overwrite="true"/> -->
+
+    <!--汇率抓取 0 0 15 * * ?-->
+    <job:simple id="exchangeRateGrabJob" class="com.huobi.contract.index.taskjob.ExchangeRateGrabJob" registry-center-ref="regCenter" cron="0 0 15 * * ?"   sharding-total-count="1" overwrite="true"/>
+    <!--汇率计算定时任务，每周五下午4点  0 0 16 ? * 6 -->
+    <job:simple id="exchangeRateCalcJob" class="com.huobi.contract.index.taskjob.ExchangeRateCalcJob" registry-center-ref="regCenter" cron="0 0 16 ? * 6"   sharding-total-count="1" overwrite="true"/>
+
+    <!--指数计算定时任务 0/6 * * * * ?-->
+    <job:simple id="ContractIndexCalcJob" class="com.huobi.contract.index.taskjob.ContractIndexCalcJob" registry-center-ref="regCenter" cron="0 0/1 * * * ?"   sharding-total-count="1" overwrite="true"/>
+
+	<!--http grab job 0/3 * * * * ?-->
+	<job:simple id="bitstampIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.BitstampIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="bitfinexIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.BitfinexIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="bittrexIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.BittrexIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="krakenIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.KrakenIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="gdaxIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.GdaxIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="geminiIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.GeminiIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="huobiIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.HuobiIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+	<job:simple id="poloniexIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.http.PoloniexIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+     <!--ip 池队列定时任务-->
+    <job:simple id="ipPoolQueueJob" class="com.huobi.contract.index.taskjob.IpPoolQueueJob" registry-center-ref="regCenter" cron="0 0/2 * * * ?" sharding-total-count="1" overwrite="true"/>
+    <!--ws grab job-->
+    <job:simple id="websocketIndexGrabJob" class="com.huobi.contract.index.taskjob.grab.ws.WebsocketIndexGrabJob" registry-center-ref="regCenter" cron="0 0/5 * * * ?" sharding-total-count="1" overwrite="true"/>
+
+	<!--http是否参与计算计算定时任务 0 0/1 * * * ?-->
+	<job:simple id="exchangeHttpQualifiedGrapCalcJob" class="com.huobi.contract.index.taskjob.ExchangeHttpQualifiedGrapCalcJob" registry-center-ref="regCenter" cron="30 0/10 * * * ?"   sharding-total-count="1" overwrite="true"/>
+	<!--webscoket是否参与计算计算定时任务 0 0/1 * * * ?-->
+	<job:simple id="exchangeWebsocketQualifiedCalcJob" class="com.huobi.contract.index.taskjob.ExchangeWebsocketQualifiedCalcJob" registry-center-ref="regCenter" cron="30 0/10 * * * ?"   sharding-total-count="1" overwrite="true"/>
+	<!--okex指数抓取-->
+	<job:simple id="LastestTickerNotifyJob" class="com.huobi.contract.index.taskjob.LastestTickerNotifyJob" registry-center-ref="regCenter" cron="0 0/1 * * * ?"   sharding-total-count="1" overwrite="true"/>
+
+</beans>

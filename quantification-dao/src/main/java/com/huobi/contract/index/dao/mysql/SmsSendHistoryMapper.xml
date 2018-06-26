@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.SmsSendHistoryMapper" >
+  <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.SmsSendHistory" >
+    <result column="sms_id" property="smsId" jdbcType="BIGINT" />
+    <result column="client_id" property="clientId" jdbcType="VARCHAR" />
+    <result column="destination" property="destination" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="LONGVARBINARY" />
+    <result column="message_id" property="messageId" jdbcType="VARCHAR" />
+    <result column="last_send_time" property="lastSendTime" jdbcType="TIMESTAMP" />
+    <result column="deal_times" property="dealTimes" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="VARCHAR" />
+    <result column="input_time" property="inputTime" jdbcType="TIMESTAMP" />
+    <result column="expected_send_time" property="expectedSendTime" jdbcType="TIMESTAMP" />
+    <result column="error_code" property="errorCode" jdbcType="VARCHAR" />
+    <result column="error_msg" property="errorMsg" jdbcType="VARCHAR" />
+  </resultMap>
+  <insert id="insert" parameterType="com.huobi.contract.index.entity.SmsSendHistory" >
+    insert into sms_send_history (sms_id, client_id, destination, 
+      content, message_id, last_send_time, 
+      deal_times, status, input_time, 
+      expected_send_time, error_code, error_msg
+      )
+    values (#{smsId,jdbcType=BIGINT}, #{clientId,jdbcType=VARCHAR}, #{destination,jdbcType=VARCHAR}, 
+      #{content,jdbcType=LONGVARBINARY}, #{messageId,jdbcType=VARCHAR}, #{lastSendTime,jdbcType=TIMESTAMP},
+      #{dealTimes,jdbcType=INTEGER}, #{status,jdbcType=VARCHAR}, #{inputTime,jdbcType=TIMESTAMP}, 
+      #{expectedSendTime,jdbcType=TIMESTAMP}, #{errorCode,jdbcType=VARCHAR}, #{errorMsg,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.SmsSendHistory" >
+    insert into sms_send_history
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="smsId != null" >
+        sms_id,
+      </if>
+      <if test="clientId != null" >
+        client_id,
+      </if>
+      <if test="destination != null" >
+        destination,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+      <if test="messageId != null" >
+        message_id,
+      </if>
+      <if test="lastSendTime != null" >
+        last_send_time,
+      </if>
+      <if test="dealTimes != null" >
+        deal_times,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="inputTime != null" >
+        input_time,
+      </if>
+      <if test="expectedSendTime != null" >
+        expected_send_time,
+      </if>
+      <if test="errorCode != null" >
+        error_code,
+      </if>
+      <if test="errorMsg != null" >
+        error_msg,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="smsId != null" >
+        #{smsId,jdbcType=BIGINT},
+      </if>
+      <if test="clientId != null" >
+        #{clientId,jdbcType=VARCHAR},
+      </if>
+      <if test="destination != null" >
+        #{destination,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARBINARY},
+      </if>
+      <if test="messageId != null" >
+        #{messageId,jdbcType=VARCHAR},
+      </if>
+      <if test="lastSendTime != null" >
+        #{lastSendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dealTimes != null" >
+        #{dealTimes,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="inputTime != null" >
+        #{inputTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expectedSendTime != null" >
+        #{expectedSendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="errorCode != null" >
+        #{errorCode,jdbcType=VARCHAR},
+      </if>
+      <if test="errorMsg != null" >
+        #{errorMsg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

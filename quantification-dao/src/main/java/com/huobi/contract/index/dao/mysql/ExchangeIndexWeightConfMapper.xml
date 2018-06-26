@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.ExchangeIndexWeightConfMapper">
+    <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.ExchangeIndexWeightConf">
+        <id column="weight_id" jdbcType="BIGINT" property="weightId"/>
+        <result column="exchange_id" jdbcType="BIGINT" property="exchangeId"/>
+        <result column="index_symbol" jdbcType="VARCHAR" property="indexSymbol"/>
+        <result column="source_symbol" jdbcType="VARCHAR" property="sourceSymbol"/>
+        <result column="exchange_symbol" jdbcType="VARCHAR" property="exchangeSymbol"/>
+        <result column="weight" jdbcType="DECIMAL" property="weight"/>
+        <result column="http_qualified" jdbcType="SMALLINT" property="httpQualified"/>
+        <result column="ws_qualified" jdbcType="SMALLINT" property="wsQualified"/>
+        <result column="input_by" jdbcType="VARCHAR" property="inputBy"/>
+        <result column="input_time" jdbcType="TIMESTAMP" property="inputTime"/>
+        <result column="updator" jdbcType="VARCHAR" property="updator"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        weight_id, exchange_id, index_symbol, source_symbol, exchange_symbol, weight, http_qualified, ws_qualified,
+        input_by, input_time, updator, update_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from exchange_index_weight_conf
+        where weight_id = #{weightId,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from exchange_index_weight_conf
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from exchange_index_weight_conf
+        where weight_id = #{weightId,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.huobi.contract.index.entity.ExchangeIndexWeightConf">
+        insert into exchange_index_weight_conf (weight_id, exchange_id, index_symbol,
+          source_symbol, exchange_symbol, weight,
+          http_qualified, ws_qualified, calc_origin,
+          input_by, input_time, updator,
+          update_time)
+        values (#{weightId,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{indexSymbol,jdbcType=VARCHAR},
+          #{sourceSymbol,jdbcType=VARCHAR}, #{exchangeSymbol,jdbcType=VARCHAR}, #{weight,jdbcType=DECIMAL},
+          #{httpQualified,jdbcType=SMALLINT}, #{wsQualified,jdbcType=SMALLINT},
+          #{inputBy,jdbcType=VARCHAR}, #{inputTime,jdbcType=TIMESTAMP}, #{updator,jdbcType=VARCHAR},
+          #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.ExchangeIndexWeightConf">
+        update exchange_index_weight_conf
+        set exchange_id = #{exchangeId,jdbcType=BIGINT},
+          index_symbol = #{indexSymbol,jdbcType=VARCHAR},
+          source_symbol = #{sourceSymbol,jdbcType=VARCHAR},
+          exchange_symbol = #{exchangeSymbol,jdbcType=VARCHAR},
+          weight = #{weight,jdbcType=DECIMAL},
+          http_qualified = #{httpQualified,jdbcType=SMALLINT},
+          ws_qualified = #{wsQualified,jdbcType=SMALLINT},
+          input_by = #{inputBy,jdbcType=VARCHAR},
+          input_time = #{inputTime,jdbcType=TIMESTAMP},
+          updator = #{updator,jdbcType=VARCHAR},
+          update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where weight_id = #{weightId,jdbcType=BIGINT}
+    </update>
+    <update id="updateIsQualifiedByExchangeIDAndIndexSymbol"
+            parameterType="com.huobi.contract.index.entity.ExchangeIndexWeightConf">
+        update exchange_index_weight_conf
+        <set>
+            <if test="httpQualified != null">
+                http_qualified = #{httpQualified,jdbcType=SMALLINT},
+            </if>
+            <if test="wsQualified != null">
+                ws_qualified = #{wsQualified,jdbcType=SMALLINT},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where exchange_id = #{exchangeId,jdbcType=BIGINT} AND
+        index_symbol = #{indexSymbol,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateHttpQualifiedValue">
+        update exchange_index_weight_conf set http_qualified= #{status} where exchange_id= #{exchangeId} and index_symbol= #{indexSymbol}
+
+    </update>
+
+    <update id="updateWsQualifiedValue">
+        update exchange_index_weight_conf set ws_qualified= #{status} where exchange_id= #{exchangeId} and index_symbol= #{indexSymbol}
+    </update>
+</mapper>

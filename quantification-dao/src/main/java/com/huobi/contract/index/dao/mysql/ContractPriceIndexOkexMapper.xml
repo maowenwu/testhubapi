@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huobi.contract.index.dao.ContractPriceIndexOkexMapper">
+    <resultMap id="BaseResultMap" type="com.huobi.contract.index.entity.ContractPriceIndexOkex">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="index_symbol" property="indexSymbol" jdbcType="VARCHAR"/>
+        <result column="index_price" property="indexPrice" jdbcType="DECIMAL"/>
+        <result column="input_time" property="inputTime" jdbcType="TIMESTAMP"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, index_symbol, index_price, input_time, remark
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from contract_price_index_okex
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from contract_price_index_okex
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.huobi.contract.index.entity.ContractPriceIndexOkex">
+    insert into contract_price_index_okex (id, index_symbol, index_price, 
+      input_time, remark)
+    values (#{id,jdbcType=BIGINT}, #{indexSymbol,jdbcType=VARCHAR}, #{indexPrice,jdbcType=DECIMAL}, 
+      #{inputTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.huobi.contract.index.entity.ContractPriceIndexOkex">
+        insert into contract_price_index_okex
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="indexSymbol != null">
+                index_symbol,
+            </if>
+            <if test="indexPrice != null">
+                index_price,
+            </if>
+            <if test="inputTime != null">
+                input_time,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="indexSymbol != null">
+                #{indexSymbol,jdbcType=VARCHAR},
+            </if>
+            <if test="indexPrice != null">
+                #{indexPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="inputTime != null">
+                #{inputTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.contract.index.entity.ContractPriceIndexOkex">
+        update contract_price_index_okex
+        <set>
+            <if test="indexSymbol != null">
+                index_symbol = #{indexSymbol,jdbcType=VARCHAR},
+            </if>
+            <if test="indexPrice != null">
+                index_price = #{indexPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="inputTime != null">
+                input_time = #{inputTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.contract.index.entity.ContractPriceIndexOkex">
+    update contract_price_index_okex
+    set index_symbol = #{indexSymbol,jdbcType=VARCHAR},
+      index_price = #{indexPrice,jdbcType=DECIMAL},
+      input_time = #{inputTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="listLastOkexPrice" resultMap="BaseResultMap">
+    SELECT
+        o.index_symbol,
+        o.input_time,
+        o.index_price
+    FROM
+        ( SELECT index_symbol, max( id ) AS id FROM contract_price_index_okex GROUP BY index_symbol ) s
+        LEFT JOIN contract_price_index_okex o ON s.id = o.id
+    AND s.index_symbol = o.index_symbol;
+  </select>
+</mapper>
