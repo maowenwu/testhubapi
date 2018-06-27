@@ -1,5 +1,7 @@
 package com.huobi.quantification.service.market.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.MarketService;
@@ -21,7 +23,9 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public Object getOkTicker(String symbol, String contractType) {
         String url = HttpConstant.OK_TICKER + "?symbol=" + symbol + "&contract_type=" + contractType;
-        return httpService.doGet(url);
+        String body = httpService.doGet(url);
+        JSONObject jsonObject = JSON.parseObject(body);
+        return null;
     }
 
     @Override
@@ -30,14 +34,4 @@ public class MarketServiceImpl implements MarketService {
         return httpService.doGet(url);
     }
 
-    @Override
-    public Object getOkTrades(String symbol, String contractType) {
-        String url = HttpConstant.OK_TRADES + "?symbol=" + symbol + "&contract_type=" + contractType;
-        return httpService.doGet(url);
-    }
-
-    @Override
-    public Object getOkIndex(String symbol, String contractType) {
-        return null;
-    }
 }
