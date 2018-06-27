@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanKlineMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanKline">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+    <result column="period" jdbcType="VARCHAR" property="period" />
+    <result column="size" jdbcType="BIGINT" property="size" />
+    <result column="tick_id" jdbcType="BIGINT" property="tickId" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+    <result column="amount" jdbcType="DOUBLE" property="amount" />
+    <result column="count" jdbcType="DOUBLE" property="count" />
+    <result column="open" jdbcType="DECIMAL" property="open" />
+    <result column="close" jdbcType="DECIMAL" property="close" />
+    <result column="low" jdbcType="DECIMAL" property="low" />
+    <result column="high" jdbcType="DECIMAL" property="high" />
+    <result column="vol" jdbcType="DECIMAL" property="vol" />
+    <result column="kline_type" jdbcType="VARCHAR" property="klineType" />
+  </resultMap>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanKline">
+    insert into quan_kline (id, exchange_id, symbol, 
+      period, size, tick_id, 
+      ts, amount, count, 
+      open, close, low, high, 
+      vol, kline_type)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR}, 
+      #{period,jdbcType=VARCHAR}, #{size,jdbcType=BIGINT}, #{tickId,jdbcType=BIGINT}, 
+      #{ts,jdbcType=TIMESTAMP}, #{amount,jdbcType=DOUBLE}, #{count,jdbcType=DOUBLE}, 
+      #{open,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, #{high,jdbcType=DECIMAL}, 
+      #{vol,jdbcType=DECIMAL}, #{klineType,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, exchange_id, symbol, period, size, tick_id, ts, amount, count, open, close, 
+    low, high, vol, kline_type
+    from quan_kline
+  </select>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanDepthDetailMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepthDetail">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="depth_id" jdbcType="BIGINT" property="depthId" />
+    <result column="detail_type" jdbcType="VARCHAR" property="detailType" />
+    <result column="detail_price" jdbcType="DECIMAL" property="detailPrice" />
+    <result column="detail_amount" jdbcType="DOUBLE" property="detailAmount" />
+    <result column="date_update" jdbcType="TIMESTAMP" property="dateUpdate" />
+  </resultMap>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepthDetail">
+    insert into quan_depth_detail (id, depth_id, detail_type, 
+      detail_price, detail_amount, date_update
+      )
+    values (#{id,jdbcType=BIGINT}, #{depthId,jdbcType=BIGINT}, #{detailType,jdbcType=VARCHAR}, 
+      #{detailPrice,jdbcType=DECIMAL}, #{detailAmount,jdbcType=DOUBLE}, #{dateUpdate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, depth_id, detail_type, detail_price, detail_amount, date_update
+    from quan_depth_detail
+  </select>
+</mapper>

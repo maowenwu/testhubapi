@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanTickerMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanTicker">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="ts" jdbcType="BIGINT" property="ts" />
+    <result column="ch" jdbcType="VARCHAR" property="ch" />
+    <result column="tick_id" jdbcType="BIGINT" property="tickId" />
+    <result column="amount" jdbcType="DOUBLE" property="amount" />
+    <result column="count" jdbcType="DOUBLE" property="count" />
+    <result column="open" jdbcType="DECIMAL" property="open" />
+    <result column="close" jdbcType="DECIMAL" property="close" />
+    <result column="low" jdbcType="DECIMAL" property="low" />
+    <result column="high" jdbcType="DECIMAL" property="high" />
+    <result column="vol" jdbcType="DOUBLE" property="vol" />
+    <result column="bid_price" jdbcType="DECIMAL" property="bidPrice" />
+    <result column="bid_amount" jdbcType="DOUBLE" property="bidAmount" />
+    <result column="ask_price" jdbcType="DECIMAL" property="askPrice" />
+    <result column="ask__amount" jdbcType="DOUBLE" property="askAmount" />
+    <result column="date_update" jdbcType="TIMESTAMP" property="dateUpdate" />
+    <result column="ticker_type" jdbcType="VARCHAR" property="tickerType" />
+  </resultMap>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanTicker">
+    insert into quan_ticker (id, exchange_id, status, 
+      ts, ch, tick_id, amount, 
+      count, open, close, 
+      low, high, vol, bid_price, 
+      bid_amount, ask_price, ask__amount, 
+      date_update, ticker_type)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{status,jdbcType=VARCHAR}, 
+      #{ts,jdbcType=BIGINT}, #{ch,jdbcType=VARCHAR}, #{tickId,jdbcType=BIGINT}, #{amount,jdbcType=DOUBLE}, 
+      #{count,jdbcType=DOUBLE}, #{open,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL}, 
+      #{low,jdbcType=DECIMAL}, #{high,jdbcType=DECIMAL}, #{vol,jdbcType=DOUBLE}, #{bidPrice,jdbcType=DECIMAL}, 
+      #{bidAmount,jdbcType=DOUBLE}, #{askPrice,jdbcType=DECIMAL}, #{askAmount,jdbcType=DOUBLE}, 
+      #{dateUpdate,jdbcType=TIMESTAMP}, #{tickerType,jdbcType=VARCHAR})
+  </insert>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, exchange_id, status, ts, ch, tick_id, amount, count, open, close, low, 
+    high, vol, bid_price, bid_amount, ask_price, ask__amount, date_update, ticker_type
+    from quan_ticker
+  </select>
+</mapper>

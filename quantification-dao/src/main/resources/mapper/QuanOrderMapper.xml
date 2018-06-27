@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanOrderMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanOrder">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="order_account_id" jdbcType="BIGINT" property="orderAccountId" />
+    <result column="order_amount" jdbcType="BIGINT" property="orderAmount" />
+    <result column="order_canceled_at" jdbcType="TIMESTAMP" property="orderCanceledAt" />
+    <result column="order_created_at" jdbcType="TIMESTAMP" property="orderCreatedAt" />
+    <result column="order_field_amount" jdbcType="BIGINT" property="orderFieldAmount" />
+    <result column="order_field_cash_amount" jdbcType="BIGINT" property="orderFieldCashAmount" />
+    <result column="order_field_fees" jdbcType="DECIMAL" property="orderFieldFees" />
+    <result column="order_finished_at" jdbcType="TIMESTAMP" property="orderFinishedAt" />
+    <result column="order_order_id" jdbcType="BIGINT" property="orderOrderId" />
+    <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+    <result column="order_source" jdbcType="VARCHAR" property="orderSource" />
+    <result column="order_state" jdbcType="VARCHAR" property="orderState" />
+    <result column="order_symbol" jdbcType="VARCHAR" property="orderSymbol" />
+    <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrder">
+    insert into quan_order (id, order_account_id, order_amount, 
+      order_canceled_at, order_created_at, order_field_amount, 
+      order_field_cash_amount, order_field_fees, order_finished_at, 
+      order_order_id, order_price, order_source, 
+      order_state, order_symbol, order_type
+      )
+    values (#{id,jdbcType=BIGINT}, #{orderAccountId,jdbcType=BIGINT}, #{orderAmount,jdbcType=BIGINT}, 
+      #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderFieldAmount,jdbcType=BIGINT}, 
+      #{orderFieldCashAmount,jdbcType=BIGINT}, #{orderFieldFees,jdbcType=DECIMAL}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
+      #{orderOrderId,jdbcType=BIGINT}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
+      #{orderState,jdbcType=VARCHAR}, #{orderSymbol,jdbcType=VARCHAR}, #{orderType,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrder">
+    update quan_order
+    set order_account_id = #{orderAccountId,jdbcType=BIGINT},
+      order_amount = #{orderAmount,jdbcType=BIGINT},
+      order_canceled_at = #{orderCanceledAt,jdbcType=TIMESTAMP},
+      order_created_at = #{orderCreatedAt,jdbcType=TIMESTAMP},
+      order_field_amount = #{orderFieldAmount,jdbcType=BIGINT},
+      order_field_cash_amount = #{orderFieldCashAmount,jdbcType=BIGINT},
+      order_field_fees = #{orderFieldFees,jdbcType=DECIMAL},
+      order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP},
+      order_order_id = #{orderOrderId,jdbcType=BIGINT},
+      order_price = #{orderPrice,jdbcType=DECIMAL},
+      order_source = #{orderSource,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=VARCHAR},
+      order_symbol = #{orderSymbol,jdbcType=VARCHAR},
+      order_type = #{orderType,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, order_account_id, order_amount, order_canceled_at, order_created_at, order_field_amount, 
+    order_field_cash_amount, order_field_fees, order_finished_at, order_order_id, order_price, 
+    order_source, order_state, order_symbol, order_type
+    from quan_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, order_account_id, order_amount, order_canceled_at, order_created_at, order_field_amount, 
+    order_field_cash_amount, order_field_fees, order_finished_at, order_order_id, order_price, 
+    order_source, order_state, order_symbol, order_type
+    from quan_order
+  </select>
+</mapper>

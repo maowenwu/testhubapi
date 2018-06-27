@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanAccountsSubMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountsSub">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="accounts_id" jdbcType="BIGINT" property="accountsId" />
+    <result column="balance" jdbcType="DECIMAL" property="balance" />
+    <result column="currency" jdbcType="VARCHAR" property="currency" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_accounts_sub
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountsSub">
+    insert into quan_accounts_sub (id, accounts_id, balance, 
+      currency, type)
+    values (#{id,jdbcType=BIGINT}, #{accountsId,jdbcType=BIGINT}, #{balance,jdbcType=DECIMAL}, 
+      #{currency,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountsSub">
+    update quan_accounts_sub
+    set accounts_id = #{accountsId,jdbcType=BIGINT},
+      balance = #{balance,jdbcType=DECIMAL},
+      currency = #{currency,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, accounts_id, balance, currency, type
+    from quan_accounts_sub
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, accounts_id, balance, currency, type
+    from quan_accounts_sub
+  </select>
+</mapper>

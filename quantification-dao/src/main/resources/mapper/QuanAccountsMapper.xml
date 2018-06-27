@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanAccountsMapper">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccounts">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="exchange_id" jdbcType="BIGINT" property="exchangeId"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="exchange_accounts_id" jdbcType="BIGINT" property="exchangeAccountsId"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_accounts
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccounts">
+    insert into quan_accounts (id, exchange_id, user_id, 
+      exchange_accounts_id, state, type
+      )
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
+      #{exchangeAccountsId,jdbcType=BIGINT}, #{state,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccounts">
+    update quan_accounts
+    set exchange_id = #{exchangeId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      exchange_accounts_id = #{exchangeAccountsId,jdbcType=BIGINT},
+      state = #{state,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, exchange_id, user_id, exchange_accounts_id, state, type
+    from quan_accounts
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, exchange_id, user_id, exchange_accounts_id, state, type
+    from quan_accounts
+  </select>
+</mapper>
