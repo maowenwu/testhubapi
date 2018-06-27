@@ -5,4 +5,8 @@ package com.huobi.quantification.service.account;
  * @since 2018/6/26
  */
 public interface AccountService {
+
+    Object getOkUserInfo();
+
+    Object getOkPosition();
 }

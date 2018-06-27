@@ -1,13 +1,17 @@
 package com.huobi.quantification.common.util;
 
 import com.huobi.quantification.common.exception.HttpRequestException;
+import org.apache.commons.collections.MapUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -15,6 +19,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +28,13 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -53,7 +62,7 @@ public class HttpClientUtils {
         }
 
     }
-    
+
     private static RequestConfig defaultRequestConfig() {
         RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setSocketTimeout(5000)
@@ -99,6 +108,7 @@ public class HttpClientUtils {
         httpGet.setConfig(defaultRequestConfig());
         httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36");
         httpGet.setHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded");
         CloseableHttpResponse response = null;
         try {
             response = httpClient.execute(httpGet);
@@ -115,4 +125,41 @@ public class HttpClientUtils {
         throw new HttpRequestException("响应码不为200");
     }
 
+    public String doPost(String url, Map<String, String> params) {
+        HttpPost httpPost = new HttpPost(url);
+        httpPost.setConfig(defaultRequestConfig());
+        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36");
+        httpPost.setHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        if (MapUtils.isNotEmpty(params)) {
+            List<NameValuePair> valuePairs = new ArrayList<>();
+            params.forEach((k, v) -> {
+                valuePairs.add(new BasicNameValuePair(k, v));
+            });
+            UrlEncodedFormEntity entity = null;
+            try {
+                entity = new UrlEncodedFormEntity(valuePairs, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new HttpRequestException("http请求参数编码异常", e);
+            }
+            httpPost.setEntity(entity);
+        }
+
+        CloseableHttpResponse response = null;
+        try {
+            response = httpClient.execute(httpPost);
+        } catch (IOException e) {
+            throw new HttpRequestException("http执行异常，url=" + url, e);
+        }
+        if (response.getStatusLine().getStatusCode() == 200) {
+            try {
+                return EntityUtils.toString(response.getEntity());
+            } catch (IOException e) {
+                throw new HttpRequestException("http结果解析异常", e);
+            }
+        }
+        throw new HttpRequestException("响应码不为200");
+
+    }
 }
