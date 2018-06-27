@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * @author 
  */
-public class QuanDepthDetail implements Serializable {
+public class QuanDepthFuturesDetail implements Serializable {
     private Long id;
 
     /**

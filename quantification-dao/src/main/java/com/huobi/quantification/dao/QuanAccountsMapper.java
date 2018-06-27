@@ -1,6 +1,5 @@
 package com.huobi.quantification.dao;
 
-import com.huobi.quantification.entity.QuanAccounts;
 import java.util.List;
 
 public interface QuanAccountsMapper {

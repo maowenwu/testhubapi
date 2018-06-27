@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * @author 
  */
-public class QuanDepth implements Serializable {
+public class QuanDepthFutures implements Serializable {
     private Long id;
 
     /**
@@ -28,6 +28,16 @@ public class QuanDepth implements Serializable {
      * 定价币种
      */
     private String quoteCoin;
+
+    /**
+     * 合约代码
+     */
+    private String contractCode;
+
+    /**
+     * 合约名称
+     */
+    private String contractName;
 
     private static final long serialVersionUID = 1L;
 
@@ -69,5 +79,21 @@ public class QuanDepth implements Serializable {
 
     public void setQuoteCoin(String quoteCoin) {
         this.quoteCoin = quoteCoin;
+    }
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public String getContractName() {
+        return contractName;
+    }
+
+    public void setContractName(String contractName) {
+        this.contractName = contractName;
     }
 }

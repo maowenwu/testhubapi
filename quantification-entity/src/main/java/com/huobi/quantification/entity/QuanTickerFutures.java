@@ -6,7 +6,7 @@ import java.util.Date;
 /**
  * @author 
  */
-public class QuanTicker implements Serializable {
+public class QuanTickerFutures implements Serializable {
     private Long id;
 
     /**
@@ -53,6 +53,16 @@ public class QuanTicker implements Serializable {
      * 最低价
      */
     private Long lowPrice;
+
+    /**
+     * 合约代码
+     */
+    private String contractCode;
+
+    /**
+     * 合约名称
+     */
+    private String contractName;
 
     private static final long serialVersionUID = 1L;
 
@@ -134,5 +144,21 @@ public class QuanTicker implements Serializable {
 
     public void setLowPrice(Long lowPrice) {
         this.lowPrice = lowPrice;
+    }
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public String getContractName() {
+        return contractName;
+    }
+
+    public void setContractName(String contractName) {
+        this.contractName = contractName;
     }
 }

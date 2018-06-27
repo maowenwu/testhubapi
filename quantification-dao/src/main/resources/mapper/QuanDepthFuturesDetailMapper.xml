@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huobi.quantification.dao.QuanDepthDetailMapper">
-  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepthDetail">
+<mapper namespace="com.huobi.quantification.dao.QuanDepthFuturesDetailMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepthFuturesDetail">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="depth_id" jdbcType="BIGINT" property="depthId" />
     <result column="detail_price" jdbcType="DECIMAL" property="detailPrice" />
@@ -9,17 +9,17 @@
     <result column="date_update" jdbcType="TIMESTAMP" property="dateUpdate" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from quan_depth_detail
+    delete from quan_depth_futures_detail
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepthDetail">
-    insert into quan_depth_detail (id, depth_id, detail_price, 
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepthFuturesDetail">
+    insert into quan_depth_futures_detail (id, depth_id, detail_price, 
       detail_amount, date_update)
     values (#{id,jdbcType=BIGINT}, #{depthId,jdbcType=BIGINT}, #{detailPrice,jdbcType=DECIMAL}, 
       #{detailAmount,jdbcType=DOUBLE}, #{dateUpdate,jdbcType=TIMESTAMP})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthDetail">
-    update quan_depth_detail
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFuturesDetail">
+    update quan_depth_futures_detail
     set depth_id = #{depthId,jdbcType=BIGINT},
       detail_price = #{detailPrice,jdbcType=DECIMAL},
       detail_amount = #{detailAmount,jdbcType=DOUBLE},
@@ -28,11 +28,11 @@
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, depth_id, detail_price, detail_amount, date_update
-    from quan_depth_detail
+    from quan_depth_futures_detail
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, depth_id, detail_price, detail_amount, date_update
-    from quan_depth_detail
+    from quan_depth_futures_detail
   </select>
 </mapper>

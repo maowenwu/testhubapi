@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * @author 
  */
-public class QuanAccounts implements Serializable {
+public class QuanAccountsFutures implements Serializable {
     private Long id;
 
     private Long exchangeId;

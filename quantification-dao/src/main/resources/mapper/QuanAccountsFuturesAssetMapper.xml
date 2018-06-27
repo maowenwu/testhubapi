@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanAccountsFuturesAssetMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountsFuturesAsset">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="accounts_id" jdbcType="BIGINT" property="accountsId" />
+    <result column="coin" jdbcType="DECIMAL" property="coin" />
+    <result column="rights" jdbcType="DECIMAL" property="rights" />
+    <result column="data_update" jdbcType="TIMESTAMP" property="dataUpdate" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_accounts_futures_asset
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountsFuturesAsset">
+    insert into quan_accounts_futures_asset (id, accounts_id, coin, 
+      rights, data_update, ts
+      )
+    values (#{id,jdbcType=BIGINT}, #{accountsId,jdbcType=BIGINT}, #{coin,jdbcType=DECIMAL}, 
+      #{rights,jdbcType=DECIMAL}, #{dataUpdate,jdbcType=TIMESTAMP}, #{ts,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountsFuturesAsset">
+    update quan_accounts_futures_asset
+    set accounts_id = #{accountsId,jdbcType=BIGINT},
+      coin = #{coin,jdbcType=DECIMAL},
+      rights = #{rights,jdbcType=DECIMAL},
+      data_update = #{dataUpdate,jdbcType=TIMESTAMP},
+      ts = #{ts,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, accounts_id, coin, rights, data_update, ts
+    from quan_accounts_futures_asset
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, accounts_id, coin, rights, data_update, ts
+    from quan_accounts_futures_asset
+  </select>
+</mapper>

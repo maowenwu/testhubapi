@@ -9,32 +9,74 @@ import java.util.Date;
 public class QuanOrder implements Serializable {
     private Long id;
 
+    /**
+     * 账户 ID
+     */
     private Long orderAccountId;
 
+    /**
+     * 订单数量
+     */
     private Long orderAmount;
 
+    /**
+     * 订单撤销时间
+     */
     private Date orderCanceledAt;
 
+    /**
+     * 订单创建时间
+     */
     private Date orderCreatedAt;
 
+    /**
+     * 已成交数量
+     */
     private Long orderFieldAmount;
 
+    /**
+     * 已成交总金额
+     */
     private Long orderFieldCashAmount;
 
+    /**
+     * 已成交手续费
+     */
     private Long orderFieldFees;
 
+    /**
+     * 订单变为终结态的时间
+     */
     private Date orderFinishedAt;
 
+    /**
+     * 订单ID
+     */
     private Long orderOrderId;
 
+    /**
+     * 价格
+     */
     private Long orderPrice;
 
+    /**
+     * 订单来源
+     */
     private String orderSource;
 
+    /**
+     * 订单状态
+     */
     private String orderState;
 
+    /**
+     * 交易对
+     */
     private String orderSymbol;
 
+    /**
+     * 订单类型
+     */
     private String orderType;
 
     private static final long serialVersionUID = 1L;
