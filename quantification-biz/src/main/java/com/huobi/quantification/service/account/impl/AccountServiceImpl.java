@@ -1,6 +1,5 @@
 package com.huobi.quantification.service.account.impl;
 
-import com.huobi.quantification.common.util.MD5;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import org.springframework.beans.factory.annotation.Autowired;

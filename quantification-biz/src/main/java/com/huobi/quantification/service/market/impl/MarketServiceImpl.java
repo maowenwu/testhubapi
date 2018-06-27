@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author zhangl
  * @since 2018/6/26
@@ -23,17 +26,20 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public Object getOkTicker(String symbol, String contractType) {
         String url = HttpConstant.OK_TICKER + "?symbol=" + symbol + "&contract_type=" + contractType;
-        //String body = httpService.doGet(url);
-        String body="{\"date\":\"1530075027\",\"ticker\":{\"high\":6269.01,\"vol\":3066748,\"day_high\":0,\"last\":6054.85,\"low\":6018.61,\"contract_id\":201806290000034,\"buy\":6049.73,\"sell\":6053.71,\"coin_vol\":0,\"day_low\":0,\"unit_amount\":100}}";
+        String body = httpService.doGet(url);
         JSONObject jsonObject = JSON.parseObject(body);
         return null;
     }
 
     @Override
     public Object getOkDepth(String symbol, String contractType) {
-        String url = HttpConstant.OK_DEPTH + "?symbol=" + symbol + "&contract_type=" + contractType;
-        //{"asks":[[6055.95,100],[6055,75],[6053.88,26],[6053.71,22],[6052.86,80]],"bids":[[6048.31,100],[6048.2,35],[6047.5,100],[6047.24,100],[6047.11,80]]}
-        return httpService.doGet(url);
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", "btc_usd");
+        params.put("contract_type", "this_week");
+        params.put("size", "100");
+        params.put("merge", "1");
+        String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
+        return null;
     }
 
 }

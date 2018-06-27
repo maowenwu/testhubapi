@@ -12,6 +12,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -29,6 +30,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -104,11 +107,29 @@ public class HttpClientUtils {
     }
 
     public String doGet(String url) {
-        HttpGet httpGet = new HttpGet(url);
+        return doGet(url, null);
+    }
+
+    public String doGet(String url, Map<String, String> params) {
+        URIBuilder builder = null;
+        URI uri = null;
+        try {
+            builder = new URIBuilder(url);
+            if (MapUtils.isNotEmpty(params)) {
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    builder.addParameter(entry.getKey(), entry.getValue());
+                }
+            }
+            uri = builder.build();
+        } catch (URISyntaxException e) {
+            throw new HttpRequestException("url地址解析异常", e);
+        }
+        HttpGet httpGet = new HttpGet(uri);
         httpGet.setConfig(defaultRequestConfig());
         httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36");
         httpGet.setHeader("accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
         httpGet.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
         CloseableHttpResponse response = null;
         try {
             response = httpClient.execute(httpGet);

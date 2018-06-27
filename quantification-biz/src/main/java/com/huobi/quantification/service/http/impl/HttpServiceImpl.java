@@ -5,6 +5,8 @@ import com.huobi.quantification.common.util.HttpClientUtils;
 import com.huobi.quantification.common.util.MD5;
 import com.huobi.quantification.common.util.ProxyConfig;
 import com.huobi.quantification.service.http.HttpService;
+import org.apache.commons.collections.MapUtils;
+import org.apache.http.params.HttpParams;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -32,6 +34,11 @@ public class HttpServiceImpl implements HttpService {
     @Override
     public String doGet(String url) throws HttpRequestException {
         return httpClientUtils.doGet(url);
+    }
+
+    @Override
+    public String doGet(String url, Map<String, String> params) throws HttpRequestException {
+        return httpClientUtils.doGet(url,params);
     }
 
     @Override

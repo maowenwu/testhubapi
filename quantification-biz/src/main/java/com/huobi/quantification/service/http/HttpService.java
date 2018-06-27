@@ -12,7 +12,9 @@ public interface HttpService {
 
     String doGet(String url) throws HttpRequestException;
 
-    String doPost(String url, Map<String,String> params) throws HttpRequestException;
+    String doGet(String url, Map<String, String> params) throws HttpRequestException;
 
-    String okSignedPost(String url, Map<String,String> params) throws HttpRequestException;
+    String doPost(String url, Map<String, String> params) throws HttpRequestException;
+
+    String okSignedPost(String url, Map<String, String> params) throws HttpRequestException;
 }

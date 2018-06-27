@@ -20,4 +20,13 @@ public class MarketServiceTest {
         Object okTicker = marketService.getOkTicker("btc_usd", "this_week");
         System.out.println(okTicker);
     }
+
+
+    @Test
+    public void getOkDepth(){
+        Object okTicker = marketService.getOkDepth("btc_usd", "this_week");
+        System.out.println(okTicker);
+    }
+
+
 }
