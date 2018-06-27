@@ -25,8 +25,10 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public Object getOkTicker(String symbol, String contractType) {
-        String url = HttpConstant.OK_TICKER + "?symbol=" + symbol + "&contract_type=" + contractType;
-        String body = httpService.doGet(url);
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", symbol);
+        params.put("contract_type", contractType);
+        String body = httpService.doGet(HttpConstant.OK_TICKER, params);
         JSONObject jsonObject = JSON.parseObject(body);
         return null;
     }
@@ -34,8 +36,8 @@ public class MarketServiceImpl implements MarketService {
     @Override
     public Object getOkDepth(String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
-        params.put("symbol", "btc_usd");
-        params.put("contract_type", "this_week");
+        params.put("symbol", symbol);
+        params.put("contract_type", contractType);
         params.put("size", "100");
         params.put("merge", "1");
         String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
