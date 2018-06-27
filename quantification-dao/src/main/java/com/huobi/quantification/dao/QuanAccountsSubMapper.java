@@ -1,5 +1,7 @@
 package com.huobi.quantification.dao;
 
+import com.huobi.quantification.entity.QuanAccountsSub;
+
 import java.util.List;
 
 public interface QuanAccountsSubMapper {
