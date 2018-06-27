@@ -16,6 +16,11 @@ public class QuanDepthDetail implements Serializable {
     private Long depthId;
 
     /**
+     * 买卖盘类型
+     */
+    private int detailType;
+
+    /**
      * 价格
      */
     private BigDecimal detailPrice;
@@ -46,6 +51,14 @@ public class QuanDepthDetail implements Serializable {
 
     public void setDepthId(Long depthId) {
         this.depthId = depthId;
+    }
+
+    public int getDetailType() {
+        return detailType;
+    }
+
+    public void setDetailType(int detailType) {
+        this.detailType = detailType;
     }
 
     public BigDecimal getDetailPrice() {

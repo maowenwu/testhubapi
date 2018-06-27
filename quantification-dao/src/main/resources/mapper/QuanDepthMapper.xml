@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanDepthMapper">
-  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepth">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
-    <result column="depth_ts" jdbcType="TIMESTAMP" property="depthTs" />
-    <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
-    <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin" />
-  </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepth">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="exchange_id" jdbcType="BIGINT" property="exchangeId"/>
+        <result column="depth_ts" jdbcType="TIMESTAMP" property="depthTs"/>
+        <result column="base_coin" jdbcType="VARCHAR" property="baseCoin"/>
+        <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_depth
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepth">
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepth">
     insert into quan_depth (id, exchange_id, depth_ts, 
       base_coin, quote_coin)
     values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{depthTs,jdbcType=TIMESTAMP}, 
       #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepth">
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepth">
     update quan_depth
     set exchange_id = #{exchangeId,jdbcType=BIGINT},
       depth_ts = #{depthTs,jdbcType=TIMESTAMP},
@@ -26,12 +26,12 @@
       quote_coin = #{quoteCoin,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, exchange_id, depth_ts, base_coin, quote_coin
     from quan_depth
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectAll" resultMap="BaseResultMap">
+    <select id="selectAll" resultMap="BaseResultMap">
     select id, exchange_id, depth_ts, base_coin, quote_coin
     from quan_depth
   </select>
