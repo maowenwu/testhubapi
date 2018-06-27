@@ -1,6 +1,7 @@
 package com.huobi.quantification.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -17,12 +18,12 @@ public class QuanAccountsAsset implements Serializable {
     /**
      * 币种
      */
-    private Long coin;
+    private BigDecimal coin;
 
     /**
      * 总量
      */
-    private Long total;
+    private BigDecimal total;
 
     /**
      * api请求时间
@@ -37,12 +38,12 @@ public class QuanAccountsAsset implements Serializable {
     /**
      * 可用
      */
-    private Long available;
+    private BigDecimal available;
 
     /**
      * 冻结
      */
-    private Long frozen;
+    private BigDecimal frozen;
 
     private static final long serialVersionUID = 1L;
 
@@ -62,19 +63,19 @@ public class QuanAccountsAsset implements Serializable {
         this.accountsId = accountsId;
     }
 
-    public Long getCoin() {
+    public BigDecimal getCoin() {
         return coin;
     }
 
-    public void setCoin(Long coin) {
+    public void setCoin(BigDecimal coin) {
         this.coin = coin;
     }
 
-    public Long getTotal() {
+    public BigDecimal getTotal() {
         return total;
     }
 
-    public void setTotal(Long total) {
+    public void setTotal(BigDecimal total) {
         this.total = total;
     }
 
@@ -94,19 +95,19 @@ public class QuanAccountsAsset implements Serializable {
         this.ts = ts;
     }
 
-    public Long getAvailable() {
+    public BigDecimal getAvailable() {
         return available;
     }
 
-    public void setAvailable(Long available) {
+    public void setAvailable(BigDecimal available) {
         this.available = available;
     }
 
-    public Long getFrozen() {
+    public BigDecimal getFrozen() {
         return frozen;
     }
 
-    public void setFrozen(Long frozen) {
+    public void setFrozen(BigDecimal frozen) {
         this.frozen = frozen;
     }
 }

@@ -1,6 +1,7 @@
 package com.huobi.quantification.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ public class QuanDepthDetail implements Serializable {
     /**
      * 价格
      */
-    private Long detailPrice;
+    private BigDecimal detailPrice;
 
     /**
      * 数量
@@ -47,11 +48,11 @@ public class QuanDepthDetail implements Serializable {
         this.depthId = depthId;
     }
 
-    public Long getDetailPrice() {
+    public BigDecimal getDetailPrice() {
         return detailPrice;
     }
 
-    public void setDetailPrice(Long detailPrice) {
+    public void setDetailPrice(BigDecimal detailPrice) {
         this.detailPrice = detailPrice;
     }
 

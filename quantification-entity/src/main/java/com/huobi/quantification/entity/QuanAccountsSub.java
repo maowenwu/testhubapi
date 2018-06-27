@@ -1,6 +1,7 @@
 package com.huobi.quantification.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * @author 
@@ -10,7 +11,7 @@ public class QuanAccountsSub implements Serializable {
 
     private Long accountsId;
 
-    private Long balance;
+    private BigDecimal balance;
 
     private String currency;
 
@@ -34,11 +35,11 @@ public class QuanAccountsSub implements Serializable {
         this.accountsId = accountsId;
     }
 
-    public Long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

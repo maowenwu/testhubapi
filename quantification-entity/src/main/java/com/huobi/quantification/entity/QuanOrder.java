@@ -1,6 +1,7 @@
 package com.huobi.quantification.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -42,7 +43,7 @@ public class QuanOrder implements Serializable {
     /**
      * 已成交手续费
      */
-    private Long orderFieldFees;
+    private BigDecimal orderFieldFees;
 
     /**
      * 订单变为终结态的时间
@@ -57,7 +58,7 @@ public class QuanOrder implements Serializable {
     /**
      * 价格
      */
-    private Long orderPrice;
+    private BigDecimal orderPrice;
 
     /**
      * 订单来源
@@ -137,11 +138,11 @@ public class QuanOrder implements Serializable {
         this.orderFieldCashAmount = orderFieldCashAmount;
     }
 
-    public Long getOrderFieldFees() {
+    public BigDecimal getOrderFieldFees() {
         return orderFieldFees;
     }
 
-    public void setOrderFieldFees(Long orderFieldFees) {
+    public void setOrderFieldFees(BigDecimal orderFieldFees) {
         this.orderFieldFees = orderFieldFees;
     }
 
@@ -161,11 +162,11 @@ public class QuanOrder implements Serializable {
         this.orderOrderId = orderOrderId;
     }
 
-    public Long getOrderPrice() {
+    public BigDecimal getOrderPrice() {
         return orderPrice;
     }
 
-    public void setOrderPrice(Long orderPrice) {
+    public void setOrderPrice(BigDecimal orderPrice) {
         this.orderPrice = orderPrice;
     }
 

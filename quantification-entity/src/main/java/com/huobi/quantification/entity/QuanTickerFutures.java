@@ -1,6 +1,7 @@
 package com.huobi.quantification.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -22,17 +23,17 @@ public class QuanTickerFutures implements Serializable {
     /**
      * 最新成交价
      */
-    private Long lastPrice;
+    private BigDecimal lastPrice;
 
     /**
      * 买1价
      */
-    private Long bidPrice;
+    private BigDecimal bidPrice;
 
     /**
      * 卖1价
      */
-    private Long askPrice;
+    private BigDecimal askPrice;
 
     /**
      * 基础币种
@@ -52,7 +53,7 @@ public class QuanTickerFutures implements Serializable {
     /**
      * 最低价
      */
-    private Long lowPrice;
+    private BigDecimal lowPrice;
 
     /**
      * 合约代码
@@ -90,27 +91,27 @@ public class QuanTickerFutures implements Serializable {
         this.ts = ts;
     }
 
-    public Long getLastPrice() {
+    public BigDecimal getLastPrice() {
         return lastPrice;
     }
 
-    public void setLastPrice(Long lastPrice) {
+    public void setLastPrice(BigDecimal lastPrice) {
         this.lastPrice = lastPrice;
     }
 
-    public Long getBidPrice() {
+    public BigDecimal getBidPrice() {
         return bidPrice;
     }
 
-    public void setBidPrice(Long bidPrice) {
+    public void setBidPrice(BigDecimal bidPrice) {
         this.bidPrice = bidPrice;
     }
 
-    public Long getAskPrice() {
+    public BigDecimal getAskPrice() {
         return askPrice;
     }
 
-    public void setAskPrice(Long askPrice) {
+    public void setAskPrice(BigDecimal askPrice) {
         this.askPrice = askPrice;
     }
 
@@ -138,11 +139,11 @@ public class QuanTickerFutures implements Serializable {
         this.highPrice = highPrice;
     }
 
-    public Long getLowPrice() {
+    public BigDecimal getLowPrice() {
         return lowPrice;
     }
 
-    public void setLowPrice(Long lowPrice) {
+    public void setLowPrice(BigDecimal lowPrice) {
         this.lowPrice = lowPrice;
     }
 
@@ -161,4 +162,5 @@ public class QuanTickerFutures implements Serializable {
     public void setContractName(String contractName) {
         this.contractName = contractName;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.huobi.quantification.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -17,12 +18,12 @@ public class QuanAccountsFuturesAsset implements Serializable {
     /**
      * 币种
      */
-    private Long coin;
+    private BigDecimal coin;
 
     /**
      * 账户权益
      */
-    private Long rights;
+    private BigDecimal rights;
 
     /**
      * api请求时间
@@ -52,19 +53,19 @@ public class QuanAccountsFuturesAsset implements Serializable {
         this.accountsId = accountsId;
     }
 
-    public Long getCoin() {
+    public BigDecimal getCoin() {
         return coin;
     }
 
-    public void setCoin(Long coin) {
+    public void setCoin(BigDecimal coin) {
         this.coin = coin;
     }
 
-    public Long getRights() {
+    public BigDecimal getRights() {
         return rights;
     }
 
-    public void setRights(Long rights) {
+    public void setRights(BigDecimal rights) {
         this.rights = rights;
     }
 

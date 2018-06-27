@@ -1,5 +1,6 @@
 package com.huobi.quantification.service.account.impl;
 
+import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Object getOkUserInfo() {
         Map<String, String> params = new HashMap<>();
-        String result = httpService.okSignedPost("https://www.okex.com/api/v1/future_userinfo_4fix.do", params);
+        String result = httpService.okSignedPost(HttpConstant.OK_USER_INFO, params);
         System.out.println(result);
         return null;
     }
@@ -31,9 +32,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Object getOkPosition() {
         Map<String, String> params = new HashMap<>();
-        params.put("symbol","btc_usd");
-        params.put("contract_type","this_week");
-        String result = httpService.okSignedPost("https://www.okex.com/api/v1/future_position_4fix.do", params);
+        params.put("symbol", "btc_usd");
+        params.put("contract_type", "this_week");
+        String result = httpService.okSignedPost(HttpConstant.OK_POSITION, params);
         System.out.println(result);
         return null;
     }
