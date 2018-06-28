@@ -3,63 +3,75 @@ package com.huobi.quantification.entity;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class QuanTicker {
+public class QuanTickerFuture {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private Long id;
 
     /**
      * 交易所ID
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private Integer exchangeId;
 
     /**
+     * 合约代码
+     * @mbg.generated 2018-06-28 14:54:23
+     */
+    private String contractCode;
+
+    /**
+     * 合约名称
+     * @mbg.generated 2018-06-28 14:54:23
+     */
+    private String contractName;
+
+    /**
      * 最高价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private BigDecimal highPrice;
 
     /**
      * 最低价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private BigDecimal lowPrice;
 
     /**
      * 最新成交价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private BigDecimal lastPrice;
 
     /**
-     * 买1价
-     * @mbg.generated 2018-06-28 14:50:45
-     */
-    private BigDecimal bidPrice;
-
-    /**
      * 卖1价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private BigDecimal askPrice;
 
     /**
+     * 买1价
+     * @mbg.generated 2018-06-28 14:54:23
+     */
+    private BigDecimal bidPrice;
+
+    /**
      * 基础币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private String baseCoin;
 
     /**
      * 定价币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private String quoteCoin;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 14:54:23
      */
     private Date ts;
 
@@ -77,6 +89,22 @@ public class QuanTicker {
 
     public void setExchangeId(Integer exchangeId) {
         this.exchangeId = exchangeId;
+    }
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public String getContractName() {
+        return contractName;
+    }
+
+    public void setContractName(String contractName) {
+        this.contractName = contractName;
     }
 
     public BigDecimal getHighPrice() {
@@ -103,20 +131,20 @@ public class QuanTicker {
         this.lastPrice = lastPrice;
     }
 
-    public BigDecimal getBidPrice() {
-        return bidPrice;
-    }
-
-    public void setBidPrice(BigDecimal bidPrice) {
-        this.bidPrice = bidPrice;
-    }
-
     public BigDecimal getAskPrice() {
         return askPrice;
     }
 
     public void setAskPrice(BigDecimal askPrice) {
         this.askPrice = askPrice;
+    }
+
+    public BigDecimal getBidPrice() {
+        return bidPrice;
+    }
+
+    public void setBidPrice(BigDecimal bidPrice) {
+        this.bidPrice = bidPrice;
     }
 
     public String getBaseCoin() {

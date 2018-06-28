@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanAccountAssetMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountAsset">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="account_id" jdbcType="BIGINT" property="accountId" />
+    <result column="coin" jdbcType="DECIMAL" property="coin" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="available" jdbcType="DECIMAL" property="available" />
+    <result column="frozen" jdbcType="DECIMAL" property="frozen" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+    <result column="data_update" jdbcType="TIMESTAMP" property="dataUpdate" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_account_asset
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountAsset">
+    insert into quan_account_asset (id, account_id, coin, 
+      total, available, frozen, 
+      ts, data_update)
+    values (#{id,jdbcType=BIGINT}, #{accountId,jdbcType=BIGINT}, #{coin,jdbcType=DECIMAL}, 
+      #{total,jdbcType=DECIMAL}, #{available,jdbcType=DECIMAL}, #{frozen,jdbcType=DECIMAL}, 
+      #{ts,jdbcType=TIMESTAMP}, #{dataUpdate,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountAsset">
+    update quan_account_asset
+    set account_id = #{accountId,jdbcType=BIGINT},
+      coin = #{coin,jdbcType=DECIMAL},
+      total = #{total,jdbcType=DECIMAL},
+      available = #{available,jdbcType=DECIMAL},
+      frozen = #{frozen,jdbcType=DECIMAL},
+      ts = #{ts,jdbcType=TIMESTAMP},
+      data_update = #{dataUpdate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, account_id, coin, total, available, frozen, ts, data_update
+    from quan_account_asset
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, account_id, coin, total, available, frozen, ts, data_update
+    from quan_account_asset
+  </select>
+</mapper>

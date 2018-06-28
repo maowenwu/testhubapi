@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanAccountMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccount">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="accounts_type" jdbcType="VARCHAR" property="accountsType" />
+    <result column="accounts_name" jdbcType="VARCHAR" property="accountsName" />
+    <result column="access_key" jdbcType="VARCHAR" property="accessKey" />
+    <result column="secret_key" jdbcType="VARCHAR" property="secretKey" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_account
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccount">
+    insert into quan_account (id, exchange_id, user_id, 
+      accounts_type, accounts_name, access_key, 
+      secret_key, state)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{userId,jdbcType=BIGINT}, 
+      #{accountsType,jdbcType=VARCHAR}, #{accountsName,jdbcType=VARCHAR}, #{accessKey,jdbcType=VARCHAR}, 
+      #{secretKey,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccount">
+    update quan_account
+    set exchange_id = #{exchangeId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=BIGINT},
+      accounts_type = #{accountsType,jdbcType=VARCHAR},
+      accounts_name = #{accountsName,jdbcType=VARCHAR},
+      access_key = #{accessKey,jdbcType=VARCHAR},
+      secret_key = #{secretKey,jdbcType=VARCHAR},
+      state = #{state,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, exchange_id, user_id, accounts_type, accounts_name, access_key, secret_key, 
+    state
+    from quan_account
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, exchange_id, user_id, accounts_type, accounts_name, access_key, secret_key, 
+    state
+    from quan_account
+  </select>
+</mapper>

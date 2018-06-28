@@ -1,86 +1,97 @@
 package com.huobi.quantification.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * @author 
- */
-public class QuanOrder implements Serializable {
+public class QuanOrder {
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long id;
 
     /**
      * 账户 ID
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Long orderAccountId;
 
     /**
      * 订单数量
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Long orderAmount;
 
     /**
      * 订单撤销时间
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Date orderCanceledAt;
 
     /**
      * 订单创建时间
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Date orderCreatedAt;
 
     /**
      * 已成交数量
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Long orderFieldAmount;
 
     /**
      * 已成交总金额
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Long orderFieldCashAmount;
 
     /**
      * 已成交手续费
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal orderFieldFees;
 
     /**
      * 订单变为终结态的时间
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Date orderFinishedAt;
 
     /**
      * 订单ID
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Long orderOrderId;
 
     /**
      * 价格
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal orderPrice;
 
     /**
      * 订单来源
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private String orderSource;
 
     /**
      * 订单状态
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private String orderState;
 
     /**
      * 交易对
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private String orderSymbol;
 
     /**
      * 订单类型
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private String orderType;
-
-    private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;

@@ -1,36 +1,37 @@
 package com.huobi.quantification.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * @author 
- */
-public class QuanDepthFuturesDetail implements Serializable {
+public class QuanDepthFutureDetail {
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long id;
 
     /**
      * 深度ID
+     * @mbg.generated 2018-06-28 14:50:45
      */
-    private Long depthId;
+    private Long depthFutureId;
 
     /**
      * 价格
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal detailPrice;
 
     /**
      * 数量
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Double detailAmount;
 
     /**
      * 更新时间
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private Date dateUpdate;
-
-    private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
@@ -40,12 +41,12 @@ public class QuanDepthFuturesDetail implements Serializable {
         this.id = id;
     }
 
-    public Long getDepthId() {
-        return depthId;
+    public Long getDepthFutureId() {
+        return depthFutureId;
     }
 
-    public void setDepthId(Long depthId) {
-        this.depthId = depthId;
+    public void setDepthFutureId(Long depthFutureId) {
+        this.depthFutureId = depthFutureId;
     }
 
     public BigDecimal getDetailPrice() {

@@ -1,23 +1,32 @@
 package com.huobi.quantification.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * @author 
- */
-public class QuanAccountsSub implements Serializable {
+public class QuanAccountSub {
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long id;
 
-    private Long accountsId;
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Long accountId;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private BigDecimal balance;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String currency;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String type;
-
-    private static final long serialVersionUID = 1L;
 
     public Long getId() {
         return id;
@@ -27,12 +36,12 @@ public class QuanAccountsSub implements Serializable {
         this.id = id;
     }
 
-    public Long getAccountsId() {
-        return accountsId;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setAccountsId(Long accountsId) {
-        this.accountsId = accountsId;
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     public BigDecimal getBalance() {

@@ -4,15 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.dao.QuanDepthDetailMapper;
-import com.huobi.quantification.dao.QuanDepthMapper;
-import com.huobi.quantification.dao.QuanTickerMapper;
-import com.huobi.quantification.entity.QuanDepth;
-import com.huobi.quantification.entity.QuanDepthDetail;
-import com.huobi.quantification.entity.QuanTicker;
+import com.huobi.quantification.dao.QuanTickerFutureMapper;
+import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.MarketService;
-import com.sun.scenario.effect.impl.prism.PrImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +28,8 @@ public class MarketServiceImpl implements MarketService {
     private HttpService httpService;
 
     @Autowired
-    private QuanTickerMapper quanTickerMapper;
+    private QuanTickerFutureMapper quanTickerFutureMapper;
 
-    @Autowired
-    private QuanDepthMapper quanDepthMapper;
-
-    @Autowired
-    private QuanDepthDetailMapper quanDepthDetailMapper;
 
     @Override
     public Object getOkTicker(String symbol, String contractType) {
@@ -45,25 +37,27 @@ public class MarketServiceImpl implements MarketService {
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
         String body = httpService.doGet(HttpConstant.OK_TICKER, params);
-        QuanTicker quanTicker = parseAndSaveQuanTicker(body);
+        QuanTickerFuture quanTicker = parseAndSaveQuanTicker(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
         return quanTicker;
     }
 
-    private QuanTicker parseAndSaveQuanTicker(String body) {
+    private QuanTickerFuture parseAndSaveQuanTicker(String body, OkSymbolEnum symbolEnum, String contractType) {
         JSONObject jsonObject = JSON.parseObject(body);
-        QuanTicker quanTicker = new QuanTicker();
-        quanTicker.setExchangeId(1L);
-        quanTicker.setTs(new Date(jsonObject.getLong("date") * 1000L));
+        QuanTickerFuture quanTickerFuture = new QuanTickerFuture();
+        quanTickerFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
+        quanTickerFuture.setTs(new Date(jsonObject.getLong("date") * 1000L));
         JSONObject ticker = jsonObject.getJSONObject("ticker");
-        quanTicker.setLastPrice(ticker.getBigDecimal("last"));
-        quanTicker.setBidPrice(ticker.getBigDecimal("buy"));
-        quanTicker.setAskPrice(ticker.getBigDecimal("sell"));
-        quanTicker.setBaseCoin("BTC");
-        quanTicker.setQuoteCoin("USD");
-        quanTicker.setHighPrice(ticker.getBigDecimal("high"));
-        quanTicker.setLowPrice(ticker.getBigDecimal("low"));
-        quanTickerMapper.insert(quanTicker);
-        return quanTicker;
+        quanTickerFuture.setLastPrice(ticker.getBigDecimal("last"));
+        quanTickerFuture.setBidPrice(ticker.getBigDecimal("buy"));
+        quanTickerFuture.setAskPrice(ticker.getBigDecimal("sell"));
+        quanTickerFuture.setContractCode(ticker.getString("contract_id"));
+        quanTickerFuture.setContractName(contractType);
+        quanTickerFuture.setBaseCoin(symbolEnum.getBaseCoin());
+        quanTickerFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
+        quanTickerFuture.setHighPrice(ticker.getBigDecimal("high"));
+        quanTickerFuture.setLowPrice(ticker.getBigDecimal("low"));
+        quanTickerFutureMapper.insert(quanTickerFuture);
+        return quanTickerFuture;
     }
 
     @Override
@@ -79,7 +73,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     private void parseAndSaveQuanDepth(String body) {
-        QuanDepth quanDepth = new QuanDepth();
+      /*  QuanDepth quanDepth = new QuanDepth();
         quanDepth.setExchangeId(1L);
         quanDepth.setDepthTs(new Date());
         quanDepth.setBaseCoin("BTC");
@@ -110,6 +104,6 @@ public class MarketServiceImpl implements MarketService {
             list.add(depthDetail);
         }
 
-        //quanDepthDetailMapper
+        //quanDepthDetailMapper*/
     }
 }

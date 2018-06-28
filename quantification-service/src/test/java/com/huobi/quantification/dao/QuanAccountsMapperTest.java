@@ -13,12 +13,10 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 public class QuanAccountsMapperTest {
 
-    @Autowired
-    private QuanAccountsMapper accountsMapper;
 
     @Test
     public void selectByPrimaryKey() {
 
-        System.out.println(accountsMapper);
+
     }
 }

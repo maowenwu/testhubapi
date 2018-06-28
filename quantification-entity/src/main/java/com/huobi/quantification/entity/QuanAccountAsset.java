@@ -1,51 +1,55 @@
 package com.huobi.quantification.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * @author 
- */
-public class QuanAccountsAsset implements Serializable {
+public class QuanAccountAsset {
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long id;
 
     /**
      * 账号ID
+     * @mbg.generated 2018-06-28 14:50:45
      */
-    private Long accountsId;
+    private Long accountId;
 
     /**
      * 币种
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal coin;
 
     /**
      * 总量
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal total;
 
     /**
-     * api请求时间
-     */
-    private Date dataUpdate;
-
-    /**
-     * 交易所服务器时间
-     */
-    private Date ts;
-
-    /**
      * 可用
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal available;
 
     /**
      * 冻结
+     * @mbg.generated 2018-06-28 14:50:45
      */
     private BigDecimal frozen;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 交易所服务器时间
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Date ts;
+
+    /**
+     * api请求时间
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Date dataUpdate;
 
     public Long getId() {
         return id;
@@ -55,12 +59,12 @@ public class QuanAccountsAsset implements Serializable {
         this.id = id;
     }
 
-    public Long getAccountsId() {
-        return accountsId;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setAccountsId(Long accountsId) {
-        this.accountsId = accountsId;
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     public BigDecimal getCoin() {
@@ -79,22 +83,6 @@ public class QuanAccountsAsset implements Serializable {
         this.total = total;
     }
 
-    public Date getDataUpdate() {
-        return dataUpdate;
-    }
-
-    public void setDataUpdate(Date dataUpdate) {
-        this.dataUpdate = dataUpdate;
-    }
-
-    public Date getTs() {
-        return ts;
-    }
-
-    public void setTs(Date ts) {
-        this.ts = ts;
-    }
-
     public BigDecimal getAvailable() {
         return available;
     }
@@ -109,5 +97,21 @@ public class QuanAccountsAsset implements Serializable {
 
     public void setFrozen(BigDecimal frozen) {
         this.frozen = frozen;
+    }
+
+    public Date getTs() {
+        return ts;
+    }
+
+    public void setTs(Date ts) {
+        this.ts = ts;
+    }
+
+    public Date getDataUpdate() {
+        return dataUpdate;
+    }
+
+    public void setDataUpdate(Date dataUpdate) {
+        this.dataUpdate = dataUpdate;
     }
 }

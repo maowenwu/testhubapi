@@ -1,28 +1,45 @@
 package com.huobi.quantification.entity;
 
-import java.io.Serializable;
-
-/**
- * @author 
- */
-public class QuanAccountsFutures implements Serializable {
+public class QuanAccount {
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long id;
 
-    private Long exchangeId;
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Integer exchangeId;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long userId;
 
-    private String state;
-
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String accountsType;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String accountsName;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String accessKey;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String secretKey;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private String state;
 
     public Long getId() {
         return id;
@@ -32,11 +49,11 @@ public class QuanAccountsFutures implements Serializable {
         this.id = id;
     }
 
-    public Long getExchangeId() {
+    public Integer getExchangeId() {
         return exchangeId;
     }
 
-    public void setExchangeId(Long exchangeId) {
+    public void setExchangeId(Integer exchangeId) {
         this.exchangeId = exchangeId;
     }
 
@@ -46,14 +63,6 @@ public class QuanAccountsFutures implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public String getAccountsType() {
@@ -86,5 +95,13 @@ public class QuanAccountsFutures implements Serializable {
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

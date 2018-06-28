@@ -1,44 +1,83 @@
 package com.huobi.quantification.entity;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * @author 
- */
-public class QuanKline implements Serializable {
+public class QuanKline {
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long id;
 
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long exchangeId;
 
-    private String symbol;
-
-    private String period;
-
-    private Long size;
-
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private Long tickId;
 
-    private Date ts;
-
-    private Double amount;
-
-    private Double count;
-
-    private BigDecimal open;
-
-    private BigDecimal close;
-
-    private BigDecimal low;
-
-    private BigDecimal high;
-
-    private BigDecimal vol;
-
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
     private String klineType;
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private String symbol;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private String period;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Long size;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private BigDecimal high;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private BigDecimal open;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private BigDecimal low;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private BigDecimal close;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Double count;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Double amount;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private BigDecimal vol;
+
+    /**
+     * @mbg.generated 2018-06-28 14:50:45
+     */
+    private Date ts;
 
     public Long getId() {
         return id;
@@ -54,6 +93,22 @@ public class QuanKline implements Serializable {
 
     public void setExchangeId(Long exchangeId) {
         this.exchangeId = exchangeId;
+    }
+
+    public Long getTickId() {
+        return tickId;
+    }
+
+    public void setTickId(Long tickId) {
+        this.tickId = tickId;
+    }
+
+    public String getKlineType() {
+        return klineType;
+    }
+
+    public void setKlineType(String klineType) {
+        this.klineType = klineType;
     }
 
     public String getSymbol() {
@@ -80,36 +135,12 @@ public class QuanKline implements Serializable {
         this.size = size;
     }
 
-    public Long getTickId() {
-        return tickId;
+    public BigDecimal getHigh() {
+        return high;
     }
 
-    public void setTickId(Long tickId) {
-        this.tickId = tickId;
-    }
-
-    public Date getTs() {
-        return ts;
-    }
-
-    public void setTs(Date ts) {
-        this.ts = ts;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
-
-    public Double getCount() {
-        return count;
-    }
-
-    public void setCount(Double count) {
-        this.count = count;
+    public void setHigh(BigDecimal high) {
+        this.high = high;
     }
 
     public BigDecimal getOpen() {
@@ -120,14 +151,6 @@ public class QuanKline implements Serializable {
         this.open = open;
     }
 
-    public BigDecimal getClose() {
-        return close;
-    }
-
-    public void setClose(BigDecimal close) {
-        this.close = close;
-    }
-
     public BigDecimal getLow() {
         return low;
     }
@@ -136,12 +159,28 @@ public class QuanKline implements Serializable {
         this.low = low;
     }
 
-    public BigDecimal getHigh() {
-        return high;
+    public BigDecimal getClose() {
+        return close;
     }
 
-    public void setHigh(BigDecimal high) {
-        this.high = high;
+    public void setClose(BigDecimal close) {
+        this.close = close;
+    }
+
+    public Double getCount() {
+        return count;
+    }
+
+    public void setCount(Double count) {
+        this.count = count;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
     }
 
     public BigDecimal getVol() {
@@ -152,11 +191,11 @@ public class QuanKline implements Serializable {
         this.vol = vol;
     }
 
-    public String getKlineType() {
-        return klineType;
+    public Date getTs() {
+        return ts;
     }
 
-    public void setKlineType(String klineType) {
-        this.klineType = klineType;
+    public void setTs(Date ts) {
+        this.ts = ts;
     }
 }
