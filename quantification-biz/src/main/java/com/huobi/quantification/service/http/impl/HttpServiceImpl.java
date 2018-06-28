@@ -1,5 +1,6 @@
 package com.huobi.quantification.service.http.impl;
 
+import com.huobi.quantification.common.api.OkSignature;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.common.util.HttpClientUtils;
 import com.huobi.quantification.common.util.MD5;
@@ -46,20 +47,8 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String okSignedPost(String url, Map<String, String> params) throws HttpRequestException {
-        params.put("api_key", "d880067d-65b7-4bcb-b366-4cea186001a7");
-        String sign = getSign(params);
-        params.put("sign", sign);
+        params = new OkSignature().sign(params);
         return httpClientUtils.doPost(url, params);
-    }
-
-    private String getSign(Map<String, String> params) {
-        List<String> sortParam = params.entrySet().stream()
-                .map((e) -> e.getKey() + "=" + e.getValue())
-                .sorted(Comparator.naturalOrder())
-                .collect(Collectors.toList());
-        sortParam.add("secret_key=F6D5CF92E40A0FA178BDF05FB9801BED");
-        String preSign = String.join("&", sortParam);
-        return MD5.hash(preSign);
     }
 
 }
