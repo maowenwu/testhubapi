@@ -3,7 +3,7 @@
 <mapper namespace="com.huobi.quantification.dao.QuanDepthFutureMapper">
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepthFuture">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
     <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
     <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
@@ -18,13 +18,13 @@
     insert into quan_depth_future (id, exchange_id, base_coin, 
       quote_coin, contract_code, contract_name, 
       depth_ts)
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{baseCoin,jdbcType=VARCHAR}, 
       #{quoteCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, 
       #{depthTs,jdbcType=TIMESTAMP})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFuture">
     update quan_depth_future
-    set exchange_id = #{exchangeId,jdbcType=BIGINT},
+    set exchange_id = #{exchangeId,jdbcType=INTEGER},
       base_coin = #{baseCoin,jdbcType=VARCHAR},
       quote_coin = #{quoteCoin,jdbcType=VARCHAR},
       contract_code = #{contractCode,jdbcType=VARCHAR},
@@ -41,4 +41,14 @@
     select id, exchange_id, base_coin, quote_coin, contract_code, contract_name, depth_ts
     from quan_depth_future
   </select>
+
+
+  <insert id="insertAndGetId" parameterType="com.huobi.quantification.entity.QuanDepthFuture" useGeneratedKeys="true" keyProperty="id">
+    insert into quan_depth_future (id, exchange_id, base_coin,
+      quote_coin, contract_code, contract_name,
+      depth_ts)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{baseCoin,jdbcType=VARCHAR},
+      #{quoteCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR},
+      #{depthTs,jdbcType=TIMESTAMP})
+  </insert>
 </mapper>

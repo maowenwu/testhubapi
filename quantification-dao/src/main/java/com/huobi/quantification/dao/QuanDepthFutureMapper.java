@@ -8,6 +8,8 @@ public interface QuanDepthFutureMapper {
 
     int insert(QuanDepthFuture record);
 
+    int insertAndGetId(QuanDepthFuture record);
+
     QuanDepthFuture selectByPrimaryKey(Long id);
 
     List<QuanDepthFuture> selectAll();

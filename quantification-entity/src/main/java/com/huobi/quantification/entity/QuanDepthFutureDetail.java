@@ -5,31 +5,36 @@ import java.util.Date;
 
 public class QuanDepthFutureDetail {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:27:19
      */
     private Long id;
 
     /**
      * 深度ID
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:27:19
      */
     private Long depthFutureId;
 
     /**
+     * @mbg.generated 2018-06-28 15:27:19
+     */
+    private Integer detailType;
+
+    /**
      * 价格
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:27:19
      */
     private BigDecimal detailPrice;
 
     /**
      * 数量
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:27:19
      */
     private Double detailAmount;
 
     /**
      * 更新时间
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:27:19
      */
     private Date dateUpdate;
 
@@ -47,6 +52,14 @@ public class QuanDepthFutureDetail {
 
     public void setDepthFutureId(Long depthFutureId) {
         this.depthFutureId = depthFutureId;
+    }
+
+    public Integer getDetailType() {
+        return detailType;
+    }
+
+    public void setDetailType(Integer detailType) {
+        this.detailType = detailType;
     }
 
     public BigDecimal getDetailPrice() {

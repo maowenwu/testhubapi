@@ -4,43 +4,43 @@ import java.util.Date;
 
 public class QuanDepthFuture {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
     private Long id;
 
     /**
      * 交易所ID
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
-    private Long exchangeId;
+    private Integer exchangeId;
 
     /**
      * 基础币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
     private String baseCoin;
 
     /**
      * 定价币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
     private String quoteCoin;
 
     /**
      * 合约代码
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
     private String contractCode;
 
     /**
      * 合约名称
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
     private String contractName;
 
     /**
      * 响应生成时间点
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 15:21:49
      */
     private Date depthTs;
 
@@ -52,11 +52,11 @@ public class QuanDepthFuture {
         this.id = id;
     }
 
-    public Long getExchangeId() {
+    public Integer getExchangeId() {
         return exchangeId;
     }
 
-    public void setExchangeId(Long exchangeId) {
+    public void setExchangeId(Integer exchangeId) {
         this.exchangeId = exchangeId;
     }
 

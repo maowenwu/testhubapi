@@ -4,8 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.dao.QuanDepthFutureDetailMapper;
+import com.huobi.quantification.dao.QuanDepthFutureMapper;
 import com.huobi.quantification.dao.QuanTickerFutureMapper;
+import com.huobi.quantification.entity.QuanDepthFuture;
+import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.enums.DepthDirectionEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.http.HttpService;
@@ -30,6 +35,11 @@ public class MarketServiceImpl implements MarketService {
     @Autowired
     private QuanTickerFutureMapper quanTickerFutureMapper;
 
+    @Autowired
+    private QuanDepthFutureMapper quanDepthFutureMapper;
+
+    @Autowired
+    private QuanDepthFutureDetailMapper quanDepthFutureDetailMapper;
 
     @Override
     public Object getOkTicker(String symbol, String contractType) {
@@ -68,25 +78,29 @@ public class MarketServiceImpl implements MarketService {
         params.put("size", "5");
         params.put("merge", "1");
         String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
-        parseAndSaveQuanDepth(body);
+        parseAndSaveQuanDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
         return null;
     }
 
-    private void parseAndSaveQuanDepth(String body) {
-      /*  QuanDepth quanDepth = new QuanDepth();
-        quanDepth.setExchangeId(1L);
-        quanDepth.setDepthTs(new Date());
-        quanDepth.setBaseCoin("BTC");
-        quanDepth.setQuoteCoin("USD");
-        quanDepthMapper.insert(quanDepth);
+    private void parseAndSaveQuanDepth(String body, OkSymbolEnum symbolEnum, String contractType) {
+        QuanDepthFuture quanDepthFuture = new QuanDepthFuture();
+        quanDepthFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
+        quanDepthFuture.setDepthTs(new Date());
+        quanDepthFuture.setBaseCoin(symbolEnum.getBaseCoin());
+        quanDepthFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
+        // todo 接口没返回呢
+        quanDepthFuture.setContractCode("");
+        quanDepthFuture.setContractName(contractType);
+        quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
+
         JSONObject jsonObject = JSON.parseObject(body);
-        List<QuanDepthDetail> list = new ArrayList<>();
+        List<QuanDepthFutureDetail> list = new ArrayList<>();
         JSONArray asks = jsonObject.getJSONArray("asks");
         for (int i = 0; i < asks.size(); i++) {
             JSONArray item = asks.getJSONArray(i);
-            QuanDepthDetail depthDetail = new QuanDepthDetail();
-            depthDetail.setDepthId(quanDepth.getId());
-            depthDetail.setDetailType(0);
+            QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
+            depthDetail.setDepthFutureId(quanDepthFuture.getId());
+            depthDetail.setDetailType(DepthDirectionEnum.ASKS.getIntType());
             depthDetail.setDetailPrice(item.getBigDecimal(0));
             depthDetail.setDetailAmount(item.getDouble(1));
             depthDetail.setDateUpdate(new Date());
@@ -95,15 +109,17 @@ public class MarketServiceImpl implements MarketService {
         JSONArray bids = jsonObject.getJSONArray("bids");
         for (int i = 0; i < bids.size(); i++) {
             JSONArray item = bids.getJSONArray(i);
-            QuanDepthDetail depthDetail = new QuanDepthDetail();
-            depthDetail.setDepthId(quanDepth.getId());
-            depthDetail.setDetailType(1);
+            QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
+            depthDetail.setDepthFutureId(quanDepthFuture.getId());
+            depthDetail.setDetailType(DepthDirectionEnum.BIDS.getIntType());
             depthDetail.setDetailPrice(item.getBigDecimal(0));
             depthDetail.setDetailAmount(item.getDouble(1));
             depthDetail.setDateUpdate(new Date());
             list.add(depthDetail);
         }
 
-        //quanDepthDetailMapper*/
+        for (QuanDepthFutureDetail detail : list) {
+            quanDepthFutureDetailMapper.insert(detail);
+        }
     }
 }

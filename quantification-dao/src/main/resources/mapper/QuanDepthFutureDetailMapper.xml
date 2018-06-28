@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepthFutureDetail">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="depth_future_id" jdbcType="BIGINT" property="depthFutureId" />
+    <result column="detail_type" jdbcType="INTEGER" property="detailType" />
     <result column="detail_price" jdbcType="DECIMAL" property="detailPrice" />
     <result column="detail_amount" jdbcType="DOUBLE" property="detailAmount" />
     <result column="date_update" jdbcType="TIMESTAMP" property="dateUpdate" />
@@ -13,26 +14,29 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepthFutureDetail">
-    insert into quan_depth_future_detail (id, depth_future_id, detail_price, 
-      detail_amount, date_update)
-    values (#{id,jdbcType=BIGINT}, #{depthFutureId,jdbcType=BIGINT}, #{detailPrice,jdbcType=DECIMAL}, 
-      #{detailAmount,jdbcType=DOUBLE}, #{dateUpdate,jdbcType=TIMESTAMP})
+    insert into quan_depth_future_detail (id, depth_future_id, detail_type, 
+      detail_price, detail_amount, date_update
+      )
+    values (#{id,jdbcType=BIGINT}, #{depthFutureId,jdbcType=BIGINT}, #{detailType,jdbcType=INTEGER}, 
+      #{detailPrice,jdbcType=DECIMAL}, #{detailAmount,jdbcType=DOUBLE}, #{dateUpdate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFutureDetail">
     update quan_depth_future_detail
     set depth_future_id = #{depthFutureId,jdbcType=BIGINT},
+      detail_type = #{detailType,jdbcType=INTEGER},
       detail_price = #{detailPrice,jdbcType=DECIMAL},
       detail_amount = #{detailAmount,jdbcType=DOUBLE},
       date_update = #{dateUpdate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, depth_future_id, detail_price, detail_amount, date_update
+    select id, depth_future_id, detail_type, detail_price, detail_amount, date_update
     from quan_depth_future_detail
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, depth_future_id, detail_price, detail_amount, date_update
+    select id, depth_future_id, detail_type, detail_price, detail_amount, date_update
     from quan_depth_future_detail
   </select>
 </mapper>
