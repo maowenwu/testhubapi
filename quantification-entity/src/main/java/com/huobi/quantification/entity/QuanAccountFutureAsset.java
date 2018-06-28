@@ -1,43 +1,57 @@
 package com.huobi.quantification.entity;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 public class QuanAccountFutureAsset {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 17:32:10
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 17:32:10
      */
     private Long accountFutureId;
 
     /**
-     * 币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 17:32:10
      */
-    private BigDecimal coin;
+    private Long queryId;
+
+    /**
+     * 币种
+     * @mbg.generated 2018-06-28 17:32:10
+     */
+    private String symbol;
 
     /**
      * 账户权益
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 17:32:10
      */
-    private BigDecimal right;
+    private BigDecimal riskRate;
 
     /**
      * 交易所服务器时间
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 17:32:10
      */
-    private Date ts;
+    private BigDecimal accountRights;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-06-28 17:32:10
      */
-    private Date dataUpdate;
+    private BigDecimal profitUnreal;
+
+    /**
+     * @mbg.generated 2018-06-28 17:32:10
+     */
+    private BigDecimal profitReal;
+
+    /**
+     * @mbg.generated 2018-06-28 17:32:10
+     */
+    private BigDecimal keepDeposit;
 
     public Long getId() {
         return id;
@@ -55,35 +69,59 @@ public class QuanAccountFutureAsset {
         this.accountFutureId = accountFutureId;
     }
 
-    public BigDecimal getCoin() {
-        return coin;
+    public Long getQueryId() {
+        return queryId;
     }
 
-    public void setCoin(BigDecimal coin) {
-        this.coin = coin;
+    public void setQueryId(Long queryId) {
+        this.queryId = queryId;
     }
 
-    public BigDecimal getRight() {
-        return right;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public void setRight(BigDecimal right) {
-        this.right = right;
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
     }
 
-    public Date getTs() {
-        return ts;
+    public BigDecimal getRiskRate() {
+        return riskRate;
     }
 
-    public void setTs(Date ts) {
-        this.ts = ts;
+    public void setRiskRate(BigDecimal riskRate) {
+        this.riskRate = riskRate;
     }
 
-    public Date getDataUpdate() {
-        return dataUpdate;
+    public BigDecimal getAccountRights() {
+        return accountRights;
     }
 
-    public void setDataUpdate(Date dataUpdate) {
-        this.dataUpdate = dataUpdate;
+    public void setAccountRights(BigDecimal accountRights) {
+        this.accountRights = accountRights;
+    }
+
+    public BigDecimal getProfitUnreal() {
+        return profitUnreal;
+    }
+
+    public void setProfitUnreal(BigDecimal profitUnreal) {
+        this.profitUnreal = profitUnreal;
+    }
+
+    public BigDecimal getProfitReal() {
+        return profitReal;
+    }
+
+    public void setProfitReal(BigDecimal profitReal) {
+        this.profitReal = profitReal;
+    }
+
+    public BigDecimal getKeepDeposit() {
+        return keepDeposit;
+    }
+
+    public void setKeepDeposit(BigDecimal keepDeposit) {
+        this.keepDeposit = keepDeposit;
     }
 }
