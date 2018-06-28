@@ -16,4 +16,8 @@ public class MD5 {
         m.update(input.getBytes(), 0, input.length());
         return new BigInteger(1, m.digest()).toString(16).toUpperCase();
     }
+
+    public static void main(String[] args) {
+        System.out.println(hash("abc").equals("900150983CD24FB0D6963F7D28E17F72"));
+    }
 }

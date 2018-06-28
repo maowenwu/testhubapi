@@ -9,9 +9,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.http.params.HttpParams;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,7 +36,7 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doGet(String url, Map<String, String> params) throws HttpRequestException {
-        return httpClientUtils.doGet(url,params);
+        return httpClientUtils.doGet(url, params);
     }
 
     @Override
@@ -49,7 +47,8 @@ public class HttpServiceImpl implements HttpService {
     @Override
     public String okSignedPost(String url, Map<String, String> params) throws HttpRequestException {
         params.put("api_key", "d880067d-65b7-4bcb-b366-4cea186001a7");
-        params.put("sign", getSign(params));
+        String sign = getSign(params);
+        params.put("sign", sign);
         return httpClientUtils.doPost(url, params);
     }
 
@@ -62,4 +61,5 @@ public class HttpServiceImpl implements HttpService {
         String preSign = String.join("&", sortParam);
         return MD5.hash(preSign);
     }
+
 }
