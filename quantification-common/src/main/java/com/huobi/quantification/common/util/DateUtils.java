@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 // 建议使用jdk8的相关日期类
@@ -128,10 +129,11 @@ public class DateUtils {
 
     /**
      * 获得指定日期的星期几数
+     *
      * @param date
      * @return int
      */
-    public static Integer getDayOfweek(Date date){
+    public static Integer getDayOfweek(Date date) {
         Calendar aCalendar = Calendar.getInstance();
         aCalendar.setTime(date);
         int weekDay = aCalendar.get(Calendar.DAY_OF_WEEK);
@@ -151,11 +153,12 @@ public class DateUtils {
         return cal.get(Calendar.MONTH) + 1;
     }
 
-    public static Date getSpecifiedHourBefore(Integer hour){
+    public static Date getSpecifiedHourBefore(Integer hour) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.HOUR, -hour);
         return calendar.getTime();
     }
+
     /**
      * 获取某日期的日数
      *
@@ -268,6 +271,10 @@ public class DateUtils {
         } catch (Exception e) {
             return defaultValue;
         }
+    }
+
+    public static Date plusMinutes(Date date, long minutes) {
+        return new Date(date.getTime() + 60 * 1000 * minutes);
     }
 
     /**
@@ -847,12 +854,13 @@ public class DateUtils {
 
     /**
      * 两个时间之间相差距离多少天
+     *
      * @param date1
      * @param date2
      * @return
      */
-    public static Long getDistanceDays(Date date1, Date date2){
-        return Math.abs(date1.getTime()-date2.getTime())/(1000 * 60 * 60 * 24);
+    public static Long getDistanceDays(Date date1, Date date2) {
+        return Math.abs(date1.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24);
     }
 
     /**
@@ -964,39 +972,44 @@ public class DateUtils {
     public static Date timeMilli2Date(long milli) {
         return new Date(milli);
     }
+
     /**
      * 秒时间戳转为Date
+     *
      * @param timestramp
      * @return
      */
-    public static Date parseStrTimestampSecondToDate(String timestramp){
-        Long time = Long.valueOf(timestramp+"000");
-        Date date= new Date(time);
+    public static Date parseStrTimestampSecondToDate(String timestramp) {
+        Long time = Long.valueOf(timestramp + "000");
+        Date date = new Date(time);
         return date;
     }
+
     /**
      * 毫秒时间戳转为Date
+     *
      * @param timestramp
      * @return
      */
-    public static Date parseStrTimestampMilliSecondToDate(String timestramp){
+    public static Date parseStrTimestampMilliSecondToDate(String timestramp) {
         Long time = Long.valueOf(timestramp);
-        Date date= new Date(time);
+        Date date = new Date(time);
         return date;
     }
 
     /**
      * 获取上一个周五的日期
+     *
      * @return
      */
-    public static Date getPreviousGFriday(){
-        int i =0;
-        while (true){
+    public static Date getPreviousGFriday() {
+        int i = 0;
+        while (true) {
             Date preday = DateUtils.getSpecifiedDayBefore(i);
             Calendar aCalendar = Calendar.getInstance();
             aCalendar.setTime(preday);
             int weekDay = aCalendar.get(Calendar.DAY_OF_WEEK);
-            if(weekDay==Calendar.FRIDAY){
+            if (weekDay == Calendar.FRIDAY) {
                 return preday;
             }
             i++;

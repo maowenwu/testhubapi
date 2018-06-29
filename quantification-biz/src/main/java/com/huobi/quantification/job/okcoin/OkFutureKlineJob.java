@@ -14,6 +14,6 @@ public class OkFutureKlineJob implements SimpleJob {
 
     @Override
     public void execute(ShardingContext shardingContext) {
-        System.out.println(marketService);
+        marketService.storeOkFutureKline();
     }
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.dao.QuanDepthFutureDetailMapper;
 import com.huobi.quantification.dao.QuanDepthFutureMapper;
 import com.huobi.quantification.dao.QuanKlineFutureMapper;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -189,6 +191,15 @@ public class MarketServiceImpl implements MarketService {
 
     @Override
     public Object getOkFutureKline(String symbol, String type, String contractType, int size, long since) {
+        List<QuanKlineFuture> list = getOkFutureKlineList(symbol, type, contractType, size, since);
+        for (QuanKlineFuture klineFuture : list) {
+            quanKlineFutureMapper.insert(klineFuture);
+        }
+        return null;
+    }
+
+
+    private List<QuanKlineFuture> getOkFutureKlineList(String symbol, String type, String contractType, int size, long since) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("type", type);
@@ -202,9 +213,8 @@ public class MarketServiceImpl implements MarketService {
             klineFuture.setType(type);
             klineFuture.setSymbol(symbol);
             klineFuture.setContractType(contractType);
-            quanKlineFutureMapper.insert(klineFuture);
         }
-        return null;
+        return list;
     }
 
 
@@ -228,4 +238,61 @@ public class MarketServiceImpl implements MarketService {
         klineFuture.setAmount(kline.getBigDecimal(5));
         return klineFuture;
     }
+
+    @Override
+    public void storeOkFutureKline() {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        getLatestOkFutureKline(OkSymbolEnum.BTC_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.BTC_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.BTC_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
+
+        getLatestOkFutureKline(OkSymbolEnum.LTC_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.LTC_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.LTC_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
+
+        getLatestOkFutureKline(OkSymbolEnum.ETH_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.ETH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.ETH_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
+
+        getLatestOkFutureKline(OkSymbolEnum.ETC_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.ETC_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.ETC_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
+
+        getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
+
+        logger.info("OKOKEx合约Kline，执行完成，消耗时间：" + stopwatch);
+    }
+
+    public void getLatestOkFutureKline(String symbol, String type, String contractType) {
+        QuanKlineFuture klineFuture = selectLatestKlineFuture(symbol, type, contractType);
+        List<QuanKlineFuture> list = null;
+        int retry = 3;
+        if (klineFuture != null) {
+            Date sinceDate = klineFuture.getTs();
+            for (int i = 1; i <= retry; i++) {
+                sinceDate = DateUtils.plusMinutes(sinceDate, -1 * i * 60);
+                list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
+                QuanKlineFuture latestKlineFuture = list.get(0);
+                if (latestKlineFuture.getTs().before(klineFuture.getTs())) {
+                    break;
+                }
+            }
+        } else {
+            Date sinceDate = DateUtils.plusMinutes(new Date(), -60);
+            list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
+        }
+        // todo
+        for (QuanKlineFuture kline : list) {
+            quanKlineFutureMapper.insert(kline);
+        }
+    }
+
+    private QuanKlineFuture selectLatestKlineFuture(String symbol, String type, String contractType) {
+        QuanKlineFuture klineFuture = quanKlineFutureMapper.selectLatestKlineFuture(symbol, type, contractType);
+        return klineFuture;
+    }
+
+
 }

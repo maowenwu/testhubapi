@@ -50,4 +50,11 @@ public interface MarketService {
     Object getOkFutureKline(String symbol, String type, String contractType, int size, long since);
 
 
+    /**
+     * 获取所提供的所有kline数据，
+     * 保存到数据库
+     */
+    void storeOkFutureKline();
+
+    void getLatestOkFutureKline(String symbol, String type, String contractType);
 }
