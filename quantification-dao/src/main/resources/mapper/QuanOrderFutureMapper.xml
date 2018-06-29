@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanOrderFutureMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanOrderFuture">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
+    <result column="strategy_version" jdbcType="BIGINT" property="strategyVersion" />
+    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="order_account_id" jdbcType="BIGINT" property="orderAccountId" />
+    <result column="order_source_id" jdbcType="BIGINT" property="orderSourceId" />
+    <result column="contract_name" jdbcType="VARCHAR" property="contractName" />
+    <result column="order_symbol" jdbcType="VARCHAR" property="orderSymbol" />
+    <result column="order_type" jdbcType="INTEGER" property="orderType" />
+    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+    <result column="order_amount" jdbcType="DECIMAL" property="orderAmount" />
+    <result column="order_deal_amount" jdbcType="DECIMAL" property="orderDealAmount" />
+    <result column="order_fee" jdbcType="DECIMAL" property="orderFee" />
+    <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+    <result column="order_price_avg" jdbcType="DECIMAL" property="orderPriceAvg" />
+    <result column="order_lever_rate" jdbcType="DECIMAL" property="orderLeverRate" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_order_future
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    insert into quan_order_future (id, strategy_name, strategy_version, 
+      exchange_id, order_account_id, order_source_id, 
+      contract_name, order_symbol, order_type, 
+      order_status, order_amount, order_deal_amount, 
+      order_fee, order_price, order_price_avg, 
+      order_lever_rate, create_date)
+    values (#{id,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
+      #{exchangeId,jdbcType=BIGINT}, #{orderAccountId,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, 
+      #{contractName,jdbcType=VARCHAR}, #{orderSymbol,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER}, 
+      #{orderStatus,jdbcType=INTEGER}, #{orderAmount,jdbcType=DECIMAL}, #{orderDealAmount,jdbcType=DECIMAL}, 
+      #{orderFee,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderPriceAvg,jdbcType=DECIMAL}, 
+      #{orderLeverRate,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    update quan_order_future
+    set strategy_name = #{strategyName,jdbcType=VARCHAR},
+      strategy_version = #{strategyVersion,jdbcType=BIGINT},
+      exchange_id = #{exchangeId,jdbcType=BIGINT},
+      order_account_id = #{orderAccountId,jdbcType=BIGINT},
+      order_source_id = #{orderSourceId,jdbcType=BIGINT},
+      contract_name = #{contractName,jdbcType=VARCHAR},
+      order_symbol = #{orderSymbol,jdbcType=VARCHAR},
+      order_type = #{orderType,jdbcType=INTEGER},
+      order_status = #{orderStatus,jdbcType=INTEGER},
+      order_amount = #{orderAmount,jdbcType=DECIMAL},
+      order_deal_amount = #{orderDealAmount,jdbcType=DECIMAL},
+      order_fee = #{orderFee,jdbcType=DECIMAL},
+      order_price = #{orderPrice,jdbcType=DECIMAL},
+      order_price_avg = #{orderPriceAvg,jdbcType=DECIMAL},
+      order_lever_rate = #{orderLeverRate,jdbcType=DECIMAL},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, strategy_name, strategy_version, exchange_id, order_account_id, order_source_id, 
+    contract_name, order_symbol, order_type, order_status, order_amount, order_deal_amount, 
+    order_fee, order_price, order_price_avg, order_lever_rate, create_date
+    from quan_order_future
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, strategy_name, strategy_version, exchange_id, order_account_id, order_source_id, 
+    contract_name, order_symbol, order_type, order_status, order_amount, order_deal_amount, 
+    order_fee, order_price, order_price_avg, order_lever_rate, create_date
+    from quan_order_future
+  </select>
+</mapper>
