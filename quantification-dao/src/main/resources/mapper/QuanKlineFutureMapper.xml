@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanKlineFutureMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanKlineFuture">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+    <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+    <result column="high" jdbcType="DECIMAL" property="high" />
+    <result column="open" jdbcType="DECIMAL" property="open" />
+    <result column="low" jdbcType="DECIMAL" property="low" />
+    <result column="close" jdbcType="DECIMAL" property="close" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
+    <result column="ts" jdbcType="TIMESTAMP" property="ts" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from quan_kline_future
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanKlineFuture">
+    insert into quan_kline_future (id, exchange_id, type, 
+      symbol, contract_type, high, 
+      open, low, close, amount, 
+      ts)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 
+      #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, #{high,jdbcType=DECIMAL}, 
+      #{open,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL}, 
+      #{ts,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanKlineFuture">
+    update quan_kline_future
+    set exchange_id = #{exchangeId,jdbcType=INTEGER},
+      type = #{type,jdbcType=VARCHAR},
+      symbol = #{symbol,jdbcType=VARCHAR},
+      contract_type = #{contractType,jdbcType=VARCHAR},
+      high = #{high,jdbcType=DECIMAL},
+      open = #{open,jdbcType=DECIMAL},
+      low = #{low,jdbcType=DECIMAL},
+      close = #{close,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=DECIMAL},
+      ts = #{ts,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, exchange_id, type, symbol, contract_type, high, open, low, close, amount, 
+    ts
+    from quan_kline_future
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, exchange_id, type, symbol, contract_type, high, open, low, close, amount, 
+    ts
+    from quan_kline_future
+  </select>
+</mapper>

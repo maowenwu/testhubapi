@@ -52,7 +52,6 @@ public class OrderServiceImpl implements OrderService {
                 JSONObject order = orders.getJSONObject(i);
                 list.add(parseOrderFuture(order));
             }
-
             for (QuanOrderFuture orderFuture : list) {
                 quanOrderFutureMapper.insert(orderFuture);
             }
