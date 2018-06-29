@@ -14,6 +14,7 @@
     <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
     <result column="order_amount" jdbcType="DECIMAL" property="orderAmount" />
     <result column="order_deal_amount" jdbcType="DECIMAL" property="orderDealAmount" />
+    <result column="unit_amount" jdbcType="DECIMAL" property="unitAmount" />
     <result column="order_fee" jdbcType="DECIMAL" property="orderFee" />
     <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
     <result column="order_price_avg" jdbcType="DECIMAL" property="orderPriceAvg" />
@@ -29,14 +30,16 @@
       exchange_id, order_account_id, order_source_id, 
       contract_name, order_symbol, order_type, 
       order_status, order_amount, order_deal_amount, 
-      order_fee, order_price, order_price_avg, 
-      order_lever_rate, create_date)
+      unit_amount, order_fee, order_price, 
+      order_price_avg, order_lever_rate, create_date
+      )
     values (#{id,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
       #{exchangeId,jdbcType=BIGINT}, #{orderAccountId,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, 
       #{contractName,jdbcType=VARCHAR}, #{orderSymbol,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER}, 
       #{orderStatus,jdbcType=INTEGER}, #{orderAmount,jdbcType=DECIMAL}, #{orderDealAmount,jdbcType=DECIMAL}, 
-      #{orderFee,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderPriceAvg,jdbcType=DECIMAL}, 
-      #{orderLeverRate,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP})
+      #{unitAmount,jdbcType=DECIMAL}, #{orderFee,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, 
+      #{orderPriceAvg,jdbcType=DECIMAL}, #{orderLeverRate,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     update quan_order_future
@@ -51,6 +54,7 @@
       order_status = #{orderStatus,jdbcType=INTEGER},
       order_amount = #{orderAmount,jdbcType=DECIMAL},
       order_deal_amount = #{orderDealAmount,jdbcType=DECIMAL},
+      unit_amount = #{unitAmount,jdbcType=DECIMAL},
       order_fee = #{orderFee,jdbcType=DECIMAL},
       order_price = #{orderPrice,jdbcType=DECIMAL},
       order_price_avg = #{orderPriceAvg,jdbcType=DECIMAL},
@@ -61,14 +65,14 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, strategy_name, strategy_version, exchange_id, order_account_id, order_source_id, 
     contract_name, order_symbol, order_type, order_status, order_amount, order_deal_amount, 
-    order_fee, order_price, order_price_avg, order_lever_rate, create_date
+    unit_amount, order_fee, order_price, order_price_avg, order_lever_rate, create_date
     from quan_order_future
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, strategy_name, strategy_version, exchange_id, order_account_id, order_source_id, 
     contract_name, order_symbol, order_type, order_status, order_amount, order_deal_amount, 
-    order_fee, order_price, order_price_avg, order_lever_rate, create_date
+    unit_amount, order_fee, order_price, order_price_avg, order_lever_rate, create_date
     from quan_order_future
   </select>
 </mapper>
