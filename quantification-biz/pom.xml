@@ -78,6 +78,10 @@
             <groupId>com.dangdang</groupId>
             <artifactId>elastic-job-lite-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+        </dependency>
     </dependencies>
 
 

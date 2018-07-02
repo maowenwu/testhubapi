@@ -22,6 +22,7 @@ import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.facade.OkMarketServiceFacade;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.MarketService;
+import com.huobi.quantification.service.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,9 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     @Autowired
     private QuanKlineFutureMapper quanKlineFutureMapper;
 
+    @Autowired
+    private RedisService redisService;
+
     @Override
     public ServiceResult getOkTicker(String symbol, String contractType) {
 
@@ -65,6 +69,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     private void updateOkTicker(String symbol, String contractType) {
         QuanTickerFuture ticker = queryOkTickerByAPI(symbol, contractType);
         quanTickerFutureMapper.insert(ticker);
+        redisService.saveOkTicker(symbol, contractType, ticker);
     }
 
     private QuanTickerFuture queryOkTickerByAPI(String symbol, String contractType) {
@@ -143,8 +148,8 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         quanDepthFuture.setBaseCoin(symbolEnum.getBaseCoin());
         quanDepthFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
         // todo 接口没返回呢
-        quanDepthFuture.setContractCode("");
-        quanDepthFuture.setContractName(contractType);
+        quanDepthFuture.setSymbol(symbolEnum.getSymbol());
+        quanDepthFuture.setContractType(contractType);
         quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
 
         JSONObject jsonObject = JSON.parseObject(body);
@@ -174,6 +179,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         for (QuanDepthFutureDetail detail : list) {
             quanDepthFutureDetailMapper.insert(detail);
         }
+        redisService.saveOkDepth(symbolEnum.getSymbol(), contractType, list);
     }
 
     @Override
@@ -297,12 +303,14 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
             sinceDate = DateUtils.plusMinutes(new Date(), -60);
             list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
         }
-
+        List<QuanKlineFuture> redisKline = new ArrayList<>();
         for (QuanKlineFuture kline : list) {
             if (kline.getTs().after(sinceDate)) {
                 quanKlineFutureMapper.insert(kline);
+                redisKline.add(kline);
             }
         }
+        redisService.saveOkKline(symbol, type, contractType, redisKline);
     }
 
     private QuanKlineFuture selectLatestKlineFuture(int exchangeId, String symbol, String type, String contractType) {

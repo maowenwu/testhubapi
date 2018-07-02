@@ -4,43 +4,43 @@ import java.util.Date;
 
 public class QuanDepthFuture {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-02 19:03:06
      */
     private Long id;
 
     /**
      * 交易所ID
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-02 19:03:06
      */
     private Integer exchangeId;
 
     /**
+     * 合约名称
+     * @mbg.generated 2018-07-02 19:03:06
+     */
+    private String symbol;
+
+    /**
+     * 合约代码
+     * @mbg.generated 2018-07-02 19:03:06
+     */
+    private String contractType;
+
+    /**
      * 基础币种
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-02 19:03:06
      */
     private String baseCoin;
 
     /**
      * 定价币种
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-02 19:03:06
      */
     private String quoteCoin;
 
     /**
-     * 合约代码
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private String contractCode;
-
-    /**
-     * 合约名称
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private String contractName;
-
-    /**
      * 响应生成时间点
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-02 19:03:06
      */
     private Date depthTs;
 
@@ -60,6 +60,22 @@ public class QuanDepthFuture {
         this.exchangeId = exchangeId;
     }
 
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
+
     public String getBaseCoin() {
         return baseCoin;
     }
@@ -74,22 +90,6 @@ public class QuanDepthFuture {
 
     public void setQuoteCoin(String quoteCoin) {
         this.quoteCoin = quoteCoin;
-    }
-
-    public String getContractCode() {
-        return contractCode;
-    }
-
-    public void setContractCode(String contractCode) {
-        this.contractCode = contractCode;
-    }
-
-    public String getContractName() {
-        return contractName;
-    }
-
-    public void setContractName(String contractName) {
-        this.contractName = contractName;
     }
 
     public Date getDepthTs() {
