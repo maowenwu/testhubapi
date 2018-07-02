@@ -4,43 +4,43 @@ import java.util.Date;
 
 public class QuanDepthFuture {
     /**
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
      * 交易所ID
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer exchangeId;
 
     /**
      * 基础币种
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String baseCoin;
 
     /**
      * 定价币种
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String quoteCoin;
 
     /**
      * 合约代码
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String contractCode;
 
     /**
      * 合约名称
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String contractName;
 
     /**
      * 响应生成时间点
-     * @mbg.generated 2018-06-28 15:21:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date depthTs;
 

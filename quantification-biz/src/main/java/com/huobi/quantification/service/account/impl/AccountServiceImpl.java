@@ -5,9 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
+import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.entity.QuanAccountFutureSecret;
+import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OkContractType;
+import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,16 +39,34 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private QuanAccountFuturePositionMapper quanAccountFuturePositionMapper;
 
+    @Autowired
+    private QuanAccountFutureMapper quanAccountFutureMapper;
+
     @Override
-    public Object getOkUserInfo() {
-        Map<String, String> params = new HashMap<>();
-        String body = httpService.okSignedPost(HttpConstant.OK_USER_INFO, params);
-        parseAndSaveUserInfo(body);
-        return null;
+    public void storeAllOkUserInfo() {
+        List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
+        for (Long accountId : accounts) {
+            updateOkUserInfo(accountId);
+        }
     }
 
-    private void parseAndSaveUserInfo(String body) {
+    private void updateOkUserInfo(Long accountId) {
         long queryId = System.currentTimeMillis();
+        List<QuanAccountFutureAsset> list = queryOkUserInfoByAPI(accountId);
+        for (QuanAccountFutureAsset asset : list) {
+            asset.setQueryId(queryId);
+            asset.setAccountSourceId(accountId);
+            quanAccountFutureAssetMapper.insert(asset);
+        }
+    }
+
+    private List<QuanAccountFutureAsset> queryOkUserInfoByAPI(Long accountId) {
+        Map<String, String> params = new HashMap<>();
+        String body = httpService.okSignedPost(HttpConstant.OK_USER_INFO, params);
+        return parseAndSaveUserInfo(body);
+    }
+
+    private List<QuanAccountFutureAsset> parseAndSaveUserInfo(String body) {
         JSONObject jsonObject = JSON.parseObject(body);
         Boolean b = jsonObject.getBoolean("result");
         List<QuanAccountFutureAsset> list = new ArrayList<>();
@@ -58,12 +81,7 @@ public class AccountServiceImpl implements AccountService {
             list.add(parseFutureAsset(info.getJSONObject("eos"), "eos"));
             list.add(parseFutureAsset(info.getJSONObject("ltc"), "ltc"));
         }
-
-        for (QuanAccountFutureAsset asset : list) {
-            asset.setQueryId(queryId);
-            quanAccountFutureAssetMapper.insert(asset);
-        }
-
+        return list;
     }
 
     private QuanAccountFutureAsset parseFutureAsset(JSONObject obj, String symbol) {
@@ -78,34 +96,63 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Object getOkPosition() {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", "btc_usd");
-        params.put("contract_type", "this_week");
-        String body = httpService.okSignedPost(HttpConstant.OK_POSITION, params);
-        parseAndSavePosition(body);
-        return null;
+    public void storeAllOkPosition() {
+        List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
+        for (Long accountId : accounts) {
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
+
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
+
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
+
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
+
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
+        }
     }
 
-
-    private void parseAndSavePosition(String body) {
+    private void updateOkPosition(Long accountId, String symbol, OkContractType contractType) {
         long queryId = System.currentTimeMillis();
+        List<QuanAccountFuturePosition> list = queryOkPositionByAPI(accountId, symbol, contractType);
+        for (QuanAccountFuturePosition position : list) {
+            position.setQueryId(queryId);
+            position.setAccountSourceId(accountId);
+            quanAccountFuturePositionMapper.insert(position);
+        }
+    }
+
+    private List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", symbol);
+        params.put("contract_type", contractType.getType());
+        String body = httpService.okSignedPost(HttpConstant.OK_POSITION, params);
+        return parseAndSavePosition(body);
+    }
+
+    private List<QuanAccountFuturePosition> parseAndSavePosition(String body) {
         JSONObject jsonObject = JSON.parseObject(body);
         Boolean b = jsonObject.getBoolean("result");
         List<QuanAccountFuturePosition> list = new ArrayList<>();
         if (b) {
-            BigDecimal forceLiquPrice = jsonObject.getBigDecimal("force_liqu_price");
+            String liquPrice = jsonObject.getString("force_liqu_price").replaceAll(",", "");
+            BigDecimal forceLiquPrice = new BigDecimal(liquPrice);
             JSONArray holding = jsonObject.getJSONArray("holding");
             for (int i = 0; i < holding.size(); i++) {
                 JSONObject holdingJSONObject = holding.getJSONObject(i);
                 list.add(parseFuturePosition(holdingJSONObject, forceLiquPrice));
             }
         }
-
-        for (QuanAccountFuturePosition position : list) {
-            position.setQueryId(queryId);
-            quanAccountFuturePositionMapper.insert(position);
-        }
+        return list;
     }
 
     private QuanAccountFuturePosition parseFuturePosition(JSONObject obj, BigDecimal forceLiquPrice) {
@@ -127,5 +174,22 @@ public class AccountServiceImpl implements AccountService {
         position.setSymbol(obj.getString("symbol"));
         position.setDateCreate(new Date(obj.getLong("create_date")));
         return position;
+    }
+
+    @Override
+    public List<Long> findAccountFutureByExchangeId(int exchangeId) {
+        List<Long> list = new ArrayList<>();
+        list.add(1L);
+        return list;
+    }
+
+    @Override
+    public List<QuanAccountFutureSecret> findAccountFutureSecretById(Long id) {
+        List<QuanAccountFutureSecret> list = new ArrayList<>();
+        QuanAccountFutureSecret secret = new QuanAccountFutureSecret();
+        secret.setAccessKey("");
+        secret.setSecretKey("");
+        list.add(secret);
+        return list;
     }
 }

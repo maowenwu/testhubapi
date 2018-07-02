@@ -5,7 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
     <result column="strategy_version" jdbcType="BIGINT" property="strategyVersion" />
-    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
     <result column="order_account_id" jdbcType="BIGINT" property="orderAccountId" />
     <result column="order_source_id" jdbcType="BIGINT" property="orderSourceId" />
     <result column="contract_name" jdbcType="VARCHAR" property="contractName" />
@@ -20,6 +20,7 @@
     <result column="order_price_avg" jdbcType="DECIMAL" property="orderPriceAvg" />
     <result column="order_lever_rate" jdbcType="DECIMAL" property="orderLeverRate" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_order_future
@@ -31,21 +32,22 @@
       contract_name, order_symbol, order_type, 
       order_status, order_amount, order_deal_amount, 
       unit_amount, order_fee, order_price, 
-      order_price_avg, order_lever_rate, create_date
-      )
+      order_price_avg, order_lever_rate, create_date, 
+      update_date)
     values (#{id,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
-      #{exchangeId,jdbcType=BIGINT}, #{orderAccountId,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, 
+      #{exchangeId,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, 
       #{contractName,jdbcType=VARCHAR}, #{orderSymbol,jdbcType=VARCHAR}, #{orderType,jdbcType=INTEGER}, 
       #{orderStatus,jdbcType=INTEGER}, #{orderAmount,jdbcType=DECIMAL}, #{orderDealAmount,jdbcType=DECIMAL}, 
       #{unitAmount,jdbcType=DECIMAL}, #{orderFee,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, 
-      #{orderPriceAvg,jdbcType=DECIMAL}, #{orderLeverRate,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}
-      )
+      #{orderPriceAvg,jdbcType=DECIMAL}, #{orderLeverRate,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     update quan_order_future
     set strategy_name = #{strategyName,jdbcType=VARCHAR},
       strategy_version = #{strategyVersion,jdbcType=BIGINT},
-      exchange_id = #{exchangeId,jdbcType=BIGINT},
+      exchange_id = #{exchangeId,jdbcType=INTEGER},
       order_account_id = #{orderAccountId,jdbcType=BIGINT},
       order_source_id = #{orderSourceId,jdbcType=BIGINT},
       contract_name = #{contractName,jdbcType=VARCHAR},
@@ -59,20 +61,70 @@
       order_price = #{orderPrice,jdbcType=DECIMAL},
       order_price_avg = #{orderPriceAvg,jdbcType=DECIMAL},
       order_lever_rate = #{orderLeverRate,jdbcType=DECIMAL},
-      create_date = #{createDate,jdbcType=TIMESTAMP}
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, strategy_name, strategy_version, exchange_id, order_account_id, order_source_id, 
     contract_name, order_symbol, order_type, order_status, order_amount, order_deal_amount, 
-    unit_amount, order_fee, order_price, order_price_avg, order_lever_rate, create_date
+    unit_amount, order_fee, order_price, order_price_avg, order_lever_rate, create_date, 
+    update_date
     from quan_order_future
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, strategy_name, strategy_version, exchange_id, order_account_id, order_source_id, 
     contract_name, order_symbol, order_type, order_status, order_amount, order_deal_amount, 
-    unit_amount, order_fee, order_price, order_price_avg, order_lever_rate, create_date
+    unit_amount, order_fee, order_price, order_price_avg, order_lever_rate, create_date, 
+    update_date
     from quan_order_future
   </select>
+
+  <insert id="insertOrUpdate" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+      INSERT INTO quan_order_future (
+          `strategy_name`,
+          `strategy_version`,
+          `exchange_id`,
+          `order_account_id`,
+          `order_source_id`,
+          `contract_name`,
+          `order_symbol`,
+          `order_type`,
+          `order_status`,
+          `order_amount`,
+          `order_deal_amount`,
+          `unit_amount`,
+          `order_fee`,
+          `order_price`,
+          `order_price_avg`,
+          `order_lever_rate`,
+          `create_date`,
+          `update_date`
+      )
+      VALUES
+          (
+              #{strategyName},
+              #{strategyVersion},
+              #{exchangeId},
+              #{orderAccountId},
+              #{orderSourceId},
+              #{contractName},
+              #{orderSymbol},
+              #{orderType},
+              #{orderStatus},
+              #{orderAmount},
+              #{orderDealAmount},
+              #{unitAmount},
+              #{orderFee},
+              #{orderPrice},
+              #{orderPriceAvg},
+              #{orderLeverRate},
+              #{createDate},
+              #{updateDate}
+          ) ON DUPLICATE KEY UPDATE contract_name=#{contractName},order_symbol=#{orderSymbol},order_type=#{orderType},
+          order_status=#{orderStatus},order_amount= #{orderAmount},order_deal_amount=#{orderDealAmount},unit_amount=#{unitAmount},
+          order_fee=#{orderFee},order_price=#{orderPrice},order_price_avg=#{orderPriceAvg},order_lever_rate=#{orderLeverRate},
+          create_date= #{createDate},update_date=#{updateDate}
+  </insert>
 </mapper>

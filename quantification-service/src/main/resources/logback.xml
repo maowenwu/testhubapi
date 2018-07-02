@@ -72,7 +72,11 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.huobi.contract.index.dao" level="warn" />
+    <logger name="com.huobi.quantification.dao" level="warn" />
+    <logger name="org.apache" level="warn" />
+    <logger name="org.quartz" level="warn" />
+    <logger name="org.mybatis.spring" level="warn" />
+    <logger name="org.springframework.jdbc.datasource" level="warn" />
     <!-- 配置好前面对应的appender -->
     <root level="debug">
         <appender-ref ref="STDOUT" />

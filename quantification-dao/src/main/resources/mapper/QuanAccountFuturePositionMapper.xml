@@ -3,7 +3,7 @@
 <mapper namespace="com.huobi.quantification.dao.QuanAccountFuturePositionMapper">
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFuturePosition">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="account_future_id" jdbcType="BIGINT" property="accountFutureId" />
+    <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId" />
     <result column="query_id" jdbcType="BIGINT" property="queryId" />
     <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
     <result column="contract_name" jdbcType="VARCHAR" property="contractName" />
@@ -27,14 +27,14 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFuturePosition">
-    insert into quan_account_future_position (id, account_future_id, query_id, 
+    insert into quan_account_future_position (id, account_source_id, query_id, 
       contract_code, contract_name, symbol, 
       force_liqu_price, buy_amount, buy_available, 
       buy_price_avg, buy_price_cost, buy_profit_real, 
       lever_rate, sell_amount, sell_available, 
       sell_price_avg, sell_price_cost, sell_profit_real, 
       date_create)
-    values (#{id,jdbcType=BIGINT}, #{accountFutureId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=BIGINT}, #{accountSourceId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT}, 
       #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, #{symbol,jdbcType=VARCHAR}, 
       #{forceLiquPrice,jdbcType=DECIMAL}, #{buyAmount,jdbcType=DECIMAL}, #{buyAvailable,jdbcType=DECIMAL}, 
       #{buyPriceAvg,jdbcType=DECIMAL}, #{buyPriceCost,jdbcType=DECIMAL}, #{buyProfitReal,jdbcType=DECIMAL}, 
@@ -44,7 +44,7 @@
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountFuturePosition">
     update quan_account_future_position
-    set account_future_id = #{accountFutureId,jdbcType=BIGINT},
+    set account_source_id = #{accountSourceId,jdbcType=BIGINT},
       query_id = #{queryId,jdbcType=BIGINT},
       contract_code = #{contractCode,jdbcType=VARCHAR},
       contract_name = #{contractName,jdbcType=VARCHAR},
@@ -65,14 +65,14 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, account_future_id, query_id, contract_code, contract_name, symbol, force_liqu_price, 
+    select id, account_source_id, query_id, contract_code, contract_name, symbol, force_liqu_price, 
     buy_amount, buy_available, buy_price_avg, buy_price_cost, buy_profit_real, lever_rate, 
     sell_amount, sell_available, sell_price_avg, sell_price_cost, sell_profit_real, date_create
     from quan_account_future_position
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, account_future_id, query_id, contract_code, contract_name, symbol, force_liqu_price, 
+    select id, account_source_id, query_id, contract_code, contract_name, symbol, force_liqu_price, 
     buy_amount, buy_available, buy_price_avg, buy_price_cost, buy_profit_real, lever_rate, 
     sell_amount, sell_available, sell_price_avg, sell_price_cost, sell_profit_real, date_create
     from quan_account_future_position

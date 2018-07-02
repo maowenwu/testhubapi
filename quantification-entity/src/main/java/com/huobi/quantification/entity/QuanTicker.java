@@ -5,61 +5,61 @@ import java.util.Date;
 
 public class QuanTicker {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
      * 交易所ID
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer exchangeId;
 
     /**
      * 最高价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal highPrice;
 
     /**
      * 最低价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal lowPrice;
 
     /**
      * 最新成交价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal lastPrice;
 
     /**
      * 买1价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal bidPrice;
 
     /**
      * 卖1价
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal askPrice;
 
     /**
      * 基础币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String baseCoin;
 
     /**
      * 定价币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String quoteCoin;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date ts;
 

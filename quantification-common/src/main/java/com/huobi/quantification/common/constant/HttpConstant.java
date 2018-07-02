@@ -7,6 +7,7 @@ public class HttpConstant {
     // OK market相关
     public static final String OK_TICKER = OK_HOST + "/api/v1/future_ticker.do";
     public static final String OK_DEPTH = OK_HOST + "/api/v1/future_depth.do";
+    public static final String OK_KLINE = OK_HOST + "/api/v1/future_kline.do";
     // OK订单相关
     public static final String OK_ORDER_INFO = OK_HOST + "/api/v1/future_order_info.do";
     public static final String OK_ORDERS_INFO = OK_HOST + "/api/v1/future_orders_info.do";

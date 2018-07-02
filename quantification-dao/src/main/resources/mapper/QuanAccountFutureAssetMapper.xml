@@ -3,7 +3,7 @@
 <mapper namespace="com.huobi.quantification.dao.QuanAccountFutureAssetMapper">
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFutureAsset">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="account_future_id" jdbcType="BIGINT" property="accountFutureId" />
+    <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId" />
     <result column="query_id" jdbcType="BIGINT" property="queryId" />
     <result column="symbol" jdbcType="VARCHAR" property="symbol" />
     <result column="risk_rate" jdbcType="DECIMAL" property="riskRate" />
@@ -17,18 +17,18 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFutureAsset">
-    insert into quan_account_future_asset (id, account_future_id, query_id, 
+    insert into quan_account_future_asset (id, account_source_id, query_id, 
       symbol, risk_rate, account_rights, 
       profit_unreal, profit_real, keep_deposit
       )
-    values (#{id,jdbcType=BIGINT}, #{accountFutureId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=BIGINT}, #{accountSourceId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT}, 
       #{symbol,jdbcType=VARCHAR}, #{riskRate,jdbcType=DECIMAL}, #{accountRights,jdbcType=DECIMAL}, 
       #{profitUnreal,jdbcType=DECIMAL}, #{profitReal,jdbcType=DECIMAL}, #{keepDeposit,jdbcType=DECIMAL}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountFutureAsset">
     update quan_account_future_asset
-    set account_future_id = #{accountFutureId,jdbcType=BIGINT},
+    set account_source_id = #{accountSourceId,jdbcType=BIGINT},
       query_id = #{queryId,jdbcType=BIGINT},
       symbol = #{symbol,jdbcType=VARCHAR},
       risk_rate = #{riskRate,jdbcType=DECIMAL},
@@ -39,13 +39,13 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, account_future_id, query_id, symbol, risk_rate, account_rights, profit_unreal, 
+    select id, account_source_id, query_id, symbol, risk_rate, account_rights, profit_unreal, 
     profit_real, keep_deposit
     from quan_account_future_asset
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, account_future_id, query_id, symbol, risk_rate, account_rights, profit_unreal, 
+    select id, account_source_id, query_id, symbol, risk_rate, account_rights, profit_unreal, 
     profit_real, keep_deposit
     from quan_account_future_asset
   </select>

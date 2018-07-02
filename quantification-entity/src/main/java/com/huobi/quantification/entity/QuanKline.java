@@ -5,77 +5,77 @@ import java.util.Date;
 
 public class QuanKline {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
-    private Long exchangeId;
+    private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long tickId;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String klineType;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String period;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long size;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal high;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal open;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal low;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal close;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
-    private Double count;
+    private BigDecimal count;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
-    private Double amount;
+    private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal vol;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date ts;
 
@@ -87,11 +87,11 @@ public class QuanKline {
         this.id = id;
     }
 
-    public Long getExchangeId() {
+    public Integer getExchangeId() {
         return exchangeId;
     }
 
-    public void setExchangeId(Long exchangeId) {
+    public void setExchangeId(Integer exchangeId) {
         this.exchangeId = exchangeId;
     }
 
@@ -167,19 +167,19 @@ public class QuanKline {
         this.close = close;
     }
 
-    public Double getCount() {
+    public BigDecimal getCount() {
         return count;
     }
 
-    public void setCount(Double count) {
+    public void setCount(BigDecimal count) {
         this.count = count;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

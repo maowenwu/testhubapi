@@ -2,7 +2,6 @@ package com.huobi.quantification.service.account.impl;
 
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.service.account.AccountService;
-import com.huobi.quantification.service.market.MarketService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +17,13 @@ public class AccountServiceImplTest {
 
     @Test
     public void getOkUserInfo() {
-        accountService.getOkUserInfo();
+        accountService.storeAllOkUserInfo();
     }
 
 
     @Test
     public void getOkPosition() {
-        accountService.getOkPosition();
+        accountService.storeAllOkPosition();
     }
 
 }

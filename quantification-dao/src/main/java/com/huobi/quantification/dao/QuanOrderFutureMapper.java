@@ -13,4 +13,6 @@ public interface QuanOrderFutureMapper {
     List<QuanOrderFuture> selectAll();
 
     int updateByPrimaryKey(QuanOrderFuture record);
+
+    void insertOrUpdate(QuanOrderFuture orderFuture);
 }

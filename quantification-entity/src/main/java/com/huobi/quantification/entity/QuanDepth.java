@@ -4,31 +4,31 @@ import java.util.Date;
 
 public class QuanDepth {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
      * 交易所ID
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long exchangeId;
 
     /**
      * 基础币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String baseCoin;
 
     /**
      * 定价币种
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String quoteCoin;
 
     /**
      * 响应生成时间点
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date depthTs;
 

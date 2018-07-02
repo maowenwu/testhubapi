@@ -7,23 +7,19 @@ package com.huobi.quantification.service.market;
 public interface MarketService {
 
     /**
-     * 获取OKEx合约行情数据
-     *
-     * @param symbol
-     * @param contractType
-     * @return
+     * 获取所提供的所有ticker数据，保存到数据库
      */
-    Object getOkTicker(String symbol, String contractType);
+    void storeOkTicker();
 
     /**
-     * 获取OKEx合约深度信息
-     *
-     * @param symbol
-     * @param contractType
-     * @return
+     * 获取所提供的所有Depth数据，保存到数据库
      */
-    Object getOkDepth(String symbol, String contractType);
+    void storeOkDepth();
 
+    /**
+     * 获取所提供的所有kline数据，保存到数据库
+     */
+    void storeOkFutureKline();
 
-
+    void getLatestOkFutureKline(String symbol, String type, String contractType);
 }
