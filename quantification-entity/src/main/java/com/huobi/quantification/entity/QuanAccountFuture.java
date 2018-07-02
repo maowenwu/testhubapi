@@ -2,42 +2,32 @@ package com.huobi.quantification.entity;
 
 public class QuanAccountFuture {
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
-    private Long userId;
+    private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String accountsType;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String accountsName;
 
     /**
-     * @mbg.generated 2018-06-28 14:50:45
-     */
-    private String accessKey;
-
-    /**
-     * @mbg.generated 2018-06-28 14:50:45
-     */
-    private String secretKey;
-
-    /**
-     * @mbg.generated 2018-06-28 14:50:45
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String state;
 
@@ -57,12 +47,12 @@ public class QuanAccountFuture {
         this.exchangeId = exchangeId;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getAccountSourceId() {
+        return accountSourceId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setAccountSourceId(Long accountSourceId) {
+        this.accountSourceId = accountSourceId;
     }
 
     public String getAccountsType() {
@@ -79,22 +69,6 @@ public class QuanAccountFuture {
 
     public void setAccountsName(String accountsName) {
         this.accountsName = accountsName;
-    }
-
-    public String getAccessKey() {
-        return accessKey;
-    }
-
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
-
-    public String getSecretKey() {
-        return secretKey;
-    }
-
-    public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
     }
 
     public String getState() {

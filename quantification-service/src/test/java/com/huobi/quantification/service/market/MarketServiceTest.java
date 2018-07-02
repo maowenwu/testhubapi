@@ -18,24 +18,7 @@ public class MarketServiceTest {
     @Autowired
     private MarketService marketService;
 
-    @Test
-    public void getOkTicker() {
-        Object okTicker = marketService.getOkTicker("btc_usd", "this_week");
-        System.out.println(okTicker);
-    }
 
-
-    @Test
-    public void getOkDepth() {
-        Object okTicker = marketService.getOkDepth("btc_usd", "this_week");
-        System.out.println(okTicker);
-    }
-
-    @Test
-    public void getOkFutureKline() {
-        Object kline = marketService.getOkFutureKline("btc_usd", "1min", "this_week", 2, 1530265560000L);
-        System.out.println(kline);
-    }
 
     @Test
     public void getLatestOkFutureKline() {

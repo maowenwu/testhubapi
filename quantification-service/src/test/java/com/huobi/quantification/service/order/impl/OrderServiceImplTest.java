@@ -16,42 +16,6 @@ public class OrderServiceImplTest {
     private OrderService orderService;
 
 
-    @Test
-    public void getOkOrderInfo() {
-        orderService.getOkOrderInfo();
-    }
-    @Test
-    public void getOkOrdersInfo() {
-        orderService.getOkOrdersInfo();
-    }
-
-    @Test
-    public void getOkOrdersHistory() {
-        orderService.storeOkOrdersHistory();
-    }
-
-
-    @Test
-    public void placeOkOrder() {
-        orderService.placeOkOrder();
-    }
-
-
-    @Test
-    public void placeOkOrders() {
-        orderService.placeOkOrders();
-    }
-
-
-    @Test
-    public void cancelOkOrder() {
-        orderService.cancelOkOrder();
-    }
-
-    @Test
-    public void cancelOkOrders() {
-        orderService.cancelOkOrders();
-    }
 
 
 

@@ -5,9 +5,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
+import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.entity.QuanAccountFutureSecret;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkContractType;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.account.AccountService;
@@ -36,9 +39,12 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private QuanAccountFuturePositionMapper quanAccountFuturePositionMapper;
 
+    @Autowired
+    private QuanAccountFutureMapper quanAccountFutureMapper;
+
     @Override
     public void storeAllOkUserInfo() {
-        List<Long> accounts = null;
+        List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
         for (Long accountId : accounts) {
             updateOkUserInfo(accountId);
         }
@@ -49,6 +55,7 @@ public class AccountServiceImpl implements AccountService {
         List<QuanAccountFutureAsset> list = queryOkUserInfoByAPI(accountId);
         for (QuanAccountFutureAsset asset : list) {
             asset.setQueryId(queryId);
+            asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }
     }
@@ -60,7 +67,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private List<QuanAccountFutureAsset> parseAndSaveUserInfo(String body) {
-
         JSONObject jsonObject = JSON.parseObject(body);
         Boolean b = jsonObject.getBoolean("result");
         List<QuanAccountFutureAsset> list = new ArrayList<>();
@@ -93,25 +99,25 @@ public class AccountServiceImpl implements AccountService {
     public void storeAllOkPosition() {
         List<Long> accounts = null;
         for (Long accountId : accounts) {
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(),OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(),OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(),OkContractType.QUARTER);
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
 
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(),OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(),OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(),OkContractType.QUARTER);
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
 
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(),OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(),OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(),OkContractType.QUARTER);
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
 
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(),OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(),OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(),OkContractType.QUARTER);
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
 
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(),OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(),OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(),OkContractType.QUARTER);
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
         }
     }
 
@@ -166,5 +172,22 @@ public class AccountServiceImpl implements AccountService {
         position.setSymbol(obj.getString("symbol"));
         position.setDateCreate(new Date(obj.getLong("create_date")));
         return position;
+    }
+
+    @Override
+    public List<Long> findAccountFutureByExchangeId(int exchangeId) {
+        List<Long> list = new ArrayList<>();
+        list.add(1L);
+        return list;
+    }
+
+    @Override
+    public List<QuanAccountFutureSecret> findAccountFutureSecretById(Long id) {
+        List<QuanAccountFutureSecret> list = new ArrayList<>();
+        QuanAccountFutureSecret secret = new QuanAccountFutureSecret();
+        secret.setAccessKey("");
+        secret.setSecretKey("");
+        list.add(secret);
+        return list;
     }
 }

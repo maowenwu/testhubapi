@@ -5,57 +5,57 @@ import java.util.Date;
 
 public class QuanKlineFuture {
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String type;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String contractType;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal high;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal open;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal low;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal close;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-06-29 14:08:10
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date ts;
 

@@ -4,52 +4,52 @@ import java.math.BigDecimal;
 
 public class QuanAccountFutureAsset {
     /**
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
-    private Long accountFutureId;
+    private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private Long queryId;
 
     /**
      * 币种
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private String symbol;
 
     /**
      * 账户权益
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private BigDecimal riskRate;
 
     /**
      * 交易所服务器时间
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private BigDecimal accountRights;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private BigDecimal profitUnreal;
 
     /**
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private BigDecimal profitReal;
 
     /**
-     * @mbg.generated 2018-06-28 17:32:10
+     * @mbg.generated 2018-07-02 14:36:55
      */
     private BigDecimal keepDeposit;
 
@@ -61,12 +61,12 @@ public class QuanAccountFutureAsset {
         this.id = id;
     }
 
-    public Long getAccountFutureId() {
-        return accountFutureId;
+    public Long getAccountSourceId() {
+        return accountSourceId;
     }
 
-    public void setAccountFutureId(Long accountFutureId) {
-        this.accountFutureId = accountFutureId;
+    public void setAccountSourceId(Long accountSourceId) {
+        this.accountSourceId = accountSourceId;
     }
 
     public Long getQueryId() {

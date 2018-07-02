@@ -144,7 +144,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
             depthDetail.setDepthFutureId(quanDepthFuture.getId());
             depthDetail.setDetailType(DepthDirectionEnum.ASKS.getIntType());
             depthDetail.setDetailPrice(item.getBigDecimal(0));
-            depthDetail.setDetailAmount(item.getDouble(1));
+            depthDetail.setDetailAmount(item.getBigDecimal(1));
             depthDetail.setDateUpdate(new Date());
             list.add(depthDetail);
         }
@@ -155,7 +155,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
             depthDetail.setDepthFutureId(quanDepthFuture.getId());
             depthDetail.setDetailType(DepthDirectionEnum.BIDS.getIntType());
             depthDetail.setDetailPrice(item.getBigDecimal(0));
-            depthDetail.setDetailAmount(item.getDouble(1));
+            depthDetail.setDetailAmount(item.getBigDecimal(1));
             depthDetail.setDateUpdate(new Date());
             list.add(depthDetail);
         }

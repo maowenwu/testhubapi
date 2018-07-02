@@ -5,111 +5,111 @@ import java.util.Date;
 
 public class QuanOrderFuture {
     /**
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long strategyVersion;
 
     /**
      * 交易所id
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer exchangeId;
 
     /**
      * 账户 ID
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long orderAccountId;
 
     /**
      * 火币或ok返回的订单id
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long orderSourceId;
 
     /**
      * 合约名称
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String contractName;
 
     /**
      * btc_usd   ltc_usd    eth_usd    etc_usd    bch_usd
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String orderSymbol;
 
     /**
      * 订单类型 1：开多 2：开空 3：平多 4： 平空
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer orderType;
 
     /**
      * 订单状态(0等待成交 1部分成交 2全部成交 -1撤单 4撤单处理中 5撤单中)
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Integer orderStatus;
 
     /**
      * 委托数量
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal orderAmount;
 
     /**
      * 成交数量
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal orderDealAmount;
 
     /**
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal unitAmount;
 
     /**
      * 手续费
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal orderFee;
 
     /**
      * 订单价格
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal orderPrice;
 
     /**
      * 平均价格
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal orderPriceAvg;
 
     /**
      * 杠杆倍数  value:10\20  默认10 
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal orderLeverRate;
 
     /**
      * 委托时间
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date createDate;
 
     /**
-     * @mbg.generated 2018-07-02 10:58:47
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date updateDate;
 

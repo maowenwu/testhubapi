@@ -5,102 +5,102 @@ import java.util.Date;
 
 public class QuanAccountFuturePosition {
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long accountFutureId;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Long queryId;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String contractCode;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String contractName;
 
     /**
      * 币种
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private String symbol;
 
     /**
      * 账户权益
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal forceLiquPrice;
 
     /**
      * 交易所服务器时间
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal buyAmount;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal buyAvailable;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal buyPriceAvg;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal buyPriceCost;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal buyProfitReal;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal leverRate;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal sellAmount;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal sellAvailable;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal sellPriceAvg;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal sellPriceCost;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private BigDecimal sellProfitReal;
 
     /**
-     * @mbg.generated 2018-06-28 18:05:49
+     * @mbg.generated 2018-07-02 14:32:37
      */
     private Date dateCreate;
 

@@ -4,10 +4,10 @@
        xmlns:job="http://www.dangdang.com/schema/ddframe/job"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.dangdang.com/schema/ddframe/reg http://www.dangdang.com/schema/ddframe/reg/reg.xsd http://www.dangdang.com/schema/ddframe/job http://www.dangdang.com/schema/ddframe/job/job.xsd">
 
-    <!--<reg:zookeeper id="regCenter" server-lists="127.0.0.1:2181" namespace="dd-job" base-sleep-time-milliseconds="1000"
+    <reg:zookeeper id="regCenter" server-lists="127.0.0.1:2181" namespace="dd-job" base-sleep-time-milliseconds="1000"
                    max-sleep-time-milliseconds="3000" max-retries="3"/>
 
-    <job:simple id="okFutureKlineJob" class="com.huobi.quantification.job.okcoin.OkFutureKlineJob"
+    <!--<job:simple id="okFutureKlineJob" class="com.huobi.quantification.job.okcoin.OkFutureKlineJob"
                 registry-center-ref="regCenter" cron="0/1 * * * * ?"
                 sharding-total-count="1"/>
 
@@ -23,5 +23,8 @@
                 registry-center-ref="regCenter" cron="0/3 * * * * ?"
                 sharding-total-count="1"/>-->
 
+    <job:simple id="okFutureUserInfoJob" class="com.huobi.quantification.job.okcoin.OkFutureUserInfoJob"
+                registry-center-ref="regCenter" cron="0/3 * * * * ?"
+                sharding-total-count="1"/>
 
 </beans>

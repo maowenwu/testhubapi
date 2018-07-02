@@ -3,7 +3,7 @@
 <mapper namespace="com.huobi.quantification.dao.QuanKlineMapper">
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanKline">
     <result column="id" jdbcType="BIGINT" property="id" />
-    <result column="exchange_id" jdbcType="BIGINT" property="exchangeId" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
     <result column="tick_id" jdbcType="BIGINT" property="tickId" />
     <result column="kline_type" jdbcType="VARCHAR" property="klineType" />
     <result column="symbol" jdbcType="VARCHAR" property="symbol" />
@@ -13,8 +13,8 @@
     <result column="open" jdbcType="DECIMAL" property="open" />
     <result column="low" jdbcType="DECIMAL" property="low" />
     <result column="close" jdbcType="DECIMAL" property="close" />
-    <result column="count" jdbcType="DOUBLE" property="count" />
-    <result column="amount" jdbcType="DOUBLE" property="amount" />
+    <result column="count" jdbcType="DECIMAL" property="count" />
+    <result column="amount" jdbcType="DECIMAL" property="amount" />
     <result column="vol" jdbcType="DECIMAL" property="vol" />
     <result column="ts" jdbcType="TIMESTAMP" property="ts" />
   </resultMap>
@@ -24,10 +24,10 @@
       size, high, open, low, 
       close, count, amount, 
       vol, ts)
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{tickId,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{tickId,jdbcType=BIGINT}, 
       #{klineType,jdbcType=VARCHAR}, #{symbol,jdbcType=VARCHAR}, #{period,jdbcType=VARCHAR}, 
       #{size,jdbcType=BIGINT}, #{high,jdbcType=DECIMAL}, #{open,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, 
-      #{close,jdbcType=DECIMAL}, #{count,jdbcType=DOUBLE}, #{amount,jdbcType=DOUBLE}, 
+      #{close,jdbcType=DECIMAL}, #{count,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL}, 
       #{vol,jdbcType=DECIMAL}, #{ts,jdbcType=TIMESTAMP})
   </insert>
   <select id="selectAll" resultMap="BaseResultMap">

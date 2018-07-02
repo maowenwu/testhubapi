@@ -6,7 +6,7 @@
     <result column="depth_id" jdbcType="BIGINT" property="depthId" />
     <result column="detail_type" jdbcType="TINYINT" property="detailType" />
     <result column="detail_price" jdbcType="DECIMAL" property="detailPrice" />
-    <result column="detail_amount" jdbcType="DOUBLE" property="detailAmount" />
+    <result column="detail_amount" jdbcType="DECIMAL" property="detailAmount" />
     <result column="date_update" jdbcType="TIMESTAMP" property="dateUpdate" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -18,7 +18,7 @@
       detail_price, detail_amount, date_update
       )
     values (#{id,jdbcType=BIGINT}, #{depthId,jdbcType=BIGINT}, #{detailType,jdbcType=TINYINT}, 
-      #{detailPrice,jdbcType=DECIMAL}, #{detailAmount,jdbcType=DOUBLE}, #{dateUpdate,jdbcType=TIMESTAMP}
+      #{detailPrice,jdbcType=DECIMAL}, #{detailAmount,jdbcType=DECIMAL}, #{dateUpdate,jdbcType=TIMESTAMP}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthDetail">
@@ -26,7 +26,7 @@
     set depth_id = #{depthId,jdbcType=BIGINT},
       detail_type = #{detailType,jdbcType=TINYINT},
       detail_price = #{detailPrice,jdbcType=DECIMAL},
-      detail_amount = #{detailAmount,jdbcType=DOUBLE},
+      detail_amount = #{detailAmount,jdbcType=DECIMAL},
       date_update = #{dateUpdate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
