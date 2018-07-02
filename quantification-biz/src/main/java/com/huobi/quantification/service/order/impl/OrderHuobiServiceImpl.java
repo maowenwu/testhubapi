@@ -96,7 +96,7 @@ public class OrderHuobiServiceImpl implements OrderHuobiService {
     		JSONObject jsonObjectdata=jsonObject.getJSONObject("data");
     		QuanOrder quanOrder=new QuanOrder();
     		quanOrder.setOrderState(jsonObjectdata.getString("state"));
-    		quanOrder.setOrderAmount(Long.valueOf(jsonObjectdata.getString("amount")));
+    		//quanOrder.setOrderAmount(Long.valueOf(jsonObjectdata.getString("amount")));
     		quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
     		quanOrderMapper.insert(quanOrder);
     }

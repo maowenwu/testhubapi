@@ -66,7 +66,7 @@ public class MarketHuobiServiceImpl implements MarketHuobiService{
 		            JSONArray item = jsarr.getJSONArray(i);
 		            QuanDepthDetail depthDetail=new QuanDepthDetail();
 		            depthDetail.setDetailPrice(item.getBigDecimal(0));
-		            depthDetail.setDetailAmount(item.getDouble(1));
+		            //depthDetail.setDetailAmount(item.getDouble(1));
 		            depthDetail.setDepthId(quanDepth.getId());
 		           quanDepthDetailMapper.insert(depthDetail);
 			  }
