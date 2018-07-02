@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
+import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.dao.QuanDepthFutureDetailMapper;
@@ -18,6 +19,7 @@ import com.huobi.quantification.enums.DepthDirectionEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkContractType;
 import com.huobi.quantification.enums.OkSymbolEnum;
+import com.huobi.quantification.facade.OkMarketServiceFacade;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.MarketService;
 import org.slf4j.Logger;
@@ -35,7 +37,7 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class MarketServiceImpl implements MarketService {
+public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -55,13 +57,13 @@ public class MarketServiceImpl implements MarketService {
     private QuanKlineFutureMapper quanKlineFutureMapper;
 
     @Override
-    public Object getOkTicker(String symbol, String contractType) {
+    public ServiceResult getOkTicker(String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
         String body = httpService.doGet(HttpConstant.OK_TICKER, params);
         QuanTickerFuture quanTicker = parseAndSaveQuanTicker(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
-        return quanTicker;
+        return null;
     }
 
     private QuanTickerFuture parseAndSaveQuanTicker(String body, OkSymbolEnum symbolEnum, String contractType) {
@@ -111,7 +113,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Object getOkDepth(String symbol, String contractType) {
+    public ServiceResult getOkDepth(String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
@@ -190,7 +192,7 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public Object getOkFutureKline(String symbol, String type, String contractType, int size, long since) {
+    public ServiceResult getOkKline(String symbol, String type, String contractType, int size, long since) {
         List<QuanKlineFuture> list = getOkFutureKlineList(symbol, type, contractType, size, since);
         for (QuanKlineFuture klineFuture : list) {
             quanKlineFutureMapper.insert(klineFuture);

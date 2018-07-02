@@ -6,7 +6,7 @@ package com.huobi.quantification.service.account;
  */
 public interface AccountService {
 
-    Object getOkUserInfo();
+    void storeAllOkUserInfo();
 
-    Object getOkPosition();
+    void storeAllOkPosition();
 }

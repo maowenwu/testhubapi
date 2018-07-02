@@ -6,8 +6,6 @@ package com.huobi.quantification.service.order;
  */
 public interface OrderService {
 
-
-
     /**
      * 定时拉去ok所有订单信息，包括已完成、未完成订单
      */
@@ -19,8 +17,6 @@ public interface OrderService {
      * @return
      */
     Object storeOkOrdersHistory();
-
-
 
 
 }

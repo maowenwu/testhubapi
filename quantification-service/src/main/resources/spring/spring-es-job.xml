@@ -18,5 +18,10 @@
     <job:simple id="okFutureDepthJob" class="com.huobi.quantification.job.okcoin.OkFutureDepthJob"
                 registry-center-ref="regCenter" cron="0/3 * * * * ?"
                 sharding-total-count="1"/>
--->
+
+    <job:simple id="okFutureDepthJob" class="com.huobi.quantification.job.okcoin.OkFutureOrderJob"
+                registry-center-ref="regCenter" cron="0/3 * * * * ?"
+                sharding-total-count="1"/>-->
+
+
 </beans>
