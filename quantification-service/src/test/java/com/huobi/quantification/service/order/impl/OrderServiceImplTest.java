@@ -1,7 +1,6 @@
 package com.huobi.quantification.service.order.impl;
 
 import com.huobi.quantification.ServiceApplication;
-import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.order.OrderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +27,7 @@ public class OrderServiceImplTest {
 
     @Test
     public void getOkOrdersHistory() {
-        orderService.getOkOrdersHistory();
+        orderService.storeOkOrdersHistory();
     }
 
 

@@ -268,9 +268,10 @@ public class MarketServiceImpl implements MarketService {
     public void getLatestOkFutureKline(String symbol, String type, String contractType) {
         QuanKlineFuture klineFuture = selectLatestKlineFuture(symbol, type, contractType);
         List<QuanKlineFuture> list = null;
+        Date sinceDate = null;
         int retry = 3;
         if (klineFuture != null) {
-            Date sinceDate = klineFuture.getTs();
+            sinceDate = klineFuture.getTs();
             for (int i = 1; i <= retry; i++) {
                 sinceDate = DateUtils.plusMinutes(sinceDate, -1 * i * 60);
                 list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
@@ -280,12 +281,14 @@ public class MarketServiceImpl implements MarketService {
                 }
             }
         } else {
-            Date sinceDate = DateUtils.plusMinutes(new Date(), -60);
+            sinceDate = DateUtils.plusMinutes(new Date(), -60);
             list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
         }
-        // todo
+
         for (QuanKlineFuture kline : list) {
-            quanKlineFutureMapper.insert(kline);
+            if (kline.getTs().after(klineFuture.getTs())) {
+                quanKlineFutureMapper.insert(kline);
+            }
         }
     }
 
