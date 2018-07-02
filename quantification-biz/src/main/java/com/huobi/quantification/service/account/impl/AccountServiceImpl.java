@@ -15,6 +15,7 @@ import com.huobi.quantification.enums.OkContractType;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
+import com.huobi.quantification.service.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private HttpService httpService;
+
+    @Autowired
+    private RedisService redisService;
 
     @Autowired
     private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
@@ -58,6 +62,7 @@ public class AccountServiceImpl implements AccountService {
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }
+        redisService.saveOkUserInfo(accountId,list);
     }
 
     private List<QuanAccountFutureAsset> queryOkUserInfoByAPI(Long accountId) {
@@ -129,6 +134,7 @@ public class AccountServiceImpl implements AccountService {
             position.setAccountSourceId(accountId);
             quanAccountFuturePositionMapper.insert(position);
         }
+        redisService.saveOkPosition(accountId,symbol,contractType.getType(),list);
     }
 
     private List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {

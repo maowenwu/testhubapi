@@ -4,10 +4,10 @@
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanDepthFuture">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
+    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+    <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
     <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
     <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin" />
-    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
-    <result column="contract_name" jdbcType="VARCHAR" property="contractName" />
     <result column="depth_ts" jdbcType="TIMESTAMP" property="depthTs" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -15,40 +15,40 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanDepthFuture">
-    insert into quan_depth_future (id, exchange_id, base_coin, 
-      quote_coin, contract_code, contract_name, 
+    insert into quan_depth_future (id, exchange_id, symbol, 
+      contract_type, base_coin, quote_coin, 
       depth_ts)
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{baseCoin,jdbcType=VARCHAR}, 
-      #{quoteCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, 
+      #{contractType,jdbcType=VARCHAR}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR}, 
       #{depthTs,jdbcType=TIMESTAMP})
   </insert>
 
-    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFuture">
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFuture">
     update quan_depth_future
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
+      symbol = #{symbol,jdbcType=VARCHAR},
+      contract_type = #{contractType,jdbcType=VARCHAR},
       base_coin = #{baseCoin,jdbcType=VARCHAR},
       quote_coin = #{quoteCoin,jdbcType=VARCHAR},
-      contract_code = #{contractCode,jdbcType=VARCHAR},
-      contract_name = #{contractName,jdbcType=VARCHAR},
       depth_ts = #{depthTs,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, exchange_id, base_coin, quote_coin, contract_code, contract_name, depth_ts
+    select id, exchange_id, symbol, contract_type, base_coin, quote_coin, depth_ts
     from quan_depth_future
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, exchange_id, base_coin, quote_coin, contract_code, contract_name, depth_ts
+    select id, exchange_id, symbol, contract_type, base_coin, quote_coin, depth_ts
     from quan_depth_future
   </select>
 
   <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="id">
-         insert into quan_depth_future (id, exchange_id, base_coin,
-        quote_coin, contract_code, contract_name,
-        depth_ts)
-      values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{baseCoin,jdbcType=VARCHAR},
-        #{quoteCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR},
-        #{depthTs,jdbcType=TIMESTAMP})
-    </insert>
+     insert into quan_depth_future (id, exchange_id, symbol,
+      contract_type, base_coin, quote_coin,
+      depth_ts)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR},
+      #{contractType,jdbcType=VARCHAR}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR},
+      #{depthTs,jdbcType=TIMESTAMP})
+  </insert>
 </mapper>

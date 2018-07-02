@@ -26,7 +26,7 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
-    //@Bean
+    @Bean
     public RedissonClient redissonClient() {
         Config config = new Config();
         logger.info("redis连接：" + "redis://" + host + ":" + port);

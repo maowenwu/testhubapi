@@ -7,8 +7,12 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Pattern;
 
 // 建议使用jdk8的相关日期类
 @Deprecated
@@ -692,6 +696,12 @@ public class DateUtils {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         return cal.getTime();
+    }
+
+    public static String format(Date date, String pattern) {
+        Instant instant = date.toInstant();
+        LocalDateTime localDateTime = instant.atZone(ZoneId.systemDefault()).toLocalDateTime();
+        return localDateTime.format(DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
