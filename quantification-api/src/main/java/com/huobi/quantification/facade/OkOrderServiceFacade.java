@@ -1,6 +1,7 @@
 package com.huobi.quantification.facade;
 
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
 
 public interface OkOrderServiceFacade {
@@ -41,7 +42,7 @@ public interface OkOrderServiceFacade {
      *
      * @return
      */
-    ServiceResult cancelOkOrder();
+    ServiceResult cancelOkOrder(OkCancelOrderDto cancelOrderDto);
 
     /**
      * 合约批量撤单

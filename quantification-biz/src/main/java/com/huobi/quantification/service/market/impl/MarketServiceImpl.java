@@ -58,12 +58,21 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
 
     @Override
     public ServiceResult getOkTicker(String symbol, String contractType) {
+
+        return null;
+    }
+
+    private void updateOkTicker(String symbol, String contractType) {
+        QuanTickerFuture ticker = queryOkTickerByAPI(symbol, contractType);
+        quanTickerFutureMapper.insert(ticker);
+    }
+
+    private QuanTickerFuture queryOkTickerByAPI(String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
         String body = httpService.doGet(HttpConstant.OK_TICKER, params);
-        QuanTickerFuture quanTicker = parseAndSaveQuanTicker(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
-        return null;
+        return parseAndSaveQuanTicker(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
     }
 
     private QuanTickerFuture parseAndSaveQuanTicker(String body, OkSymbolEnum symbolEnum, String contractType) {
@@ -81,7 +90,6 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         quanTickerFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
         quanTickerFuture.setHighPrice(ticker.getBigDecimal("high"));
         quanTickerFuture.setLowPrice(ticker.getBigDecimal("low"));
-        quanTickerFutureMapper.insert(quanTickerFuture);
         return quanTickerFuture;
     }
 
@@ -89,31 +97,36 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     public void storeOkTicker() {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
-        getOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER.getType());
 
         logger.info("OKEx合约行情，执行完成，消耗时间：" + stopwatch);
     }
 
     @Override
     public ServiceResult getOkDepth(String symbol, String contractType) {
+
+        return null;
+    }
+
+    private void updateOkDepth(String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
@@ -121,7 +134,6 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         params.put("merge", "0");
         String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
         parseAndSaveQuanDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
-        return null;
     }
 
     private void parseAndSaveQuanDepth(String body, OkSymbolEnum symbolEnum, String contractType) {
@@ -159,7 +171,6 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
             depthDetail.setDateUpdate(new Date());
             list.add(depthDetail);
         }
-
         for (QuanDepthFutureDetail detail : list) {
             quanDepthFutureDetailMapper.insert(detail);
         }
@@ -168,25 +179,25 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     @Override
     public void storeOkDepth() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        getOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER.getType());
 
-        getOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        getOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        getOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER.getType());
+        updateOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
+        updateOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER.getType());
 
         logger.info("OKOKEx合约深度，执行完成，消耗时间：" + stopwatch);
     }
@@ -268,7 +279,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     }
 
     public void getLatestOkFutureKline(String symbol, String type, String contractType) {
-        QuanKlineFuture klineFuture = selectLatestKlineFuture(symbol, type, contractType);
+        QuanKlineFuture klineFuture = selectLatestKlineFuture(ExchangeEnum.OKEX.getExId(), symbol, type, contractType);
         List<QuanKlineFuture> list = null;
         Date sinceDate = null;
         int retry = 3;
@@ -288,14 +299,14 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         }
 
         for (QuanKlineFuture kline : list) {
-            if (kline.getTs().after(klineFuture.getTs())) {
+            if (kline.getTs().after(sinceDate)) {
                 quanKlineFutureMapper.insert(kline);
             }
         }
     }
 
-    private QuanKlineFuture selectLatestKlineFuture(String symbol, String type, String contractType) {
-        QuanKlineFuture klineFuture = quanKlineFutureMapper.selectLatestKlineFuture(symbol, type, contractType);
+    private QuanKlineFuture selectLatestKlineFuture(int exchangeId, String symbol, String type, String contractType) {
+        QuanKlineFuture klineFuture = quanKlineFutureMapper.selectLatestKlineFuture(exchangeId, symbol, type, contractType);
         return klineFuture;
     }
 

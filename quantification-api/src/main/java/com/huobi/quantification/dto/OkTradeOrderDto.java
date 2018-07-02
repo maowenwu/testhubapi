@@ -10,8 +10,8 @@ public class OkTradeOrderDto {
 
     private String symbol;
     private String contractType;
-    private BigDecimal price;
-    private BigDecimal amount;
+    private String price;
+    private String amount;
     private int type;
     private int matchPrice;
     private Integer leverRate;
@@ -57,19 +57,19 @@ public class OkTradeOrderDto {
         this.contractType = contractType;
     }
 
-    public BigDecimal getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 
-    public BigDecimal getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 

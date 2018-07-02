@@ -42,7 +42,8 @@
       #{orderPriceAvg,jdbcType=DECIMAL}, #{orderLeverRate,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, 
       #{updateDate,jdbcType=TIMESTAMP})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     update quan_order_future
     set strategy_name = #{strategyName,jdbcType=VARCHAR},
       strategy_version = #{strategyVersion,jdbcType=BIGINT},
@@ -79,4 +80,51 @@
     update_date
     from quan_order_future
   </select>
+
+  <insert id="insertOrUpdate" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+      INSERT INTO quan_order_future (
+          `strategy_name`,
+          `strategy_version`,
+          `exchange_id`,
+          `order_account_id`,
+          `order_source_id`,
+          `contract_name`,
+          `order_symbol`,
+          `order_type`,
+          `order_status`,
+          `order_amount`,
+          `order_deal_amount`,
+          `unit_amount`,
+          `order_fee`,
+          `order_price`,
+          `order_price_avg`,
+          `order_lever_rate`,
+          `create_date`,
+          `update_date`
+      )
+      VALUES
+          (
+              #{strategyName},
+              #{strategyVersion},
+              #{exchangeId},
+              #{orderAccountId},
+              #{orderSourceId},
+              #{contractName},
+              #{orderSymbol},
+              #{orderType},
+              #{orderStatus},
+              #{orderAmount},
+              #{orderDealAmount},
+              #{unitAmount},
+              #{orderFee},
+              #{orderPrice},
+              #{orderPriceAvg},
+              #{orderLeverRate},
+              #{createDate},
+              #{updateDate}
+          ) ON DUPLICATE KEY UPDATE contract_name=#{contractName},order_symbol=#{orderSymbol},order_type=#{orderType},
+          order_status=#{orderStatus},order_amount= #{orderAmount},order_deal_amount=#{orderDealAmount},unit_amount=#{unitAmount},
+          order_fee=#{orderFee},order_price=#{orderPrice},order_price_avg=#{orderPriceAvg},order_lever_rate=#{orderLeverRate},
+          create_date= #{createDate},update_date=#{updateDate}
+  </insert>
 </mapper>

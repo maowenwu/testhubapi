@@ -22,7 +22,8 @@
       #{quoteCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR}, 
       #{depthTs,jdbcType=TIMESTAMP})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFuture">
+
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepthFuture">
     update quan_depth_future
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
       base_coin = #{baseCoin,jdbcType=VARCHAR},
@@ -41,4 +42,13 @@
     select id, exchange_id, base_coin, quote_coin, contract_code, contract_name, depth_ts
     from quan_depth_future
   </select>
+
+  <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="id">
+         insert into quan_depth_future (id, exchange_id, base_coin,
+        quote_coin, contract_code, contract_name,
+        depth_ts)
+      values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{baseCoin,jdbcType=VARCHAR},
+        #{quoteCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{contractName,jdbcType=VARCHAR},
+        #{depthTs,jdbcType=TIMESTAMP})
+    </insert>
 </mapper>

@@ -2,13 +2,14 @@ package com.huobi.quantification.common;
 
 public class ServiceResult<T> {
 
+    public static final int SUCCESS=0;
     private int code;
 
     private String message;
 
     private T data;
 
-    public ServiceResult(int code, String message, T data) {
+    public ServiceResult() {
         this.code = code;
         this.message = message;
         this.data = data;

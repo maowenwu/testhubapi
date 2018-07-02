@@ -2,7 +2,7 @@ package com.huobi.quantification.enums;
 
 public enum OrderStatus {
 
-    FINISH(1), UNFINISH(0);
+    FINISH(2), UNFINISH(1);
 
     private int intStatus;
 

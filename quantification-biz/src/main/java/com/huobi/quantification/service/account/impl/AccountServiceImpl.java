@@ -97,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void storeAllOkPosition() {
-        List<Long> accounts = null;
+        List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
         for (Long accountId : accounts) {
             updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
             updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
@@ -126,6 +126,7 @@ public class AccountServiceImpl implements AccountService {
         List<QuanAccountFuturePosition> list = queryOkPositionByAPI(accountId, symbol, contractType);
         for (QuanAccountFuturePosition position : list) {
             position.setQueryId(queryId);
+            position.setAccountSourceId(accountId);
             quanAccountFuturePositionMapper.insert(position);
         }
     }
@@ -143,7 +144,8 @@ public class AccountServiceImpl implements AccountService {
         Boolean b = jsonObject.getBoolean("result");
         List<QuanAccountFuturePosition> list = new ArrayList<>();
         if (b) {
-            BigDecimal forceLiquPrice = jsonObject.getBigDecimal("force_liqu_price");
+            String liquPrice = jsonObject.getString("force_liqu_price").replaceAll(",", "");
+            BigDecimal forceLiquPrice = new BigDecimal(liquPrice);
             JSONArray holding = jsonObject.getJSONArray("holding");
             for (int i = 0; i < holding.size(); i++) {
                 JSONObject holdingJSONObject = holding.getJSONObject(i);
