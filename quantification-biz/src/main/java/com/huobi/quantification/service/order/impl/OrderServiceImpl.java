@@ -141,7 +141,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         Stopwatch started = Stopwatch.createStarted();
         List<QuanOrderFuture> finishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.FINISH);
         List<QuanOrderFuture> unfinishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.UNFINISH);
-        logger.info("单个订单查询耗时：" + started);
+        logger.debug("单个订单查询耗时：" + started);
         list.addAll(finishOrder);
         list.addAll(unfinishOrder);
         return list;

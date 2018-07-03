@@ -49,7 +49,9 @@ public class HttpClientUtils {
     private HttpClientUtils(ProxyConfig proxyConfig) {
         HttpClientBuilder builder = HttpClients.custom()
                 .setSSLSocketFactory(getSslFactory())
-                .setDefaultRequestConfig(defaultRequestConfig());
+                .setDefaultRequestConfig(defaultRequestConfig())
+                .setMaxConnTotal(500)
+                .setMaxConnPerRoute(45);
         if (proxyConfig == null) {
             httpClient = builder.build();
         } else {
@@ -136,14 +138,15 @@ public class HttpClientUtils {
         } catch (IOException e) {
             throw new HttpRequestException("http执行异常，url=" + url, e);
         }
-        if (response.getStatusLine().getStatusCode() == 200) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 200) {
             try {
                 return EntityUtils.toString(response.getEntity());
             } catch (IOException e) {
                 throw new HttpRequestException("http结果解析异常", e);
             }
         }
-        throw new HttpRequestException("响应码不为200");
+        throw new HttpRequestException("响应码不为200，返回响应码：" + statusCode + "，url：" + url);
     }
 
     public String doPost(String url, Map<String, String> params) {
@@ -173,14 +176,15 @@ public class HttpClientUtils {
         } catch (IOException e) {
             throw new HttpRequestException("http执行异常，url=" + url, e);
         }
-        if (response.getStatusLine().getStatusCode() == 200) {
+        int statusCode = response.getStatusLine().getStatusCode();
+        if (statusCode == 200) {
             try {
                 return EntityUtils.toString(response.getEntity());
             } catch (IOException e) {
                 throw new HttpRequestException("http结果解析异常", e);
             }
         }
-        throw new HttpRequestException("响应码不为200");
+        throw new HttpRequestException("响应码不为200，返回响应码：" + statusCode + "，url：" + url);
 
     }
 }

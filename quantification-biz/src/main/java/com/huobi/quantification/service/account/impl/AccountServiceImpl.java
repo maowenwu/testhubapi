@@ -74,7 +74,9 @@ public class AccountServiceImpl implements AccountService {
 
     private void updateOkUserInfo(Long accountId) {
         long queryId = System.currentTimeMillis();
+        Stopwatch started = Stopwatch.createStarted();
         List<QuanAccountFutureAsset> list = queryOkUserInfoByAPI(accountId);
+        logger.debug("查询单个用户资产耗时：" + started);
         for (QuanAccountFutureAsset asset : list) {
             asset.setQueryId(queryId);
             asset.setAccountSourceId(accountId);
@@ -135,7 +137,6 @@ public class AccountServiceImpl implements AccountService {
 
     private void updateSingleOkPosition(Long accountId) {
         CompletableFuture[] futures = new CompletableFuture[15];
-
         /*BTC_USD*/
         futures[0] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
@@ -191,6 +192,7 @@ public class AccountServiceImpl implements AccountService {
 
     private void updateOkPosition(Long accountId, String symbol, OkContractType contractType) {
         long queryId = System.currentTimeMillis();
+        Stopwatch started = Stopwatch.createStarted();
         List<QuanAccountFuturePosition> list = queryOkPositionByAPI(accountId, symbol, contractType);
         for (QuanAccountFuturePosition position : list) {
             position.setQueryId(queryId);
@@ -198,6 +200,7 @@ public class AccountServiceImpl implements AccountService {
             quanAccountFuturePositionMapper.insert(position);
         }
         redisService.saveOkPosition(accountId, symbol, contractType.getType(), list);
+        logger.debug("查询单个用户持仓耗时：" + started);
     }
 
     private List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {

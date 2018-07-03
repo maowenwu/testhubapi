@@ -36,28 +36,33 @@ public class HttpServiceImpl implements HttpService {
         config.setHost("proxy.huobidev.com");
         config.setPort(3129);
         httpClientUtils = HttpClientUtils.getInstance(config);
+
+    }
+
+    public HttpClientUtils getHttpClientUtils() {
+        return httpClientUtils;
     }
 
     @Override
     public String doGet(String url) throws HttpRequestException {
-        return httpClientUtils.doGet(url);
+        return getHttpClientUtils().doGet(url);
     }
 
     @Override
     public String doGet(String url, Map<String, String> params) throws HttpRequestException {
-        return httpClientUtils.doGet(url, params);
+        return getHttpClientUtils().doGet(url, params);
     }
 
     @Override
     public String doPost(String url, Map<String, String> params) throws HttpRequestException {
-        return httpClientUtils.doPost(url, params);
+        return getHttpClientUtils().doPost(url, params);
     }
 
     @Override
     public String doOkSignedPost(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
         OkSignature signature = okSecretHolder.getOkSignatureById(accountId);
         params = signature.sign(params);
-        return httpClientUtils.doPost(url, params);
+        return getHttpClientUtils().doPost(url, params);
     }
 
 }

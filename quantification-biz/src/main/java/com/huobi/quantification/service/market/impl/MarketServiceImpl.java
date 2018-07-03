@@ -69,9 +69,11 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     }
 
     private void updateOkTicker(String symbol, String contractType) {
+        Stopwatch started = Stopwatch.createStarted();
         QuanTickerFuture ticker = queryOkTickerByAPI(symbol, contractType);
         quanTickerFutureMapper.insert(ticker);
         redisService.saveOkTicker(symbol, contractType, ticker);
+        logger.debug("更新单个Ticker耗时：" + started);
     }
 
     private QuanTickerFuture queryOkTickerByAPI(String symbol, String contractType) {
@@ -382,6 +384,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     }
 
     public void getLatestOkFutureKline(String symbol, String type, String contractType) {
+        Stopwatch started = Stopwatch.createStarted();
         QuanKlineFuture klineFuture = selectLatestKlineFuture(ExchangeEnum.OKEX.getExId(), symbol, type, contractType);
         List<QuanKlineFuture> list = null;
         Date sinceDate = null;
@@ -402,12 +405,13 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         }
         List<QuanKlineFuture> redisKline = new ArrayList<>();
         for (QuanKlineFuture kline : list) {
-            if (kline.getTs().after(sinceDate)) {
+            if (kline.getTs().after(klineFuture.getTs())) {
                 quanKlineFutureMapper.insert(kline);
                 redisKline.add(kline);
             }
         }
         redisService.saveOkKline(symbol, type, contractType, redisKline);
+        logger.debug("更新单个Kline耗时：" + started);
     }
 
     private QuanKlineFuture selectLatestKlineFuture(int exchangeId, String symbol, String type, String contractType) {
