@@ -7,6 +7,8 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
+import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
+import com.huobi.quantification.entity.QuanAccountFuture;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
@@ -46,6 +48,9 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private QuanAccountFutureMapper quanAccountFutureMapper;
 
+    @Autowired
+    private QuanAccountFutureSecretMapper quanAccountFutureSecretMapper;
+
     @Override
     public void storeAllOkUserInfo() {
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
@@ -62,12 +67,12 @@ public class AccountServiceImpl implements AccountService {
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }
-        redisService.saveOkUserInfo(accountId,list);
+        redisService.saveOkUserInfo(accountId, list);
     }
 
     private List<QuanAccountFutureAsset> queryOkUserInfoByAPI(Long accountId) {
         Map<String, String> params = new HashMap<>();
-        String body = httpService.okSignedPost(HttpConstant.OK_USER_INFO, params);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_USER_INFO, params);
         return parseAndSaveUserInfo(body);
     }
 
@@ -134,14 +139,14 @@ public class AccountServiceImpl implements AccountService {
             position.setAccountSourceId(accountId);
             quanAccountFuturePositionMapper.insert(position);
         }
-        redisService.saveOkPosition(accountId,symbol,contractType.getType(),list);
+        redisService.saveOkPosition(accountId, symbol, contractType.getType(), list);
     }
 
     private List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType.getType());
-        String body = httpService.okSignedPost(HttpConstant.OK_POSITION, params);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_POSITION, params);
         return parseAndSavePosition(body);
     }
 
@@ -184,18 +189,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Long> findAccountFutureByExchangeId(int exchangeId) {
-        List<Long> list = new ArrayList<>();
-        list.add(1L);
+        List<Long> list = quanAccountFutureMapper.selectByExchangeId(exchangeId);
         return list;
     }
 
     @Override
     public List<QuanAccountFutureSecret> findAccountFutureSecretById(Long id) {
-        List<QuanAccountFutureSecret> list = new ArrayList<>();
-        QuanAccountFutureSecret secret = new QuanAccountFutureSecret();
-        secret.setAccessKey("");
-        secret.setSecretKey("");
-        list.add(secret);
+        List<QuanAccountFutureSecret> list = quanAccountFutureSecretMapper.selectBySourceId(id);
         return list;
     }
 }

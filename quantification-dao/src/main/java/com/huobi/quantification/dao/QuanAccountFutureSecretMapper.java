@@ -1,6 +1,8 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface QuanAccountFutureSecretMapper {
@@ -13,4 +15,6 @@ public interface QuanAccountFutureSecretMapper {
     List<QuanAccountFutureSecret> selectAll();
 
     int updateByPrimaryKey(QuanAccountFutureSecret record);
+
+    List<QuanAccountFutureSecret> selectBySourceId(@Param("id") Long id);
 }

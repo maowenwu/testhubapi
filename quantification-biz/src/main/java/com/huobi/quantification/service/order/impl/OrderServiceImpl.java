@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("order_id", "-1");
         params.put("current_page", "1");
         params.put("page_length", "50");
-        String body = httpService.okSignedPost(HttpConstant.OK_ORDER_INFO, params);
+        //String body = httpService.doOkSignedPost(HttpConstant.OK_ORDER_INFO, params);
         //parseAndSaveOrderInfo(body);
         return null;
     }
@@ -128,7 +128,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("order_id", orderId);
         params.put("current_page", currentPage + "");
         params.put("page_length", pageLength + "");
-        String body = httpService.okSignedPost(HttpConstant.OK_ORDER_INFO, params);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_ORDER_INFO, params);
         return parseAndSaveOrderInfo(accountId, body);
     }
 
@@ -174,7 +174,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", "btc_usd");
         params.put("contract_type", "this_week");
         params.put("order_id", "1015885804614656");
-        String body = httpService.okSignedPost(HttpConstant.OK_ORDERS_INFO, params);
+        // String body = httpService.doOkSignedPost(HttpConstant.OK_ORDERS_INFO, params);
         //parseAndSaveOrderInfo(body);
         return null;
     }
@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", "btc_usd");
         params.put("date", "2018-06-29");
         params.put("since", "1015885804614656");
-        String result = httpService.okSignedPost(HttpConstant.OK_TRADES_HISTORY, params);
+        //String result = httpService.doOkSignedPost(HttpConstant.OK_TRADES_HISTORY, params);
         return null;
     }
 
@@ -201,7 +201,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         if (order.getLeverRate() != null) {
             params.put("lever_rate", String.valueOf(order.getLeverRate()));
         }
-        String body = httpService.okSignedPost(HttpConstant.OK_TRADE, params);
+        String body = httpService.doOkSignedPost(order.getAccountId(), HttpConstant.OK_TRADE, params);
         JSONObject jsonObject = JSON.parseObject(body);
         ServiceResult<Long> result = new ServiceResult<>();
         if (jsonObject.getBoolean("result")) {
@@ -218,7 +218,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
             result.setCode(ServiceResultEnum.SUCCESS.getCode());
             result.setMessage(ServiceResultEnum.SUCCESS.getMessage());
             result.setData(orderId);
-        }else {
+        } else {
             Integer errorCode = jsonObject.getInteger("error_code");
             result.setCode(errorCode);
             result.setMessage(OkRestErrorCode.findErrorMessageByCode(errorCode));
@@ -233,7 +233,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("contract_type", "this_week");
         params.put("orders_data", "[{price:6050,amount:0.0001,type:1,match_price:0}]");
         params.put("lever_rate", "10");
-        String result = httpService.okSignedPost(HttpConstant.OK_BATCH_TRADE, params);
+        //String result = httpService.doOkSignedPost(HttpConstant.OK_BATCH_TRADE, params);
         return null;
     }
 
@@ -243,7 +243,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", cancelOrderDto.getSymbol());
         params.put("contract_type", cancelOrderDto.getContractType());
         params.put("order_id", cancelOrderDto.getOrderId());
-        String body = httpService.okSignedPost(HttpConstant.OK_CANCEL, params);
+        String body = httpService.doOkSignedPost(cancelOrderDto.getAccountId(), HttpConstant.OK_CANCEL, params);
         JSONObject jsonObject = JSON.parseObject(body);
         ServiceResult<String> result = new ServiceResult<>();
         if (jsonObject.getBoolean("result")) {
@@ -265,7 +265,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", "");
         params.put("contract_type", "");
         params.put("order_id", "");
-        String result = httpService.okSignedPost(HttpConstant.OK_CANCEL, params);
+        //String result = httpService.doOkSignedPost(HttpConstant.OK_CANCEL, params);
         return null;
     }
 }
