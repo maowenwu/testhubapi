@@ -5,6 +5,7 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
 import com.huobi.quantification.facade.OkOrderServiceFacade;
+import com.huobi.quantification.job.okcoin.*;
 import com.huobi.quantification.service.order.OrderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.util.concurrent.CompletableFuture;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
@@ -23,6 +25,51 @@ public class OrderServiceImplTest {
 
     @Autowired
     private OkOrderServiceFacade okOrderServiceFacade;
+
+    @Autowired
+    private OkFutureDepthJob okFutureDepthJob;
+    @Autowired
+    private OkFutureKlineJob okFutureKlineJob;
+    @Autowired
+    private OkFutureOrderJob okFutureOrderJob;
+    @Autowired
+    private OkFuturePositionJob okFuturePositionJob;
+    @Autowired
+    private OkFutureTickerJob okFutureTickerJob;
+    @Autowired
+    private OkFutureUserInfoJob okFutureUserInfoJob;
+    @Test
+    public void jobTest()  {
+        while (true){
+            CompletableFuture[] futures=new CompletableFuture[6];
+            futures[0]=CompletableFuture.runAsync(()->{
+                okFutureDepthJob.execute();
+            });
+            futures[1]=CompletableFuture.runAsync(()->{
+                okFutureKlineJob.execute();
+            });
+            futures[2]=CompletableFuture.runAsync(()->{
+                okFutureOrderJob.execute();
+            });
+            futures[3]=CompletableFuture.runAsync(()->{
+                okFuturePositionJob.execute();
+            });
+            futures[4]=CompletableFuture.runAsync(()->{
+                okFutureTickerJob.execute();
+            });
+            futures[5]=CompletableFuture.runAsync(()->{
+                okFutureUserInfoJob.execute();
+            });
+            CompletableFuture.allOf(futures).join();
+            System.out.println("done");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     @Test
     public void cancelOkOrder(){

@@ -72,7 +72,7 @@ public class HttpClientUtils {
         RequestConfig defaultRequestConfig = RequestConfig.custom()
                 .setSocketTimeout(1000)
                 .setConnectTimeout(1000)
-                .setConnectionRequestTimeout(3000)
+                .setConnectionRequestTimeout(1000)
                 .build();
         return defaultRequestConfig;
     }

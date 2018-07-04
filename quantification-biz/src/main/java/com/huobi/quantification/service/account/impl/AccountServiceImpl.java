@@ -62,14 +62,17 @@ public class AccountServiceImpl implements AccountService {
         logger.info("storeAllOkUserInfo更新用户资产信息开始");
         Stopwatch started = Stopwatch.createStarted();
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        CompletableFuture[] futures = new CompletableFuture[accounts.size()];
+        for (Long id : accounts) {
+            updateOkUserInfo(id);
+        }
+        /*CompletableFuture[] futures = new CompletableFuture[accounts.size()];
         for (int i = 0; i < accounts.size(); i++) {
             final int idx = i;
             futures[i] = AsyncUtils.runAsyncNoException(() -> {
                 updateOkUserInfo(accounts.get(idx));
             });
         }
-        CompletableFuture.allOf(futures).join();
+        CompletableFuture.allOf(futures).join();*/
         logger.info("storeAllOkUserInfo更新用户资产信息完成，耗时：" + started);
     }
 
@@ -126,14 +129,17 @@ public class AccountServiceImpl implements AccountService {
         logger.info("storeAllOkPosition更新用户持仓任务开始");
         Stopwatch started = Stopwatch.createStarted();
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        CompletableFuture[] futures = new CompletableFuture[accounts.size()];
+        for (Long id : accounts) {
+            updateSingleOkPosition(id);
+        }
+        /*CompletableFuture[] futures = new CompletableFuture[accounts.size()];
         for (int i = 0; i < accounts.size(); i++) {
             final int idx = i;
             futures[i] = AsyncUtils.runAsyncNoException(() -> {
                 updateSingleOkPosition(accounts.get(idx));
             });
         }
-        CompletableFuture.allOf(futures).join();
+        CompletableFuture.allOf(futures).join();*/
         logger.info("storeAllOkPosition更新用户持仓任务完成，耗时：" + started);
     }
 

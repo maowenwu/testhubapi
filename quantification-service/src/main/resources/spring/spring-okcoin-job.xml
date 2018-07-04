@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <!--account 任务-->
+    <!--用户资产job-->
+    <bean id="userInfoJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="okFutureUserInfoJob"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="userInfoTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="userInfoJob"/>
+        <property name="cronExpression" value="0/1 * * * * ?"/>
+    </bean>
+    <!--用户持仓job-->
+    <bean id="positionJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="okFuturePositionJob"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="positionTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="positionJob"/>
+        <property name="cronExpression" value="0/1 * * * * ?"/>
+    </bean>
+
+
+    <!--order 任务-->
+    <bean id="okOrderJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="okFutureOrderJob"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="okOrderTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="okOrderJob"/>
+        <property name="cronExpression" value="0/1 * * * * ?"/>
+    </bean>
+
+
+    <!--market 任务-->
+    <!--Kline任务-->
+    <bean id="okKlineJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="okFutureKlineJob"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="okKlineTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="okKlineJob"/>
+        <property name="cronExpression" value="0/1 * * * * ?"/>
+    </bean>
+    <!--Ticker任务-->
+    <bean id="okTickerJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="okFutureTickerJob"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="okTickerTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="okTickerJob"/>
+        <property name="cronExpression" value="0/1 * * * * ?"/>
+    </bean>
+    <!--Depth任务-->
+    <bean id="okDepthJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject" ref="okFutureDepthJob"/>
+        <property name="targetMethod" value="execute"/>
+        <property name="concurrent" value="false"/>
+    </bean>
+    <bean id="okDepthTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="okDepthJob"/>
+        <property name="cronExpression" value="0/1 * * * * ?"/>
+    </bean>
+
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="userInfoTrigger"/>
+                <ref bean="positionTrigger"/>
+                <ref bean="okOrderTrigger"/>
+                <ref bean="okKlineTrigger"/>
+                <ref bean="okTickerTrigger"/>
+                <ref bean="okDepthTrigger"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>

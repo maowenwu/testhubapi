@@ -63,14 +63,17 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         logger.info("storeOkFutureOrder更新订单信息开始");
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<Long> accountIds = accountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        CompletableFuture[] futures = new CompletableFuture[accountIds.size()];
+        for(Long id:accountIds){
+            updateSingleOkFutureOrder(id);
+        }
+        /*CompletableFuture[] futures = new CompletableFuture[accountIds.size()];
         for (int i = 0; i < accountIds.size(); i++) {
             final int idx = i;
             futures[i] = AsyncUtils.runAsyncNoException(() -> {
                 updateSingleOkFutureOrder(accountIds.get(idx));
             });
         }
-        CompletableFuture.allOf(futures).join();
+        CompletableFuture.allOf(futures).join();*/
         logger.info("storeOkFutureOrder更新订单信息完成，耗时：" + stopwatch);
     }
 
