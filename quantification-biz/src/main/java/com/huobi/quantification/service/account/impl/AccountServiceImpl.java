@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
@@ -15,24 +14,25 @@ import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkContractType;
-import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author zhangl
  * @since 2018/6/26
  */
+@DependsOn("httpServiceImpl")
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
@@ -51,42 +51,25 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private QuanAccountFuturePositionMapper quanAccountFuturePositionMapper;
 
-    @Autowired
+    @Resource
     private QuanAccountFutureMapper quanAccountFutureMapper;
 
-    @Autowired
+    @Resource
     private QuanAccountFutureSecretMapper quanAccountFutureSecretMapper;
 
-    @Override
-    public void storeAllOkUserInfo() {
-        logger.info("storeAllOkUserInfo更新用户资产信息开始");
-        Stopwatch started = Stopwatch.createStarted();
-        List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        for (Long id : accounts) {
-            updateOkUserInfo(id);
-        }
-        /*CompletableFuture[] futures = new CompletableFuture[accounts.size()];
-        for (int i = 0; i < accounts.size(); i++) {
-            final int idx = i;
-            futures[i] = AsyncUtils.runAsyncNoException(() -> {
-                updateOkUserInfo(accounts.get(idx));
-            });
-        }
-        CompletableFuture.allOf(futures).join();*/
-        logger.info("storeAllOkUserInfo更新用户资产信息完成，耗时：" + started);
-    }
 
-    private void updateOkUserInfo(Long accountId) {
-        long queryId = System.currentTimeMillis();
+    public void updateOkUserInfo(Long accountId) {
         Stopwatch started = Stopwatch.createStarted();
+        logger.info("[OkUserInfo][accountId={}]任务开始", accountId);
+        long queryId = System.currentTimeMillis();
         List<QuanAccountFutureAsset> list = queryOkUserInfoByAPI(accountId);
-        logger.debug("查询单个用户资产耗时：" + started);
         for (QuanAccountFutureAsset asset : list) {
             asset.setQueryId(queryId);
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }
         redisService.saveOkUserInfo(accountId, list);
+        logger.info("[OkUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
     }
 
     private List<QuanAccountFutureAsset> queryOkUserInfoByAPI(Long accountId) {
@@ -124,97 +107,25 @@ public class AccountServiceImpl implements AccountService {
         return asset;
     }
 
-    @Override
-    public void storeAllOkPosition() {
-        logger.info("storeAllOkPosition更新用户持仓任务开始");
+
+    public void updateOkPosition(Long accountId, String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
-        List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        for (Long id : accounts) {
-            updateSingleOkPosition(id);
-        }
-        /*CompletableFuture[] futures = new CompletableFuture[accounts.size()];
-        for (int i = 0; i < accounts.size(); i++) {
-            final int idx = i;
-            futures[i] = AsyncUtils.runAsyncNoException(() -> {
-                updateSingleOkPosition(accounts.get(idx));
-            });
-        }
-        CompletableFuture.allOf(futures).join();*/
-        logger.info("storeAllOkPosition更新用户持仓任务完成，耗时：" + started);
-    }
-
-    private void updateSingleOkPosition(Long accountId) {
-        CompletableFuture[] futures = new CompletableFuture[1];
-        /*BTC_USD*/
-        futures[0] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-       /* futures[1] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[2] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*LTC_USD*/
-       /* futures[3] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[4] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[5] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*ETH_USD*/
-        /*futures[6] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[7] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[8] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*ETC_USD*/
-        /*futures[9] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[10] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[11] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*BCH_USD*/
-       /* futures[12] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[13] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[14] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        CompletableFuture.allOf(futures).join();
-    }
-
-    private void updateOkPosition(Long accountId, String symbol, OkContractType contractType) {
+        logger.info("[OkPosition][symbol={},contractType={}]任务开始", symbol, contractType);
         long queryId = System.currentTimeMillis();
-        Stopwatch started = Stopwatch.createStarted();
         List<QuanAccountFuturePosition> list = queryOkPositionByAPI(accountId, symbol, contractType);
         for (QuanAccountFuturePosition position : list) {
             position.setQueryId(queryId);
             position.setAccountSourceId(accountId);
             quanAccountFuturePositionMapper.insert(position);
         }
-        redisService.saveOkPosition(accountId, symbol, contractType.getType(), list);
-        logger.debug("查询单个用户持仓耗时：" + started + ",symbol=" + symbol + ",contractType=" + contractType.getType());
+        redisService.saveOkPosition(accountId, symbol, contractType, list);
+        logger.info("[OkPosition][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
-    public List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {
+    public List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
-        params.put("contract_type", contractType.getType());
+        params.put("contract_type", contractType);
         String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_POSITION, params);
         return parseAndSavePosition(body);
     }

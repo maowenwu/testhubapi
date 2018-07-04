@@ -17,21 +17,9 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 public class AccountServiceImplTest {
 
-    @Autowired
-    private AccountService accountService;
 
     @Autowired
     private HttpService httpService;
-    @Test
-    public void getOkUserInfo() {
-        accountService.storeAllOkUserInfo();
-    }
-
-
-    @Test
-    public void getOkPosition() {
-        accountService.storeAllOkPosition();
-    }
 
 
     @Test

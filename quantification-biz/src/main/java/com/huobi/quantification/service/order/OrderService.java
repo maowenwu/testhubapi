@@ -6,11 +6,9 @@ package com.huobi.quantification.service.order;
  */
 public interface OrderService {
 
-    /**
-     * 定时拉去ok所有订单信息，包括已完成、未完成订单
-     */
-    void storeOkFutureOrder();
 
+
+    void updateOkOrderInfo(Long accountId, String symbol, String contractType);
     /**
      * 查询成交（时间顺序）
      *

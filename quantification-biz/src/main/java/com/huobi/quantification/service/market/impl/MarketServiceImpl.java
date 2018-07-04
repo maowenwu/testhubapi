@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -68,12 +67,13 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         return null;
     }
 
-    private void updateOkTicker(String symbol, String contractType) {
+    public void updateOkTicker(String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
+        logger.info("[Ticker][symbol={},contractType={}]任务开始", symbol, contractType);
         QuanTickerFuture ticker = queryOkTickerByAPI(symbol, contractType);
         quanTickerFutureMapper.insert(ticker);
         redisService.saveOkTicker(symbol, contractType, ticker);
-        logger.debug("更新单个Ticker耗时：" + started);
+        logger.info("[Ticker][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
     private QuanTickerFuture queryOkTickerByAPI(String symbol, String contractType) {
@@ -102,64 +102,6 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         return quanTickerFuture;
     }
 
-    @Override
-    public void storeOkTicker() {
-        logger.info("storeOkTicker更新Ticker信息开始");
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        CompletableFuture[] futures = new CompletableFuture[1];
-        /*BTC_USD*/
-        futures[0] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-       /* futures[1] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[2] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*LTC_USD*/
-       /* futures[3] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[4] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[5] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*ETH_USD*/
-      /*  futures[6] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[7] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[8] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*ETC_USD*/
-       /* futures[9] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[10] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[11] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*BCH_USD*/
-       /* futures[12] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[13] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[14] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkTicker(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        CompletableFuture.allOf(futures).join();
-        logger.info("storeOkTicker更新Ticker信息完成，耗时：" + stopwatch);
-    }
 
     @Override
     public ServiceResult getOkDepth(String symbol, String contractType) {
@@ -167,7 +109,10 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         return null;
     }
 
-    private void updateOkDepth(String symbol, String contractType) {
+
+    public void updateOkDepth(String symbol, String contractType) {
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("[深度][symbol={},contractType={}]任务开始", symbol, contractType);
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
@@ -175,6 +120,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         params.put("merge", "0");
         String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
         parseAndSaveQuanDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
+        logger.info("[深度][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
     private void parseAndSaveQuanDepth(String body, OkSymbolEnum symbolEnum, String contractType) {
@@ -218,64 +164,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         redisService.saveOkDepth(symbolEnum.getSymbol(), contractType, list);
     }
 
-    @Override
-    public void storeOkDepth() {
-        logger.info("storeOkDepth更新深度信息开始");
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        CompletableFuture[] futures = new CompletableFuture[1];
-        /*BTC_USD*/
-        futures[0] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-      /*  futures[1] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[2] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*LTC_USD*/
-        /*futures[3] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[4] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[5] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*ETH_USD*/
-       /* futures[6] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[7] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[8] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*ETC_USD*/
-        /*futures[9] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[10] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[11] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        /*BCH_USD*/
-       /* futures[12] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK.getType());
-        });
-        futures[13] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK.getType());
-        });
-        futures[14] = AsyncUtils.runAsyncNoException(() -> {
-            updateOkDepth(OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER.getType());
-        });*/
-        CompletableFuture.allOf(futures).join();
-        logger.info("storeOkDepth更新深度信息完成，耗时：" + stopwatch);
-    }
+
 
     @Override
     public ServiceResult getOkKline(String symbol, String type, String contractType, int size, long since) {
@@ -327,67 +216,9 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         return klineFuture;
     }
 
-    @Override
-    public void storeOkFutureKline() {
-        logger.info("storeOkFutureKline更新Kline信息开始");
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        CompletableFuture[] futures = new CompletableFuture[1];
-        /*BTC_USD*/
-        futures[0] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.BTC_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
-        });
-     /*   futures[1] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.BTC_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
-        });
-        futures[2] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.BTC_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
-        });*/
-        /*LTC_USD*/
-      /*  futures[3] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.LTC_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
-        });
-        futures[4] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.LTC_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
-        });
-        futures[5] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.LTC_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
-        });*/
-        /*ETH_USD*/
-       /* futures[6] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.ETH_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
-        });
-        futures[7] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.ETH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
-        });
-        futures[8] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.ETH_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
-        });*/
-        /*ETC_USD*/
-      /*  futures[9] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.ETC_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
-        });
-        futures[10] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.ETC_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
-        });
-        futures[11] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.ETC_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
-        });*/
-        /*BCH_USD*/
-      /*  futures[12] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.THIS_WEEK.getType());
-        });
-        futures[13] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
-        });
-        futures[14] = AsyncUtils.runAsyncNoException(() -> {
-            getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.QUARTER.getType());
-        });*/
-        CompletableFuture.allOf(futures).join();
-        logger.info("storeOkFutureKline更新Kline信息完成，耗时：" + stopwatch);
-    }
-
-    public void getLatestOkFutureKline(String symbol, String type, String contractType) {
+    public void updateOkFutureKline(String symbol, String type, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
+        logger.info("[Kline][symbol={},contractType={}]任务开始", symbol, contractType);
         QuanKlineFuture klineFuture = selectLatestKlineFuture(ExchangeEnum.OKEX.getExId(), symbol, type, contractType);
         List<QuanKlineFuture> list = null;
         Date sinceDate = null;
@@ -414,7 +245,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
             }
         }
         redisService.saveOkKline(symbol, type, contractType, redisKline);
-        logger.debug("更新单个Kline(symbo={},contractType={})耗时：" + started, symbol, contractType);
+        logger.info("[Kline][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
     private QuanKlineFuture selectLatestKlineFuture(int exchangeId, String symbol, String type, String contractType) {

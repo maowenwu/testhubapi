@@ -58,89 +58,17 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         return null;
     }
 
-    @Override
-    public void storeOkFutureOrder() {
-        logger.info("storeOkFutureOrder更新订单信息开始");
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        List<Long> accountIds = accountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        for(Long id:accountIds){
-            updateSingleOkFutureOrder(id);
-        }
-        /*CompletableFuture[] futures = new CompletableFuture[accountIds.size()];
-        for (int i = 0; i < accountIds.size(); i++) {
-            final int idx = i;
-            futures[i] = AsyncUtils.runAsyncNoException(() -> {
-                updateSingleOkFutureOrder(accountIds.get(idx));
-            });
-        }
-        CompletableFuture.allOf(futures).join();*/
-        logger.info("storeOkFutureOrder更新订单信息完成，耗时：" + stopwatch);
-    }
-
-    private void updateSingleOkFutureOrder(Long accountId) {
-        CompletableFuture[] futures = new CompletableFuture[1];
-        /*BTC_USD*/
-        futures[0] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-       /* futures[1] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[2] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*LTC_USD*/
-        /*futures[3] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[4] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[5] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*ETH_USD*/
-        /*futures[6] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[7] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[8] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*ETC_USD*/
-       /* futures[9] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[10] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[11] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        /*BCH_USD*/
-        /*futures[12] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
-        });
-        futures[13] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-        });
-        futures[14] = AsyncUtils.runAsyncNoException(() -> {
-            updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
-        });*/
-        CompletableFuture.allOf(futures).join();
-    }
-
-    private void updateAllOkOrderInfo(Long accountId, String symbol, OkContractType contractType) {
+    public void updateOkOrderInfo(Long accountId, String symbol, String contractType) {
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
         List<QuanOrderFuture> orderFutures = queryAllOkOrderInfo(accountId, symbol, contractType);
         for (QuanOrderFuture orderFuture : orderFutures) {
             quanOrderFutureMapper.insertOrUpdate(orderFuture);
         }
-
+        logger.info("[OkOrder][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
-    private List<QuanOrderFuture> queryAllOkOrderInfo(Long accountId, String symbol, OkContractType contractType) {
+    private List<QuanOrderFuture> queryAllOkOrderInfo(Long accountId, String symbol, String contractType) {
         List<QuanOrderFuture> list = new ArrayList<>();
         Stopwatch started = Stopwatch.createStarted();
         List<QuanOrderFuture> finishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.FINISH);
@@ -160,7 +88,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
      * @param status
      * @return
      */
-    private List<QuanOrderFuture> queryAllOkOrderInfoByStatus(Long accountId, String symbol, OkContractType contractType, OrderStatus status) {
+    private List<QuanOrderFuture> queryAllOkOrderInfoByStatus(Long accountId, String symbol, String contractType, OrderStatus status) {
         int pageLength = 50;
         List<QuanOrderFuture> list = new ArrayList<>();
         int i = 1;
@@ -176,10 +104,10 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
     }
 
 
-    private List<QuanOrderFuture> queryOkOrderInfoByAPI(Long accountId, String symbol, OkContractType contractType, OrderStatus status, String orderId, int currentPage, int pageLength) {
+    private List<QuanOrderFuture> queryOkOrderInfoByAPI(Long accountId, String symbol, String contractType, OrderStatus status, String orderId, int currentPage, int pageLength) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
-        params.put("contract_type", contractType.getType());
+        params.put("contract_type", contractType);
         params.put("status", status.getIntStatus() + "");
         params.put("order_id", orderId);
         params.put("current_page", currentPage + "");

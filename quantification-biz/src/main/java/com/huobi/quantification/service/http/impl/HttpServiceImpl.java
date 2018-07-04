@@ -25,9 +25,6 @@ import java.util.stream.Stream;
 @Service
 public class HttpServiceImpl implements HttpService {
 
-    @Autowired
-    private AccountService accountService;
-
     private HttpClientUtils[] clients = new HttpClientUtils[1];
 
     private AtomicInteger nextId = new AtomicInteger();

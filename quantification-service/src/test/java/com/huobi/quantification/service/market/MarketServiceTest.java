@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
 public class MarketServiceTest {
@@ -22,7 +20,7 @@ public class MarketServiceTest {
 
     @Test
     public void getLatestOkFutureKline() {
-        marketService.getLatestOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        marketService.updateOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
         System.out.println();
     }
 

@@ -5,7 +5,12 @@ import com.huobi.quantification.entity.QuanAccountFutureSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.service.account.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -42,4 +47,5 @@ public class OkSecretHolder {
         OkSignature okSignature = new OkSignature(secret.getAccessKey(), secret.getSecretKey());
         return okSignature;
     }
+
 }
