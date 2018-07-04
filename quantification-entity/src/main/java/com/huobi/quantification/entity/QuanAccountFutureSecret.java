@@ -2,22 +2,22 @@ package com.huobi.quantification.entity;
 
 public class QuanAccountFutureSecret {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-03 10:29:58
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-03 10:29:58
      */
-    private Long accountFutureId;
+    private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-03 10:29:58
      */
     private String accessKey;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-03 10:29:58
      */
     private String secretKey;
 
@@ -29,12 +29,12 @@ public class QuanAccountFutureSecret {
         this.id = id;
     }
 
-    public Long getAccountFutureId() {
-        return accountFutureId;
+    public Long getAccountSourceId() {
+        return accountSourceId;
     }
 
-    public void setAccountFutureId(Long accountFutureId) {
-        this.accountFutureId = accountFutureId;
+    public void setAccountSourceId(Long accountSourceId) {
+        this.accountSourceId = accountSourceId;
     }
 
     public String getAccessKey() {

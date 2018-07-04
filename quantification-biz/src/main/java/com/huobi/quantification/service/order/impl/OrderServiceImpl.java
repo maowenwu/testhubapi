@@ -3,9 +3,11 @@ package com.huobi.quantification.service.order.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.constant.OkRestErrorCode;
+import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
@@ -15,11 +17,14 @@ import com.huobi.quantification.facade.OkOrderServiceFacade;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author zhangl
@@ -28,6 +33,8 @@ import java.util.*;
 @Service
 @Transactional
 public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private HttpService httpService;
@@ -46,36 +53,79 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("order_id", "-1");
         params.put("current_page", "1");
         params.put("page_length", "50");
-        String body = httpService.okSignedPost(HttpConstant.OK_ORDER_INFO, params);
+        //String body = httpService.doOkSignedPost(HttpConstant.OK_ORDER_INFO, params);
         //parseAndSaveOrderInfo(body);
         return null;
     }
 
     @Override
     public void storeOkFutureOrder() {
-        List<Long> accountList = accountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        for (Long account : accountList) {
-            updateAllOkOrderInfo(account, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-            /*updateAllOkOrderInfo(account, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
-
-
-            updateAllOkOrderInfo(account, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateAllOkOrderInfo(account, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateAllOkOrderInfo(account, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateAllOkOrderInfo(account, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateAllOkOrderInfo(account, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);*/
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        List<Long> accountIds = accountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
+        CompletableFuture[] futures = new CompletableFuture[accountIds.size()];
+        for (int i = 0; i < accountIds.size(); i++) {
+            final int idx = i;
+            futures[i] = AsyncUtils.runAsyncNoException(() -> {
+                updateSingleOkFutureOrder(accountIds.get(idx));
+            });
         }
+        CompletableFuture.allOf(futures).join();
+        logger.info("storeOkFutureOrder更新订单信息完成，耗时：" + stopwatch);
+    }
+
+    private void updateSingleOkFutureOrder(Long accountId) {
+        CompletableFuture[] futures = new CompletableFuture[15];
+        /*BTC_USD*/
+        futures[0] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[1] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[2] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*LTC_USD*/
+        futures[3] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[4] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[5] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*ETH_USD*/
+        futures[6] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[7] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[8] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*ETC_USD*/
+        futures[9] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[10] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[11] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*BCH_USD*/
+        futures[12] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[13] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[14] = AsyncUtils.runAsyncNoException(() -> {
+            updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        CompletableFuture.allOf(futures).join();
     }
 
     private void updateAllOkOrderInfo(Long accountId, String symbol, OkContractType contractType) {
@@ -88,8 +138,10 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
 
     private List<QuanOrderFuture> queryAllOkOrderInfo(Long accountId, String symbol, OkContractType contractType) {
         List<QuanOrderFuture> list = new ArrayList<>();
+        Stopwatch started = Stopwatch.createStarted();
         List<QuanOrderFuture> finishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.FINISH);
         List<QuanOrderFuture> unfinishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.UNFINISH);
+        logger.debug("单个订单查询耗时：" + started);
         list.addAll(finishOrder);
         list.addAll(unfinishOrder);
         return list;
@@ -128,7 +180,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("order_id", orderId);
         params.put("current_page", currentPage + "");
         params.put("page_length", pageLength + "");
-        String body = httpService.okSignedPost(HttpConstant.OK_ORDER_INFO, params);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_ORDER_INFO, params);
         return parseAndSaveOrderInfo(accountId, body);
     }
 
@@ -174,7 +226,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", "btc_usd");
         params.put("contract_type", "this_week");
         params.put("order_id", "1015885804614656");
-        String body = httpService.okSignedPost(HttpConstant.OK_ORDERS_INFO, params);
+        // String body = httpService.doOkSignedPost(HttpConstant.OK_ORDERS_INFO, params);
         //parseAndSaveOrderInfo(body);
         return null;
     }
@@ -185,7 +237,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", "btc_usd");
         params.put("date", "2018-06-29");
         params.put("since", "1015885804614656");
-        String result = httpService.okSignedPost(HttpConstant.OK_TRADES_HISTORY, params);
+        //String result = httpService.doOkSignedPost(HttpConstant.OK_TRADES_HISTORY, params);
         return null;
     }
 
@@ -201,7 +253,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         if (order.getLeverRate() != null) {
             params.put("lever_rate", String.valueOf(order.getLeverRate()));
         }
-        String body = httpService.okSignedPost(HttpConstant.OK_TRADE, params);
+        String body = httpService.doOkSignedPost(order.getAccountId(), HttpConstant.OK_TRADE, params);
         JSONObject jsonObject = JSON.parseObject(body);
         ServiceResult<Long> result = new ServiceResult<>();
         if (jsonObject.getBoolean("result")) {
@@ -218,7 +270,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
             result.setCode(ServiceResultEnum.SUCCESS.getCode());
             result.setMessage(ServiceResultEnum.SUCCESS.getMessage());
             result.setData(orderId);
-        }else {
+        } else {
             Integer errorCode = jsonObject.getInteger("error_code");
             result.setCode(errorCode);
             result.setMessage(OkRestErrorCode.findErrorMessageByCode(errorCode));
@@ -233,7 +285,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("contract_type", "this_week");
         params.put("orders_data", "[{price:6050,amount:0.0001,type:1,match_price:0}]");
         params.put("lever_rate", "10");
-        String result = httpService.okSignedPost(HttpConstant.OK_BATCH_TRADE, params);
+        //String result = httpService.doOkSignedPost(HttpConstant.OK_BATCH_TRADE, params);
         return null;
     }
 
@@ -243,7 +295,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", cancelOrderDto.getSymbol());
         params.put("contract_type", cancelOrderDto.getContractType());
         params.put("order_id", cancelOrderDto.getOrderId());
-        String body = httpService.okSignedPost(HttpConstant.OK_CANCEL, params);
+        String body = httpService.doOkSignedPost(cancelOrderDto.getAccountId(), HttpConstant.OK_CANCEL, params);
         JSONObject jsonObject = JSON.parseObject(body);
         ServiceResult<String> result = new ServiceResult<>();
         if (jsonObject.getBoolean("result")) {
@@ -265,7 +317,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         params.put("symbol", "");
         params.put("contract_type", "");
         params.put("order_id", "");
-        String result = httpService.okSignedPost(HttpConstant.OK_CANCEL, params);
+        //String result = httpService.doOkSignedPost(HttpConstant.OK_CANCEL, params);
         return null;
     }
 }

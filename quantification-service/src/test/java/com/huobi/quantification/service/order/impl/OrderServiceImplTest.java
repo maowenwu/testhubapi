@@ -27,9 +27,10 @@ public class OrderServiceImplTest {
     @Test
     public void cancelOkOrder(){
         OkCancelOrderDto okCancelOrderDto = new OkCancelOrderDto();
+        okCancelOrderDto.setAccountId(1L);
         okCancelOrderDto.setSymbol("btc_usd");
         okCancelOrderDto.setContractType("this_week");
-        okCancelOrderDto.setOrderId("223323323");
+        okCancelOrderDto.setOrderId("1038730059004928");
         ServiceResult serviceResult =
                 okOrderServiceFacade.cancelOkOrder(okCancelOrderDto);
         System.out.println(serviceResult);
@@ -42,7 +43,7 @@ public class OrderServiceImplTest {
         orderDto.setAccountId(1L);
         orderDto.setSymbol("btc_usd");
         orderDto.setContractType("this_week");
-        orderDto.setPrice("6100");
+        orderDto.setPrice("6500");
         orderDto.setAmount("1");
         orderDto.setType(1);
         orderDto.setMatchPrice(0);

@@ -78,7 +78,7 @@
     <logger name="org.mybatis.spring" level="warn" />
     <logger name="org.springframework.jdbc.datasource" level="warn" />
     <!-- 配置好前面对应的appender -->
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="INFO-OUT" />
         <appender-ref ref="DEBUG-OUT" />

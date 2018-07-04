@@ -16,5 +16,5 @@ public interface HttpService {
 
     String doPost(String url, Map<String, String> params) throws HttpRequestException;
 
-    String okSignedPost(String url, Map<String, String> params) throws HttpRequestException;
+    String doOkSignedPost(Long accountId, String url, Map<String, String> params) throws HttpRequestException;
 }

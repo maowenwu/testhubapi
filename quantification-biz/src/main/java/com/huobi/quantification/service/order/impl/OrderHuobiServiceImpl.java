@@ -28,7 +28,7 @@ public class OrderHuobiServiceImpl implements OrderHuobiService {
      */
     public Object getHuobiOrderInfo() {
     	 Map<String, String> params = new HashMap<>();
-         String body = httpService.okSignedPost(HttpConstant.HUOBI_ORDERDETAIL, params);
+         String body = httpService.doPost(HttpConstant.HUOBI_ORDERDETAIL, params);
          parseAndSaveOrderInfo(body);
          return null;
     }

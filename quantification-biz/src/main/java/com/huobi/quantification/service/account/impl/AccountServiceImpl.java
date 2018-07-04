@@ -3,10 +3,13 @@ package com.huobi.quantification.service.account.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
+import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
@@ -16,12 +19,15 @@ import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author zhangl
@@ -30,6 +36,8 @@ import java.util.*;
 @Service
 @Transactional
 public class AccountServiceImpl implements AccountService {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private HttpService httpService;
@@ -46,28 +54,40 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private QuanAccountFutureMapper quanAccountFutureMapper;
 
+    @Autowired
+    private QuanAccountFutureSecretMapper quanAccountFutureSecretMapper;
+
     @Override
     public void storeAllOkUserInfo() {
+        Stopwatch started = Stopwatch.createStarted();
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        for (Long accountId : accounts) {
-            updateOkUserInfo(accountId);
+        CompletableFuture[] futures = new CompletableFuture[accounts.size()];
+        for (int i = 0; i < accounts.size(); i++) {
+            final int idx = i;
+            futures[i] = AsyncUtils.runAsyncNoException(() -> {
+                updateOkUserInfo(accounts.get(idx));
+            });
         }
+        CompletableFuture.allOf(futures).join();
+        logger.info("storeAllOkUserInfo更新用户资产信息完成，耗时：" + started);
     }
 
     private void updateOkUserInfo(Long accountId) {
         long queryId = System.currentTimeMillis();
+        Stopwatch started = Stopwatch.createStarted();
         List<QuanAccountFutureAsset> list = queryOkUserInfoByAPI(accountId);
+        logger.debug("查询单个用户资产耗时：" + started);
         for (QuanAccountFutureAsset asset : list) {
             asset.setQueryId(queryId);
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }
-        redisService.saveOkUserInfo(accountId,list);
+        redisService.saveOkUserInfo(accountId, list);
     }
 
     private List<QuanAccountFutureAsset> queryOkUserInfoByAPI(Long accountId) {
         Map<String, String> params = new HashMap<>();
-        String body = httpService.okSignedPost(HttpConstant.OK_USER_INFO, params);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_USER_INFO, params);
         return parseAndSaveUserInfo(body);
     }
 
@@ -102,46 +122,92 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void storeAllOkPosition() {
+        Stopwatch started = Stopwatch.createStarted();
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
-        for (Long accountId : accounts) {
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
-
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
-            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
+        CompletableFuture[] futures = new CompletableFuture[accounts.size()];
+        for (int i = 0; i < accounts.size(); i++) {
+            final int idx = i;
+            futures[i] = AsyncUtils.runAsyncNoException(() -> {
+                updateSingleOkPosition(accounts.get(idx));
+            });
         }
+        CompletableFuture.allOf(futures).join();
+        logger.info("storeAllOkPosition更新用户持仓任务完成，耗时：" + started);
+    }
+
+    private void updateSingleOkPosition(Long accountId) {
+        CompletableFuture[] futures = new CompletableFuture[15];
+        /*BTC_USD*/
+        futures[0] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[1] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[2] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*LTC_USD*/
+        futures[3] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[4] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[5] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*ETH_USD*/
+        futures[6] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[7] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[8] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*ETC_USD*/
+        futures[9] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[10] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[11] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        /*BCH_USD*/
+        futures[12] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
+        });
+        futures[13] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.NEXT_WEEK);
+        });
+        futures[14] = AsyncUtils.runAsyncNoException(() -> {
+            updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
+        });
+        CompletableFuture.allOf(futures).join();
     }
 
     private void updateOkPosition(Long accountId, String symbol, OkContractType contractType) {
         long queryId = System.currentTimeMillis();
+        Stopwatch started = Stopwatch.createStarted();
         List<QuanAccountFuturePosition> list = queryOkPositionByAPI(accountId, symbol, contractType);
         for (QuanAccountFuturePosition position : list) {
             position.setQueryId(queryId);
             position.setAccountSourceId(accountId);
             quanAccountFuturePositionMapper.insert(position);
         }
-        redisService.saveOkPosition(accountId,symbol,contractType.getType(),list);
+        redisService.saveOkPosition(accountId, symbol, contractType.getType(), list);
+        logger.debug("查询单个用户持仓耗时：" + started);
     }
 
     private List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType.getType());
-        String body = httpService.okSignedPost(HttpConstant.OK_POSITION, params);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_POSITION, params);
         return parseAndSavePosition(body);
     }
 
@@ -184,18 +250,13 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<Long> findAccountFutureByExchangeId(int exchangeId) {
-        List<Long> list = new ArrayList<>();
-        list.add(1L);
+        List<Long> list = quanAccountFutureMapper.selectByExchangeId(exchangeId);
         return list;
     }
 
     @Override
     public List<QuanAccountFutureSecret> findAccountFutureSecretById(Long id) {
-        List<QuanAccountFutureSecret> list = new ArrayList<>();
-        QuanAccountFutureSecret secret = new QuanAccountFutureSecret();
-        secret.setAccessKey("");
-        secret.setSecretKey("");
-        list.add(secret);
+        List<QuanAccountFutureSecret> list = quanAccountFutureSecretMapper.selectBySourceId(id);
         return list;
     }
 }

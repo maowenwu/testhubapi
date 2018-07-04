@@ -39,4 +39,7 @@
     select id, exchange_id, account_source_id, accounts_type, accounts_name, state
     from quan_account_future
   </select>
+    <select id="selectByExchangeId" resultType="java.lang.Long">
+      SELECT account_source_id FROM quan_account_future where exchange_id=#{exchangeId}
+    </select>
 </mapper>
