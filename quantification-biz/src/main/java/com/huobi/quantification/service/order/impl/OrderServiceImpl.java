@@ -60,6 +60,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
 
     @Override
     public void storeOkFutureOrder() {
+        logger.info("storeOkFutureOrder更新订单信息开始");
         Stopwatch stopwatch = Stopwatch.createStarted();
         List<Long> accountIds = accountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
         CompletableFuture[] futures = new CompletableFuture[accountIds.size()];
@@ -74,19 +75,19 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
     }
 
     private void updateSingleOkFutureOrder(Long accountId) {
-        CompletableFuture[] futures = new CompletableFuture[15];
+        CompletableFuture[] futures = new CompletableFuture[1];
         /*BTC_USD*/
         futures[0] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
-        futures[1] = AsyncUtils.runAsyncNoException(() -> {
+       /* futures[1] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
         });
         futures[2] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*LTC_USD*/
-        futures[3] = AsyncUtils.runAsyncNoException(() -> {
+        /*futures[3] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[4] = AsyncUtils.runAsyncNoException(() -> {
@@ -94,9 +95,9 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         });
         futures[5] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*ETH_USD*/
-        futures[6] = AsyncUtils.runAsyncNoException(() -> {
+        /*futures[6] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[7] = AsyncUtils.runAsyncNoException(() -> {
@@ -104,9 +105,9 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         });
         futures[8] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*ETC_USD*/
-        futures[9] = AsyncUtils.runAsyncNoException(() -> {
+       /* futures[9] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[10] = AsyncUtils.runAsyncNoException(() -> {
@@ -114,9 +115,9 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         });
         futures[11] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*BCH_USD*/
-        futures[12] = AsyncUtils.runAsyncNoException(() -> {
+        /*futures[12] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[13] = AsyncUtils.runAsyncNoException(() -> {
@@ -124,7 +125,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         });
         futures[14] = AsyncUtils.runAsyncNoException(() -> {
             updateAllOkOrderInfo(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         CompletableFuture.allOf(futures).join();
     }
 

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,8 +28,9 @@ public class HttpServiceImpl implements HttpService {
     @Autowired
     private AccountService accountService;
 
-    private HttpClientUtils httpClientUtils = null;
+    private HttpClientUtils[] clients = new HttpClientUtils[1];
 
+    private AtomicInteger nextId = new AtomicInteger();
     @Autowired
     private OkSecretHolder okSecretHolder;
 
@@ -35,12 +38,27 @@ public class HttpServiceImpl implements HttpService {
         ProxyConfig config = new ProxyConfig();
         config.setHost("proxy.huobidev.com");
         config.setPort(3129);
-        httpClientUtils = HttpClientUtils.getInstance(config);
+        clients[0] = HttpClientUtils.getInstance(config);
 
+        /*config.setHost("172.31.6.86");
+        config.setPort(13128);
+        clients[0] = HttpClientUtils.getInstance(config);
+
+
+        config.setHost("54.248.65.254");
+        config.setPort(13129);
+        clients[1] = HttpClientUtils.getInstance(config);
+
+        config.setHost("13.230.239.28");
+        config.setPort(13129);
+        clients[2] = HttpClientUtils.getInstance(config);*/
     }
 
     public HttpClientUtils getHttpClientUtils() {
-        return httpClientUtils;
+        if (nextId.get() >= Integer.MAX_VALUE) {
+            nextId = new AtomicInteger(0);
+        }
+        return clients[nextId.getAndIncrement() % clients.length];
     }
 
     @Override

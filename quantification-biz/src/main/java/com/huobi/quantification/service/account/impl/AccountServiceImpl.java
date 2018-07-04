@@ -59,6 +59,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void storeAllOkUserInfo() {
+        logger.info("storeAllOkUserInfo更新用户资产信息开始");
         Stopwatch started = Stopwatch.createStarted();
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
         CompletableFuture[] futures = new CompletableFuture[accounts.size()];
@@ -122,6 +123,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void storeAllOkPosition() {
+        logger.info("storeAllOkPosition更新用户持仓任务开始");
         Stopwatch started = Stopwatch.createStarted();
         List<Long> accounts = findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
         CompletableFuture[] futures = new CompletableFuture[accounts.size()];
@@ -136,19 +138,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private void updateSingleOkPosition(Long accountId) {
-        CompletableFuture[] futures = new CompletableFuture[15];
+        CompletableFuture[] futures = new CompletableFuture[1];
         /*BTC_USD*/
         futures[0] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
-        futures[1] = AsyncUtils.runAsyncNoException(() -> {
+       /* futures[1] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.NEXT_WEEK);
         });
         futures[2] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.BTC_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*LTC_USD*/
-        futures[3] = AsyncUtils.runAsyncNoException(() -> {
+       /* futures[3] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[4] = AsyncUtils.runAsyncNoException(() -> {
@@ -156,9 +158,9 @@ public class AccountServiceImpl implements AccountService {
         });
         futures[5] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.LTC_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*ETH_USD*/
-        futures[6] = AsyncUtils.runAsyncNoException(() -> {
+        /*futures[6] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[7] = AsyncUtils.runAsyncNoException(() -> {
@@ -166,9 +168,9 @@ public class AccountServiceImpl implements AccountService {
         });
         futures[8] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.ETH_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*ETC_USD*/
-        futures[9] = AsyncUtils.runAsyncNoException(() -> {
+        /*futures[9] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[10] = AsyncUtils.runAsyncNoException(() -> {
@@ -176,9 +178,9 @@ public class AccountServiceImpl implements AccountService {
         });
         futures[11] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.ETC_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         /*BCH_USD*/
-        futures[12] = AsyncUtils.runAsyncNoException(() -> {
+       /* futures[12] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.THIS_WEEK);
         });
         futures[13] = AsyncUtils.runAsyncNoException(() -> {
@@ -186,7 +188,7 @@ public class AccountServiceImpl implements AccountService {
         });
         futures[14] = AsyncUtils.runAsyncNoException(() -> {
             updateOkPosition(accountId, OkSymbolEnum.BCH_USD.getSymbol(), OkContractType.QUARTER);
-        });
+        });*/
         CompletableFuture.allOf(futures).join();
     }
 
@@ -200,10 +202,10 @@ public class AccountServiceImpl implements AccountService {
             quanAccountFuturePositionMapper.insert(position);
         }
         redisService.saveOkPosition(accountId, symbol, contractType.getType(), list);
-        logger.debug("查询单个用户持仓耗时：" + started);
+        logger.debug("查询单个用户持仓耗时：" + started + ",symbol=" + symbol + ",contractType=" + contractType.getType());
     }
 
-    private List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {
+    public List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, OkContractType contractType) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType.getType());

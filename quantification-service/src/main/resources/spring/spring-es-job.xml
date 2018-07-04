@@ -7,31 +7,31 @@
     <reg:zookeeper id="regCenter" server-lists="127.0.0.1:2181" namespace="dd-job" base-sleep-time-milliseconds="1000"
                    max-sleep-time-milliseconds="3000" max-retries="3"/>
 
-
-    <!--account 任务-->
+   <!--account 任务-->
     <job:simple id="okFutureUserInfoJob" class="com.huobi.quantification.job.okcoin.OkFutureUserInfoJob"
-                registry-center-ref="regCenter" cron="0/1 * * * * ?"
-                sharding-total-count="1"/>
+                registry-center-ref="regCenter" cron="0/5 * * * * ?"
+                sharding-total-count="1" overwrite="true"/>
 
     <job:simple id="okFuturePositionJob" class="com.huobi.quantification.job.okcoin.OkFuturePositionJob"
-                registry-center-ref="regCenter" cron="0/1 * * * * ?"
-                sharding-total-count="1"/>
+                registry-center-ref="regCenter" cron="0/5 * * * * ?"
+                sharding-total-count="1" overwrite="true"/>
 
     <!--market 任务-->
     <job:simple id="okFutureKlineJob" class="com.huobi.quantification.job.okcoin.OkFutureKlineJob"
-                registry-center-ref="regCenter" cron="0/1 * * * * ?"
-                sharding-total-count="1"/>
+                registry-center-ref="regCenter" cron="0/5 * * * * ?"
+                sharding-total-count="1" overwrite="true"/>
 
     <job:simple id="okFutureTickerJob" class="com.huobi.quantification.job.okcoin.OkFutureTickerJob"
-                registry-center-ref="regCenter" cron="0/1 * * * * ?"
-                sharding-total-count="1"/>
+                registry-center-ref="regCenter" cron="0/5 * * * * ?"
+                sharding-total-count="1" overwrite="true"/>
 
     <job:simple id="okFutureDepthJob" class="com.huobi.quantification.job.okcoin.OkFutureDepthJob"
-                registry-center-ref="regCenter" cron="0/1 * * * * ?"
-                sharding-total-count="1"/>
+                registry-center-ref="regCenter" cron="0/5 * * * * ?"
+                sharding-total-count="1" overwrite="true"/>
 
     <!--order 任务-->
     <job:simple id="okFutureOrderJob" class="com.huobi.quantification.job.okcoin.OkFutureOrderJob"
-                registry-center-ref="regCenter" cron="0/1 * * * * ?"
-                sharding-total-count="1"/>
+                registry-center-ref="regCenter" cron="0/5 * * * * ?"
+                sharding-total-count="1" overwrite="true"/>
+
 </beans>

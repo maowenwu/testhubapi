@@ -13,7 +13,7 @@ public class AsyncUtils {
 
     private static Logger logger = LoggerFactory.getLogger(AsyncUtils.class);
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(45, new ThreadFactory() {
+    private static ExecutorService executor = Executors.newFixedThreadPool(200,new ThreadFactory() {
         private final AtomicInteger nextId = new AtomicInteger();
 
         @Override
@@ -32,7 +32,7 @@ public class AsyncUtils {
             } catch (Throwable e) {
                 logger.error("异步任务异常：", e);
             }
-        }, executor);
+        },executor);
         return future;
     }
 }

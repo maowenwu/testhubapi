@@ -50,8 +50,8 @@ public class HttpClientUtils {
         HttpClientBuilder builder = HttpClients.custom()
                 .setSSLSocketFactory(getSslFactory())
                 .setDefaultRequestConfig(defaultRequestConfig())
-                .setMaxConnTotal(500)
-                .setMaxConnPerRoute(45);
+                .setMaxConnTotal(200)
+                .setMaxConnPerRoute(100);
         if (proxyConfig == null) {
             httpClient = builder.build();
         } else {
@@ -70,9 +70,9 @@ public class HttpClientUtils {
 
     private static RequestConfig defaultRequestConfig() {
         RequestConfig defaultRequestConfig = RequestConfig.custom()
-                .setSocketTimeout(5000)
-                .setConnectTimeout(5000)
-                .setConnectionRequestTimeout(5000)
+                .setSocketTimeout(1000)
+                .setConnectTimeout(1000)
+                .setConnectionRequestTimeout(3000)
                 .build();
         return defaultRequestConfig;
     }
