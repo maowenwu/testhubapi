@@ -25,7 +25,7 @@ public class JobServiceImpl implements JobService {
         List<QuanJobFuture> jobFutures = quanJobFutureMapper.selectAll();
         for (QuanJobFuture jobFuture : jobFutures) {
             if (jobFuture.getState().equals(1)) {
-                Class jobClass = getJobClass(jobFuture.getExchangeId(), jobFuture.getJobType());
+                Class jobClass = getFutureJobClass(jobFuture.getExchangeId(), jobFuture.getJobType());
                 if (jobClass == null) {
                     continue;
                 }
@@ -36,7 +36,7 @@ public class JobServiceImpl implements JobService {
         }
     }
 
-    private Class getJobClass(int exchangeId, int jobType) {
+    private Class getFutureJobClass(int exchangeId, int jobType) {
         Class clazz = null;
         if (exchangeId == ExchangeEnum.OKEX.getExId()) {
             switch (jobType) {
