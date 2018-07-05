@@ -40,8 +40,6 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
     private HttpService httpService;
 
     @Autowired
-    private AccountService accountService;
-    @Autowired
     private QuanOrderFutureMapper quanOrderFutureMapper;
 
     @Override

@@ -44,21 +44,19 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void saveOkKline(String symbol, String type, String contractType, List<QuanKlineFuture> redisKline) {
-        RList<QuanKlineFuture> list = client.getList("quan.market.future.ok.kline." + symbol + "." + type + "." + contractType);
-        for (QuanKlineFuture kline : redisKline) {
-            list.add(kline);
-        }
+        RMap<Object, Object> map = client.getMap("quan.market.future.ok.kline." + symbol);
+        map.put("contractType", redisKline);
     }
 
-	@Override
-	public void saveHuobiTicker(String symbol, QuanTicker ticker) {
-		RMap<String, Object> map = client.getMap("quan.market.huobi.ticker."+symbol);
-		map.put(symbol, ticker);
-	}
+    @Override
+    public void saveHuobiTicker(String symbol, QuanTicker ticker) {
+        RMap<String, Object> map = client.getMap("quan.market.huobi.ticker." + symbol);
+        map.put(symbol, ticker);
+    }
 
-	@Override
-	public void saveHuobiDepth(String symbol, String type, QuanDepth depth) {
-		RMap<String, Object> map = client.getMap("quan.market.huobi.depth."+ symbol + "." + type);
-		map.put(symbol, depth);
-	}
+    @Override
+    public void saveHuobiDepth(String symbol, String type, QuanDepth depth) {
+        RMap<String, Object> map = client.getMap("quan.market.huobi.depth." + symbol + "." + type);
+        map.put(symbol, depth);
+    }
 }

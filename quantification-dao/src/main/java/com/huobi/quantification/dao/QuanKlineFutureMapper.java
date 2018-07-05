@@ -15,6 +15,4 @@ public interface QuanKlineFutureMapper {
     List<QuanKlineFuture> selectAll();
 
     int updateByPrimaryKey(QuanKlineFuture record);
-
-    QuanKlineFuture selectLatestKlineFuture(@Param("exchangeId") int exchangeId, @Param("symbol") String symbol, @Param("type") String type, @Param("contractType") String contractType);
 }

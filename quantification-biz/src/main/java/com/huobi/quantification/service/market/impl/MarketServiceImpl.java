@@ -6,7 +6,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.dao.QuanDepthFutureDetailMapper;
 import com.huobi.quantification.dao.QuanDepthFutureMapper;
@@ -18,7 +17,6 @@ import com.huobi.quantification.entity.QuanKlineFuture;
 import com.huobi.quantification.entity.QuanTickerFuture;
 import com.huobi.quantification.enums.DepthDirectionEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OkContractType;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.facade.OkMarketServiceFacade;
 import com.huobi.quantification.service.http.HttpService;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author zhangl
@@ -129,7 +126,6 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
         quanDepthFuture.setDepthTs(new Date());
         quanDepthFuture.setBaseCoin(symbolEnum.getBaseCoin());
         quanDepthFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
-        // todo 接口没返回呢
         quanDepthFuture.setSymbol(symbolEnum.getSymbol());
         quanDepthFuture.setContractType(contractType);
         quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
@@ -165,10 +161,9 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     }
 
 
-
     @Override
     public ServiceResult getOkKline(String symbol, String type, String contractType, int size, long since) {
-        List<QuanKlineFuture> list = getOkFutureKlineList(symbol, type, contractType, size, since);
+        List<QuanKlineFuture> list = queryOkFutureKlineByAPI(symbol, type, contractType, size, since);
         for (QuanKlineFuture klineFuture : list) {
             quanKlineFutureMapper.insert(klineFuture);
         }
@@ -176,7 +171,7 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     }
 
 
-    private List<QuanKlineFuture> getOkFutureKlineList(String symbol, String type, String contractType, int size, long since) {
+    private List<QuanKlineFuture> queryOkFutureKlineByAPI(String symbol, String type, String contractType, int size, long since) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("type", type);
@@ -219,38 +214,10 @@ public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
     public void updateOkFutureKline(String symbol, String type, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[Kline][symbol={},contractType={}]任务开始", symbol, contractType);
-        QuanKlineFuture klineFuture = selectLatestKlineFuture(ExchangeEnum.OKEX.getExId(), symbol, type, contractType);
-        List<QuanKlineFuture> list = null;
-        Date sinceDate = null;
-        int retry = 3;
-        if (klineFuture != null) {
-            sinceDate = klineFuture.getTs();
-            for (int i = 1; i <= retry; i++) {
-                sinceDate = DateUtils.plusMinutes(sinceDate, -1 * i * 60);
-                list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
-                QuanKlineFuture latestKlineFuture = list.get(0);
-                if (latestKlineFuture.getTs().before(klineFuture.getTs())) {
-                    break;
-                }
-            }
-        } else {
-            sinceDate = DateUtils.plusMinutes(new Date(), -60);
-            list = getOkFutureKlineList(symbol, type, contractType, 100, sinceDate.getTime());
-        }
-        List<QuanKlineFuture> redisKline = new ArrayList<>();
-        for (QuanKlineFuture kline : list) {
-            if (kline.getTs().after(klineFuture.getTs())) {
-                quanKlineFutureMapper.insert(kline);
-                redisKline.add(kline);
-            }
-        }
+        Date sinceDate = DateUtils.plusMinutes(new Date(), -60 * 24);
+        List<QuanKlineFuture> redisKline = queryOkFutureKlineByAPI(symbol, type, contractType, 100, sinceDate.getTime());
         redisService.saveOkKline(symbol, type, contractType, redisKline);
         logger.info("[Kline][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
-    }
-
-    private QuanKlineFuture selectLatestKlineFuture(int exchangeId, String symbol, String type, String contractType) {
-        QuanKlineFuture klineFuture = quanKlineFutureMapper.selectLatestKlineFuture(exchangeId, symbol, type, contractType);
-        return klineFuture;
     }
 
 

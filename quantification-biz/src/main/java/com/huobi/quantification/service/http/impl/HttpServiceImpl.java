@@ -2,21 +2,14 @@ package com.huobi.quantification.service.http.impl;
 
 import com.huobi.quantification.common.api.OkSignature;
 import com.huobi.quantification.common.exception.HttpRequestException;
-import com.huobi.quantification.common.util.HttpClientUtils;
-import com.huobi.quantification.common.util.MD5;
+import com.huobi.quantification.common.util.OkHttpClientUtils;
 import com.huobi.quantification.common.util.ProxyConfig;
-import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
-import org.apache.commons.collections.MapUtils;
-import org.apache.http.params.HttpParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author zhangl
@@ -25,9 +18,10 @@ import java.util.stream.Stream;
 @Service
 public class HttpServiceImpl implements HttpService {
 
-    private HttpClientUtils[] clients = new HttpClientUtils[1];
+    private OkHttpClientUtils[] clients = new OkHttpClientUtils[1];
 
     private AtomicInteger nextId = new AtomicInteger();
+
     @Autowired
     private OkSecretHolder okSecretHolder;
 
@@ -35,7 +29,7 @@ public class HttpServiceImpl implements HttpService {
         ProxyConfig config = new ProxyConfig();
         config.setHost("proxy.huobidev.com");
         config.setPort(3129);
-        clients[0] = HttpClientUtils.getInstance(config);
+        clients[0] = OkHttpClientUtils.getInstance(config);
 
         /*config.setHost("172.31.6.86");
         config.setPort(13128);
@@ -51,7 +45,7 @@ public class HttpServiceImpl implements HttpService {
         clients[2] = HttpClientUtils.getInstance(config);*/
     }
 
-    public HttpClientUtils getHttpClientUtils() {
+    public OkHttpClientUtils getHttpClientUtils() {
         if (nextId.get() >= Integer.MAX_VALUE) {
             nextId = new AtomicInteger(0);
         }
@@ -60,7 +54,7 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doGet(String url) throws HttpRequestException {
-        return getHttpClientUtils().doGet(url);
+        return getHttpClientUtils().doGet(url, null);
     }
 
     @Override

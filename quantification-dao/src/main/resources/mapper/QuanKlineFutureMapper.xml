@@ -54,13 +54,4 @@
     from quan_kline_future
   </select>
 
-
-    <select id="selectLatestKlineFuture" resultType="com.huobi.quantification.entity.QuanKlineFuture">
-      select id, exchange_id, type, symbol, contract_type, high, open, low, close, amount,
-      ts
-      from quan_kline_future where id=(
-      select max(id) from quan_kline_future where exchange_id=#{exchangeId} and symbol=#{symbol} and type=#{type} and contract_type=#{contractType}
-      )
-    </select>
-
 </mapper>
