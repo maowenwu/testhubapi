@@ -1,7 +1,6 @@
 package com.huobi.quantification.quartz;
 
 import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class LogJobListener implements JobListener {
 

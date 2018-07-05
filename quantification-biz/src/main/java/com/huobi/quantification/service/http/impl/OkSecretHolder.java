@@ -31,8 +31,14 @@ public class OkSecretHolder {
     @PostConstruct
     public void loadAllSecret() {
         List<Long> accountIds = accountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
+        if (accountIds.size() <= 0) {
+            throw new RuntimeException("quan_account_future表未初始化账户数据");
+        }
         for (Long accountId : accountIds) {
             List<QuanAccountFutureSecret> secretList = accountService.findAccountFutureSecretById(accountId);
+            if (secretList.size() <= 0) {
+                throw new RuntimeException("账户[" + accountId + "]，未配置对应的accessKey");
+            }
             map.put(accountId, secretList);
             accountUsageCounter.put(accountId, 0L);
         }

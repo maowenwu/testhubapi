@@ -31,10 +31,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.*;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -43,11 +40,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class OkHttpClientUtils {
 
     private OkHttpClient httpClient;
+
+    private AtomicInteger numRequestFaild = new AtomicInteger(0);
 
     private OkHttpClientUtils(ProxyConfig proxyConfig) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
@@ -81,10 +81,14 @@ public class OkHttpClientUtils {
         try {
             response = httpClient.newCall(reqBuild.build()).execute();
         } catch (IOException e) {
+            if (e instanceof SocketTimeoutException) {
+                numRequestFaild.getAndIncrement();
+            }
             throw new HttpRequestException("http执行异常", e);
         }
         if (response.isSuccessful()) {
             try {
+                reset();
                 return response.body().string();
             } catch (IOException e) {
                 throw new HttpRequestException("http结果解析异常", e);
@@ -112,10 +116,14 @@ public class OkHttpClientUtils {
         try {
             response = httpClient.newCall(reqBuilder.build()).execute();
         } catch (IOException e) {
+            if (e instanceof SocketTimeoutException) {
+                numRequestFaild.getAndIncrement();
+            }
             throw new HttpRequestException("http执行异常", e);
         }
         if (response.isSuccessful()) {
             try {
+                reset();
                 return response.body().string();
             } catch (IOException e) {
                 throw new HttpRequestException("http结果解析异常", e);
@@ -124,5 +132,13 @@ public class OkHttpClientUtils {
             int statusCode = response.code();
             throw new HttpRequestException("响应码不为200，返回响应码：" + statusCode + "，url：" + reqBuilder.build());
         }
+    }
+
+    private void reset() {
+        numRequestFaild.set(0);
+    }
+
+    public int getRequestFaildTotal() {
+        return numRequestFaild.get();
     }
 }

@@ -4,11 +4,15 @@ import com.huobi.quantification.common.api.OkSignature;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.common.util.OkHttpClientUtils;
 import com.huobi.quantification.common.util.ProxyConfig;
+import com.huobi.quantification.dao.QuanProxyIpMapper;
+import com.huobi.quantification.entity.QuanProxyIp;
 import com.huobi.quantification.service.http.HttpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -18,38 +22,60 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class HttpServiceImpl implements HttpService {
 
-    private OkHttpClientUtils[] clients = new OkHttpClientUtils[1];
+    private List<OkHttpClientUtils> clients = null;
 
     private AtomicInteger nextId = new AtomicInteger();
 
     @Autowired
+    private QuanProxyIpMapper quanProxyIpMapper;
+
+    @Autowired
     private OkSecretHolder okSecretHolder;
 
+    private Timer timer = new Timer();
+
     public HttpServiceImpl() {
-        ProxyConfig config = new ProxyConfig();
-        config.setHost("proxy.huobidev.com");
-        config.setPort(3129);
-        clients[0] = OkHttpClientUtils.getInstance(config);
-
-        /*config.setHost("172.31.6.86");
-        config.setPort(13128);
-        clients[0] = HttpClientUtils.getInstance(config);
-
-
-        config.setHost("54.248.65.254");
-        config.setPort(13129);
-        clients[1] = HttpClientUtils.getInstance(config);
-
-        config.setHost("13.230.239.28");
-        config.setPort(13129);
-        clients[2] = HttpClientUtils.getInstance(config);*/
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (clients == null) {
+                    return;
+                }
+                Iterator<OkHttpClientUtils> iterator = clients.iterator();
+                while (iterator.hasNext()) {
+                    OkHttpClientUtils next = iterator.next();
+                    if (next.getRequestFaildTotal() > 3) {
+                        clients.remove(next);
+                    }
+                }
+                if (clients.size() <= 0) {
+                    init();
+                }
+            }
+        }, 0, 1000);
     }
+
+    @PostConstruct
+    public void init() {
+        List<QuanProxyIp> proxyIps = quanProxyIpMapper.selectAll();
+        clients = new CopyOnWriteArrayList<>();
+        for (QuanProxyIp proxyIp : proxyIps) {
+            ProxyConfig config = new ProxyConfig();
+            config.setHost(proxyIp.getHost());
+            config.setPort(proxyIp.getPort());
+            config.setUsername(proxyIp.getUserName());
+            config.setPassword(proxyIp.getPassword());
+            clients.add(OkHttpClientUtils.getInstance(config));
+        }
+        clients.add(OkHttpClientUtils.getInstance(null));
+    }
+
 
     public OkHttpClientUtils getHttpClientUtils() {
         if (nextId.get() >= Integer.MAX_VALUE) {
             nextId = new AtomicInteger(0);
         }
-        return clients[nextId.getAndIncrement() % clients.length];
+        return clients.get(nextId.getAndIncrement() % clients.size());
     }
 
     @Override
