@@ -4,5 +4,8 @@ package com.huobi.quantification.service.account;
  * @since 2018/6/26
  */
 public interface AccountHuobiService {
+	
 	 public Object accounts(String accountId);
+	 
+	 void updateAccount(String accountId);
 }
