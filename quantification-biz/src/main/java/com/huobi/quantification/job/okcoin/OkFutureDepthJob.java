@@ -4,13 +4,11 @@ import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.market.MarketService;
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+@DisallowConcurrentExecution
 public class OkFutureDepthJob extends AbstractQuartzJob {
 
 

@@ -5,7 +5,6 @@ import com.huobi.quantification.dao.QuanJobFutureMapper;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.job.okcoin.OkFutureDepthJob;
 import com.huobi.quantification.quartz.QuartzManager;
-import com.huobi.quantification.service.http.impl.OkSecretHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +24,7 @@ public class InnerController {
     @RequestMapping("/test")
     public String test() {
         QuanJobFuture quanJobFuture = quanJobFutureMapper.selectByPrimaryKey(1);
-        quartzManager.addJob(quanJobFuture.getJobName(), OkFutureDepthJob.class, quanJobFuture.getCron(), quanJobFuture);
+        quartzManager.addJobNoRepeat(quanJobFuture.getJobName(), OkFutureDepthJob.class, quanJobFuture.getCron(), quanJobFuture);
         System.out.println(quartzManager);
         return "ok";
     }

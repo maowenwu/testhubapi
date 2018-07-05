@@ -2,27 +2,25 @@ package com.huobi.quantification.quartz;
 
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuartzManager {
 
-    private SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+    @Autowired
+    private Scheduler sched;
 
-    private Scheduler sched = null;
 
-    public QuartzManager() {
-        try {
-            sched = schedulerFactory.getScheduler();
-        } catch (SchedulerException e) {
-            e.printStackTrace();
+    public void addJobNoRepeat(String jobName, Class jobClass, String cron, Object data) {
+        String quartzJobName = jobName + "Job";
+        String quartzJobGroupName = jobName + "JobGroup";
+        String quartzTriggerName = jobName + "Trigger";
+        String quartzTriggerGroupName = jobName + "TriggerGroup";
+        if (containsJob(quartzTriggerName, quartzTriggerGroupName)) {
+            return;
         }
-    }
-
-
-    public void addJob(String jobName, Class jobClass, String cron, Object data) {
-        addJob(jobName + "Job", jobName + "JobGroup",
-                jobName + "Trigger", jobName + "TriggerGroup", jobClass, cron, data);
+        addJob(quartzJobName, quartzJobGroupName, quartzTriggerName, quartzTriggerGroupName, jobClass, cron, data);
     }
 
     /**
@@ -36,7 +34,9 @@ public class QuartzManager {
     public void addJob(String jobName, String jobGroupName, String triggerName, String triggerGroupName, Class jobClass, String cron, Object data) {
         try {
             JobDataMap jobDataMap = new JobDataMap();
-            jobDataMap.put("data", data);
+            if (data != null) {
+                jobDataMap.put("data", data);
+            }
             JobDetail jobDetail = JobBuilder.newJob(jobClass)
                     .usingJobData(jobDataMap)
                     .withIdentity(jobName, jobGroupName)
@@ -106,6 +106,17 @@ public class QuartzManager {
         }
     }
 
+    public void removeJobNoRepeat(String jobName) {
+        String quartzJobName = jobName + "Job";
+        String quartzJobGroupName = jobName + "JobGroup";
+        String quartzTriggerName = jobName + "Trigger";
+        String quartzTriggerGroupName = jobName + "TriggerGroup";
+        if (!containsJob(quartzTriggerName, quartzTriggerGroupName)) {
+            return;
+        }
+        removeJob(quartzJobName, quartzJobGroupName, quartzTriggerName, quartzTriggerGroupName);
+    }
+
     /**
      * @param jobName
      * @param jobGroupName
@@ -147,4 +158,13 @@ public class QuartzManager {
         }
     }
 
+
+    private boolean containsJob(String triggerName, String triggerGroupName) {
+        TriggerKey triggerKey = TriggerKey.triggerKey(triggerName, triggerGroupName);
+        try {
+            return sched.checkExists(triggerKey);
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
