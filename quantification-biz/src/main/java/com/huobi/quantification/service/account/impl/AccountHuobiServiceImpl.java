@@ -68,6 +68,7 @@ public class AccountHuobiServiceImpl implements AccountHuobiService {
 			JSONObject list = jsarr.getJSONObject(i);
 			QuanAccountAsset quanAccountAsset = new QuanAccountAsset();
 			quanAccountAsset.setAccountId(account.getId());
+			quanAccountAsset.setCoin(list.getString("currency"));
 			quanAccountAssetMapper.insert(quanAccountAsset);
 		}
 		redisService.saveHuobiAccount(account);

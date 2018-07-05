@@ -19,7 +19,7 @@ public class QuanAccountAsset {
      * 币种
      * @mbg.generated 2018-07-02 14:32:37
      */
-    private BigDecimal coin;
+    private String coin;
 
     /**
      * 总量
@@ -67,11 +67,11 @@ public class QuanAccountAsset {
         this.accountId = accountId;
     }
 
-    public BigDecimal getCoin() {
+    public String getCoin() {
         return coin;
     }
 
-    public void setCoin(BigDecimal coin) {
+    public void setCoin(String coin) {
         this.coin = coin;
     }
 
