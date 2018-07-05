@@ -36,7 +36,7 @@ public class QuanJob {
     /**
      * @mbg.generated 2018-07-04 17:21:27
      */
-    private String contractType;
+    private String type;
 
     /**
      * @mbg.generated 2018-07-04 17:21:27
@@ -111,15 +111,15 @@ public class QuanJob {
         this.symbol = symbol;
     }
 
-    public String getContractType() {
-        return contractType;
-    }
+    public String getType() {
+		return type;
+	}
 
-    public void setContractType(String contractType) {
-        this.contractType = contractType;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public String getIpId() {
+	public String getIpId() {
         return ipId;
     }
 
