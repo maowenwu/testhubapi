@@ -2,6 +2,7 @@ package com.huobi.quantification.init;
 
 
 import com.huobi.quantification.job.scanner.FutureJobScanner;
+import com.huobi.quantification.job.scanner.JobScanner;
 import com.huobi.quantification.quartz.QuartzManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
@@ -18,6 +19,7 @@ public class JobInitializer implements ApplicationListener<ContextRefreshedEvent
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
             quartzManager.addJobNoRepeat("FutureJobScanner", FutureJobScanner.class, "0/1 * * * * ?", null);
+            quartzManager.addJobNoRepeat("JobScanner", JobScanner.class, "0/1 * * * * ?", null);
         }
     }
 }

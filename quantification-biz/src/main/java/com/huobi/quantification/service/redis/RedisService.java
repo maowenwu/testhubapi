@@ -19,4 +19,6 @@ public interface RedisService {
 	void saveHuobiTicker(String symbol, QuanTicker ticker);
 
 	void saveHuobiDepth(String symbol, String type, QuanDepth depth);
+
+	void saveHuobiAccount(QuanAccount quanAccount);
 }

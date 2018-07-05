@@ -8,7 +8,7 @@
     <result column="job_name" jdbcType="VARCHAR" property="jobName" />
     <result column="account_id" jdbcType="BIGINT" property="accountId" />
     <result column="symbol" jdbcType="VARCHAR" property="symbol" />
-    <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
     <result column="ip_id" jdbcType="VARCHAR" property="ipId" />
     <result column="cron" jdbcType="VARCHAR" property="cron" />
     <result column="state" jdbcType="INTEGER" property="state" />
@@ -22,12 +22,12 @@
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanJob">
     insert into quan_job (id, exchange_id, job_type, 
       job_name, account_id, symbol, 
-      contract_type, ip_id, cron, 
+      type, ip_id, cron, 
       state, update_date, create_date
       )
     values (#{id,jdbcType=INTEGER}, #{exchangeId,jdbcType=INTEGER}, #{jobType,jdbcType=INTEGER}, 
       #{jobName,jdbcType=VARCHAR}, #{accountId,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR}, 
-      #{contractType,jdbcType=VARCHAR}, #{ipId,jdbcType=VARCHAR}, #{cron,jdbcType=VARCHAR}, 
+      #{type,jdbcType=VARCHAR}, #{ipId,jdbcType=VARCHAR}, #{cron,jdbcType=VARCHAR}, 
       #{state,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -38,7 +38,7 @@
       job_name = #{jobName,jdbcType=VARCHAR},
       account_id = #{accountId,jdbcType=BIGINT},
       symbol = #{symbol,jdbcType=VARCHAR},
-      contract_type = #{contractType,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
       ip_id = #{ipId,jdbcType=VARCHAR},
       cron = #{cron,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER},
@@ -47,13 +47,13 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, exchange_id, job_type, job_name, account_id, symbol, contract_type, ip_id, 
+    select id, exchange_id, job_type, job_name, account_id, symbol, type, ip_id, 
     cron, state, update_date, create_date
     from quan_job
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, exchange_id, job_type, job_name, account_id, symbol, contract_type, ip_id, 
+    select id, exchange_id, job_type, job_name, account_id, symbol, type, ip_id, 
     cron, state, update_date, create_date
     from quan_job
   </select>

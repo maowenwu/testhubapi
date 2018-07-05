@@ -23,15 +23,18 @@ import com.google.common.base.Stopwatch;
 import com.google.gson.Gson;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.util.AsyncUtils;
+import com.huobi.quantification.dao.QuanAccountMapper;
 import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
+import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkContractType;
 import com.huobi.quantification.enums.OkSymbolEnum;
+import com.huobi.quantification.huobi.response.Account;
 import com.huobi.quantification.huobi.response.DepthResponse;
 import com.huobi.quantification.huobi.response.Merged;
 import com.huobi.quantification.service.http.HttpService;
@@ -187,29 +190,19 @@ public class MarketHuobiServiceImpl implements MarketHuobiService {
 	}
 
 	@Override
-	public void storeHuobiTicker() {
-		logger.info("storeHuobiTicker更新Ticker信息开始");
+	public void updateHuobiTicker(String symbol) {
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		CompletableFuture[] futures = new CompletableFuture[1];
-		String symbol = "eth_usdt";
-		futures[0] = AsyncUtils.runAsyncNoException(() -> {
-			getTicker(symbol);
-		});
-		CompletableFuture.allOf(futures).join();
-		logger.info("storeHuobiTicker更新Ticker信息完成，耗时：" + stopwatch);
+		logger.info("[Ticker][symbol={}]任务开始" ,symbol);
+		getTicker(symbol);
+		logger.info("[Ticker][symbol={}]任务结束，耗时：" + stopwatch , symbol);
 	}
 
 	@Override
-	public void storeHuobiDepth() {
-		logger.info("storeHuobiDepth更新Depth信息开始");
+	public void updateHuobiDepth(String symbol,String type) {
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		String symbol = "eth_usdt";
-		String type = "step1";
-		CompletableFuture[] futures = new CompletableFuture[1];
-		futures[0] = AsyncUtils.runAsyncNoException(() -> {
-			getDepth(symbol, type);
-		});
-		CompletableFuture.allOf(futures).join();
-		logger.info("storeHuobiDepth更新Depth信息完成，耗时：" + stopwatch);
+		logger.info("[Depth][symbol={},type={}]任务开始",symbol,type);
+		getDepth(symbol, type);
+		logger.info("[Ticker][symbol={},type={}]任务结束，耗时：" + stopwatch , symbol , type);
 	}
+
 }
