@@ -8,14 +8,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Stopwatch;
 import com.google.gson.Gson;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
@@ -23,17 +30,23 @@ import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OkContractType;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.huobi.response.DepthResponse;
 import com.huobi.quantification.huobi.response.Merged;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.MarketHuobiService;
+import com.huobi.quantification.service.redis.RedisService;
 
 /**
  * @author shaoxiaofeng
  * @since 2018/6/26
  */
+@Service
+@Transactional
 public class MarketHuobiServiceImpl implements MarketHuobiService {
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private HttpService httpService;
@@ -43,6 +56,8 @@ public class MarketHuobiServiceImpl implements MarketHuobiService {
 	private QuanDepthMapper quanDepthMapper;
 	@Autowired
 	private QuanTickerMapper quanTickerMapper;
+	@Autowired
+	private RedisService redisService;
 
 	public Object getTicker(String symbol) {
 		Map<String, String> params = new HashMap<>();
@@ -96,6 +111,7 @@ public class MarketHuobiServiceImpl implements MarketHuobiService {
 		}
 		quanTicker.setTs(parse);
 		quanTickerMapper.insert(quanTicker);
+		redisService.saveHuobiTicker(symbol, quanTicker);
 		return null;
 	}
 
@@ -138,6 +154,7 @@ public class MarketHuobiServiceImpl implements MarketHuobiService {
 		}
 		quanDepth.setDepthTs(parse);
 		quanDepthMapper.insert(quanDepth);
+		redisService.saveHuobiDepth(symbol, type, quanDepth);
 		return null;
 	}
 
@@ -167,5 +184,32 @@ public class MarketHuobiServiceImpl implements MarketHuobiService {
 			quanDepthDetailMapper.insert(depthDetail);
 		}
 
+	}
+
+	@Override
+	public void storeHuobiTicker() {
+		logger.info("storeHuobiTicker更新Ticker信息开始");
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		CompletableFuture[] futures = new CompletableFuture[1];
+		String symbol = "eth_usdt";
+		futures[0] = AsyncUtils.runAsyncNoException(() -> {
+			getTicker(symbol);
+		});
+		CompletableFuture.allOf(futures).join();
+		logger.info("storeHuobiTicker更新Ticker信息完成，耗时：" + stopwatch);
+	}
+
+	@Override
+	public void storeHuobiDepth() {
+		logger.info("storeHuobiDepth更新Depth信息开始");
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		String symbol = "eth_usdt";
+		String type = "step1";
+		CompletableFuture[] futures = new CompletableFuture[1];
+		futures[0] = AsyncUtils.runAsyncNoException(() -> {
+			getDepth(symbol, type);
+		});
+		CompletableFuture.allOf(futures).join();
+		logger.info("storeHuobiDepth更新Depth信息完成，耗时：" + stopwatch);
 	}
 }
