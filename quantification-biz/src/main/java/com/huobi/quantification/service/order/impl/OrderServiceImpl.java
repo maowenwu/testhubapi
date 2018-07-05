@@ -3,6 +3,7 @@ package com.huobi.quantification.service.order.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
@@ -17,6 +18,8 @@ import com.huobi.quantification.facade.OkOrderServiceFacade;
 import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OrderService;
+import com.huobi.quantification.service.redis.RedisService;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,9 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
     @Autowired
     private QuanOrderFutureMapper quanOrderFutureMapper;
 
+    @Autowired
+    private RedisService redisService;
+
     @Override
     public ServiceResult getOkOrderInfo() {
         Map<String, String> params = new HashMap<>();
@@ -59,11 +65,40 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
     public void updateOkOrderInfo(Long accountId, String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
-        List<QuanOrderFuture> orderFutures = queryAllOkOrderInfo(accountId, symbol, contractType);
+        List<QuanOrderFuture> orderFutures = updateRedisOkOrderInfo(accountId, symbol, contractType);
         for (QuanOrderFuture orderFuture : orderFutures) {
             quanOrderFutureMapper.insertOrUpdate(orderFuture);
         }
         logger.info("[OkOrder][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
+    }
+
+    private List<QuanOrderFuture> updateRedisOkOrderInfo(Long accountId, String symbol, String contractType) {
+        Map<String, QuanOrderFuture> ordersMap = redisService.getOkOrder(accountId, symbol, contractType);
+        List<Long> orderIds = new ArrayList<>();
+        for (QuanOrderFuture orderFuture : ordersMap.values()) {
+            if (!orderFuture.getOrderStatus().equals(2)) {
+                orderIds.add(orderFuture.getOrderSourceId());
+            }
+        }
+        if (CollectionUtils.isEmpty(orderIds)) {
+            return new ArrayList<>();
+        }
+        List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
+        for (QuanOrderFuture orderFuture : orderFutures) {
+            ordersMap.put(orderFuture.getOrderSourceId() + "", orderFuture);
+        }
+        return orderFutures;
+    }
+
+
+    public List<QuanOrderFuture> queryOkOrdersInfoByAPI(Long accountId, String symbol, String contractType, List<Long> orderIds) {
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", symbol);
+        params.put("contract_type", contractType);
+        String orderId = Joiner.on(",").join(orderIds);
+        params.put("order_id", orderId);
+        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_ORDERS_INFO, params);
+        return parseAndSaveOrderInfo(accountId, body);
     }
 
     private List<QuanOrderFuture> queryAllOkOrderInfo(Long accountId, String symbol, String contractType) {
@@ -196,6 +231,7 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
             orderFuture.setOrderSourceId(orderId);
             orderFuture.setUpdateDate(new Date());
             quanOrderFutureMapper.insert(orderFuture);
+            redisService.saveOkOrder(order.getSymbol(), order.getContractType(), orderFuture);
 
             result.setCode(ServiceResultEnum.SUCCESS.getCode());
             result.setMessage(ServiceResultEnum.SUCCESS.getMessage());
