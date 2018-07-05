@@ -15,4 +15,8 @@ public interface RedisService {
     void saveOkDepth(String symbol, String contractType, List<QuanDepthFutureDetail> list);
 
     void saveOkKline(String symbol, String type, String contractType, List<QuanKlineFuture> redisKline);
+    
+	void saveHuobiTicker(String symbol, QuanTicker ticker);
+
+	void saveHuobiDepth(String symbol, String type, QuanDepth depth);
 }

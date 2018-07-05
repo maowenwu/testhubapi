@@ -1,6 +1,5 @@
 package com.huobi.quantification.service.redis.impl;
 
-import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.entity.*;
 import com.huobi.quantification.service.redis.RedisService;
 import org.redisson.api.RList;
@@ -50,4 +49,16 @@ public class RedisServiceImpl implements RedisService {
             list.add(kline);
         }
     }
+
+	@Override
+	public void saveHuobiTicker(String symbol, QuanTicker ticker) {
+		RMap<String, Object> map = client.getMap("quan.market.huobi.ticker."+symbol);
+		map.put(symbol, ticker);
+	}
+
+	@Override
+	public void saveHuobiDepth(String symbol, String type, QuanDepth depth) {
+		RMap<String, Object> map = client.getMap("quan.market.huobi.depth."+ symbol + "." + type);
+		map.put(symbol, depth);
+	}
 }
