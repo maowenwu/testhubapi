@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.google.gson.Gson;
 import com.huobi.quantification.ServiceApplication;
+import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
@@ -28,6 +29,7 @@ import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.huobi.response.DepthResponse;
 import com.huobi.quantification.huobi.response.Merged;
+import com.huobi.quantification.service.http.HttpService;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
@@ -38,6 +40,8 @@ public class MarketHuobiServiceTest {
 	private QuanDepthMapper quanDepthMapper;
 	@Autowired
 	private QuanTickerMapper quanTickerMapper;
+	@Autowired
+	private HttpService httpService;
 
 	@Test
 	public void getDepth() {
@@ -109,6 +113,12 @@ public class MarketHuobiServiceTest {
 		}
 		quanDepth.setDepthTs(parse);
 		quanDepthMapper.insert(quanDepth);
+	}
+	
+	@Test
+	public void getAccountJSON() {
+		String doGet = httpService.doGet("https://api.huobipro.com/v1/account/accounts");
+		System.out.println(doGet);
 	}
 
 	@Test

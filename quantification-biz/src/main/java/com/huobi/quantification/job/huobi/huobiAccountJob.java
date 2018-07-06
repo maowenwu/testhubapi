@@ -1,20 +1,21 @@
-package com.huobi.quantification.job.huobicoin;
+package com.huobi.quantification.job.huobi;
 
 import org.quartz.DisallowConcurrentExecution;
+
 import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.job.AbstractQuartzJob;
-import com.huobi.quantification.service.market.MarketHuobiService;
+import com.huobi.quantification.service.account.AccountHuobiService;
 
 @DisallowConcurrentExecution
-public class HuobiDepthJob extends AbstractQuartzJob{
+public class huobiAccountJob extends AbstractQuartzJob{
 
 	@Override
 	public void execute(Object data) {
-		MarketHuobiService marketHuobiService = ApplicationContextHolder.getContext().getBean(MarketHuobiService.class);
+		AccountHuobiService bean = ApplicationContextHolder.getContext().getBean(AccountHuobiService.class);
 		if (data instanceof QuanJob) {
 			QuanJob jobData = (QuanJob)data;
-			marketHuobiService.updateHuobiDepth(jobData.getSymbol(),jobData.getType());
+			bean.accounts(String.valueOf(jobData.getAccountId()));
 		}
 	}
 

@@ -1,8 +1,6 @@
 package com.huobi.quantification.service.redis;
 
 import com.huobi.quantification.entity.*;
-import org.redisson.api.RMap;
-
 import java.util.List;
 import java.util.Map;
 
@@ -27,4 +25,6 @@ public interface RedisService {
     void saveOkOrder(String symbol, String contractType, QuanOrderFuture orderFuture);
 
     Map<String, QuanOrderFuture> getOkOrder(Long accountId, String symbol, String contractType);
+
+	void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId);
 }

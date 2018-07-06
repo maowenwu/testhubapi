@@ -29,8 +29,8 @@ import com.huobi.quantification.huobi.response.TradeResponse;
  */
 public class Main {
 
-    static final String API_KEY = "";
-    static final String API_SECRET = "";
+    static final String API_KEY = "b3ee28b9-82506e4a-d1f8c9dc-b5ce3";
+    static final String API_SECRET = "2d88904d-75c15363-3d0d6d14-25e23";
     public static void main(String[] args) {
         try {
             apiSample();

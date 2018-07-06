@@ -1,5 +1,7 @@
 package com.huobi.quantification.service.account.impl;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +48,7 @@ public class AccountHuobiServiceImpl implements AccountHuobiService {
 
 	public Object accounts(String accountId) {
 		Map<String, String> params = new HashMap<>();
-		String body = httpService.doGet(HttpConstant.HUOBI_ACCOUNT, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
 		parseAndaccounts(body);
 		return null;
 	}
@@ -54,24 +56,35 @@ public class AccountHuobiServiceImpl implements AccountHuobiService {
 	private void parseAndaccounts(String accountres) {
 		JSONObject jsonObject = JSON.parseObject(accountres);
 		String data = jsonObject.getString("data");
-		JSONObject dataObject = jsonObject.getJSONObject("data");
-		QuanAccount quanAccount = new QuanAccount();
-		quanAccount.setAccountSourceId(dataObject.getLong("user-id"));
-		quanAccount.setAccountsType(dataObject.getString("type"));
-		quanAccount.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		quanAccount.setState(dataObject.getString("state"));
 		JSONObject temp = JSON.parseObject(data);
+		QuanAccount quanAccount = new QuanAccount();
+		quanAccount.setAccountSourceId(temp.getLong("user-id"));
+		quanAccount.setAccountsType(temp.getString("type"));
+		quanAccount.setExchangeId(ExchangeEnum.HUOBI.getExId());
+		quanAccount.setState(temp.getString("state"));
 		JSONArray jsarr = temp.getJSONArray("list");
-		QuanAccount account = new QuanAccount();
-		quanAccountMapper.insert(account);
+		quanAccountMapper.insert(quanAccount);
+		redisService.saveHuobiAccount(quanAccount);
+		QuanAccountAsset quanAccountAsset = new QuanAccountAsset();
+		QuanAccountAsset tempAccount = new QuanAccountAsset();
 		for (int i = 0; i < jsarr.size(); i++) {
 			JSONObject list = jsarr.getJSONObject(i);
-			QuanAccountAsset quanAccountAsset = new QuanAccountAsset();
-			quanAccountAsset.setAccountId(account.getId());
+			if (i > 0 && tempAccount.getCoin().equals(list.getString("currency"))) {
+				if (list.getString("type").equals("frozen")) {
+					quanAccountAsset.setFrozen(new BigDecimal(list.getString("balance")));
+					quanAccountAssetMapper.insert(quanAccountAsset);
+					redisService.saveHuobiAccountAsset(quanAccountAsset,quanAccount.getAccountSourceId());
+				}
+				continue;
+			}
+			quanAccountAsset.setAccountId(quanAccount.getAccountSourceId());
 			quanAccountAsset.setCoin(list.getString("currency"));
-			quanAccountAssetMapper.insert(quanAccountAsset);
+			quanAccountAsset.setDataUpdate(new Date());
+			if (list.getString("type").equals("trade")) {
+				quanAccountAsset.setAvailable(new BigDecimal(list.getString("balance")));
+			}
+			tempAccount = quanAccountAsset;
 		}
-		redisService.saveHuobiAccount(account);
 	}
 
 	@Override
@@ -79,7 +92,7 @@ public class AccountHuobiServiceImpl implements AccountHuobiService {
 		Stopwatch started = Stopwatch.createStarted();
 		logger.info("[HuobiUserInfo][accountId={}]任务开始", accountId);
 		Map<String, String> params = new HashMap<>();
-		String body = httpService.doGet(HttpConstant.HUOBI_ACCOUNT, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
 		parseAndaccounts(body);
 		logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
 	}

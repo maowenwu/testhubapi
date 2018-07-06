@@ -1,4 +1,4 @@
-package com.huobi.quantification.job.huobicoin;
+package com.huobi.quantification.job.huobi;
 
 import org.quartz.DisallowConcurrentExecution;
 
