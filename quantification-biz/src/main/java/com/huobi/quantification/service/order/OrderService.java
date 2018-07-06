@@ -9,6 +9,7 @@ public interface OrderService {
 
 
     void updateOkOrderInfo(Long accountId, String symbol, String contractType);
+
     /**
      * 查询成交（时间顺序）
      *

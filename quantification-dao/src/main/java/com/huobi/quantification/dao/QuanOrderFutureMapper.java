@@ -15,4 +15,8 @@ public interface QuanOrderFutureMapper {
     int updateByPrimaryKey(QuanOrderFuture record);
 
     void insertOrUpdate(QuanOrderFuture orderFuture);
+
+    List<Long> selectUnfinishOrderSourceId();
+
+
 }

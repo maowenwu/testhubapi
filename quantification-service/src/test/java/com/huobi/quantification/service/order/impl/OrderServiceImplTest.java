@@ -45,7 +45,7 @@ public class OrderServiceImplTest {
         orderDto.setAccountId(1L);
         orderDto.setSymbol("btc_usd");
         orderDto.setContractType("this_week");
-        orderDto.setPrice("6500");
+        orderDto.setPrice("6400");
         orderDto.setAmount("1");
         orderDto.setType(1);
         orderDto.setMatchPrice(0);

@@ -80,8 +80,11 @@
     update_date
     from quan_order_future
   </select>
+    <select id="selectUnfinishOrderSourceId" resultType="java.lang.Long">
+        select order_source_id from quan_order_future where order_status!='2' and order_status!='-1'
+    </select>
 
-  <insert id="insertOrUpdate" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    <insert id="insertOrUpdate" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
       INSERT INTO quan_order_future (
           `strategy_name`,
           `strategy_version`,
