@@ -12,9 +12,7 @@ import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
-import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OkContractType;
-import com.huobi.quantification.service.account.AccountService;
+import com.huobi.quantification.service.account.OkAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
 import org.slf4j.Logger;
@@ -35,7 +33,7 @@ import java.util.*;
 @DependsOn("httpServiceImpl")
 @Service
 @Transactional
-public class AccountServiceImpl implements AccountService {
+public class OkAccountServiceImpl implements OkAccountService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 

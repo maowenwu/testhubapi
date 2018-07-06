@@ -18,9 +18,8 @@ import com.huobi.quantification.entity.QuanTickerFuture;
 import com.huobi.quantification.enums.DepthDirectionEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
-import com.huobi.quantification.facade.OkMarketServiceFacade;
 import com.huobi.quantification.service.http.HttpService;
-import com.huobi.quantification.service.market.MarketService;
+import com.huobi.quantification.service.market.OkMarketService;
 import com.huobi.quantification.service.redis.RedisService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ import java.util.*;
  */
 @Service
 @Transactional
-public class MarketServiceImpl implements MarketService, OkMarketServiceFacade {
+public class OkMarketServiceImpl implements OkMarketService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 

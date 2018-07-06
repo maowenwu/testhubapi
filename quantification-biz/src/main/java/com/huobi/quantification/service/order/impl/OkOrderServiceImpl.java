@@ -8,16 +8,13 @@ import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.constant.OkRestErrorCode;
-import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.enums.*;
-import com.huobi.quantification.facade.OkOrderServiceFacade;
-import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
-import com.huobi.quantification.service.order.OrderService;
+import com.huobi.quantification.service.order.OkOrderService;
 import com.huobi.quantification.service.redis.RedisService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -27,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author zhangl
@@ -35,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  */
 @Service
 @Transactional
-public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
+public class OkOrderServiceImpl implements OkOrderService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -242,8 +238,8 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
             orderFuture.setUpdateDate(new Date());
             quanOrderFutureMapper.insert(orderFuture);
 
-            result.setCode(ServiceResultEnum.SUCCESS.getCode());
-            result.setMessage(ServiceResultEnum.SUCCESS.getMessage());
+            result.setCode(ServiceErrorEnum.SUCCESS.getCode());
+            result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
             result.setData(orderId);
         } else {
             Integer errorCode = jsonObject.getInteger("error_code");
@@ -274,8 +270,8 @@ public class OrderServiceImpl implements OrderService, OkOrderServiceFacade {
         JSONObject jsonObject = JSON.parseObject(body);
         ServiceResult<String> result = new ServiceResult<>();
         if (jsonObject.getBoolean("result")) {
-            result.setCode(ServiceResultEnum.SUCCESS.getCode());
-            result.setMessage(ServiceResultEnum.SUCCESS.getMessage());
+            result.setCode(ServiceErrorEnum.SUCCESS.getCode());
+            result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
             result.setData(jsonObject.getString("order_id"));
         } else {
             Integer errorCode = jsonObject.getInteger("error_code");

@@ -1,10 +1,25 @@
-package com.huobi.quantification.facade;
+package com.huobi.quantification.service.order;
 
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
 
-public interface OkOrderServiceFacade {
+/**
+ * @author zhangl
+ * @since 2018/6/26
+ */
+public interface OkOrderService {
+
+
+
+    void updateOkOrderInfo(Long accountId, String symbol, String contractType);
+
+    /**
+     * 查询成交（时间顺序）
+     *
+     * @return
+     */
+    Object storeOkOrdersHistory();
 
 
     /**
@@ -50,4 +65,5 @@ public interface OkOrderServiceFacade {
      * @return
      */
     ServiceResult cancelOkOrders();
+
 }

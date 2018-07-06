@@ -13,4 +13,6 @@ public interface QuanJobFutureMapper {
     List<QuanJobFuture> selectAll();
 
     int updateByPrimaryKey(QuanJobFuture record);
+
+    void insertOrUpdate(QuanJobFuture jobFuture);
 }

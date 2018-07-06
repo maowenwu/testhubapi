@@ -2,7 +2,6 @@ package com.huobi.quantification.service.account.impl;
 
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.service.account.AccountService;
 import com.huobi.quantification.service.http.HttpService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
-public class AccountServiceImplTest {
+public class OkAccountServiceImplTest {
 
 
     @Autowired

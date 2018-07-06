@@ -1,13 +1,16 @@
 package com.huobi.quantification.enums;
 
-public enum ServiceResultEnum {
+public enum ServiceErrorEnum {
 
-    SUCCESS(0, "操作成功");
+    SUCCESS(0, "调用成功"),
+    JOB_START_ERROR(100, "任务启动异常"),
+    JOB_STOP_ERROR(100, "任务停止异常");
+
 
     private int code;
     private String message;
 
-    ServiceResultEnum(int code, String message) {
+    ServiceErrorEnum(int code, String message) {
         this.code = code;
         this.message = message;
     }

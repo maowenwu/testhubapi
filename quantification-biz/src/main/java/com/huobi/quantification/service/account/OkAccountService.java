@@ -9,7 +9,7 @@ import java.util.List;
  * @author zhangl
  * @since 2018/6/26
  */
-public interface AccountService {
+public interface OkAccountService {
 
 
     void updateOkUserInfo(Long accountId);

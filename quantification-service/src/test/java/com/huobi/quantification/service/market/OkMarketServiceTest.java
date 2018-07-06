@@ -11,16 +11,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
-public class MarketServiceTest {
+public class OkMarketServiceTest {
 
     @Autowired
-    private MarketService marketService;
+    private OkMarketService okMarketService;
 
 
 
     @Test
     public void getLatestOkFutureKline() {
-        marketService.updateOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
+        okMarketService.updateOkFutureKline(OkSymbolEnum.BCH_USD.getSymbol(), "1min", OkContractType.NEXT_WEEK.getType());
         System.out.println();
     }
 

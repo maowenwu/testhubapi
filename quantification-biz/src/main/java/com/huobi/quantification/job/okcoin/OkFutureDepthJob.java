@@ -3,10 +3,8 @@ package com.huobi.quantification.job.okcoin;
 import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.job.AbstractQuartzJob;
-import com.huobi.quantification.service.market.MarketService;
+import com.huobi.quantification.service.market.OkMarketService;
 import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 @DisallowConcurrentExecution
 public class OkFutureDepthJob extends AbstractQuartzJob {
@@ -14,10 +12,10 @@ public class OkFutureDepthJob extends AbstractQuartzJob {
 
     @Override
     public void execute(Object data) {
-        MarketService marketService = ApplicationContextHolder.getContext().getBean(MarketService.class);
+        OkMarketService okMarketService = ApplicationContextHolder.getContext().getBean(OkMarketService.class);
         if (data instanceof QuanJobFuture) {
             QuanJobFuture jobFuture = (QuanJobFuture) data;
-            marketService.updateOkDepth(jobFuture.getSymbol(), jobFuture.getContractType());
+            okMarketService.updateOkDepth(jobFuture.getSymbol(), jobFuture.getContractType());
         }
     }
 }
