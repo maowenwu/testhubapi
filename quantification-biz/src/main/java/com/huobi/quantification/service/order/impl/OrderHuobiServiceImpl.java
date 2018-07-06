@@ -1,28 +1,41 @@
 package com.huobi.quantification.service.order.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.entity.QuanOrder;
+import com.huobi.quantification.entity.QuanOrderFuture;
+import com.huobi.quantification.enums.OrderStatus;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OrderHuobiService;
+import com.huobi.quantification.service.redis.RedisService;
 
 /**
  * @author shaoxiaofeng
  * @since 2018/6/26
  */
 public class OrderHuobiServiceImpl implements OrderHuobiService {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
+	
 	@Autowired
 	private HttpService httpService;
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
+	@Autowired
+	private RedisService redisService;
 
 	/**
 	 * 获取订单信息
@@ -61,10 +74,10 @@ public class OrderHuobiServiceImpl implements OrderHuobiService {
 	 */
 	public Object placeHuobiOrder() {
 		Map<String, String> params = new HashMap<>();
-		params.put("account-id", "");
-		params.put("amount", "");
-		params.put("price", "");
-		params.put("source", "");
+		params.put("account-id", "100009");
+		params.put("amount", "10.1");
+		params.put("price", "100.1");
+		params.put("source", "api");
 		params.put("symbol", "ethusdt");
 		params.put("type", "buy-limit");
 		String result = httpService.doPost(HttpConstant.HUOBI_ORDER_PLACE, params);
@@ -118,5 +131,17 @@ public class OrderHuobiServiceImpl implements OrderHuobiService {
 		quanOrder.setOrderState(jsonObjectdata.getString("state"));
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.insert(quanOrder);
+		redisService.saveHuobiOrder(quanOrder);
+	}
+
+	@Override
+	public void updateHuobiOrder(Long orderId) {
+		 Stopwatch started = Stopwatch.createStarted();
+	        logger.info("[HuobiOrder][orderId={}]任务开始", orderId);
+	        Map<String, String> params = new HashMap<>();
+	        params.put("order-id", orderId + "");
+			String body = httpService.doPost(HttpConstant.HUOBI_ORDERDETAIL, params);
+			parseAndSaveOrderInfo(body);
+	        logger.info("[HuobiOrder][orderId={}]任务结束，耗时：" + started,orderId);
 	}
 }

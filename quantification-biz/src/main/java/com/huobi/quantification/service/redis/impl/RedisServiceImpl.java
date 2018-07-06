@@ -89,4 +89,10 @@ public class RedisServiceImpl implements RedisService {
 		RMap<String, Object> map = client.getMap("quan.accout.huobi.accountasset." + accountId);
 		map.put(quanAccountAsset.getCoin(), quanAccountAsset);
 	}
+
+	@Override
+	public void saveHuobiOrder(QuanOrder quanOrder) {
+		RMap<String , Object> map = client.getMap("quan.order.huobi"+quanOrder.getOrderSourceId());
+		map.put(quanOrder.getOrderAccountId() + "" , quanOrder);
+	}
 }

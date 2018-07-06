@@ -4,6 +4,8 @@ package com.huobi.quantification.service.order;
  * @since 2018/6/26
  */
 public interface OrderHuobiService {
+	
+	void updateHuobiOrder(Long orderId);
 	  /**
      * 获取订单信息
      *

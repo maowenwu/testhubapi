@@ -27,4 +27,6 @@ public interface RedisService {
     Map<String, QuanOrderFuture> getOkOrder(Long accountId, String symbol, String contractType);
 
 	void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId);
+
+	void saveHuobiOrder(QuanOrder quanOrder);
 }
