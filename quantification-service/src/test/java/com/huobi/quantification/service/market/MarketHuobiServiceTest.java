@@ -116,12 +116,6 @@ public class MarketHuobiServiceTest {
 	}
 	
 	@Test
-	public void getAccountJSON() {
-		String doGet = httpService.doGet("https://api.huobipro.com/v1/account/accounts");
-		System.out.println(doGet);
-	}
-
-	@Test
 	public void getTicker() {
 		String str = "{\r\n" + "\"status\":\"ok\",\r\n" + "\"ch\":\"market.ethusdt.detail.merged\",\r\n"
 				+ "\"ts\":1499225276950,\r\n" + "\"tick\":{\r\n" + "  \"id\":1499225271,\r\n"
