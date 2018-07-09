@@ -3,9 +3,8 @@ package com.huobi.quantification.huobi.response;
 import com.huobi.quantification.huobi.api.ApiException;
 
 /**
- * @Author ISME
- * @Date 2018/1/14
- * @Time 14:15
+ * @author shaoxiaofeng
+ * @since 2018/6/29
  */
 
 public class MergedResponse<T> {
