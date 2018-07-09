@@ -1,9 +1,8 @@
 package com.huobi.quantification.huobi.response;
 
 /**
- * @Author ISME
- * @Date 2018/1/14
- * @Time 16:23
+ * @author shaoxiaofeng
+ * @since 2018/6/29
  */
 
 public class BalanceBean {
