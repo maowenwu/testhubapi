@@ -5,6 +5,9 @@ import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.job.JobService;
 import org.quartz.DisallowConcurrentExecution;
 
+/**
+ * 期货job定时扫描更新
+ */
 @DisallowConcurrentExecution
 public class FutureJobScanner extends AbstractQuartzJob {
     @Override

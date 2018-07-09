@@ -15,7 +15,7 @@ import com.huobi.quantification.entity.QuanDepthFuture;
 import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanKlineFuture;
 import com.huobi.quantification.entity.QuanTickerFuture;
-import com.huobi.quantification.enums.DepthDirectionEnum;
+import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.service.http.HttpService;
@@ -136,7 +136,7 @@ public class OkMarketServiceImpl implements OkMarketService {
             JSONArray item = asks.getJSONArray(i);
             QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
             depthDetail.setDepthFutureId(quanDepthFuture.getId());
-            depthDetail.setDetailType(DepthDirectionEnum.ASKS.getIntType());
+            depthDetail.setDetailType(DepthEnum.ASKS.getIntType());
             depthDetail.setDetailPrice(item.getBigDecimal(0));
             depthDetail.setDetailAmount(item.getBigDecimal(1));
             depthDetail.setDateUpdate(new Date());
@@ -147,7 +147,7 @@ public class OkMarketServiceImpl implements OkMarketService {
             JSONArray item = bids.getJSONArray(i);
             QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
             depthDetail.setDepthFutureId(quanDepthFuture.getId());
-            depthDetail.setDetailType(DepthDirectionEnum.BIDS.getIntType());
+            depthDetail.setDetailType(DepthEnum.BIDS.getIntType());
             depthDetail.setDetailPrice(item.getBigDecimal(0));
             depthDetail.setDetailAmount(item.getBigDecimal(1));
             depthDetail.setDateUpdate(new Date());

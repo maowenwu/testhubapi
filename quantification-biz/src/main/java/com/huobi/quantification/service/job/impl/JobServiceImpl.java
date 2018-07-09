@@ -7,7 +7,7 @@ import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.job.huobi.HuobiDepthJob;
 import com.huobi.quantification.job.huobi.HuobiTickerJob;
-import com.huobi.quantification.job.huobi.huobiAccountJob;
+import com.huobi.quantification.job.huobi.HuobiAccountJob;
 import com.huobi.quantification.job.okcoin.*;
 import com.huobi.quantification.quartz.QuartzManager;
 import com.huobi.quantification.service.job.JobService;
@@ -100,7 +100,7 @@ public class JobServiceImpl implements JobService {
                     clazz = HuobiTickerJob.class;
                     break;
                 case 3:
-                	clazz = huobiAccountJob.class;
+                	clazz = HuobiAccountJob.class;
                 	break;
                 default:
                     clazz = null;

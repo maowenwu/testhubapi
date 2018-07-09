@@ -8,7 +8,7 @@ import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.account.AccountHuobiService;
 
 @DisallowConcurrentExecution
-public class huobiAccountJob extends AbstractQuartzJob{
+public class HuobiAccountJob extends AbstractQuartzJob{
 
 	@Override
 	public void execute(Object data) {

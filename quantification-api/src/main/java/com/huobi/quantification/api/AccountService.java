@@ -4,5 +4,4 @@ public interface AccountService {
 
 
     String ping();
-
 }
