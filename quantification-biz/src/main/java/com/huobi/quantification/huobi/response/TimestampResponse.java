@@ -4,9 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @Author ISME
- * @Date 2018/1/14
- * @Time 15:53
+ * @author shaoxiaofeng
+ * @since 2018/6/29
  */
 
 public class TimestampResponse {
