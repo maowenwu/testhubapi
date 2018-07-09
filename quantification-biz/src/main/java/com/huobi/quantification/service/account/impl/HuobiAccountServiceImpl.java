@@ -22,7 +22,7 @@ import com.huobi.quantification.dao.QuanAccountMapper;
 import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.service.account.AccountHuobiService;
+import com.huobi.quantification.service.account.HuobiAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
 
@@ -33,7 +33,7 @@ import com.huobi.quantification.service.redis.RedisService;
 @DependsOn("httpServiceImpl")
 @Service
 @Transactional
-public class AccountHuobiServiceImpl implements AccountHuobiService {
+public class HuobiAccountServiceImpl implements HuobiAccountService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 

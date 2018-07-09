@@ -7,7 +7,7 @@ import com.huobi.quantification.entity.QuanTicker;
  * @author shaoxiaofeng
  * @since 2018/6/26
  */
-public interface MarketHuobiService {
+public interface HuobiMarketService {
 	/**
 	 * GET /market/history/kline 获取K线数据
 	 * 

@@ -36,4 +36,6 @@ public class HttpConstant {
     public static final String HUOBI_SUBMITCANCEL = HUOBI_HOST + "/v1/order/orders/{order-id}/submitcancel";
     public static final String HUOBI_BATCHCANCEL = HUOBI_HOST + "/v1/order/orders/batchcancel";
     public static final String HUOBI_ORDERDETAIL = HUOBI_HOST + "/v1/order/orders/{order-id}";
+    public static final String HUOBI_OPENORDERS = HUOBI_HOST + "/v1/order/openOrders";
+    public static final String HUOBI_MATCHRESULTS = HUOBI_HOST + "/v1/order/orders/{order-id}/matchresults";
 }
