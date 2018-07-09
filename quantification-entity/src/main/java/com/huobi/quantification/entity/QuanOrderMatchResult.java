@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class QuanOrderMatchResult {
+	
+	private Long id;
 	/**
 	 * 订单成交时间
 	 */
@@ -132,6 +134,14 @@ public class QuanOrderMatchResult {
 
 	public void setOrderType(String orderType) {
 		this.orderType = orderType;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 }

@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.dao.QuanOrderMapper;
+import com.huobi.quantification.dao.QuanOrderMatchResultMapper;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
 
@@ -22,6 +23,9 @@ public class OrderHuobiServiceImplTest {
 	
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
+	
+	@Autowired
+	private QuanOrderMatchResultMapper quanOrderMatchResultMapper;
 	
 	@Test
 	public void getOrder() {
@@ -139,5 +143,6 @@ public class OrderHuobiServiceImplTest {
 		matchResult.setOrderSource(dataObject.getString("source"));
 		matchResult.setOrderSymbol(dataObject.getString("symbol"));
 		matchResult.setOrderType(dataObject.getString("type"));
+		quanOrderMatchResultMapper.insert(matchResult);
 	}
 }
