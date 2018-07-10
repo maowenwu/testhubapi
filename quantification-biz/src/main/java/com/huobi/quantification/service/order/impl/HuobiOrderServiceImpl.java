@@ -67,7 +67,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 * @return
 	 */
 	public Object getHuobiOrdersHistory() {
-		String body = httpService.doGet(HttpConstant.HUOBI_MATCHRESULTS.replaceAll("//{order-id}//", "123"));
+		String body = httpService.doGet(HttpConstant.HUOBI_MATCHRESULTS.replaceAll("\\{order-id}\\", "123"));
 		parseAndSaveOrderMatchResult(body);
 		return null;
 	}
@@ -109,7 +109,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		if (parseObject.getString("status").equals("ok")) {
 			String data = parseObject.getString("data");
 			Long orderId = Long.parseLong(data);
-			String body = httpService.doGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("//{order-id//}", orderId+""));
+			String body = httpService.doGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", orderId+""));
 			parseAndSaveOrderInfo(body);
 		}
 		return null;
@@ -130,7 +130,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 * @return
 	 */
 	public Object cancelHuobiOrder() {
-		httpService.doGet(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("//{order-id//}", "123"));
+		httpService.doGet(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "123"));
 		return null;
 	}
 
