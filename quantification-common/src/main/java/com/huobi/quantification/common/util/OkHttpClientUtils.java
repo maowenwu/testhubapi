@@ -2,6 +2,7 @@ package com.huobi.quantification.common.util;
 
 import com.huobi.quantification.common.exception.HttpRequestException;
 import okhttp3.*;
+import okhttp3.Authenticator;
 import org.apache.commons.collections.MapUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
@@ -56,9 +57,16 @@ public class OkHttpClientUtils {
         if (proxyConfig == null) {
             httpClient = builder.build();
         } else {
-            httpClient = builder
-                    .proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.huobidev.com", 3129)))
-                    .build();
+            builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.huobidev.com", 3129)));
+            if (proxyConfig.getUsername() != null && proxyConfig.getPassword() != null) {
+                builder.authenticator((route, response) -> {
+                    String credential = Credentials.basic(proxyConfig.getUsername(), proxyConfig.getPassword());
+                    return response.request().newBuilder()
+                            .header("Proxy-Authorization", credential)
+                            .build();
+                });
+            }
+            httpClient = builder.build();
         }
 
     }
