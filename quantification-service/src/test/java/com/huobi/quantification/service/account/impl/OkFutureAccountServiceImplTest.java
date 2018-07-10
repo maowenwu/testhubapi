@@ -14,7 +14,7 @@ import java.util.Map;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
-public class OkAccountServiceImplTest {
+public class OkFutureAccountServiceImplTest {
 
 
     @Autowired

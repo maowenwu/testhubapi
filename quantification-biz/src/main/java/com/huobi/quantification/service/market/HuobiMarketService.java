@@ -1,8 +1,5 @@
 package com.huobi.quantification.service.market;
 
-import com.huobi.quantification.entity.QuanDepth;
-import com.huobi.quantification.entity.QuanTicker;
-
 /**
  * @author shaoxiaofeng
  * @since 2018/6/26

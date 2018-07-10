@@ -2,7 +2,7 @@ package com.huobi.quantification.common.constant;
 
 public class HttpConstant {
 
-
+    /********OK 期货********/
     public static final String OK_HOST = "https://www.okex.com";
     // OK market相关
     public static final String OK_TICKER = OK_HOST + "/api/v1/future_ticker.do";
@@ -19,6 +19,7 @@ public class HttpConstant {
     public static final String OK_USER_INFO = OK_HOST + "/api/v1/future_userinfo.do";
     public static final String OK_POSITION = OK_HOST + "/api/v1/future_position.do";
 
+    /********HUOBI 现货********/
     public static final String HUOBI_HOST = "https://api.huobipro.com";
     //火币market相关
     ///market/detail/merged 获取聚合行情(Ticker)
@@ -27,10 +28,10 @@ public class HttpConstant {
     public static final String HUOBI_DEPTH = HUOBI_HOST + "/market/depth";
     ///market/history/kline
     public static final String HUOBI_KLINE = HUOBI_HOST + "/market/history/kline";
-    
+
     //火币账户相关 /v1/account/accounts/{account-id}/balance
     public static final String HUOBI_ACCOUNT = HUOBI_HOST + "/v1/account/accounts/{account-id}/balance";
-    
+
     //火币订单相关    
     public static final String HUOBI_ORDER_PLACE = HUOBI_HOST + "/v1/order/orders/place";
     public static final String HUOBI_SUBMITCANCEL = HUOBI_HOST + "/v1/order/orders/{order-id}/submitcancel";
@@ -38,4 +39,14 @@ public class HttpConstant {
     public static final String HUOBI_ORDERDETAIL = HUOBI_HOST + "/v1/order/orders/{order-id}";
     public static final String HUOBI_OPENORDERS = HUOBI_HOST + "/v1/order/openOrders";
     public static final String HUOBI_MATCHRESULTS = HUOBI_HOST + "/v1/order/orders/{order-id}/matchresults";
+
+    /********HUOBI 期货********/
+    // market 相关
+    public static final String HUOBI_FUTURE_TICKER = "http://127.0.0.1:8882/market/detail/merged";
+    public static final String HUOBI_FUTURE_DEPTH = "http://127.0.0.1:8882/market/depth";
+    public static final String HUOBI_FUTURE_KLINE = "http://127.0.0.1:8882/market/history/kline";
+
+    // account相关
+    public static final String HUOBI_FUTURE_ACCOUNTINFO = "https://api.hcontract.com/contract/v1/contract_accountinfo";
+    public static final String HUOBI_FUTURE_POSITION = "https://api.hcontract.com/contract/v1/contract_position";
 }

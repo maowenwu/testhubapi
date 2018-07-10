@@ -6,7 +6,7 @@ import com.huobi.quantification.common.ServiceResult;
  * @author zhangl
  * @since 2018/6/26
  */
-public interface OkMarketService {
+public interface OkFutureMarketService {
 
 
     void updateOkTicker(String symbol, String contractType);
