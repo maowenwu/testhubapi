@@ -4,7 +4,7 @@ import com.huobi.quantification.api.future.FutureMarketService;
 import org.springframework.stereotype.Service;
 
 
-@Service("marketService")
+@Service
 public class FutureMarketServiceImpl implements FutureMarketService {
 
 }
