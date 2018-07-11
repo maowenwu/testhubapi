@@ -1,7 +1,5 @@
 package com.huobi.quantification.dto;
 
-import java.math.BigDecimal;
-
 public class OkTradeOrderDto {
 
     private String strategyName;
