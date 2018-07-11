@@ -80,7 +80,7 @@ public class AccountHuobiServiceImplTest {
 		String data = jsonObject.getString("data");
 		JSONObject temp = JSON.parseObject(data);
 		QuanAccount quanAccount = new QuanAccount();
-		quanAccount.setAccountSourceId(temp.getLong("user-id"));
+		quanAccount.setAccountSourceId(temp.getLong("id"));
 		quanAccount.setAccountsType(temp.getString("type"));
 		quanAccount.setExchangeId(ExchangeEnum.HUOBI.getExId());
 		quanAccount.setState(temp.getString("state"));
