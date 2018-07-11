@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
-public class OkFutureMarketServiceTest {
+public class OkFutureFutureMarketServiceTest {
 
     @Autowired
     private OkFutureMarketService okFutureMarketService;

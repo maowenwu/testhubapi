@@ -1,10 +1,10 @@
 package com.huobi.quantification.provider;
 
-import com.huobi.quantification.api.AccountService;
+import com.huobi.quantification.api.future.FutureAccountService;
 import org.springframework.stereotype.Service;
 
 @Service("accountService")
-public class AccountServiceImpl implements AccountService {
+public class FutureAccountServiceImpl implements FutureAccountService {
 
 
     @Override

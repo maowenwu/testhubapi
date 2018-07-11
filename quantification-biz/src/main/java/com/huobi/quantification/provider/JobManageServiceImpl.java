@@ -1,6 +1,6 @@
 package com.huobi.quantification.provider;
 
-import com.huobi.quantification.api.JobManageService;
+import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanJobFutureMapper;
 import com.huobi.quantification.entity.QuanJobFuture;

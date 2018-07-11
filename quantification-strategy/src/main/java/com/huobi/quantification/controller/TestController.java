@@ -1,7 +1,7 @@
 package com.huobi.quantification.controller;
 
 
-import com.huobi.quantification.api.JobManageService;
+import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkJobTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;

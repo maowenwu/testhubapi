@@ -1,26 +1,22 @@
 package com.huobi.quantification.service.order.impl;
 
 import com.huobi.quantification.ServiceApplication;
-import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
-import com.huobi.quantification.api.OrderService;
-import com.huobi.quantification.service.order.OkOrderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
-public class OkOrderServiceImplTest {
+public class OkFutureOrderServiceImplTest {
 
   /*  @Autowired
     private OkOrderService okOrderService;
 
     @Autowired
-    private OrderService okOrderServiceFacade;
+    private FutureOrderService okOrderServiceFacade;
 */
     @Test
     public void cancelOkOrder(){

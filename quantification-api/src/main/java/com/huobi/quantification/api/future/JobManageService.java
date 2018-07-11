@@ -1,4 +1,4 @@
-package com.huobi.quantification.api;
+package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
 
