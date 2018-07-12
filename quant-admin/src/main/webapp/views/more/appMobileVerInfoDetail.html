@@ -1,0 +1,75 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="index.html">主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>APP二维码历史记录详情</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="appMobileVerInfoDetailCtrl">
+	<form class="form-horizontal" id="form1">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="">
+						<div class="panel-body ibox float-e-margins">
+							<div class="ibox-content">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">APP名称：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.appName">
+									</div>
+									<label class="col-sm-2 control-label">所属客户端：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.platform | formatDropping:platforms">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">版本号：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.version">
+									</div>
+									<label class="col-sm-2 control-label">连接：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.appUrl">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">更新状态：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.downFlag | formatDropping:downFlags">
+									</div>
+									<label class="col-sm-2 control-label">最低版本：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.lowestVersion">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">说明：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.verDesc">
+									</div>
+									<label class="col-sm-2 control-label">创建时间：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.createTime | date:'yyyy-MM-dd HH:mm:ss'">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">二维码：</label>
+									<div class="col-sm-2">
+										<img ng-src="{{info.url}}" height="250px" width="250px"/>
+									</div>
+									<label class="col-sm-2 control-label">LOGO：</label>
+									<div class="col-sm-2">
+										<img ng-src="{{info.appLogo}}" height="250px" width="250px"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label"></label>
+									<div class="col-lg-8">
+										<a ui-sref="sys.appMobileVerInfo({id:info.appType})" class="btn btn-primary4" type="button">返回</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</form>
+
+</div>

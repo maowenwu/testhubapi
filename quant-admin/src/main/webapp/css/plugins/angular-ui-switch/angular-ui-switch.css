@@ -1,0 +1,98 @@
+.switch {
+  background: rgb(217, 219, 219);
+  border: 1px solid #d9d9db;
+  position: relative;
+  display: inline-block;
+  box-sizing: content-box;
+  overflow: visible;
+  width: 66px;
+  height: 22px;
+  padding: 0px;
+  margin: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: 0.3s ease-out all;
+  -webkit-transition: 0.3s ease-out all;
+  text-align: right;
+  line-height:22px;
+}
+.switch:after{content: "关闭  ";padding-right: 5px;}
+/*adding a wide width for larger switch text*/
+.switch.wide {
+  width:80px;
+}
+.switch small {
+  background: #fff;
+  border:1px solid #39abff;
+  width: 33px;
+  height: 24px;
+  position: absolute;
+  color:#3aabff;
+  top: -1px;
+  left: 0px;
+  transition: 0.3s ease-out all;
+  -webkit-transition: 0.3s ease-out all;
+  text-align: center;
+  line-height: 22px;
+  border-radius: 3px;
+}
+.switch small:after{
+  content: "| | |";
+  font-weight: bold;
+}
+.switch.checked {
+  background: rgb(57, 181, 255);
+  border-color: rgb(57, 181, 255);
+  text-align: left;
+}
+.switch.checked:after{
+  content: "打开";
+  padding-left: 5px;
+  color:#fff
+}
+.switch.checked small {
+  left: 34px;
+}
+/*wider switch text moves small further to the right*/
+.switch.wide.checked small {
+  left:52px;
+}
+/*styles for switch-text*/
+.switch .switch-text {
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:13px;
+}
+
+.switch .off {
+  display:block;
+  position: absolute;
+  right: 10%;
+  top: 25%;
+  z-index: 0;
+  color:#A9A9A9;
+}
+
+.switch .on {
+  display:none;
+   z-index: 0;
+  color:#fff;
+  position: absolute;
+  top: 25%;
+  left: 9%;
+}
+
+.switch.checked .off {
+  display:none;
+}
+
+.switch.checked .on {
+  display:block;
+
+}
+
+.switch.disabled {
+  opacity: .50;
+  cursor: not-allowed;
+}
+/*.switch-s{ width:40px; height:20px; top:0;}*/
+/*.switch-s small{ width:20px; height:20px;}*/

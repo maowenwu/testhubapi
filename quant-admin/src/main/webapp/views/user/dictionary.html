@@ -1,0 +1,196 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>用户中心</a></li>
+			<li class="active"><strong>数据字典</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="dictionaryCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>字典查询</h5>
+						<!--<div ibox-tools></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">字典键：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.sysKey'>
+							</div>
+							<label class="col-sm-2 control-label">字典名称：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.sysName'>
+							</div>
+							<label class="col-sm-2 control-label">状态：</label>
+							<div class="col-sm-2">
+								<select class="form-control" ng-model='baseInfo.status'
+									ng-options="x.value as x.text for x in statusAll">
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-primary6 btn-mr20" type="button" ng-click='query()'>查询</button>
+								<button class="btn btn-primary3 btn-mr20" type="button" ng-click="resetForm()">清空</button>
+								<button class="btn btn-primary5" ng-show="hasPermit('sysDict.insert')" type="button" ng-click="addModal()">新增</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>数据字典列表</h5>
+						<!--<div ibox-tools="" class="ng-scope"></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="gridStyle" ui-grid="dicGrid" ui-grid-pagination ui-grid-resize-columns></div>
+					</div>
+				</div>
+				<div style="height: 50px"></div>
+			</div>
+		</div>
+	</form>
+	<!-- add role -->
+	<form class="form-horizontal" id="form2" name="horizontal" novalidate>
+		<div id="addModal" class="modal fade"  role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">新增字典</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典Key：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.sysKey' name="sysKey" required/>
+								<div class="req_mesg" ng-show="horizontal.sysKey.$dirty && horizontal.sysKey.$invalid">
+									<span ng-show="horizontal.sysKey.$error.required">字典Key不能为空</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典名称：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.sysName' name="sysName" required>
+								<div class="req_mesg" ng-show="horizontal.sysName.$dirty && horizontal.sysName.$invalid">
+									<span ng-show="horizontal.sysName.$error.required">字典名称不能为空</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典值：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" name="sysValue" required ng-model='newInfo.sysValue'>
+								<div class="req_mesg" ng-show="horizontal.sysValue.$dirty && horizontal.sysValue.$invalid">
+									<span ng-show="horizontal.sysValue.$error.required">字典值不能为空</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label">上级字典Key：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" ng-model='newInfo.parentId'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">排序：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" ng-model='newInfo.orderNo'>
+							</div>
+							<label class="col-sm-2 control-label">状态：</label>
+							<div class="col-sm-3">
+								<switch class="switch" ng-model="newInfo.status" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" ng-model='newInfo.remark'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
+									id="btnSubmit" ng-disabled="horizontal.$invalid || submitting">提交</button>
+									<button class="btn btn-primary8" type="button" ng-click='cancel()'
+									>取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<!-- add role -->
+	<!-- edit role -->
+	<form class="form-horizontal" id="form3" name="horizontalEdit" novalidate>
+		<div id="editRoleModal" class="modal fade" role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">修改角色</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>角色名称：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='roleInfo.roleName' name="roleName" required/>
+								<div class="req_mesg" ng-show="horizontalEdit.roleName.$dirty && horizontalEdit.roleName.$invalid">
+									<span ng-show="horizontalEdit.RoleName.$error.required">角色名称不能为空</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>角色编码：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='roleInfo.roleCode' name="roleCode" ng-blur="checkEditCodeUnique()" required>
+								<div class="req_mesg" ng-show="horizontalEdit.roleCode.$dirty && horizontalEdit.roleCode.$invalid">
+									<span ng-show="horizontalEdit.roleCode.$error.required">角色编码不能为空</span>
+								</div>
+								<span class="req_mesg" ng-hide="editCodeCheckFlag">
+									{{editCodeCheckMsg}}
+								</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">备注：</label>
+							<div class="col-sm-8">
+								<input type="text" class="form-control" ng-model='roleInfo.roleRemark'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">状态：</label>
+							<div class="col-sm-3">
+								<switch class="switch" ng-model="roleInfo.roleStatus" ng-true-value="1" ng-false-value="0"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitEditRole()' ng-disabled="horizontalEdit.$invalid || !editCodeCheckFlag || submitting">
+									提交</button>
+								<button class="btn btn-primary8" type="button" ng-click='cancelEdit()'>取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<!-- edit role -->
+</div>

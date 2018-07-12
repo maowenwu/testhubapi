@@ -1,0 +1,192 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5>基本信息</h5>
+		<!--<div ibox-tools></div>-->
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="form-group col-sm-12">
+				<label class="col-lg-2 control-label"><i class="red_req">*</i>通告标题：</label>
+				<div class="col-lg-7">
+					<input type="text" class="form-control" name="title" ng-model="noticeInfo.title" required />
+					<div class="req_mesg" ng-show="horizontal.title.$dirty && horizontal.title.$invalid">
+						<span ng-show="horizontal.title.$error.required">通告不能为空</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group col-sm-12">
+				<label class="col-lg-2 control-label"><i class="red_req">*</i>通告内容：</label>
+				<div class="col-lg-7">
+				 	<textarea type="text" class="form-control" name="content" summernote ng-model="noticeInfo.content" required >
+				 	</textarea>
+				 	<div class="req_mesg" ng-show="horizontal.content.$dirty && horizontal.content.$invalid">
+						<span ng-show="horizontal.content.$error.required">通告内容不能为空</span>
+					</div>
+				</div>
+				<div class="col-lg-3">
+					注意：<br>
+					1、消息下发给商户时，通告内容中只能有文字内容。不要在内容中直接添加，图片可在消息图片栏上传。图片大小建议360*720，高度320固定，长度可自适应。代理商无此限制。<br>
+					2、链接只能为html链接。代理商消息详情优先显示连接内容，商户消息有连接则跳转详情。
+
+				</div>
+			</div>
+			<div class="form-group col-sm-12">
+				<label class="col-lg-2 control-label">链接：</label>
+				<div class="col-lg-7">
+				 	<input type="text" class="form-control" name="link" ng-model="noticeInfo.link"/>
+				</div>
+			</div>
+			
+			<div class="form-group col-sm-12">
+				<label class="col-lg-2 control-label">消息图片：</label>
+				<div class="col-lg-7">
+					 <input type="file" nv-file-select="" uploader="uploaderImg"   multiple  />
+					 
+						<table class="table">
+		                  <tbody>
+		                      <tr ng-repeat="item in uploaderImg.queue">
+		                          <td>
+		                              <strong>{{ item.file.name }}</strong>
+		                              <div ng-show="uploaderImg.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+		                          </td>
+		                          <td ng-show="uploaderImg.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+		                          <td ng-show="uploaderImg.isHTML5">
+		                              <div class="progress" style="margin-bottom: 0;">
+		                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+		                    	</div>
+				                </td>
+				                <td class="text-center">
+				                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+				                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+				                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+				                </td>
+				                <td nowrap>
+				                    <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+				                        <span class="glyphicon glyphicon-trash"></span> 删除
+				                    </button>
+				                </td>
+				            </tr>
+				        </tbody>
+				    </table>
+					<div ng-hide="imgFlagHide">
+						<input type="button" class="btn btn-primary2" type="button" ng-click='removeImg()' value="清除图片" />
+						<div class="col-sm-4" style="padding: 0">
+							<img style="max-width: 340px" ng-src="{{noticeInfo.messageImgUrl}}" />
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="form-group col-sm-12">
+				<label class="col-lg-2 control-label">附件：</label>
+				<div class="col-lg-7">
+
+					 <input type="file" nv-file-select="" uploader="uploaderFile"  multiple  />
+					 
+						<table class="table">
+		                  <tbody>
+		                      <tr ng-repeat="item in uploaderFile.queue">
+		                          <td>
+		                              <strong>{{ item.file.name }}</strong>
+		                              <div ng-show="uploaderFile.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+		                          </td>
+		                          <td ng-show="uploaderFile.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+		                          <td ng-show="uploaderFile.isHTML5">
+		                              <div class="progress" style="margin-bottom: 0;">
+		                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+		                    	</div>
+				                </td>
+				                <td class="text-center">
+				                    <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+				                    <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+				                    <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+				                </td>
+				                <td nowrap>
+				                    <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+				                        <span class="glyphicon glyphicon-trash"></span> 删除
+				                    </button>
+				                </td>
+				            </tr>
+				        </tbody>
+				    </table>
+					<div ng-hide="fileFlagHide">
+						<input type="button" class="btn btn-primary2" type="button" ng-click='removeAnnex()' value="清除附件" />
+						<br>
+						<div>
+							<a href="{{noticeInfo.attachmentUrl}}">{{noticeInfo.attachment}}</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="ibox float-e-margins">
+	<div class="ibox-title">
+		<h5>下发对象</h5>
+		<!--<div ibox-tools></div>-->
+	</div>
+	<div class="ibox-content">
+		<div class="row" style="height:400px;">
+			<div class="form-group col-sm-12">
+			<div class="form-group  col-sm-12">
+				<label class="col-lg-2 control-label"><i class="red_req">*</i>下发对象：</label>
+				<div class="col-lg-3">
+					<select class="form-control" name="sysType" ng-model="noticeInfo.sysType"
+						ng-options="x.value as x.text for x in sysType" required></select>
+				</div>
+				<div class="req_mesg" ng-show="horizontal.sysType.$dirty && horizontal.sysType.$invalid">
+						<span ng-show="horizontal.sysType.$error.required">下发对象不能为空</span>
+				</div>
+			</div>
+			</div>
+			<div class="form-group col-sm-12" ng-switch on="noticeInfo.sysType">
+				<div ng-switch-when="1" class="form-group col-sm-12">
+					<div class="form-group">
+						<label class="col-lg-2 control-label">指定代理商的商户：</label>
+						<div class="col-lg-3">
+						<select class="form-control" ng-change="getAgent()" ng-model="baseInfo.agentBusiness"
+							ng-options="x.value as x.text for x in agentBusiness">
+						</select>
+						</div>
+						<div ng-switch on="baseInfo.agentBusiness">
+							<div ng-switch-when="1">
+								<label class="col-lg-3 control-label">指定一级代理商：</label>
+								<div class="col-lg-3">
+									<select chosen  class="chosen-select" style="width:350px;" tabindex="4" ng-change="getBpList()" ng-model="noticeInfo.agentNo" ng-options="x.value as x.text for x in agent">
+						            	<option value=""></option>
+						            	</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<br>
+					<div class="form-group">
+						<label class="col-lg-2 control-label">&nbsp;</label>
+						<div class="col-lg-7"><img src="">
+							<div  style="height: 207px" class="gridStyle" ui-grid="productsGrid" ui-grid-selection class="grid" ui-grid-resize-columns></div>
+						</div>
+					</div>
+				</div>
+				<div ng-switch-when="2" class="form-group col-sm-12">
+					<div class="form-group">
+						<label class="col-lg-2 control-label">指定组织：</label>
+						<div class="col-sm-2" data-ng-repeat="oemType in oemTypes">
+							<input type="checkbox" name="oemtypecheck"  ng-checked="oemType.checkedState" value="{{oemType.sysValue}}"/>
+							<span ng-bind="oemType.sysName"></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label">指定代理商：</label>
+						<div class="col-lg-7">
+							<select class="form-control" ng-model="baseInfo.isAll"
+								ng-options="x.value as x.text for x in isAll"></select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,209 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>用户中心</a></li>
+			<li class="active"><strong>用户管理</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="userCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>用户条件查询</h5>
+						<!--<div ibox-tools></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">登录账号：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.userName'>
+							</div>
+							<label class="col-sm-2 control-label">真实姓名：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.realName'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">邮箱：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.email'>
+							</div>
+							<label class="col-sm-2 control-label">电话号码：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.telNo'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-primary6 btn-mr20" type="button" ng-click='query()'>查询</button>
+								<button class="btn btn-primary3 btn-mr20" type="button" ng-click="resetForm()">清空</button>
+								<button class="btn btn-primary5" ng-show="hasPermit('user.insert')" type="button" ng-click="addUserModal()">新增</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>用户信息列表</h5>
+						<!--<div ibox-tools="" class="ng-scope"></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="gridStyle" ui-grid="userGrid" ui-grid-pagination ui-grid-pinning ui-grid-resize-columns></div>
+					</div>
+				</div>
+				<div style="height: 50px;"></div>
+			</div>
+		</div>
+	</form>
+	<!-- add user -->
+	<form class="form-horizontal" id="form3" name="horizontalAdd" novalidate>
+		<div id="addUserModal" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">新增用户</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>登录账号：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" ng-blur="checkNameUnique()"
+									ng-model='newUserInfo.userName' name="userName" required/>
+								<div class="req_mesg" ng-show="horizontalAdd.userName.$dirty && horizontalAdd.userName.$invalid">
+									<span ng-show="horizontalAdd.userName.$error.required">登录账号不能为空</span>
+								</div>
+								<span class="req_mesg" ng-hide="userNameCheckFlag">
+									{{userNameCheckMsg}}
+								</span>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>真实姓名：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newUserInfo.realName' name="realNameAdd" required>
+								<div class="req_mesg" ng-show="horizontalAdd.realNameAdd.$dirty && horizontalAdd.realNameAdd.$invalid">
+									<span ng-show="horizontalAdd.realNameAdd.$error.required">真实姓名不能为空</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">邮箱：</label>
+							<div class="col-sm-3">
+								<input type="email" name="emailAdd" class="form-control" ng-model='newUserInfo.email'>
+								<div class="req_mesg" ng-show="horizontalAdd.emailAdd.$dirty && horizontalAdd.emailAdd.$invalid">
+									<span ng-show="horizontalAdd.emailAdd.$error.email">邮箱格式非法</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label">电话号码：</label>
+							<div class="col-sm-3">
+								<input type="text"  name="telNoAdd"  ng-pattern="/^1\d{10}$/"
+								class="form-control" ng-model='newUserInfo.telNo'>
+								<div class="req_mesg" ng-show="horizontalAdd.telNoAdd.$invalid">
+									<span ng-show="horizontalAdd.telNoAdd.$error.pattern">手机号码不合法</span>
+								</div>	
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">状态：</label>
+							<div class="col-sm-3">
+								<switch class="switch" ng-model="newUserInfo.status" ng-true-value="1" ng-false-value="0"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewUser()'
+									id="btnSubmit3" ng-disabled="horizontalAdd.$invalid || !userNameCheckFlag ||submitting">提交</button>
+									<button class="btn btn-primary8" type="button" ng-click='cancel()'
+									>取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		</form>
+		<!-- add -->
+		<!-- edit -->
+		<form class="form-horizontal" id="form4" name="horizontalEdit" novalidate>
+		<div id="editUserModal" class="modal fade" role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">修改用户</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>登录账号：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='userInfo.userName' readonly/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>真实姓名：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='userInfo.realName' name="realName" required>
+								<div class="req_mesg" ng-show="horizontalEdit.realName.$dirty && horizontalEdit.realName.$invalid">
+									<span ng-show="horizontalEdit.realName.$error.required">真实姓名不能为空</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">邮箱：</label>
+							<div class="col-sm-3">
+								<input type="email" name="email" class="form-control" ng-model='userInfo.email'>
+								<div class="req_mesg" ng-show="horizontalEdit.email.$dirty && horizontalEdit.email.$invalid">
+									<span ng-show="horizontalEdit.email.$error.email">邮箱格式非法</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label">电话号码：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" ng-model='userInfo.telNo' name="telNoAdd" ng-pattern="/^1\d{10}$/" >
+								<div class="req_mesg" ng-show="horizontalEdit.telNoAdd.$invalid">
+									<span ng-show="horizontalEdit.telNoAdd.$error.pattern">手机号码不合法</span>
+								</div>	
+							</div>
+						</div>
+						<div class="form-group" ng-hide="principal.id==userInfo.id">
+							<label class="col-sm-2 control-label">状态：</label>
+							<div class="col-sm-3">
+								<switch class="switch" ng-model="userInfo.status" ng-true-value="1" ng-false-value="0"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-mr20 btn-new " type="button" ng-click='restPwd(userInfo.id)'>
+									密码重置</button>
+								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitEditUser()' ng-disabled="horizontalEdit.$invalid || submitting">
+									提交</button>
+								<button class="btn btn-primary8" type="button" ng-click='cancelEdit()'>取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<form class="form-horizontal">
+		<div ui-view="modalRole" />
+		<div ui-view="modalRight" />
+	</form>
+	<!-- edit right -->
+</div>

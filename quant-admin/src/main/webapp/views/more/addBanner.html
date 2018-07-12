@@ -1,0 +1,40 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>新增APP banner广告</strong></li>
+		</ol>
+	</div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="addBannerCtrl">
+	<form class="form-horizontal" id="form1" name="horizontal">
+		<div class="form-group">
+			<div class="ibox float-e-margins">
+				 <div class="ibox-title">
+					<h5>新增APP banner广告</h5>
+					<!--<div ibox-tools></div>-->
+				</div> 
+				<div class="ibox-content">
+					<div ui-view="bannerCommon"></div>
+				</div>
+			</div>
+
+
+			<div class="col-lg-12 bgff">
+				<div class="col-sm-12">
+					<div class="col-sm-2"></div>
+					<div class="col-sm-6">
+						<button class="btn btn-primary btn-rounded btn-block" type="button" ng-click="submit()" ng-show="hasPermit('banner.insert')"
+								id="btnSubmit" ng-disabled="horizontal.$invalid || uploader.queue.length==0 || submitting">提交</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	</form>
+</div>

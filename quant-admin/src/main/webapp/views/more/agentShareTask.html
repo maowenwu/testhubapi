@@ -1,0 +1,74 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>代理商分润任务</strong></li>
+		</ol>
+	</div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="agentShareTaskCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>代理商分润任务</h5>
+					</div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-mr20 btn-new" style="width:180px" type="button"  ng-show="hasPermit('task.agentShareTask')"
+									ng-click="updateAgentShareTask()" ng-disabled="updateAgentShareTaskSubmitting">代理商分润任务执行</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-new btn-mr20" style="width:180px" type="button"  ng-show="hasPermit('task.acqRateTask')"
+									ng-click="updateAcqServiceRate()" ng-disabled="updateAcqServiceRateSubmitting">收单服务费率任务执行</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-new btn-mr20" style="width:180px" type="button"  ng-show="hasPermit('task.outRateTask')"
+									ng-click="updateOutAccountServiceTask()" ng-disabled="updateOutAccountServiceTaskSubmitting">出款服务费率任务执行</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-new btn-mr20" style="width:180px" type="button"  ng-show="hasPermit('task.outRateTask')"
+									ng-click="updateSettleStatusTask()" ng-disabled="updateSettleStatusTaskSubmitting">交易结算状态更新</button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-new btn-mr20" style="width:180px" type="button"  ng-show="hasPermit('task.outRateTask')"
+									ng-click="batchCreateAcc()" ng-disabled="batchCreateAccTaskSubmitting">存量代理商开户</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+								<a class="btn btn-primary4 btn-rounded" type="button" ui-sref="sys.timedTask">返回</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

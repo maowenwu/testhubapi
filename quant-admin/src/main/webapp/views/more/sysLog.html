@@ -1,0 +1,151 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>日志管理</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="sysLogCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>日志管理条件查询</h5>
+						<div ibox-tools></div>
+					</div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">操作人名称：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.user_name'>
+							</div>
+							<label class="col-sm-2 control-label">菜单编码：</label>
+							<div class="col-sm-6">
+								<div class="col-sm-4"><select class="form-control" ng-change="getMenuList()" ng-model="baseInfo.parent_menu_id"
+										ng-options="x.id as x.menuName for x in parentMenuList"></select></div>
+								<div class="col-sm-4"><select class="form-control" ng-change="getOperList()" ng-model="baseInfo.menu_id"
+										ng-options="x.id as x.menuName for x in menuList"></select></div>
+								<div class="col-sm-4"><select class="form-control"  ng-model="baseInfo.oper_id"
+										ng-options="x.id as x.menuName for x in operList"></select></div>
+										
+								<!-- <input type="text" class="form-control"
+									ng-model='baseInfo.oper_code'> -->
+							</div>
+						</div>
+						<div class="form-group">
+								<label class="col-sm-2 control-label">操作日期：</label>
+								<div class="col-sm-6">
+									<input type="datetime" class="form-control" style="width:auto;display:inline-block;" date-time ng-model="baseInfo.oper_start_time" view="date"  > ~
+									<div style="position: relative; display: inline-block">
+										<input type="datetime" class="form-control" style="width:auto;display:inline-block;" date-time ng-model="baseInfo.oper_end_time" view="date" >
+									</div>
+								</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary6 btn-mr20" type="button" ng-click='query()'>查询</button>
+								<button class="btn btn-primary3 btn-mr20" type="button" ng-click="resetForm()">清空</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>日志信息列表</h5>
+						<div ibox-tools="" class="ng-scope"></div>
+					</div>
+					<div class="ibox-content">
+						<div class="ibox-content">
+						<div ui-grid="logGrid" ui-grid-resize-columns ui-grid-pagination 
+									 ui-grid-pinning class="grid"></div>
+						<div ng-show="loadImg" class="timg"></div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<form class="form-horizontal" id="form2" name="horizontalAdd" novalidate>
+		<div id="logDetailModal" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">日志详情</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">操作人：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.user_name}}
+							</div>
+							<label class="col-sm-2 control-label">请求方法：</label>
+							<div class="col-sm-5 checkbox" style="word-break: break-all">
+								{{logInfo.request_method}}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">请求参数：</label>
+							<div class="col-sm-10 checkbox" style="word-break: break-all">
+								{{logInfo.request_params}}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">返回结果：</label>
+							<div class="col-sm-6 checkbox">
+								{{logInfo.return_result}}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">方法描述：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.method_desc}}
+							</div>
+							<label class="col-sm-2 control-label">菜单名称：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.menu_name}}
+							</div>
+						</div>
+						<div class="form-group">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">菜单编码：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.oper_code}}
+							</div>
+							<label class="col-sm-2 control-label">操作时间：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.oper_time | date:'yyyy-MM-dd HH:mm:ss'}}
+							</div>
+						</div>
+							<label class="col-sm-2 control-label">请求IP：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.oper_ip}}
+							</div>
+							<label class="col-sm-2 control-label">操作状态：</label>
+							<div class="col-sm-3 checkbox">
+								{{logInfo.oper_status | formatDropping:operStatus}}
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+									<button class="btn btn-primary8" type="button" ng-click='cancel()'
+									>返回</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

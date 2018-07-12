@@ -1,0 +1,67 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>系统管理</a></li>
+			<li class="active"><strong>系统角色添加菜单</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="roleCtrl2">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="bgff">
+			<div class="col-lg-4">
+			<div style="overflow-y:scroll; height:600px; padding:10px 10px 10px 100px; border:1px solid #eee;">
+				<div js-tree="treeConfig" ng-model="sysMenus" tree="treeInstance"
+					tree-events="changed:changedCB;ready:readyCB"></div>
+				</div>
+					<br/>
+			</div>
+			<div  class="col-lg-5" style="padding:20px 0 0 50px;">
+					<div class="form-group">
+						角色名称：<span>{{rightName}}</span>
+					</div>
+					<div class="form-group">
+					权限列表：
+					</div>
+					<div class="form-group" style="padding-left:57px">
+					<label style="font-weight:normal"><input type="checkbox" ng-model="checkFlag" ng-click="checkAll()" style="margin:3px 3px 0 0; float:left"/>全选</label>
+					</div>
+					<div class="row form-group permits" style="padding-left:77px;">
+					<span ng-repeat="pitem in showPages" style="padding-right:10px;"><label style="font-weight:normal"><input type="checkbox" ng-model="pitem.selected" data-code="{{pitem.id}}" style="margin:3px 3px 0 0; float:left"/>{{pitem.menuName}}</label></span>
+					</div>
+					<button  class="btn btn-primary btn-mr20" ng-disabled="submitting" ng-click="savePermits()">保存</button>
+					<button  class="btn btn-primary4" ng-click="cancel()">返回</button>
+				</div>
+			<div style="height: 80px; width: 100%; clear: both"></div>
+			</div>
+		</div>
+
+	</div>
+	
+	<!-- 模态框（Modal）确定删除 -->
+	<div id="myModal" class="modal fade" tabindex="-1" role="dialog">
+	   <div class="modal-dialog">
+	      <div class="modal-content">
+	         <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal">
+	                  &times;
+	            </button>
+	            <h3 class="modal-title">消息对话框</h3>
+	         </div>
+	         <div class="modal-body">
+	         	 确定删除{{nameDel}}吗？
+	         	 <input type="hidden" class="form-control" ng-model="id">
+	         </div>
+	         <div class="modal-footer">
+			    <button type="button" ng-click="deleteModalClose()" class="btn btn-primary">确定</button>
+			    <button type="button" data-dismiss="modal" class="btn btn-primary8">取消</button>
+			 </div>
+	      </div>
+		</div>
+	</div>
+</div>

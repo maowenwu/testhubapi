@@ -1,0 +1,60 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>代理商APP关于软件设置详情</strong></li>
+		</ol>
+	</div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="appInfoDetailCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="form-group">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>新增代理商APP banner</h5>
+					<!--<div ibox-tools></div>-->
+				</div>
+				<div class="ibox-content">
+					<div class="form-group">
+						<label class="col-sm-1 control-label">LOGO：</label>
+						<div class="col-sm-3" ng-hide="imgFlagHide">
+							<img ng-src="{{baseInfo.photoUrl}}" style="width: 198px;height: 100px">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">说明：</label>
+						<div class="col-sm-3">
+							<textarea rows="5" cols="20" class="form-control" readonly>{{baseInfo.text}}</textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label">所属组织：</label>
+						<div class="col-sm-3">
+							<p class="form-control-static">{{baseInfo.teamName}}</p></div>
+						<div ng-switch on="baseInfo.teamId">
+							<div ng-switch-when="200010">
+								<label class="col-sm-1 control-label">一级代理商名称：</label>
+								<div class="col-sm-3">
+								<p class="form-control-static">{{baseInfo.agentName}}</p></div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-1 control-label"></label>
+						<div class="col-sm-4">
+							<a class="btn btn-primary4" ui-sref='sys.queryAppInfo'>返回</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+
+		</div>
+	</form>
+</div>

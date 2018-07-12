@@ -1,0 +1,150 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>用户中心</a></li>
+			<li class="active"><strong>菜单管理</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="menuCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div>
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>菜单条件查询</h5>
+						<div ibox-tools></div>
+					</div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">菜单名称：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.menuName'>
+							</div>
+							<label class="col-sm-2 control-label">菜单编码：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.menuCode'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">菜单路径：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.menuUrl'>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary6 btn-mr20" type="button" ng-click='query()'>查询</button>
+								<button class="btn btn-primary3 btn-mr20" type="button" ng-click="resetForm()">清空</button>
+								<button class="btn btn-primary5" type="button" ng-click="menuModal()">新增</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>菜单信息列表</h5>
+						<div ibox-tools="" class="ng-scope"></div>
+					</div>
+					<div class="ibox-content">
+						<div class="gridStyle" ui-grid="menuGrid" ui-grid-pagination ui-grid-pinning ui-grid-resize-columns ui-grid-tree-view></div>
+					</div>
+				</div>
+				<div style="height: 50px"></div>
+			</div>
+		</div>
+	</form>
+	<form class="form-horizontal" id="form2" name="horizontalAdd" novalidate>
+		<div id="menuModal" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">{{type==1?'新增':'修改'}}菜单</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>菜单名称：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newMenuInfo.menuName' name="menuName" required/>
+								<div class="req_mesg" ng-show="horizontalAdd.menuName.$dirty && horizontalAdd.menuName.$invalid">
+									<span ng-show="horizontalAdd.menuName.$error.required">菜单名称不能为空</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>菜单编码：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newMenuInfo.menuCode' name="menuCode" required>
+								<div class="req_mesg" ng-show="horizontalAdd.menuCode.$dirty && horizontalAdd.menuCode.$invalid">
+									<span ng-show="horizontalAdd.menuCode.$error.required">菜单编码不能为空</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">路径：</label>
+							<div class="col-sm-3">
+								<input type="text" name="menuUrl" class="form-control" ng-model='newMenuInfo.menuUrl'>
+								<!-- <div class="req_mesg" ng-show="horizontalAdd.menuUrl.$dirty && horizontalAdd.menuUrl.$invalid">
+									<span ng-show="horizontalAdd.menuUrl.$error.menuUrl">路径不能为空</span>
+								</div> -->
+							</div>
+							<label class="col-sm-2 control-label">等级：</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model='newMenuInfo.menuLevel'
+									ng-options="x.value as x.text for x in levelType">
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">菜单类型：</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model='newMenuInfo.menuType'
+									ng-options="x.value as x.text for x in menuType">
+								</select>
+							</div>
+							<label class="col-sm-2 control-label">排序：</label>
+							<div class="col-sm-3">
+								<input type="text" name="orderNo" class="form-control" ng-model='newMenuInfo.orderNo'>
+								<!-- <div class="req_mesg" ng-show="horizontalAdd.orderNo.$dirty && horizontalAdd.orderNo.$invalid">
+									<span ng-show="horizontalAdd.orderNo.$error.orderNo">路径不能为空</span>
+								</div> -->
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">上级父ID：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newMenuInfo.parentId' />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewMenu()'
+									id="btnSubmit" ng-disabled="horizontalAdd.$invalid || submitting">提交</button>
+									<button class="btn btn-primary8" type="button" ng-click='cancel()'
+									>取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+	<form class="form-horizontal">
+		<div ui-view="modalRight" />
+	</form>
+	
+	
+</div>

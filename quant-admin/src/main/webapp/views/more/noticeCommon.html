@@ -1,0 +1,90 @@
+<div class="ibox float-e-margins">
+	<div class="ibox-content">
+		<div class="row">
+			<div class="form-group col-sm-10">
+				<label class="col-lg-3 control-label">通告标题：</label>
+				<div class="col-lg-7">
+					<input type="text" class="form-control" ng-model="noticeInfo.title" readonly />
+				</div>
+			</div>
+			<div class="form-group col-sm-10">
+				<label class="col-lg-3 control-label">通告内容：</label>
+				<div class="col-lg-7" >
+				 	 <div  style="height: 250px;overflow：hidden; overflow-y:scroll" class="form-control" ng-bind-html="noticeInfo.content | trustHtml" readonly>
+				 	</div> 
+				</div>
+			</div>
+			<div class="form-group col-sm-10">
+				<label class="col-lg-3 control-label">链接：</label>
+				<div class="col-lg-7">
+					<input type="text" class="form-control" ng-model="noticeInfo.link" readonly />
+				</div>
+			</div>
+			<div class="form-group col-sm-10">
+					<label class="col-lg-3 control-label">消息图片：</label>
+					<div class="col-lg-7">
+						<div ng-show="noticeInfo.messageImg!=null" class="col-sm-4" style="margin-top:7px">
+							<img ng-src="{{noticeInfo.messageImgUrl}}" />
+						</div>
+					</div>
+			</div>
+			<div class="form-group col-sm-10">
+				<label class="col-lg-3 control-label">附件：</label>
+				<div ng-show="noticeInfo.attachmentUrl!=null" class="col-lg-7" style="padding-top: 7px">
+					<a href="{{noticeInfo.attachmentUrl}}">{{noticeInfo.attachment}}</a>
+				</div>
+			</div>
+			<div class="form-group col-sm-10">
+					<label class="col-lg-3 control-label">下发对象：</label>
+					<div class="col-lg-7">
+							<select class="form-control" ng-model="noticeInfo.sysType"
+								ng-options="x.value as x.text for x in sysType" disabled></select>
+					</div>
+			</div>
+		<div ng-switch on="noticeInfo.sysType" class="form-group">
+			<div  ng-switch-when="1" class="col-sm-10">
+			<div class="form-group">
+						<label class="col-lg-3 control-label">指定代理商的商户：</label>
+						<div class="col-lg-3">
+						<select class="form-control " ng-model="baseInfo.agentBusiness"
+							ng-options="x.value as x.text for x in agentBusiness" disabled>
+						</select>
+						</div>
+						<div ng-switch on="baseInfo.agentBusiness">
+							<div ng-switch-when="1">
+								<label class="col-lg-3 control-label">指定一级代理商：</label>
+								<div class="col-lg-3">
+									<input type="text" class="form-control" ng-model="noticeInfo.agentName" readonly />
+								</div>
+							</div>
+						</div>
+				</div>
+				<div class="form-group">
+					<label class="col-lg-3 control-label"></label>
+					<div class="col-lg-7">
+						<div  style="height: 207px" class="gridStyle" ui-grid="productsGrid" ui-grid-resize-columns class="grid"></div>
+					</div>
+				</div>
+			</div>
+			
+			<div  ng-switch-when="2" class="col-sm-10">
+			<div class="form-group">
+					<label class="col-lg-3 control-label">指定组织：</label>
+					<div class="col-sm-2" data-ng-repeat="oemType in oemTypes">
+						<input type="checkbox" name="oemtypecheck" disabled  checked value="{{oemType.sysValue}}"/>
+						<span ng-bind="oemType.sysName"></span>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-lg-3 control-label">指定代理商：</label>
+					<div class="col-lg-7">
+						<select class="form-control" ng-model="baseInfo.isAll"
+							ng-options="x.value as x.text for x in isAll" disabled></select>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		</div>
+	</div>
+</div>

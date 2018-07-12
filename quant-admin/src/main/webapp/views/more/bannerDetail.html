@@ -1,0 +1,111 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<!-- 导航URL -->
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>App banner广告详情</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="bannerDetailCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="form-group">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>App banner广告详情</h5>
+							<!--<div ibox-tools></div>-->
+						</div>
+						<div class="ibox-content">
+							<div class="form-group" >
+								<label class="col-sm-1 control-label">APP名称：</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" ng-model="baseInfo.appName" readonly>
+								</div>
+								<label class="col-sm-1 control-label">所属组织：</label>
+								<div class="col-sm-2">
+									<input type="text" class="form-control" ng-model="baseInfo.teamName" readonly>
+								</div>
+							</div>
+							<div class="form-group" >
+								<label class="col-sm-1 control-label">banner位置：</label>
+								<div class="col-sm-2">
+									<select class="form-control" ng-model="baseInfo.bannerPosition" disabled
+										ng-options="x.value as x.text for x in bannerPosition"></select>
+								</div>
+							</div>
+						<div class="form-group" ng-show="baseInfo.bannerAttachmentUrl!=null">
+								<label class="col-sm-1 control-label">图片：</label>
+								<div class="col-sm-2">
+									<img ng-src="{{baseInfo.bannerAttachmentUrl}}" style="width: 198px;height: 100px">
+								</div>
+						</div>
+						<div class="form-group" >
+							<label class="col-sm-1 control-label">广告名称：</label>
+							<div class="col-sm-2">
+								<input type="text" class="form-control"
+									ng-model="baseInfo.bannerName" readonly>
+							</div>
+							<label class="col-sm-1 control-label">权重：</label>
+							<div class="col-sm-2">
+							<input type="text" class="form-control" ng-model="baseInfo.weight" readonly>
+							</div>
+							<span class="col-sm-2" style="color:red;margin-top: 7px;">
+										注：数字越小，就越优先显示
+									</span>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label">上线时间：</label>
+							<div class="col-sm-2">
+								<input type="datetime" date-time view="date" format="YYYY-MM-DD HH:mm:ss"
+								class="form-control" ng-model="baseInfo.onlineTime"
+								style="width: auto; display: inline-block; " disabled/>
+							</div>
+								<label class="col-sm-1 control-label">下线时间：</label>
+								<div class="col-sm-2">
+									<input type="datetime" date-time view="date" format="YYYY-MM-DD HH:mm:ss"
+								class="form-control" ng-model="baseInfo.offlineTime"
+								style="width: auto; display: inline-block; " disabled/>
+								</div>
+								<span class="col-sm-2" style="color:red;margin-top: 7px;">
+									注：上线/下线时间不填写则为手动控制
+								</span>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label">链接地址：</label> 
+							<div class="col-sm-8">
+								<input type="text" class="form-control"
+									ng-model='baseInfo.bannerLink' readonly>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label"></label>
+							<div class="col-sm-8">
+								注：以http://开头，若要添加可编辑的网页，链接请填写如下格式:http://www.yfbpay.cn/boss/kindeditor/mainBannerHtml/*.html
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label"></label>
+							<div class="col-sm-8">
+								<textarea rows="5" cols="20" class="form-control"
+									ng-model='baseInfo.bannerContent' readonly></textarea>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-1 control-label"></label>
+							<div class="col-sm-4">
+								<a class="btn btn-primary4" ui-sref='sys.queryBanner'>返回</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+
+</div>
