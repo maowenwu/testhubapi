@@ -20,13 +20,27 @@ public class DateUtils {
     }
 
 
+    /**
+     * 判断时间是否在允许的最大延时内
+     *
+     * @param date     更新时间
+     * @param maxDelay 单位秒
+     * @return
+     */
+    public static boolean withinMaxDelay(Date date, long maxDelay) {
+        Instant instant = Instant.ofEpochMilli(date.getTime());
+        if (LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).plusSeconds(maxDelay).isAfter(LocalDateTime.now())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 
-
-
-
-
-
+    public static void main(String[] args) {
+        Date date = new Date(1531389988379L);
+        System.out.println(withinMaxDelay(date, 150));
+    }
 
 
 }

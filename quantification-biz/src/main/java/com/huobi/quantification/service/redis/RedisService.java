@@ -1,6 +1,8 @@
 package com.huobi.quantification.service.redis;
 
 import com.huobi.quantification.entity.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +28,11 @@ public interface RedisService {
 
     Map<String, QuanOrderFuture> getOkOrder(Long accountId, String symbol, String contractType);
 
-	void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId);
+    void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId);
 
-	void saveHuobiOrder(QuanOrder quanOrder);
+    void saveHuobiOrder(QuanOrder quanOrder);
+
+    void saveIndexFuture(QuanIndexFuture quanIndexFuture);
+
+    QuanIndexFuture getIndexFuture(int exchangeId, String symbol);
 }

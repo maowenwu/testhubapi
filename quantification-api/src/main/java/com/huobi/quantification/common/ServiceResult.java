@@ -1,6 +1,8 @@
 package com.huobi.quantification.common;
 
-public class ServiceResult<T> {
+import java.io.Serializable;
+
+public class ServiceResult<T> implements Serializable {
 
     private int code;
 

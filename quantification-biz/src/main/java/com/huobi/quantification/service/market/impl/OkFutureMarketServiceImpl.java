@@ -11,13 +11,11 @@ import com.huobi.quantification.dao.QuanDepthFutureDetailMapper;
 import com.huobi.quantification.dao.QuanDepthFutureMapper;
 import com.huobi.quantification.dao.QuanKlineFutureMapper;
 import com.huobi.quantification.dao.QuanTickerFutureMapper;
-import com.huobi.quantification.entity.QuanDepthFuture;
-import com.huobi.quantification.entity.QuanDepthFutureDetail;
-import com.huobi.quantification.entity.QuanKlineFuture;
-import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
+import com.huobi.quantification.response.future.OKFutureIndexResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.OkFutureMarketService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -220,4 +218,26 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
     }
 
 
+    @Override
+    public void updateOkIndex(String symbol) {
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("[OkIndex][symbol={}]任务开始", symbol);
+        Date now = new Date();
+        OKFutureIndexResponse indexResponse = queryOkFutureIndexByAPI(symbol);
+        QuanIndexFuture quanIndexFuture = new QuanIndexFuture();
+        quanIndexFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
+        quanIndexFuture.setSymbol(symbol);
+        quanIndexFuture.setFutureIndex(indexResponse.getFutureIndex());
+        quanIndexFuture.setCreateTime(now);
+        quanIndexFuture.setUpdateTime(now);
+        redisService.saveIndexFuture(quanIndexFuture);
+        logger.info("[OkIndex][symbol={}]任务结束，耗时：" + started, symbol);
+    }
+
+    private OKFutureIndexResponse queryOkFutureIndexByAPI(String symbol) {
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", symbol);
+        String body = httpService.doGet(HttpConstant.OK_INDEX, params);
+        return JSON.parseObject(body, OKFutureIndexResponse.class);
+    }
 }

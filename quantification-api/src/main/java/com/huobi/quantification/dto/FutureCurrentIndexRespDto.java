@@ -1,8 +1,9 @@
 package com.huobi.quantification.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class FutureCurrentIndexRespDto {
+public class FutureCurrentIndexRespDto implements Serializable {
 
 
     private long ts;

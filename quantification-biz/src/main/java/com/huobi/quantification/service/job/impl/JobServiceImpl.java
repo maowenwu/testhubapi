@@ -67,6 +67,9 @@ public class JobServiceImpl implements JobService {
                 case 6:
                     clazz = OkFutureOrderJob.class;
                     break;
+                case 7:
+                    clazz = OkFutureIndexJob.class;
+                    break;
                 default:
                     clazz = null;
             }

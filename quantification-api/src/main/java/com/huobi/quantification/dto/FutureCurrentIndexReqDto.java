@@ -1,6 +1,8 @@
 package com.huobi.quantification.dto;
 
-public class FutureCurrentIndexReqDto {
+import java.io.Serializable;
+
+public class FutureCurrentIndexReqDto implements Serializable {
 
 
     private int exchangeId;

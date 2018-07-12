@@ -49,4 +49,11 @@ public interface OkFutureMarketService {
      * @return
      */
     ServiceResult getOkKline(String symbol, String type, String contractType, int size, long since);
+
+    /**
+     * 获取OKEx指数信息
+     *
+     * @param symbol btc_usd ltc_usd eth_usd etc_usd bch_usd
+     */
+    void updateOkIndex(String symbol);
 }

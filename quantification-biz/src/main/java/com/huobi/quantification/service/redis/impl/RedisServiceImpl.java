@@ -8,6 +8,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,15 +85,32 @@ public class RedisServiceImpl implements RedisService {
         return map;
     }
 
-	@Override
-	public void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId) {
-		RMap<String, Object> map = client.getMap("quan.accout.huobi.accountasset." + accountId);
-		map.put(quanAccountAsset.getCoin(), quanAccountAsset);
-	}
+    @Override
+    public void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId) {
+        RMap<String, Object> map = client.getMap("quan.accout.huobi.accountasset." + accountId);
+        map.put(quanAccountAsset.getCoin(), quanAccountAsset);
+    }
 
-	@Override
-	public void saveHuobiOrder(QuanOrder quanOrder) {
-		RMap<String , Object> map = client.getMap("quan.order.huobi"+quanOrder.getOrderSourceId());
-		map.put(quanOrder.getOrderAccountId() + "" , quanOrder);
-	}
+    @Override
+    public void saveHuobiOrder(QuanOrder quanOrder) {
+        RMap<String, Object> map = client.getMap("quan.order.huobi" + quanOrder.getOrderSourceId());
+        map.put(quanOrder.getOrderAccountId() + "", quanOrder);
+    }
+
+    @Override
+    public void saveIndexFuture(QuanIndexFuture quanIndexFuture) {
+        RMap<String, QuanIndexFuture> map = client.getMap("quan.market.index." + quanIndexFuture.getExchangeId());
+        map.put(quanIndexFuture.getSymbol(), quanIndexFuture);
+    }
+
+    @Override
+    public QuanIndexFuture getIndexFuture(int exchangeId, String symbol) {
+        RMap<String, QuanIndexFuture> map = client.getMap("quan.market.index." + exchangeId);
+        QuanIndexFuture indexFuture = map.get(symbol);
+        if (indexFuture != null) {
+            return indexFuture;
+        } else {
+            return null;
+        }
+    }
 }
