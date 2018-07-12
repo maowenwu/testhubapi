@@ -1,19 +1,21 @@
 package com.huobi.quantification.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
-public class FutureKlineRespDto {
+public class FutureKlineRespDto implements Serializable {
 
 
-    private int ts;
+    private Date ts;
     private List<DataBean> data;
 
-    public int getTs() {
+    public Date getTs() {
         return ts;
     }
 
-    public void setTs(int ts) {
+    public void setTs(Date ts) {
         this.ts = ts;
     }
 
@@ -25,8 +27,8 @@ public class FutureKlineRespDto {
         this.data = data;
     }
 
-    public static class DataBean {
-        private long id;
+    public static class DataBean implements Serializable{
+        private Long id;
         private BigDecimal amount;
         private BigDecimal count;
         private BigDecimal open;
@@ -35,11 +37,11 @@ public class FutureKlineRespDto {
         private BigDecimal high;
         private BigDecimal vol;
 
-        public long getId() {
+        public Long getId() {
             return id;
         }
 
-        public void setId(long id) {
+        public void setId(Long id) {
             this.id = id;
         }
 
