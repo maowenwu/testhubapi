@@ -1,8 +1,5 @@
 package com.huobi.quantification.huobi.request;
-/**
- * @author shaoxiaofeng
- * @since 2018/6/29
- */
+
 public class CreateOrderRequest {
     public static interface OrderType {
         /**

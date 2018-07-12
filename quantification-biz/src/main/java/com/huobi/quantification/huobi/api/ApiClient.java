@@ -1,5 +1,37 @@
 package com.huobi.quantification.huobi.api;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.Security;
+import java.security.Signature;
+import java.security.interfaces.ECPrivateKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -9,33 +41,47 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
 import com.huobi.quantification.huobi.request.DepthRequest;
 import com.huobi.quantification.huobi.request.IntrustOrdersDetailRequest;
-import com.huobi.quantification.huobi.response.*;
+import com.huobi.quantification.huobi.response.Account;
+import com.huobi.quantification.huobi.response.Accounts;
+import com.huobi.quantification.huobi.response.AccountsResponse;
+import com.huobi.quantification.huobi.response.ApiResponse;
+import com.huobi.quantification.huobi.response.Balance;
+import com.huobi.quantification.huobi.response.BalanceResponse;
+import com.huobi.quantification.huobi.response.Batchcancel;
+import com.huobi.quantification.huobi.response.BatchcancelBean;
+import com.huobi.quantification.huobi.response.BatchcancelResponse;
+import com.huobi.quantification.huobi.response.CurrencysResponse;
+import com.huobi.quantification.huobi.response.Depth;
+import com.huobi.quantification.huobi.response.DepthResponse;
+import com.huobi.quantification.huobi.response.DetailResponse;
+import com.huobi.quantification.huobi.response.Details;
+import com.huobi.quantification.huobi.response.HistoryTradeResponse;
+import com.huobi.quantification.huobi.response.IntrustDetail;
+import com.huobi.quantification.huobi.response.IntrustDetailResponse;
+import com.huobi.quantification.huobi.response.Kline;
+import com.huobi.quantification.huobi.response.KlineResponse;
+import com.huobi.quantification.huobi.response.MatchresultsOrdersDetailResponse;
+import com.huobi.quantification.huobi.response.Merged;
+import com.huobi.quantification.huobi.response.MergedResponse;
+import com.huobi.quantification.huobi.response.OrdersDetailResponse;
+import com.huobi.quantification.huobi.response.SubmitcancelResponse;
+import com.huobi.quantification.huobi.response.Symbol;
+import com.huobi.quantification.huobi.response.Symbols;
+import com.huobi.quantification.huobi.response.SymbolsResponse;
+import com.huobi.quantification.huobi.response.TimestampResponse;
+import com.huobi.quantification.huobi.response.TradeResponse;
 
-import okhttp3.*;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.OkHttpClient.Builder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
+ * 
  * @author shaoxiaofeng
- * @since 2018/6/29
+ * @since  2018/6/29
  */
 public class ApiClient {
 
@@ -51,6 +97,7 @@ public class ApiClient {
 
     final String accessKeyId;
     final String accessKeySecret;
+    final String privateKey;
     final String assetPassword;
 
     /**
@@ -59,9 +106,10 @@ public class ApiClient {
      * @param accessKeyId     AccessKeyId
      * @param accessKeySecret AccessKeySecret
      */
-    public ApiClient(String accessKeyId, String accessKeySecret) {
+    public ApiClient(String accessKeyId, String accessKeySecret, String privateKey) {
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;
+        this.privateKey = privateKey;
         this.assetPassword = null;
     }
 
@@ -72,9 +120,10 @@ public class ApiClient {
      * @param accessKeySecret AccessKeySecret
      * @param assetPassword   AssetPassword
      */
-    public ApiClient(String accessKeyId, String accessKeySecret, String assetPassword) {
+    public ApiClient(String accessKeyId, String accessKeySecret, String privateKey, String assetPassword) {
         this.accessKeyId = accessKeyId;
         this.accessKeySecret = accessKeySecret;
+        this.privateKey = privateKey;
         this.assetPassword = assetPassword;
     }
 
@@ -293,7 +342,7 @@ public class ApiClient {
      * @return
      */
     public SubmitcancelResponse submitcancel(String orderId) {
-        SubmitcancelResponse resp = get("/v1/order/orders/" + orderId + "/submitcancel", null, new TypeReference<SubmitcancelResponse>() {
+        SubmitcancelResponse resp = post("/v1/order/orders/" + orderId + "/submitcancel", null, new TypeReference<SubmitcancelResponse>() {
         });
         return resp;
     }
@@ -305,7 +354,9 @@ public class ApiClient {
      * @return
      */
     public BatchcancelResponse submitcancels(List orderList) {
-        BatchcancelResponse resp = post("/v1/order/orders/batchcancel", orderList, new TypeReference<BatchcancelResponse<Batchcancel<List, BatchcancelBean>>>() {
+        Map<String, List> parameterMap = new HashMap();
+        parameterMap.put("order-ids", orderList);
+        BatchcancelResponse resp = post("/v1/order/orders/batchcancel", parameterMap, new TypeReference<BatchcancelResponse<Batchcancel<List, List<BatchcancelBean>>>>() {
         });
         return resp;
     }
@@ -372,7 +423,7 @@ public class ApiClient {
     <T> T call(String method, String uri, Object object, Map<String, String> params,
                TypeReference<T> ref) {
         ApiSignature sign = new ApiSignature();
-        sign.createSignature(this.accessKeyId, this.accessKeySecret, method, API_HOST, uri, params);
+        sign.createSignature(this.accessKeyId, this.accessKeySecret,this.privateKey, method, API_HOST, uri, params);
         try {
             Request.Builder builder = null;
             if ("POST".equals(method)) {
@@ -453,7 +504,7 @@ class ApiSignature {
      * @param uri          请求路径，注意不含?以及后的参数，例如"/v1/api/info"
      * @param params       原始请求参数，以Key-Value存储，注意Value不要编码
      */
-    public void createSignature(String appKey, String appSecretKey, String method, String host,
+    public void createSignature(String appKey, String appSecretKey, String privateKey, String method, String host,
                                 String uri, Map<String, String> params) {
         StringBuilder sb = new StringBuilder(1024);
         sb.append(method.toUpperCase()).append('\n') // GET
@@ -489,6 +540,16 @@ class ApiSignature {
         byte[] hash = hmacSha256.doFinal(payload.getBytes(StandardCharsets.UTF_8));
         String actualSign = Base64.getEncoder().encodeToString(hash);
         params.put("Signature", actualSign);
+        //PrivateSignature
+        byte[] signData = null;
+        try {
+            signData = sign(actualSign.getBytes(), privateKey);
+            String  privateSignature = Base64.getEncoder().encodeToString(signData);
+            params.put("PrivateSignature", privateSignature);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+
         if (log.isDebugEnabled()) {
             log.debug("Dump parameters:");
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -496,6 +557,35 @@ class ApiSignature {
             }
         }
     }
+    /**
+     * 
+     * @param data
+     * @param privateKey
+     * @return
+     * @throws Exception
+     */
+    public  byte[] sign(byte[] data, String privateKeyStr) throws Exception  {
+        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+          
+        byte[] keyBytes = Base64.getDecoder().decode(privateKeyStr);
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
+        KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
+        ECPrivateKey privateKey = (ECPrivateKey) keyFactory.generatePrivate(keySpec);
+       
+//        byte[] server_sec1 = DatatypeConverter.parseBase64Binary(privateKeyStr);
+//        ASN1Sequence seq = ASN1Sequence.getInstance(server_sec1);
+//        org.bouncycastle.asn1.sec.ECPrivateKey pKey = org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(seq);
+//        AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, pKey.getParameters());
+//        byte[] server_pkcs8 = new PrivateKeyInfo(algId, pKey).getEncoded();
+//        KeyFactory fact = KeyFactory.getInstance ("EC","BC");
+//        PrivateKey privateKey = fact.generatePrivate (new PKCS8EncodedKeySpec(server_pkcs8));
+      
+        Signature ecdsaSign = Signature.getInstance("SHA256withECDSA", new BouncyCastleProvider());
+        ecdsaSign.initSign(privateKey);
+        ecdsaSign.update(data);
+        byte[] signData = ecdsaSign.sign();
+        return signData;
+   }
 
     /**
      * 使用标准URL Encode编码。注意和JDK默认的不同，空格被编码为%20而不是+。

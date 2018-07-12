@@ -55,7 +55,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 	public Object getTicker(String symbol) {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", symbol);
-		String body = httpService.doGet(HttpConstant.HUOBI_TICKER, params);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TICKER, params);
 		QuanTicker quanTicker = new QuanTicker();
 		JSONObject jsonObject = JSON.parseObject(body);
 		String data = jsonObject.getString("tick");
@@ -66,7 +66,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		quanTicker.setBidPrice(jsonArray2.getBigDecimal(0));
 		Merged merged = JSON.parseObject(body, Merged.class);
 		quanTicker.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		String ch = merged.getCh();
+		String ch = jsonObject.getString("ch");
 		quanTicker.setLowPrice(temp.getBigDecimal("low"));
 		quanTicker.setHighPrice(temp.getBigDecimal("high"));
 		quanTicker.setLastPrice(temp.getBigDecimal("close"));
@@ -106,7 +106,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", symbol);
 		params.put("type", type);
-		String body = httpService.doGet(HttpConstant.HUOBI_DEPTH, params);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_DEPTH, params);
 		DepthResponse marketDepth = JSON.parseObject(body, DepthResponse.class);
 		QuanDepth quanDepth = new QuanDepth();
 		quanDepth.setExchangeId(ExchangeEnum.HUOBI.getExId());

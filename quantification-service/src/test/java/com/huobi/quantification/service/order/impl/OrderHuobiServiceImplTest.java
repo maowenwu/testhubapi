@@ -1,6 +1,8 @@
 package com.huobi.quantification.service.order.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,21 +14,73 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.ServiceApplication;
+import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dao.QuanOrderMatchResultMapper;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
+import com.huobi.quantification.huobi.request.CreateOrderRequest;
+import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
+import com.huobi.quantification.service.http.HttpService;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
 public class OrderHuobiServiceImplTest {
-	
+
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
-	
+
 	@Autowired
 	private QuanOrderMatchResultMapper quanOrderMatchResultMapper;
+
+	@Autowired
+	private HttpService httpService;
+
+	@Test
+	public void CreateOrders() {
+		CreateOrderRequest createOrderReq = new CreateOrderRequest();
+		createOrderReq.accountId = "4232061";
+		createOrderReq.amount = "1";
+		createOrderReq.price = "0.001";
+		createOrderReq.symbol = "eosbtc";
+		createOrderReq.type = CreateOrderRequest.OrderType.BUY_LIMIT;
+		createOrderReq.source = "api";
+		String result = httpService.doHuobiPost(HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
+		JSONObject parseObject = JSON.parseObject(result);
+		if (parseObject.getString("status").equals("ok")) {
+			Map<String, String> params = new HashMap<>();
+			String data = parseObject.getString("data");
+			params.put("order-id", data);
+			String body = httpService.doHuobiGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", data),params);
+			JSONObject jsonObject = JSON.parseObject(body);
+			JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+			QuanOrder quanOrder = new QuanOrder();
+			quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
+			quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
+			quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));
+			quanOrder.setOrderAmount(new BigDecimal(jsonObjectdata.getString("amount")));
+			quanOrder.setOrderPrice(new BigDecimal(jsonObjectdata.getString("price")));
+			quanOrder.setOrderCreatedAt(jsonObjectdata.getDate("created-at"));
+			quanOrder.setOrderType(jsonObjectdata.getString("type"));
+			quanOrder.setOrderFieldAmount(new BigDecimal(jsonObjectdata.getString("field-amount")));
+			quanOrder.setOrderFieldCashAmount(new BigDecimal(jsonObjectdata.getString("field-cash-amount")));
+			quanOrder.setOrderFieldFees(new BigDecimal(jsonObjectdata.getString("field-fees")));
+			quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
+			quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
+			quanOrder.setOrderSource(jsonObjectdata.getString("source"));
+			quanOrder.setOrderState(jsonObjectdata.getString("state"));
+			quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
+			quanOrderMapper.insert(quanOrder);
+		}
+	}
 	
+	@Test
+	public void cancelOrder() {
+		String doHuobiPost = httpService.doHuobiPost(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "7609870737"), null);
+		JSONObject parseObject = JSON.parseObject(doHuobiPost);
+		System.err.println("取消订单，" + parseObject.getString("status"));
+	}
+
 	@Test
 	public void getOrder() {
 		String string = "{\r\n" + 
@@ -71,29 +125,16 @@ public class OrderHuobiServiceImplTest {
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.insert(quanOrder);
 	}
-	
+
 	@Test
 	public void testParseOpenOrder() {
-		String body = "{\r\n" + 
-				"  \"status\": \"ok\",\r\n" + 
-				"  \"data\": [\r\n" + 
-				"    {\r\n" + 
-				"      \"id\": 5454937,\r\n" + 
-				"      \"symbol\": \"ethusdt\",\r\n" + 
-				"      \"account-id\": 30925,\r\n" + 
-				"      \"amount\": \"1.000000000000000000\",\r\n" + 
-				"      \"price\": \"0.453000000000000000\",\r\n" + 
-				"      \"created-at\": 1530604762277,\r\n" + 
-				"      \"type\": \"sell-limit\",\r\n" + 
-				"      \"filled-amount\": \"0.0\",\r\n" + 
-				"      \"filled-cash-amount\": \"0.0\",\r\n" + 
-				"      \"filled-fees\": \"0.0\",\r\n" + 
-				"      \"source\": \"web\",\r\n" + 
-				"      \"state\": \"submitted\"\r\n" + 
-				"    }\r\n" + 
-				"  ]\r\n" + 
-				"}";
-		JSONObject parseObject = JSON.parseObject(body);
+		HuobiOpenOrderRequest huobiOpenOrderRequest = new HuobiOpenOrderRequest();
+		huobiOpenOrderRequest.accountId ="4232061";
+		huobiOpenOrderRequest.symbol = "";
+		huobiOpenOrderRequest.side ="buy";
+		huobiOpenOrderRequest.size = "100";
+		String doHuobiPost = httpService.doHuobiPost(HttpConstant.HUOBI_OPENORDERS, huobiOpenOrderRequest);
+		JSONObject parseObject = JSON.parseObject(doHuobiPost);
 		JSONArray jsonArray = parseObject.getJSONArray("data");
 		JSONObject dataObject = jsonArray.getJSONObject(0);
 		QuanOrder quanOrder = new QuanOrder();
@@ -109,40 +150,27 @@ public class OrderHuobiServiceImplTest {
 		quanOrder.setOrderState(dataObject.getString("state"));
 		quanOrderMapper.insert(quanOrder);
 	}
-	
+
 	@Test
 	public void testParseMatchResult() {
-		String body = "{\r\n" + 
-				"  \"status\": \"ok\",\r\n" + 
-				"  \"data\": [\r\n" + 
-				"    {\r\n" + 
-				"      \"id\": 29553,\r\n" + 
-				"      \"order-id\": 59378,\r\n" + 
-				"      \"match-id\": 59335,\r\n" + 
-				"      \"symbol\": \"ethusdt\",\r\n" + 
-				"      \"type\": \"buy-limit\",\r\n" + 
-				"      \"source\": \"api\",\r\n" + 
-				"      \"price\": \"100.1000000000\",\r\n" + 
-				"      \"filled-amount\": \"9.1155000000\",\r\n" + 
-				"      \"filled-fees\": \"0.0182310000\",\r\n" + 
-				"      \"created-at\": 1494901400435\r\n" + 
-				"    }\r\n" + 
-				"  ]\r\n" + 
-				"}";
-		JSONObject parseObject = JSON.parseObject(body);
-		JSONArray jsonArray = parseObject.getJSONArray("data");
-		JSONObject dataObject = jsonArray.getJSONObject(0);
-		QuanOrderMatchResult matchResult = new QuanOrderMatchResult();
-		matchResult.setMatchId(dataObject.getLong("match-id"));
-		matchResult.setMatchResultId(dataObject.getLong("id"));
-		matchResult.setOrderCreatedAt(dataObject.getDate("created-at"));
-		matchResult.setOrderFilledAmount(dataObject.getBigDecimal("filled-amount"));
-		matchResult.setOrderFilledFees(dataObject.getBigDecimal("filled-fees"));
-		matchResult.setOrderId(dataObject.getLong("order-id"));
-		matchResult.setOrderPrice(dataObject.getBigDecimal("price"));
-		matchResult.setOrderSource(dataObject.getString("source"));
-		matchResult.setOrderSymbol(dataObject.getString("symbol"));
-		matchResult.setOrderType(dataObject.getString("type"));
-		quanOrderMatchResultMapper.insert(matchResult);
+		Map<String, String> params = new HashMap<>();
+		params.put("order-id", "7610858684");
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_MATCHRESULTS.replaceAll("\\{order-id\\}", ""), params);
+		System.err.println(body);
+//		JSONObject parseObject = JSON.parseObject(body);
+//		JSONArray jsonArray = parseObject.getJSONArray("data");
+//		JSONObject dataObject = jsonArray.getJSONObject(0);
+//		QuanOrderMatchResult matchResult = new QuanOrderMatchResult();
+//		matchResult.setMatchId(dataObject.getLong("match-id"));
+//		matchResult.setMatchResultId(dataObject.getLong("id"));
+//		matchResult.setOrderCreatedAt(dataObject.getDate("created-at"));
+//		matchResult.setOrderFilledAmount(dataObject.getBigDecimal("filled-amount"));
+//		matchResult.setOrderFilledFees(dataObject.getBigDecimal("filled-fees"));
+//		matchResult.setOrderId(dataObject.getLong("order-id"));
+//		matchResult.setOrderPrice(dataObject.getBigDecimal("price"));
+//		matchResult.setOrderSource(dataObject.getString("source"));
+//		matchResult.setOrderSymbol(dataObject.getString("symbol"));
+//		matchResult.setOrderType(dataObject.getString("type"));
+//		quanOrderMatchResultMapper.insert(matchResult);
 	}
 }

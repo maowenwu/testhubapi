@@ -25,7 +25,7 @@ public interface HuobiOrderService {
      *
      * @return
      */
-    Object getHuobiOrdersHistory();
+    Object getHuobiOrdersHistory(Long orderId);
     
     /**
      * 获取所有当前帐号下未成交订单
@@ -52,7 +52,7 @@ public interface HuobiOrderService {
      *
      * @return
      */
-    Object cancelHuobiOrder();
+    Object cancelHuobiOrder(Long orderId);
 
     /**
      * 批量撤单

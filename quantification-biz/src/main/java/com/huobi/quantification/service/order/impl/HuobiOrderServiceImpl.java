@@ -21,6 +21,8 @@ import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
 import com.huobi.quantification.enums.OrderStatus;
+import com.huobi.quantification.huobi.request.CreateOrderRequest;
+import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -66,8 +68,10 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 *
 	 * @return
 	 */
-	public Object getHuobiOrdersHistory() {
-		String body = httpService.doGet(HttpConstant.HUOBI_MATCHRESULTS.replaceAll("\\{order-id}\\", "123"));
+	public Object getHuobiOrdersHistory(Long orderId) {
+		Map<String, String> params = new HashMap<>();
+		params.put("order-id", orderId + "");
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_MATCHRESULTS.replaceAll("\\{order-id\\}", "" + orderId), params);
 		parseAndSaveOrderMatchResult(body);
 		return null;
 	}
@@ -97,19 +101,20 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 * @return
 	 */
 	public Object placeHuobiOrder() {
-		Map<String, String> params = new HashMap<>();
-		params.put("account-id", "100009");
-		params.put("amount", "10.1");
-		params.put("price", "100.1");
-		params.put("source", "api");
-		params.put("symbol", "ethusdt");
-		params.put("type", "buy-limit");
-		String result = httpService.doPost(HttpConstant.HUOBI_ORDER_PLACE, params);
+		CreateOrderRequest createOrderReq = new CreateOrderRequest();
+		createOrderReq.accountId = "4232061";
+		createOrderReq.amount = "1";
+		createOrderReq.price = "0.001";
+		createOrderReq.symbol = "eosbtc";
+		createOrderReq.type = CreateOrderRequest.OrderType.BUY_LIMIT;
+		createOrderReq.source = "api";
+		String result = httpService.doHuobiPost(HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
 		JSONObject parseObject = JSON.parseObject(result);
 		if (parseObject.getString("status").equals("ok")) {
-			String data = parseObject.getString("data");
-			Long orderId = Long.parseLong(data);
-			String body = httpService.doGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", orderId+""));
+			Map<String, String> params = new HashMap<>();
+			String orderId = parseObject.getString("data");
+			params.put("order-id", orderId);
+			String body = httpService.doHuobiGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", orderId),params);
 			parseAndSaveOrderInfo(body);
 		}
 		return null;
@@ -129,8 +134,8 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 *
 	 * @return
 	 */
-	public Object cancelHuobiOrder() {
-		httpService.doGet(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "123"));
+	public Object cancelHuobiOrder(Long orderId) {
+		httpService.doHuobiPost(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", orderId+""), null);
 		return null;
 	}
 
@@ -180,7 +185,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		logger.info("[HuobiOrder][orderId={}]任务开始", orderId);
 		Map<String, String> params = new HashMap<>();
 		params.put("order-id", orderId + "");
-		String body = httpService.doPost(HttpConstant.HUOBI_ORDERDETAIL, params);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_ORDERDETAIL, params);
 		parseAndSaveOrderInfo(body);
 		logger.info("[HuobiOrder][orderId={}]任务结束，耗时：" + started, orderId);
 	}
@@ -192,13 +197,13 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 */
 	@Override
 	public Object getHuobiOpenOrders() {
-		Map<String, String> params = new HashMap<>();
-		params.put("account_id", "1");
-		params.put("symbol", "ethusdt");
-		//params.put("side", "sell");
-		params.put("size", "500");
-		String body = httpService.doGet(HttpConstant.HUOBI_OPENORDERS, params);
-		parseAndSaveOpenOrders(body);
+		HuobiOpenOrderRequest huobiOpenOrderRequest = new HuobiOpenOrderRequest();
+		huobiOpenOrderRequest.accountId ="4232061";
+		huobiOpenOrderRequest.symbol = "";
+		huobiOpenOrderRequest.side ="buy";
+		huobiOpenOrderRequest.size = "100";
+		String doHuobiPost = httpService.doHuobiPost(HttpConstant.HUOBI_OPENORDERS, huobiOpenOrderRequest);
+		parseAndSaveOpenOrders(doHuobiPost);
 		return null;
 	}
 

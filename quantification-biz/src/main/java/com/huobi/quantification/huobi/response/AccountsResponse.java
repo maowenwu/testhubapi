@@ -1,12 +1,13 @@
 package com.huobi.quantification.huobi.response;
 
-import com.huobi.quantification.huobi.api.ApiException;
+import com.huobi.quantification.common.exception.ApiException;
 
 /**
+ * 
  * @author shaoxiaofeng
- * @since 2018/6/29
+ * @since  2018/6/29
+ * 
  */
-
 public class AccountsResponse<T> {
 
     /**

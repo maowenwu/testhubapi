@@ -1,10 +1,7 @@
 package com.huobi.quantification.huobi.response;
 
 import com.huobi.quantification.huobi.api.ApiException;
-/**
- * @author shaoxiaofeng
- * @since 2018/6/29
- */
+
 public class ApiResponse<T> {
 
     public String status;

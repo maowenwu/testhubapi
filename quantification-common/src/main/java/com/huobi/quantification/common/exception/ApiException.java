@@ -1,10 +1,12 @@
-package com.huobi.quantification.huobi.api;
+package com.huobi.quantification.common.exception;
 
 /**
- * 
- * @author shaoxiaofeng
- * @since  2018/6/29
+ * ApiException if api returns error.
+ *
+ * @Date 2018/1/14
+ * @Time 16:02
  */
+
 public class ApiException extends RuntimeException {
 
     final String errCode;

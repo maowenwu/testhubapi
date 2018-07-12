@@ -48,7 +48,8 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 
 	public Object accounts(String accountId) {
 		Map<String, String> params = new HashMap<>();
-		String body = httpService.doGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
+		params.put("account-id", accountId);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
 		parseAndaccounts(body);
 		return null;
 	}
@@ -92,7 +93,8 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 		Stopwatch started = Stopwatch.createStarted();
 		logger.info("[HuobiUserInfo][accountId={}]任务开始", accountId);
 		Map<String, String> params = new HashMap<>();
-		String body = httpService.doGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
+		params.put("account-id", accountId);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
 		parseAndaccounts(body);
 		logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
 	}

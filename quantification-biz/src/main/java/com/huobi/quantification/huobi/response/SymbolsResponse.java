@@ -1,8 +1,9 @@
 package com.huobi.quantification.huobi.response;
 
 /**
- * @author shaoxiaofeng
- * @since 2018/6/29
+ * @Author ISME
+ * @Date 2018/1/14
+ * @Time 15:39
  */
 
 public class SymbolsResponse<T> {

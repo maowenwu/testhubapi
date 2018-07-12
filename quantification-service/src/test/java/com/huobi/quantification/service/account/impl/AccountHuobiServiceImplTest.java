@@ -2,6 +2,8 @@ package com.huobi.quantification.service.account.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,11 +15,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.ServiceApplication;
+import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountAssetMapper;
 import com.huobi.quantification.dao.QuanAccountMapper;
 import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
 
 @SpringBootTest(classes = ServiceApplication.class)
@@ -33,50 +37,15 @@ public class AccountHuobiServiceImplTest {
 	@Autowired
 	private RedisService redisService;
 	
+	@Autowired
+	private HttpService httpService;
+	
 	@Test
     public void updateAccount(){
-		String str="{\r\n" + 
-				"  \"status\": \"ok\",\r\n" + 
-				"  \"data\": {\r\n" + 
-				"    \"id\": 100009,\r\n" + 
-				"    \"type\": \"spot\",\r\n" + 
-				"    \"state\": \"working\",\r\n" + 
-				"    \"list\": [\r\n" + 
-				"      {\r\n" + 
-				"        \"currency\": \"usdt\",\r\n" + 
-				"        \"type\": \"trade\",\r\n" + 
-				"        \"balance\": \"500009195917.4362872650\"\r\n" + 
-				"      },\r\n" + 
-				"      {\r\n" + 
-				"        \"currency\": \"usdt\",\r\n" + 
-				"        \"type\": \"frozen\",\r\n" + 
-				"        \"balance\": \"328048.1199920000\"\r\n" + 
-				"      },\r\n" + 
-				"     {\r\n" + 
-				"        \"currency\": \"etc\",\r\n" + 
-				"        \"type\": \"trade\",\r\n" + 
-				"        \"balance\": \"499999894616.1302471000\"\r\n" + 
-				"      },\r\n" + 
-				"      {\r\n" + 
-				"        \"currency\": \"etc\",\r\n" + 
-				"        \"type\": \"frozen\",\r\n" + 
-				"        \"balance\": \"9786.6783000000\"\r\n" + 
-				"      },\r\n" + 
-				"     {\r\n" + 
-				"        \"currency\": \"eth\",\r\n" + 
-				"        \"type\": \"trade\",\r\n" + 
-				"        \"balance\": \"499999894616.1302471000\"\r\n" + 
-				"      },\r\n" + 
-				"      {\r\n" + 
-				"        \"currency\": \"eth\",\r\n" + 
-				"        \"type\": \"frozen\",\r\n" + 
-				"        \"balance\": \"9786.6783000000\"\r\n" + 
-				"      }\r\n" + 
-				"    ],\r\n" + 
-				"    \"user-id\": 1000\r\n" + 
-				"  }\r\n" + 
-				"}";
-		JSONObject jsonObject = JSON.parseObject(str);
+		Map<String, String> params = new HashMap<>();
+		params.put("account-id", "4232061");
+		String doHuobiGet = httpService.doHuobiGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", "4232061"), params);
+		JSONObject jsonObject = JSON.parseObject(doHuobiGet);
 		String data = jsonObject.getString("data");
 		JSONObject temp = JSON.parseObject(data);
 		QuanAccount quanAccount = new QuanAccount();
