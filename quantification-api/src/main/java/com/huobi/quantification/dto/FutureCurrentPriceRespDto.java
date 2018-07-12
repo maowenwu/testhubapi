@@ -2,17 +2,18 @@ package com.huobi.quantification.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class FutureCurrentPriceRespDto implements Serializable {
 
-    private long ts;
+    private Date ts;
     private BigDecimal currentPrice;
 
-    public long getTs() {
+    public Date getTs() {
         return ts;
     }
 
-    public void setTs(long ts) {
+    public void setTs(Date ts) {
         this.ts = ts;
     }
 

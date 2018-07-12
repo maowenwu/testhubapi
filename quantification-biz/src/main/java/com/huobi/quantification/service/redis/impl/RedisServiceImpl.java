@@ -125,4 +125,16 @@ public class RedisServiceImpl implements RedisService {
             return null;
         }
     }
+
+    @Override
+    public void saveCurrentPrice(int exId, String symbol, String contractType, QuanTradeFuture tradeFuture) {
+        RMap<String, QuanTradeFuture> map = client.getMap("quan.market.future.trade." + exId + "." + symbol);
+        map.put(contractType, tradeFuture);
+    }
+
+    @Override
+    public QuanTradeFuture getCurrentPrice(int exId, String symbol, String contractType) {
+        RMap<String, QuanTradeFuture> map = client.getMap("quan.market.future.trade." + exId + "." + symbol);
+        return map.get(contractType);
+    }
 }

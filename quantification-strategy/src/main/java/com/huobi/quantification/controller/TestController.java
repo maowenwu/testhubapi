@@ -65,4 +65,22 @@ public class TestController {
         System.out.println(depth);
         return JSON.toJSONString(depth);
     }
+
+
+    @RequestMapping("/testFutureCurrentPrice")
+    public String testFutureCurrentPrice() {
+        FutureCurrentPriceReqDto reqDto = new FutureCurrentPriceReqDto();
+        reqDto.setExchangeId(2);
+        reqDto.setBaseCoin("btc");
+        reqDto.setQuoteCoin("usd");
+
+        reqDto.setContractType("this_week");
+
+        reqDto.setTimeout(100);
+        reqDto.setMaxDelay(30);
+
+        ServiceResult<FutureCurrentPriceRespDto> currentPrice = futureMarketService.getCurrentPrice(reqDto);
+        System.out.println(currentPrice);
+        return JSON.toJSONString(currentPrice);
+    }
 }

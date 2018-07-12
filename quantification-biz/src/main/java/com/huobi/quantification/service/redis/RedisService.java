@@ -39,4 +39,8 @@ public interface RedisService {
     void saveIndexFuture(QuanIndexFuture quanIndexFuture);
 
     QuanIndexFuture getIndexFuture(int exchangeId, String symbol);
+
+    void saveCurrentPrice(int exId, String symbol, String contractType, QuanTradeFuture tradeFuture);
+
+    QuanTradeFuture getCurrentPrice(int exId, String symbol, String contractType);
 }

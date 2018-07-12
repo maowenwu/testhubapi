@@ -15,6 +15,7 @@ import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
+import com.huobi.quantification.response.future.OKFutureCurrentPriceResponse;
 import com.huobi.quantification.response.future.OKFutureIndexResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.OkFutureMarketService;
@@ -239,5 +240,32 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
         params.put("symbol", symbol);
         String body = httpService.doGet(HttpConstant.OK_INDEX, params);
         return JSON.parseObject(body, OKFutureIndexResponse.class);
+    }
+
+    @Override
+    public void updateOkCurrentPrice(String symbol, String contractType) {
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("[OkCurrentPrice][symbol={},contractType={}]任务开始", symbol, contractType);
+        List<OKFutureCurrentPriceResponse> priceResponses = queryOkFutureCurrentPriceByAPI(symbol, contractType);
+        OKFutureCurrentPriceResponse latestPrice = priceResponses.get(priceResponses.size() - 1);
+        QuanTradeFuture tradeFuture = new QuanTradeFuture();
+        tradeFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
+        tradeFuture.setSymbol(symbol);
+        tradeFuture.setContractType(contractType);
+        tradeFuture.setType(latestPrice.getType());
+        tradeFuture.setPrice(latestPrice.getPrice());
+        tradeFuture.setAmount(latestPrice.getAmount());
+        tradeFuture.setCreateDate(new Date());
+        tradeFuture.setUpdateTime(latestPrice.getTs());
+        redisService.saveCurrentPrice(ExchangeEnum.OKEX.getExId(), symbol, contractType,tradeFuture);
+        logger.info("[OkCurrentPrice][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
+    }
+
+    private List<OKFutureCurrentPriceResponse> queryOkFutureCurrentPriceByAPI(String symbol, String contractType) {
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", symbol);
+        params.put("contract_type", contractType);
+        String body = httpService.doGet(HttpConstant.OK_TRADES, params);
+        return JSON.parseArray(body, OKFutureCurrentPriceResponse.class);
     }
 }

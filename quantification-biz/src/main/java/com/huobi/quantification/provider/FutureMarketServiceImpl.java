@@ -8,6 +8,7 @@ import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanIndexFuture;
 import com.huobi.quantification.entity.QuanKlineFuture;
+import com.huobi.quantification.entity.QuanTradeFuture;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
@@ -33,9 +34,44 @@ public class FutureMarketServiceImpl implements FutureMarketService {
     private RedisService redisService;
 
     @Override
-    public ServiceResult<FutureCurrentPriceRespDto> getCurrentPrice(FutureCurrentPriceReqDto currentPriceReqDto) {
-
-        return null;
+    public ServiceResult<FutureCurrentPriceRespDto> getCurrentPrice(FutureCurrentPriceReqDto reqDto) {
+        ServiceResult<FutureCurrentPriceRespDto> serviceResult = new ServiceResult<>();
+        try {
+            FutureCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
+                while (!Thread.interrupted()) {
+                    // 从redis读取最新价格
+                    QuanTradeFuture tradeFuture = redisService.getCurrentPrice(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
+                            , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    if (tradeFuture == null) {
+                        continue;
+                    }
+                    Date ts = tradeFuture.getUpdateTime();
+                    System.out.println("currentPriceRespDto时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
+                    System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
+                        FutureCurrentPriceRespDto respDto = new FutureCurrentPriceRespDto();
+                        respDto.setTs(ts);
+                        respDto.setCurrentPrice(tradeFuture.getPrice());
+                        return respDto;
+                    } else {
+                        continue;
+                    }
+                }
+                return null;
+            }, reqDto.getTimeout());
+            serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+            serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+            serviceResult.setData(currentPriceRespDto);
+        } catch (ExecutionException e) {
+            logger.error("执行异常：", e);
+            serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
+            serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+        } catch (TimeoutException e) {
+            logger.error("超时异常：", e);
+            serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
+            serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+        }
+        return serviceResult;
     }
 
     @Override

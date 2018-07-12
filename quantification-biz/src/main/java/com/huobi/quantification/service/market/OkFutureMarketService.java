@@ -56,4 +56,12 @@ public interface OkFutureMarketService {
      * @param symbol btc_usd ltc_usd eth_usd etc_usd bch_usd
      */
     void updateOkIndex(String symbol);
+
+    /**
+     * 获取OKEx合约交易记录信息，最新价格
+     *
+     * @param symbol
+     * @param contractType
+     */
+    void updateOkCurrentPrice(String symbol, String contractType);
 }
