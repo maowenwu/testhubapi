@@ -1,6 +1,8 @@
 package com.huobi.quantification.dto;
 
-public class FutureKlineReqDto {
+import java.io.Serializable;
+
+public class FutureKlineReqDto implements Serializable {
 
     private int exchangeId;
     private String baseCoin;

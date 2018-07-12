@@ -14,9 +14,13 @@ public interface RedisService {
 
     void saveOkTicker(String symbol, String contractType, QuanTickerFuture ticker);
 
-    void saveOkDepth(String symbol, String contractType, List<QuanDepthFutureDetail> list);
+    void saveDepthFuture(int exchangeId,String symbol, String contractType, List<QuanDepthFutureDetail> list);
 
-    void saveOkKline(String symbol, String type, String contractType, List<QuanKlineFuture> redisKline);
+    List<QuanDepthFutureDetail> getDepthFuture(int exchangeId,String symbol, String contractType);
+
+    void saveKlineFuture(int exchangeId, String symbol, String type, String contractType, List<QuanKlineFuture> redisKline);
+
+    List<QuanKlineFuture> getKlineFuture(int exchangeId, String symbol, String type, String contractType);
 
     void saveHuobiTicker(String symbol, QuanTicker ticker);
 

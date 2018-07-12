@@ -154,7 +154,7 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
         for (QuanDepthFutureDetail detail : list) {
             quanDepthFutureDetailMapper.insert(detail);
         }
-        redisService.saveOkDepth(symbolEnum.getSymbol(), contractType, list);
+        redisService.saveDepthFuture(ExchangeEnum.OKEX.getExId(), symbolEnum.getSymbol(), contractType, list);
     }
 
 
@@ -213,7 +213,7 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
         logger.info("[Kline][symbol={},contractType={}]任务开始", symbol, contractType);
         Date sinceDate = DateUtils.plusMinutes(new Date(), -60 * 24);
         List<QuanKlineFuture> redisKline = queryOkFutureKlineByAPI(symbol, type, contractType, 100, sinceDate.getTime());
-        redisService.saveOkKline(symbol, type, contractType, redisKline);
+        redisService.saveKlineFuture(ExchangeEnum.OKEX.getExId(), symbol, type, contractType, redisKline);
         logger.info("[Kline][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
