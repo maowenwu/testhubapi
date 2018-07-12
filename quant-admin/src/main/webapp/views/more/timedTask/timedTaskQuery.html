@@ -1,0 +1,81 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a>主页</a></li>
+            <li><a>管理中心</a></li>
+            <li class="active"><strong>定时任务监控</strong></li>
+        </ol>
+    </div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app ng-controller="timedTaskQueryCtrl">
+    <form class="form-horizontal" id="form1">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+                            <div class="ibox-title">
+                                <h5>定时任务监控查询</h5>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">应用编号:</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control"  ng-model='info.id'>
+                                    </div>
+                                    <label class="col-sm-2 control-label">定时任务名称:</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control"  ng-model='info.taskName'>
+                                    </div>
+                                    <label class="col-sm-2 control-label">定时任务组:</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control"  ng-model='info.taskGroup'>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">启动状态:</label>
+                                    <div class="col-sm-2">
+                                        <select class="form-control" ng-model='info.enabledState'
+                                                ng-options="x.value as x.text for x in enabledStateSelect">
+                                        </select>
+                                    </div>
+                                    <label class="col-sm-2 control-label">当前状态:</label>
+                                    <div class="col-sm-2">
+                                        <select class="form-control" ng-model='info.taskStatus'
+                                                ng-options="x.value as x.text for x in taskStatusSelect">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <div class="col-sm-1"></div>
+                                    <button class="btn btn-primary6 btn-mr20" type="button"
+                                            id="btnSubmit1" ng-click="query()">查询</button>
+                                    <button class="btn btn-primary3" type="button" ng-click="clear()">清空</button>
+                                    <input type="button" class="btn btn-new2 btn-mr20" style="margin-left: 20px;" ng-show="hasPermit('warningPeople.taskWarningPeople')" ui-sref="sys.taskWarningPeople" value='预警人员管理'/>
+                                    <input type="button" class="btn btn-new2 btn-mr20" style="margin-left: 20px;" ui-sref="sys.agentShareTask" value='代理商分润任务(旧功能)'/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+                            <div class="form-group">
+                                <div ui-grid="gridOptions" ui-grid-pagination ui-grid-selection
+                                     ui-grid-resize-columns ui-grid-pinning class="grid">
+                                    <div ng-show="loadImg" class="timg"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

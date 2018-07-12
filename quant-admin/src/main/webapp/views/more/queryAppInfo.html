@@ -1,0 +1,62 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>代理商APP关于软件设置查询</strong></li>
+		</ol>
+	</div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="queryAppInfoCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="">
+			<div class="form-group">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>appInfo查询</h5>
+						<!--<div ibox-tools></div>-->
+						<div class="ibox-content">
+							<div class="form-group">
+								<label class="col-sm-1 control-label">所属组织：</label>
+								<div class="col-sm-2">
+								<select class="form-control" ng-model="query.teamId"
+						ng-options="x.value as x.text for x in team"></select>
+								</div>
+								<div ng-switch on="query.teamId">
+									<div ng-switch-when="200010">
+										<label class="col-sm-1 control-label">指定一级代理商：</label>
+										<div class="col-sm-2">
+										<select class="form-control" ng-model="query.agentNo"
+						ng-options="x.value as x.text for x in agent"></select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-1 control-label"></label>
+								<div class="col-sm-8">
+									<button class="btn btn-primary6 btn-mr20" type="button" id="btnSubmit" ng-click="queryFunc()">查询</button>
+										<button class="btn btn-primary3" type="button" ng-click="resetForm()">清空</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>appInfo列表</h5>
+						<!--<div ibox-tools></div>-->
+					</div>
+					<div class="ibox-content">
+					<div class="gridStyle" ui-grid="appInfoGrid" ui-grid-pagination ui-grid-resize-columns></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

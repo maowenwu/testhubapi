@@ -1,0 +1,155 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a>主页</a></li>
+            <li><a>管理中心</a></li>
+            <li class="active"><strong>定时任务监控详情</strong></li>
+        </ol>
+    </div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app ng-controller="detailTimedTaskCtrl">
+    <form class="form-horizontal" id="form1">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>基本信息</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">应用编号:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.id"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">定时任务名称:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.taskName"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">任务状态:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.enabledState |formatDropping:enabledStateSelect"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">定时任务组:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.taskGroup"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">表达式:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.expression"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>最新检索情况</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">最新检索时间:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.retrievalTime | date:'yyyy-MM-dd HH:mm:ss'"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">当时定时状态:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.taskStatus |formatDropping:taskStatusSelect"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">上次执行时间:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.lastTime | date:'yyyy-MM-dd HH:mm:ss'"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">预计下次执行时间:</label>
+                            <div class="col-sm-2 checkbox" ng-bind="info.nextTime | date:'yyyy-MM-dd HH:mm:ss'"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>预警配置</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">是否预警:</label>
+                            <div class="col-sm-3" style="float:left;margin-top:7px;">
+                                <label><input type="radio"   ng-model='info.warningState' name="warningState"  ng-value="1"/>是</label>
+                                <label><input type="radio"   ng-model='info.warningState' name="warningState"  ng-value="0"/>否</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">预警条件:</label>
+                            <div class="col-sm-3">
+                                <div style="float:left;margin-top:7px;">
+                                    <input type="checkbox" ng-model='info.errorWarningState' ng-true-value="1" ng-false-value="0" ng-checked="info.errorWarningState==1"/>
+                                    服务停止
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-3">
+                                <div style="float:left;margin-top:7px;">
+                                    <input type="checkbox" ng-model='info.overtimeWarningState' ng-true-value="1" ng-false-value="0"  ng-checked="info.overtimeWarningState==1"/>
+                                    达到超时阀值
+                                    <input  type="text" style="width:80px;" ng-model="info.earlyWarningThreshold"/>
+                                    分钟
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">预警短信模板:</label>
+                            <div style="float:left;margin-top:7px;">
+                                [警告]定时任务 9 task_name task_group 未启动 10:04:09，请处理.
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div style="float:left;margin-top:7px;">
+                                [警告]定时任务 1 task_name task_group 从 10:00 到 12:00 一直处于阻塞状态,请处理.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>其它说明</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">程序名称:</label>
+                            <div class="col-sm-3">
+                                <input type="text"  class="form-control" ng-model="info.programName"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">程序描述:</label>
+                            <div class="col-sm-3">
+                                <textarea class="form-control"  rows="6" cols="8" ng-model="info.description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">运营备注:</label>
+                            <div class="col-sm-3">
+                                <input type="text"  class="form-control" ng-model="info.remarks"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-6">
+                                <button class="btn btn-primary btn-mr20" type="button" ng-click="submit()">提交</button>
+                                <a class="btn btn-primary4 btn-rounded" type="button" ui-sref="sys.timedTask">返回</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,144 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul side-navigation class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+                <div class="profile-element">
+                    <img alt="image" class="img-circle" ng-src="img/profile_small.jpg"/>
+                    <a uib-dropdown-toggle href>
+                            <span class="clear">
+                                <span class="block m-t-xs">
+                                    <strong class="font-bold">David Williams</strong>
+                             </span>
+                            </span>
+                    </a>
+                    <!--<ul uib-dropdown-menu class="animated fadeInRight m-t-xs">-->
+                        <!--<li><a ui-sref="app.profile">Profile</a></li>-->
+                        <!--<li><a ui-sref="app.contacts">Contacts</a></li>-->
+                        <!--<li><a ui-sref="mailbox.inbox">Mailbox</a></li>-->
+                        <!--<li class="divider"></li>-->
+                        <!--<li><a ui-sref="login">Logout</a></li>-->
+                    <!--</ul>-->
+                </div>
+                <div class="logo-element">
+                    IN+
+                </div>
+            </li>
+           	<!-- 服务管理  -->
+            <li ng-class="{active: $state.includes('service')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">产品服务管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('service')}">
+                    <li ui-sref-active="active"><a ui-sref="service.addService">服务种类增加</a></li>
+                    <li ui-sref-active="active"><a ui-sref="service.queryService">服务种类查询</a></li>
+                    <li ui-sref-active="active"><a ui-sref="service.addRequireItem">进件要求项添加</a></li>
+                    <li ui-sref-active="active"><a ui-sref="service.queryRequireItem">进件要求项查询</a></li>
+                    <li ui-sref-active="active"><a ui-sref="service.addProduct">业务产品增加</a></li>
+                    <li ui-sref-active="active"><a ui-sref="service.queryProduct">业务产品查询</a></li>
+                </ul>
+            </li>
+            <!-- 一级代理商管理  -->
+           	<li ng-class="{active: $state.includes('agent')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">代理商管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('agent')}">
+                    <li ui-sref-active="active"><a ui-sref="agent.addAgent">新增代理商</a></li>
+                    <li ui-sref-active="active"><a ui-sref="agent.queryAgent">查询代理商</a></li>
+                </ul>
+            </li>
+           
+           
+           	<!-- 商户管理  -->
+            <li ng-class="{active: $state.includes('merchant')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">商户管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('merchant')}">
+                    <li ui-sref-active="active"><a ui-sref="merchant.queryMer">查询商户</a></li>
+                    <li ui-sref-active="active"><a ui-sref="merchant.auditMer">商户审核</a></li>
+                    <li ui-sref-active="active"><a ui-sref="merchant.businessProductHistory">商户业务产品历史查询</a></li>
+                </ul>
+            </li>
+            
+
+			<!-- 交易查询 -->
+			<li ui-sref-active="active">
+                <a ui-sref="trade"><i class="fa fa-pie-chart"></i> <span class="nav-label">交易查询</span> </a>
+            </li>
+            
+            <!-- 机具管理 -->
+            <li ui-sref-active="active">
+                <a ui-sref="terminal"><i class="fa fa-pie-chart"></i> <span class="nav-label">机具管理</span> </a>
+            </li>
+          
+            <!-- 微创业管理 -->
+            <li ng-class="{active: $state.includes('push')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">微创业管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('push')}">
+                    <li ui-sref-active="active"><a ui-sref="push.addRule">添加微创业规则</a></li>
+                    <li ui-sref-active="active"><a ui-sref="push.managerRule">微创业规则管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="push.queryOrder">微创业订单查询</a></li>
+                </ul>
+            </li>
+            
+            <!-- 收单机构管理 -->
+            <li ng-class="{active: $state.includes('org')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">收单机构管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('org')}">
+                    <li ui-sref-active="active"><a ui-sref="org.acqOrg">收单机构管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.groupService">收单服务管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.orgMer">收单机构商户</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.orgTerminal">收单机构终端</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.managerRoute">路由集群管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.bpClusterQuery">默认路由集群管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.routerOrg">集群中收单商户</a></li>
+                    <li ui-sref-active="active"><a ui-sref="org.routeMer">集群中普通商户</a></li>
+                </ul>
+            </li>
+            
+            <!-- 出款服务管理 -->
+            <li ng-class="{active: $state.includes('money')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">出款服务管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('money')}">
+                    <li ui-sref-active="active"><a ui-sref="money.managerService">出款服务管理</a></li>
+                </ul>
+            </li>
+            
+            <!-- 风控管理 -->
+            <li ng-class="{active: $state.includes('risk')}">
+                <a href=""><i class="fa fa-th-large"></i> <span class="nav-label">风控管理</span> <span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('risk')}">
+                    <li ui-sref-active="active"><a ui-sref="risk.blacklistQuery">黑名单管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="risk.whitelistMag">白名单管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="risk.riskRulesMag">风控规则管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="risk.riskProblemMag">风控问题管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="risk.riskProblemAudit">风控问题审核</a></li>
+                </ul>
+            </li>
+            
+            <!-- boss 管理中心 -->
+            <li ng-class="{active: $state.includes('sys')}">
+                <a href=""><i class="fa fa-edit"></i> <span class="nav-label">管理中心</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('sys')}">
+                    <li ui-sref-active="active"><a ui-sref="sys.addNotice">新增公告</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.queryNotice">查询公告</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.addBanner">新增代理商App banner</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.queryBanner">查询代理商App banner</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.addAppInfo">新增代理商APP关于软件</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.queryAppInfo">查询代理商App关于软件</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.appInfo">APP二维码查询</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.userFeedback ">用户反馈问题查询</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.logs">日志管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="sys.calendar">日历</a></li>
+                </ul>
+            </li>
+            
+            <!-- 用户管理中心 -->
+            <li ng-class="{active: $state.includes('user')}">
+                <a href=""><i class="fa fa-desktop"></i> <span class="nav-label">用户中心</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level collapse" ng-class="{in: $state.includes('user')}">
+                    <li ui-sref-active="active"><a ui-sref="user.user">用户管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="user.role">角色管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="user.right">权限管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="user.menu">菜单管理</a></li>
+                    <li ui-sref-active="active"><a ui-sref="user.dictionary">数据字典</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

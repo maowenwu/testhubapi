@@ -1,0 +1,42 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="index.html">主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>APP二维码历史查询</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="appMobileVerInfoCtrl">
+	<form class="form-horizontal" id="form1">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="">
+						<div class="panel-body ibox float-e-margins">
+							<div class="ibox-content">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">APP名称：</label>
+									<div class="col-sm-2 checkbox" ng-bind="info.appName"></div>
+								</div>
+								<div class="form-group">
+									<div class="col-lg-12">
+										<div class="col-sm-2"></div>
+										<a ui-sref="sys.appMobileVerInfoAddOrUp({id:0,appNo:info.appNo,appName:info.appName})" class="btn btn-primary5 btn-mr20" type="button">新增</a>
+										<a ui-sref="sys.appInfo" class="btn btn-primary4" type="button">返回</a>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="col-lg-12">
+										<div ui-grid="appInfoOptions" ui-grid-resize-columns ui-grid-pagination ui-grid-selection ui-grid-pinning class="grid"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</form>
+</div>

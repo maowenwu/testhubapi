@@ -1,0 +1,144 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>系统管理</a></li>
+			<li class="active"><strong>系统菜单</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="menuCtrl">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel-body ibox bgff">
+				<div class="col-lg-3" style="overflow-y:scroll; height:690px; padding:10px 10px 10px 20px; border:1px solid #eee;">
+					<div js-tree="treeConfig"  ng-model="sysMenus" tree="treeInstance"
+						tree-events="changed:changedCB;ready:readyCB;open_node:openNodeCB;close_node:closeNodeCB"></div>
+				</div>
+				<div class="col-lg-9">
+					<form class="form-horizontal">
+						<div class="row form-group">
+							<div class="col-sm-12">
+								<label class="col-sm-2 control-label">菜单名称：</label>
+								<div class="col-sm-4"><input class="form-control" ng-model="currMenu.menuName" /></div>
+								<label class="col-sm-2 control-label">菜单编码：</label>
+								<div class="col-sm-4"><input class="form-control" ng-model="currMenu.menuCode" /></div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-sm-12">
+								<label class="col-sm-2 control-label">父级菜单：</label>
+								<div class="col-sm-4"><input class="form-control" ng-model="currMenu.parentId" /></div>
+								<label class="col-sm-2 control-label">菜单路径：</label>
+								<div class="col-sm-4"><input class="form-control" ng-model="currMenu.menuUrl" /></div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-sm-12">
+								<label class="col-sm-2 control-label">排序：</label>
+								<div class="col-sm-4"><input class="form-control" ng-model="currMenu.orderNo" /></div>
+							</div>
+						</div>
+						<div class="row form-group col-sm-12" style="text-align: center">
+							<button  class="btn btn-new btn-mr20" ng-show="hasPermit('menu.insert')" ng-click="menuModal()">新增菜单</button> 
+							<button  class="btn btn-new btn-mr20" ng-show="hasPermit('menu.update')" ng-click="editMenuModal(currMenu)">修改</button>
+						</div>
+					</form>
+					<div class="row col-sm-12 form-group"><button  ng-show="hasPermit('menu.insert')" ng-click="pageModal()" class="btn btn-new ">新增功能</button></div>
+					<div class="row col-sm-12 form-group">
+					<div ui-grid="gridOptions" ui-grid-selection ui-grid-resize-columns class="grid"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<form class="form-horizontal" id="form2" name="horizontalAdd" novalidate>
+		<div id="menuModal" class="modal fade" tabindex="-1" role="dialog">
+			<div class="modal-dialog" style="width: 900px">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							&times;</button>
+						<h3 class="modal-title">{{type==1?'新增':'修改'}}菜单</h3>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>菜单名称：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newMenuInfo.menuName' name="menuName" required/>
+								<div class="req_mesg" ng-show="horizontalAdd.menuName.$dirty && horizontalAdd.menuName.$invalid">
+									<span ng-show="horizontalAdd.menuName.$error.required">菜单名称不能为空</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>菜单编码：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newMenuInfo.menuCode' name="menuCode" required>
+								<div class="req_mesg" ng-show="horizontalAdd.menuCode.$dirty && horizontalAdd.menuCode.$invalid">
+									<span ng-show="horizontalAdd.menuCode.$error.required">菜单编码不能为空</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">路径：</label>
+							<div class="col-sm-3">
+								<input type="text" name="menuUrl" class="form-control" ng-model='newMenuInfo.menuUrl'>
+								<!-- <div class="req_mesg" ng-show="horizontalAdd.menuUrl.$dirty && horizontalAdd.menuUrl.$invalid">
+									<span ng-show="horizontalAdd.menuUrl.$error.menuUrl">路径不能为空</span>
+								</div> -->
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>等级：</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model='newMenuInfo.menuLevel' required name="menuLevel" ng-change="changeLevel()"
+									ng-options="x.value as x.text for x in levelType">
+								</select>
+								<div class="req_mesg" ng-show="horizontalAdd.menuLevel.$dirty && horizontalAdd.menuLevel.$invalid">
+									<span ng-show="horizontalAdd.orderNo.$error.menuLevel">等级不能为空</span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>菜单类型：</label>
+							<div class="col-sm-3">
+								<select class="form-control" ng-model='newMenuInfo.menuType'  required
+									ng-options="x.value as x.text for x in menuType">
+								</select>
+								<div class="req_mesg" ng-show="horizontalAdd.menuType.$dirty && horizontalAdd.menuType.$invalid">
+									<span ng-show="horizontalAdd.menuType.$error.orderNo">菜单类型不能为空</span>
+								</div>
+							</div>
+							<label class="col-sm-2 control-label">排序：</label>
+							<div class="col-sm-3">
+								<input type="text" name="orderNo" class="form-control" ng-model='newMenuInfo.orderNo'>
+								<!-- <div class="req_mesg" ng-show="horizontalAdd.orderNo.$dirty && horizontalAdd.orderNo.$invalid">
+									<span ng-show="horizontalAdd.orderNo.$error.orderNo">路径不能为空</span>
+								</div> -->
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">上级父ID：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newMenuInfo.parentId' />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-6">
+								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewMenu()'
+									id="btnSubmit" ng-disabled="horizontalAdd.$invalid || submitting">提交</button>
+									<button class="btn btn-primary8" type="button" ng-click='cancel()'
+									>取消</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

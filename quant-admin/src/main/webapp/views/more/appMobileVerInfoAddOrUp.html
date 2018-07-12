@@ -1,0 +1,148 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="index.html">主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>{{name}}</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="appMobileVerInfoAddOrUpCtrl">
+	<form class="form-horizontal" id="form1" name="horizontal" novalidate>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="">
+						<div class="panel-body ibox float-e-margins">
+							<div class="ibox-content">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">APP名称：</label>
+									<div class="col-sm-2 checkbox" ng-bind="appName"></div>
+									<label class="col-sm-2 control-label">所属客户端：</label>
+									<div class="col-sm-2">
+										<select class="form-control" ng-model="info.platform" ng-options="x.value as x.text for x in platforms"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label"><i class="red_req">*</i>版本号：</label>
+									<div class="col-sm-2">
+										<input type="text" class="form-control" ng-model="info.version" name="version" required>
+										<div class="req_mesg" ng-show="horizontal.acqMerchantNo.$dirty && horizontal.acqMerchantNo.$invalid">
+											<span ng-show="horizontal.acqMerchantNo.$error.required">版本号不能为空</span>
+										</div>
+									</div>
+									<label class="col-sm-2 control-label"><i class="red_req">*</i>连接：</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" ng-model="info.appUrl" name="appUrl" required>
+										<div class="req_mesg" ng-show="horizontal.appUrl.$dirty && horizontal.appUrl.$invalid">
+											<span ng-show="horizontal.appUrl.$error.required">连接不能为空</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">更新状态：</label>
+									<div class="col-sm-2">
+										<select class="form-control" ng-model="info.downFlag" ng-options="x.value as x.text for x in downFlags"/>
+									</div>
+									<label class="col-sm-2 control-label"><i class="red_req">*</i>最低版本：</label>
+									<div class="col-sm-2">
+										<input type="text" class="form-control" ng-model="info.lowestVersion" name="lowestVersion" required>
+										<div class="req_mesg" ng-show="horizontal.lowestVersion.$dirty && horizontal.lowestVersion.$invalid">
+											<span ng-show="horizontal.lowestVersion.$error.required">最低版本不能为空</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label"><i class="red_req">*</i>说明：</label>
+									<div class="col-sm-8">
+										<textarea type="text" class="form-control" ng-model="info.verDesc" name="verDesc" required></textarea>
+										<div class="req_mesg" ng-show="horizontal.verDesc.$dirty && horizontal.verDesc.$invalid">
+											<span ng-show="horizontal.verDesc.$error.required">说明不能为空</span>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">二维码图片</label>
+									<div class="col-sm-10">
+										<input type="file" nv-file-select="" ng-model="fileSelect" uploader="uploaderImg" multiple/>
+										<br/>
+										<div ng-hide="uploaderImg.queue.length >0 ">
+											<img ng-src="{{info.url}}" height="50%" width="60%"/>
+										</div>
+										<table class="table">
+											<tbody>
+												<tr ng-repeat="item in uploaderImg.queue">
+													<td>
+														<div ng-show="uploaderImg.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+													</td>
+													<td ng-show="uploaderImg.isHTML5">
+														<div class="progress" style="margin-bottom: 0;">
+															<div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+														</div>
+													</td>
+													<td class="text-center">
+														<span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+														<span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+														<span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+													</td>
+													<td nowrap>
+														<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+															<span class="glyphicon glyphicon-trash"></span>删除图片
+														</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">LOGO</label>
+									<div class="col-sm-10">
+										<input type="file" nv-file-select="" ng-model="fileSelect" uploader="uploaderFile" multiple/>
+										<br/>
+										<div ng-hide="uploaderFile.queue.length >0 ">
+											<img ng-src="{{info.appLogo}}" height="50%" width="60%"/>
+										</div>
+										<table class="table">
+											<tbody>
+												<tr ng-repeat="item in uploaderFile.queue">
+													<td>
+														<div ng-show="uploaderFile.isHTML5" ng-thumb="{ file: item._file, height: 100 }"></div>
+													</td>
+													<td ng-show="uploaderFile.isHTML5">
+														<div class="progress" style="margin-bottom: 0;">
+															<div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+														</div>
+													</td>
+													<td class="text-center">
+														<span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+														<span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+														<span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+													</td>
+													<td nowrap>
+														<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+															<span class="glyphicon glyphicon-trash"></span>删除图片
+														</button>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label"></label>
+									<div class="col-lg-8">
+										<button ng-click="commit()" ng-disabled="horizontal.$invalid || submitting" class="btn btn-primary btn-mr20" type="button">提交</button>
+										<a ui-sref="sys.appMobileVerInfo({id:appNo})" class="btn btn-primary4" type="button">返回</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</form>
+
+</div>

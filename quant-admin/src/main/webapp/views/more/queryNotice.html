@@ -1,0 +1,95 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>公告查询</strong></li>
+		</ol>
+	</div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="queryNoticeCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>公告查询</h5>
+						<!--<div ibox-tools></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">标题：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" ng-model='baseInfo.title'>
+							</div>
+							<label class="col-sm-3 control-label">下发对象：</label>
+							<div class="col-sm-2">
+								<select class="form-control" ng-model='baseInfo.sysType'
+									ng-options="x.value as x.text for x in targetTypes">
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">创建时间：</label>
+							<div class="col-sm-5">
+								<input type="datetime" style="width: auto; display: inline-block; max-width: 181px;" date-time view="date" format="YYYY-MM-DD HH:mm:ss"
+									class="form-control" ng-model="baseInfo.createTimeBegin"/> -
+								<input type="datetime" style="width: auto; display: inline-block; max-width: 181px;" date-time view="date" format="YYYY-MM-DD HH:mm:ss" class="form-control" ng-model="baseInfo.createTimeEnd" />
+							</div>
+							<label class="col-sm-1 control-label">状态：</label>
+							<div class="col-sm-2">
+								<select class="form-control" ng-model='baseInfo.status'
+									ng-options="x.value as x.text for x in statusTypes">
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">下发时间：</label>
+							<div class="col-sm-5">
+								<input type="datetime" class="form-control"
+									ng-model="baseInfo.issuedTimeBegin"
+									style="width: auto; display: inline-block; max-width: 181px;"
+									date-time view="date" format="YYYY-MM-DD hh:mm:ss" /> - <input
+									type="datetime" class="form-control"
+									ng-model="baseInfo.issuedTimeEnd"
+									style="width: auto; display: inline-block; max-width: 182px;"
+									date-time view="date" format="YYYY-MM-DD hh:mm:ss" />
+							</div>
+							<label class="col-sm-1 control-label" hidden>类型：</label>
+							<div class="col-sm-2" hidden>
+								<select class="form-control" ng-model='baseInfo.msgType'
+										ng-options="x.value as x.text for x in msgTypes">
+								</select>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label"></label>
+							<div class="col-sm-8">
+								<button class="btn btn-primary6 btn-mr20" type="button" id="btnSubmit"
+									ng-click="queryFunc()">查询</button>
+								<button class="btn btn-primary3" type="button" ng-click="resetForm()">清空</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>公告列表</h5>
+						<!--<div ibox-tools="" class="ng-scope"></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="gridStyle" ui-grid="noticeListGrid" ui-grid-pagination ui-grid-resize-columns></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

@@ -1,0 +1,94 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a>主页</a></li>
+            <li><a>用户中心</a></li>
+            <li class="active"><strong>敏感词查询</strong></li>
+        </ol>
+    </div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+     ng-controller="querySensitiveWordsCtrl">
+    <form class="form-horizontal" id="form1">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>敏感词查询</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">关键字名称:</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" ng-model='baseInfo.keyWord'>
+                            </div>
+                            <label class="col-sm-2 control-label">关键字编号:</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" ng-model='baseInfo.sensitiveNo'>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label"></label>
+                            <div class="col-sm-8">
+                                <button class="btn btn-primary6 btn-mr20" type="button" id="btnSubmit"
+                                        ng-click="queryFunc()">查询</button>
+                                <button class="btn btn-primary3 btn-mr20" type="button" ng-click="resetForm()">清空</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>列表</h5>
+                    </div>
+                    <div style="background: #fff; text-align: right; overflow: hidden; padding: 10px 20px 0;">
+                        <button class="btn btn-primary5 btn-mr20" type="button" ng-click="openDialog()" ng-show="hasPermit('sensitiveWords.saveSensitiveWords')" >新增</button>
+                        <button class="btn btn-primary10 btn-mr20" type="button" ng-click="deleteSensitiveWordsAll()" ng-show="hasPermit('sensitiveWords.batchDeleteSensitiveWords')" >批量删除</button>
+                        <a class="btn btn-new btn-mr20" type="button" ui-sref="user.batchSensitive" ng-show="hasPermit('sensitiveWords.addButchSensitiveWords')" target="_black" >导入</a>
+
+                    </div>
+                    <div class="ibox-content">
+                        <div class="gridStyle" ui-grid="sensitiveListGrid" ui-grid-pagination ui-grid-selection ui-grid-resize-columns ui-grid-pinning></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- 模态框（Modal）关键字新增 -->
+    <div id="addDialog" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                    <h3 class="modal-title">添加关键字</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="form2">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">关键字名称:</label>
+                            <div style="padding: 0 20px;">
+                                <input ng-model="info.keyWord" name="keyWord" type="text" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" ng-click="closeDialog()" class="btn btn-primary8 btn-mr20">取消</button>
+                            <button type="button" ng-click="addSensitiveWords()" ng-disabled="submitting" class="btn btn-primary btn-mr20" >提交</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>

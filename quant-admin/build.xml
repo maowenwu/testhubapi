@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	 ====================================================================== 
+     flowmoney builder 4 product                                                      
+     ====================================================================== 
+-->
+     
+<project name="zheng" default="pack">
+	<property name="tarForZheng" value="tarForZheng"/>
+	<property name="Web" value="./target/zheng"/>
+	<property name="appName" value="zheng"/>
+	<property name="source" value="1.5"/>
+	<property name="target" value="1.5"/>
+	<property name="app.dir" value="." />
+
+	
+	<path id="zheng.classpath">
+		<fileset dir="${app.dir}/target/zheng/WEB-INF/lib/">
+		</fileset>
+	</path>
+
+	<target name="init">
+		<tstamp>
+			<format property="TODAY" pattern="yyyyMMdd" locale="cn"/>
+		</tstamp>		
+		<delete dir="${tarForZheng}"/>
+		<mkdir dir="${tarForZheng}"/>
+		<echo>${appName} ${TODAY}</echo>
+	</target>
+	<target name="packStatic" depends="init">
+		<tar destfile="${tarForZheng}/${appName}-${TODAY}.tar" >
+			<tarfileset dir="${Web}">
+				<!--  彩票功能 -->
+				<include name="WEB-INF/classes/cn/eeepay/boss/action/SuperBankAction*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/boss/job/LotteryMatchJob*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/LotteryBonusConfDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/LotteryImportRecordsDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/LotteryBonusConf*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/LotteryImportRecords*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/LotteryRecord*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/QuartzAddJodService*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/SuperBankService*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/LotteryRowImpl*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/QuartzAddJodServiceImpl*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/SuperBankServiceImpl*.class"/>
+				<include name="js/config.js"/>
+				<include name="js/controllers/superBank/loanBonusCtrl.js"/>
+				<include name="js/controllers/superBank/lotteryBonusCtrl.js"/>
+				<include name="js/controllers/superBank/lotteryImportRecordsCtrl.js"/>
+				<include name="views/superBank/lotteryBonus.html"/>
+				<include name="views/superBank/lotteryImportRecords.html"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/LotteryOrderDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/LotteryOrder*.class"/>
+				<include name="js/controllers/superBank/lotteryOrderCtrl.js"/>
+				<include name="js/controllers/superBank/lotteryOrderDetailCtrl.js"/>
+				<include name="views/superBank/lotteryOrder.html"/>
+				<include name="views/superBank/lotteryOrderDetail.html"/>
+				<include name="WEB-INF/classes/cn/eeepay/boss/listener/SpringLoadedListener*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/OrderMainDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/SuperBankUserInfoDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/OrgProfitConfToTradeType*.class"/>
+				<include name="js/controllers/superBank/orgProfitConfCtrl.js"/>
+				<include name="views/superBank/orgProfitConf.html"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/RedControl*.class"/>
+				<include name="js/controllers/superBank/profitDetailOrderCtrl.js"/>
+				<include name="js/controllers/red/redControlCtrl.js"/>
+				<include name="WEB-INF/classes/cn/eeepay/boss/action/RedAction*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/RedService*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/RedServiceImpl*.class"/>
+
+				<include name="WEB-INF/classes/cn/eeepay/boss/action/SuperBankAction*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/LotteryBonusConfDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/LotteryImportRecordsDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/LotteryImportRecords*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/SuperBankService*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/LotteryRowImpl*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/SuperBankServiceImpl*.class"/>
+				<include name="js/controllers/superBank/lotteryBonusCtrl.js"/>
+				<include name="js/controllers/superBank/lotteryImportRecordsCtrl.js"/>
+				<include name="views/superBank/lotteryImportRecords.html"/>
+
+				<include name="WEB-INF/classes/cn/eeepay/framework/util/ClientInterface*.class"/>
+
+                <!--大学生信用卡-->
+				<include name="WEB-INF/classes/cn/eeepay/boss/action/CreditcardSourceAction*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/CreditcardSourceDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/daoSuperbank/OrderMainDao*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/CreditcardSource*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/model/OrderMain*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/BankImportServiceImpl*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/CreditcardSourceServiceImpl*.class"/>
+				<include name="WEB-INF/classes/cn/eeepay/framework/service/impl/SuperBankServiceImpl*.class"/>
+				<include name="js/controllers/superBank/addCreditcardSourceCtrl.js"/>
+				<include name="js/controllers/superBank/bankImportCtrl.js"/>
+				<include name="js/controllers/superBank/creditOrderCtrl.js"/>
+				<include name="js/controllers/superBank/creditcardSourceCtrl.js"/>
+				<include name="js/controllers/superBank/creditcardSourceDetailCtrl.js"/>
+				<include name="js/controllers/superBank/updateCreditcardSourceCtrl.js"/>
+				<include name="views/superBank/addCreditcardSource.html"/>
+				<include name="views/superBank/creditOrder.html"/>
+				<include name="views/superBank/creditOrderDetail.html"/>
+				<include name="views/superBank/creditcardSource.html"/>
+				<include name="views/superBank/creditcardSourceDetail.html"/>
+				<include name="views/superBank/updateCreditcardSource.html"/>
+			</tarfileset>
+		</tar>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${tarForZheng}"/>
+		<mkdir dir="${tarForZheng}"/>
+	</target>
+
+	<target name="pack" depends="packStatic"/>
+
+	<target name="all" depends="clean,packStatic"/>
+</project>

@@ -1,0 +1,29 @@
+<!-- head -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>管理中心</a></li>
+			<li class="active"><strong>新增公告</strong></li>
+		</ol>
+	</div>
+</div>
+
+<!-- content-->
+<div class="wrapper wrapper-content animated fadeIn"
+	ng-controller="addNoticeCtrl">
+	<form class="form-horizontal" id="form1" name="horizontal">
+		<div class="form-group">
+			<div ui-view="noticeEditCommon"></div>
+			<div class="col-lg-12 bgff">
+				<div class="col-sm-12">
+					<div class="col-sm-3"></div>
+					<div class="col-sm-6">
+						<button class="btn btn-primary btn-rounded btn-block" type="button" ng-show="hasPermit('notice.insert')"
+								id="btnSubmit" ng-click="submit()" ng-disabled="horizontal.$invalid || submitting">提交</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
