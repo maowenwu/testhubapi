@@ -136,7 +136,7 @@ public class MarketHuobiServiceTest {
 		Gson gson = new Gson();
 		Merged merged = gson.fromJson(str, Merged.class);
 		quanTicker.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		String ch = merged.getCh();
+		String ch = jsonObject.getString("ch");
 		BigDecimal low = temp.getBigDecimal("low");
 		quanTicker.setLowPrice(low);
 		BigDecimal high = temp.getBigDecimal("high");

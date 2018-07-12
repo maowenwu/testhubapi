@@ -23,14 +23,19 @@ import com.huobi.quantification.huobi.response.OrdersDetailResponse;
 import com.huobi.quantification.huobi.response.SymbolsResponse;
 import com.huobi.quantification.huobi.response.TimestampResponse;
 import com.huobi.quantification.huobi.response.TradeResponse;
+
 /**
+ * 
  * @author shaoxiaofeng
- * @since 2018/6/29
+ * @since  2018/6/29
  */
 public class Main {
 
-    static final String API_KEY = "b3ee28b9-82506e4a-d1f8c9dc-b5ce3";
-    static final String API_SECRET = "2d88904d-75c15363-3d0d6d14-25e23";
+    static final String API_KEY = "KEY";
+    static final String API_SECRET = "SECRET";
+    static final String PRIVATE_KEY = "MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQgnELuWTadNxVSP4OHeIh6WsYgXC3+U/AlhxSxfXR+Sv2hRANCAAQlgOO0/2zuLUVTQanfFerQpCm2u3HLrdtvdPCVOjj0bJqx2Flg8XUcguROyS9dGxZqXbgcB6XOklacXNfBmdGn";
+  
+    
     public static void main(String[] args) {
         try {
             apiSample();
@@ -39,10 +44,10 @@ public class Main {
             e.printStackTrace();
         }
     }
-
+    
     static void apiSample() {
         // create ApiClient using your api key and api secret:
-        ApiClient client = new ApiClient(API_KEY, API_SECRET);
+        ApiClient client = new ApiClient(API_KEY, API_SECRET, PRIVATE_KEY);
         // get symbol list:
         print(client.getSymbols());
 
@@ -115,7 +120,7 @@ public class Main {
             createOrderReq.source = "api";
 
             //------------------------------------------------------ 创建订单  -------------------------------------------------------
-            //orderId = client.createOrder(createOrderReq);
+            orderId = client.createOrder(createOrderReq);
             print(orderId);
             // place order:
 

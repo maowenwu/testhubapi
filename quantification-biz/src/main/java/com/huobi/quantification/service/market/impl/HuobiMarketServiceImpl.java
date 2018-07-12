@@ -66,7 +66,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		quanTicker.setBidPrice(jsonArray2.getBigDecimal(0));
 		Merged merged = JSON.parseObject(body, Merged.class);
 		quanTicker.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		String ch = merged.getCh();
+		String ch = jsonObject.getString("ch");
 		quanTicker.setLowPrice(temp.getBigDecimal("low"));
 		quanTicker.setHighPrice(temp.getBigDecimal("high"));
 		quanTicker.setLastPrice(temp.getBigDecimal("close"));

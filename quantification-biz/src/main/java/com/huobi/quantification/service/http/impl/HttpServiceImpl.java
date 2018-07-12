@@ -7,6 +7,9 @@ import com.huobi.quantification.common.util.ProxyConfig;
 import com.huobi.quantification.dao.QuanProxyIpMapper;
 import com.huobi.quantification.entity.QuanProxyIp;
 import com.huobi.quantification.service.http.HttpService;
+
+import okhttp3.MediaType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +36,7 @@ public class HttpServiceImpl implements HttpService {
     private OkSecretHolder okSecretHolder;
 
     private Timer timer = new Timer();
-
+    
     public HttpServiceImpl() {
         timer.schedule(new TimerTask() {
             @Override
@@ -99,5 +102,19 @@ public class HttpServiceImpl implements HttpService {
         params = signature.sign(params);
         return getHttpClientUtils().doPost(url, params);
     }
+    
+    @Override
+	public String doHuobiGet(String uri, Map<String, String> params) throws HttpRequestException {
+		if (params == null) {
+			params = new HashMap<>();
+		}
+		return getHttpClientUtils().call("GET", uri, null, params);
+	}
+
+	@Override
+	public String doHuobiPost(String uri, Object object) throws HttpRequestException {
+		return getHttpClientUtils().call("POST", uri, object, new HashMap<String, String>());
+	}
+
 
 }
