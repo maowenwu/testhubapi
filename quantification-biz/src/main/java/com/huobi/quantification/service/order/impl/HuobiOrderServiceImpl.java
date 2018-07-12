@@ -185,7 +185,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		logger.info("[HuobiOrder][orderId={}]任务开始", orderId);
 		Map<String, String> params = new HashMap<>();
 		params.put("order-id", orderId + "");
-		String body = httpService.doPost(HttpConstant.HUOBI_ORDERDETAIL, params);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_ORDERDETAIL, params);
 		parseAndSaveOrderInfo(body);
 		logger.info("[HuobiOrder][orderId={}]任务结束，耗时：" + started, orderId);
 	}
