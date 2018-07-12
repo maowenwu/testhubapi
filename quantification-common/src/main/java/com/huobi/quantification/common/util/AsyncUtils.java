@@ -50,7 +50,7 @@ public class AsyncUtils {
         try {
             u = future.get(milliseconds, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            logger.error("异步任务异常：", e);
+            logger.error("线程{}中断异常：", Thread.currentThread().getName(), e);
         } catch (ExecutionException e) {
             throw e;
         } catch (TimeoutException e) {
