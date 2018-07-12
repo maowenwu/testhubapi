@@ -13,9 +13,9 @@
     <dubbo:protocol name="dubbo" port="20880" />
 
 
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureAccountService" ref="accountService" />
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureMarketService" ref="marketService" />
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureOrderService" ref="orderService" />
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureAccountService" ref="futureAccountServiceImpl" />
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureMarketService" ref="futureMarketServiceImpl" />
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureOrderService" ref="futureOrderServiceImpl" />
     <dubbo:service interface="com.huobi.quantification.api.future.JobManageService" ref="jobManageService" />
 
 
