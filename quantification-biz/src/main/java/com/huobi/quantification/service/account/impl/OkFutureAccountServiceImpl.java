@@ -1,8 +1,6 @@
 package com.huobi.quantification.service.account.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
@@ -12,6 +10,8 @@ import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
+import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.service.account.OkFutureAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -58,112 +57,89 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
 
     public void updateOkUserInfo(Long accountId) {
         Stopwatch started = Stopwatch.createStarted();
+        Date now = new Date();
         logger.info("[OkUserInfo][accountId={}]任务开始", accountId);
         long queryId = System.currentTimeMillis();
-        List<QuanAccountFutureAsset> list = queryOkUserInfoByAPI(accountId);
-        for (QuanAccountFutureAsset asset : list) {
+        String body = queryOkUserInfoByAPI(accountId);
+        QuanAccountFutureAsset futureAsset = new QuanAccountFutureAsset();
+        futureAsset.setAccountSourceId(accountId);
+        futureAsset.setQueryId(queryId);
+        futureAsset.setRespBody(body);
+        futureAsset.setCreateTime(now);
+        futureAsset.setUpdateTime(now);
+         /* for (QuanAccountFutureAsset asset : list) {
             asset.setQueryId(queryId);
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
-        }
-        redisService.saveOkUserInfo(accountId, list);
+        }*/
+        redisService.saveFutureUserInfo(ExchangeEnum.OKEX.getExId(), accountId, futureAsset);
         logger.info("[OkUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
     }
 
-    private List<QuanAccountFutureAsset> queryOkUserInfoByAPI(Long accountId) {
+    private String queryOkUserInfoByAPI(Long accountId) {
         Map<String, String> params = new HashMap<>();
         String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_USER_INFO, params);
-        return parseAndSaveUserInfo(body);
-    }
-
-    private List<QuanAccountFutureAsset> parseAndSaveUserInfo(String body) {
-        JSONObject jsonObject = JSON.parseObject(body);
-        Boolean b = jsonObject.getBoolean("result");
-        List<QuanAccountFutureAsset> list = new ArrayList<>();
-        if (b) {
-            JSONObject info = jsonObject.getJSONObject("info");
-            list.add(parseFutureAsset(info.getJSONObject("btc"), "btc"));
-            list.add(parseFutureAsset(info.getJSONObject("btg"), "btg"));
-            list.add(parseFutureAsset(info.getJSONObject("etc"), "etc"));
-            list.add(parseFutureAsset(info.getJSONObject("bch"), "bch"));
-            list.add(parseFutureAsset(info.getJSONObject("xrp"), "xrp"));
-            list.add(parseFutureAsset(info.getJSONObject("eth"), "eth"));
-            list.add(parseFutureAsset(info.getJSONObject("eos"), "eos"));
-            list.add(parseFutureAsset(info.getJSONObject("ltc"), "ltc"));
-        }
-        return list;
-    }
-
-    private QuanAccountFutureAsset parseFutureAsset(JSONObject obj, String symbol) {
-        QuanAccountFutureAsset asset = new QuanAccountFutureAsset();
-        asset.setSymbol(symbol);
-        asset.setRiskRate(obj.getBigDecimal("risk_rate"));
-        asset.setAccountRights(obj.getBigDecimal("account_rights"));
-        asset.setProfitUnreal(obj.getBigDecimal("profit_unreal"));
-        asset.setProfitReal(obj.getBigDecimal("profit_real"));
-        asset.setKeepDeposit(obj.getBigDecimal("keep_deposit"));
-        return asset;
+        return body;
     }
 
 
-    public void updateOkPosition(Long accountId, String symbol, String contractType) {
+    public void updateOkPosition(Long accountId) {
         Stopwatch started = Stopwatch.createStarted();
-        logger.info("[OkPosition][symbol={},contractType={}]任务开始", symbol, contractType);
+        Date now = new Date();
+        logger.info("[OkPosition][accountId={}]任务开始", accountId);
         long queryId = System.currentTimeMillis();
-        List<QuanAccountFuturePosition> list = queryOkPositionByAPI(accountId, symbol, contractType);
-        for (QuanAccountFuturePosition position : list) {
-            position.setQueryId(queryId);
-            position.setAccountSourceId(accountId);
-            quanAccountFuturePositionMapper.insert(position);
-        }
-        redisService.saveOkPosition(accountId, symbol, contractType, list);
-        logger.info("[OkPosition][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
+        OKFuturePositionResponse positionResponse = queryAllOkPositionByAPI(accountId);
+        QuanAccountFuturePosition position = new QuanAccountFuturePosition();
+        position.setAccountSourceId(accountId);
+        position.setQueryId(queryId);
+        position.setRespBody(JSON.toJSONString(positionResponse));
+        position.setCreateTime(now);
+        position.setUpdateTime(now);
+        redisService.saveFuturePosition(ExchangeEnum.OKEX.getExId(), accountId, position);
+        logger.info("[OkPosition][accountId={},]任务结束，耗时：" + started, accountId);
     }
 
-    public List<QuanAccountFuturePosition> queryOkPositionByAPI(Long accountId, String symbol, String contractType) {
+    private OKFuturePositionResponse queryAllOkPositionByAPI(Long accountId) {
+        OKFuturePositionResponse response = new OKFuturePositionResponse();
+        response.setHolding(new ArrayList<>());
+        response.setResult(true);
+        OKFuturePositionResponse btcUsd = queryOkPositionByAPI(accountId, "btc_usd");
+        if (btcUsd.isResult()) {
+            response.setForceLiquPrice(btcUsd.getForceLiquPrice());
+            response.getHolding().addAll(btcUsd.getHolding());
+        }
+        OKFuturePositionResponse ltcUsd = queryOkPositionByAPI(accountId, "ltc_usd");
+        if (ltcUsd.isResult()) {
+            response.setForceLiquPrice(ltcUsd.getForceLiquPrice());
+            response.getHolding().addAll(ltcUsd.getHolding());
+        }
+        OKFuturePositionResponse ethUsd = queryOkPositionByAPI(accountId, "eth_usd");
+        if (ethUsd.isResult()) {
+            response.setForceLiquPrice(ethUsd.getForceLiquPrice());
+            response.getHolding().addAll(ethUsd.getHolding());
+        }
+        OKFuturePositionResponse etcUsd = queryOkPositionByAPI(accountId, "etc_usd");
+        if (etcUsd.isResult()) {
+            response.setForceLiquPrice(etcUsd.getForceLiquPrice());
+            response.getHolding().addAll(etcUsd.getHolding());
+        }
+        OKFuturePositionResponse bchUsd = queryOkPositionByAPI(accountId, "bch_usd");
+        if (bchUsd.isResult()) {
+            response.setForceLiquPrice(bchUsd.getForceLiquPrice());
+            response.getHolding().addAll(bchUsd.getHolding());
+        }
+        return response;
+    }
+
+
+    public OKFuturePositionResponse queryOkPositionByAPI(Long accountId, String symbol) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
-        params.put("contract_type", contractType);
+        //params.put("contract_type", contractType);
         String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_POSITION, params);
-        return parseAndSavePosition(body);
+        return JSON.parseObject(body, OKFuturePositionResponse.class);
     }
 
-    private List<QuanAccountFuturePosition> parseAndSavePosition(String body) {
-        JSONObject jsonObject = JSON.parseObject(body);
-        Boolean b = jsonObject.getBoolean("result");
-        List<QuanAccountFuturePosition> list = new ArrayList<>();
-        if (b) {
-            String liquPrice = jsonObject.getString("force_liqu_price").replaceAll(",", "");
-            BigDecimal forceLiquPrice = new BigDecimal(liquPrice);
-            JSONArray holding = jsonObject.getJSONArray("holding");
-            for (int i = 0; i < holding.size(); i++) {
-                JSONObject holdingJSONObject = holding.getJSONObject(i);
-                list.add(parseFuturePosition(holdingJSONObject, forceLiquPrice));
-            }
-        }
-        return list;
-    }
-
-    private QuanAccountFuturePosition parseFuturePosition(JSONObject obj, BigDecimal forceLiquPrice) {
-        QuanAccountFuturePosition position = new QuanAccountFuturePosition();
-        position.setForceLiquPrice(forceLiquPrice);
-        position.setBuyAmount(obj.getBigDecimal("buy_amount"));
-        position.setBuyAvailable(obj.getBigDecimal("buy_available"));
-        position.setBuyPriceAvg(obj.getBigDecimal("buy_price_avg"));
-        position.setBuyPriceCost(obj.getBigDecimal("buy_price_cost"));
-        position.setBuyProfitReal(obj.getBigDecimal("buy_profit_real"));
-        position.setContractCode(obj.getString("contract_id"));
-        position.setContractName(obj.getString("contract_type"));
-        position.setLeverRate(obj.getBigDecimal("lever_rate"));
-        position.setSellAmount(obj.getBigDecimal("sell_amount"));
-        position.setSellAvailable(obj.getBigDecimal("sell_available"));
-        position.setSellPriceAvg(obj.getBigDecimal("sell_price_avg"));
-        position.setSellPriceCost(obj.getBigDecimal("sell_price_cost"));
-        position.setSellProfitReal(obj.getBigDecimal("sell_profit_real"));
-        position.setSymbol(obj.getString("symbol"));
-        position.setDateCreate(new Date(obj.getLong("create_date")));
-        return position;
-    }
 
     @Override
     public List<Long> findAccountFutureByExchangeId(int exchangeId) {

@@ -1,8 +1,10 @@
 package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.FutureBalanceDto;
-import com.huobi.quantification.dto.FuturePositionDto;
+import com.huobi.quantification.dto.FutureBalanceReqDto;
+import com.huobi.quantification.dto.FutureBalanceRespDto;
+import com.huobi.quantification.dto.FuturePositionReqDto;
+import com.huobi.quantification.dto.FuturePositionRespDto;
 
 public interface FutureAccountService {
 
@@ -10,24 +12,16 @@ public interface FutureAccountService {
     /**
      * 获取账户余额(权益)
      *
-     * @param exchangeId
-     * @param accountId
-     * @param coinType
-     * @param timeout
-     * @param maxDelay
+     * @param balanceReqDto
      * @return
      */
-    ServiceResult<FutureBalanceDto> getBalance(int exchangeId, long accountId, String coinType, long timeout, long maxDelay);
+    ServiceResult<FutureBalanceRespDto> getBalance(FutureBalanceReqDto balanceReqDto);
 
     /**
      * 获取账户持仓
      *
-     * @param exchangeId
-     * @param accountId
-     * @param coinType
-     * @param timeout
-     * @param maxDelay
+     * @param positionReqDto
      * @return
      */
-    ServiceResult<FuturePositionDto> getPosition(int exchangeId, long accountId, String coinType, long timeout, long maxDelay);
+    ServiceResult<FuturePositionRespDto> getPosition(FuturePositionReqDto positionReqDto);
 }

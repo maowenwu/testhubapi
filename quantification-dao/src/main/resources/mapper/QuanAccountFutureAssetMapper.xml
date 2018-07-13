@@ -5,12 +5,9 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId" />
     <result column="query_id" jdbcType="BIGINT" property="queryId" />
-    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
-    <result column="risk_rate" jdbcType="DECIMAL" property="riskRate" />
-    <result column="account_rights" jdbcType="DECIMAL" property="accountRights" />
-    <result column="profit_unreal" jdbcType="DECIMAL" property="profitUnreal" />
-    <result column="profit_real" jdbcType="DECIMAL" property="profitReal" />
-    <result column="keep_deposit" jdbcType="DECIMAL" property="keepDeposit" />
+    <result column="resp_body" jdbcType="VARCHAR" property="respBody" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_account_future_asset
@@ -18,35 +15,28 @@
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFutureAsset">
     insert into quan_account_future_asset (id, account_source_id, query_id, 
-      symbol, risk_rate, account_rights, 
-      profit_unreal, profit_real, keep_deposit
+      resp_body, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{accountSourceId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT}, 
-      #{symbol,jdbcType=VARCHAR}, #{riskRate,jdbcType=DECIMAL}, #{accountRights,jdbcType=DECIMAL}, 
-      #{profitUnreal,jdbcType=DECIMAL}, #{profitReal,jdbcType=DECIMAL}, #{keepDeposit,jdbcType=DECIMAL}
+      #{respBody,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountFutureAsset">
     update quan_account_future_asset
     set account_source_id = #{accountSourceId,jdbcType=BIGINT},
       query_id = #{queryId,jdbcType=BIGINT},
-      symbol = #{symbol,jdbcType=VARCHAR},
-      risk_rate = #{riskRate,jdbcType=DECIMAL},
-      account_rights = #{accountRights,jdbcType=DECIMAL},
-      profit_unreal = #{profitUnreal,jdbcType=DECIMAL},
-      profit_real = #{profitReal,jdbcType=DECIMAL},
-      keep_deposit = #{keepDeposit,jdbcType=DECIMAL}
+      resp_body = #{respBody,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, account_source_id, query_id, symbol, risk_rate, account_rights, profit_unreal, 
-    profit_real, keep_deposit
+    select id, account_source_id, query_id, resp_body, create_time, update_time
     from quan_account_future_asset
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, account_source_id, query_id, symbol, risk_rate, account_rights, profit_unreal, 
-    profit_real, keep_deposit
+    select id, account_source_id, query_id, resp_body, create_time, update_time
     from quan_account_future_asset
   </select>
 </mapper>

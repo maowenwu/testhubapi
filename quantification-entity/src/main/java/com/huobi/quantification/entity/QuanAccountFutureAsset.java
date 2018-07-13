@@ -1,57 +1,39 @@
 package com.huobi.quantification.entity;
 
-import java.math.BigDecimal;
+import java.util.Date;
 
 public class QuanAccountFutureAsset {
     /**
-     * @mbg.generated 2018-07-02 14:36:55
+     * @mbg.generated 2018-07-13 10:31:47
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-07-02 14:36:55
+     * @mbg.generated 2018-07-13 10:31:47
      */
     private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-07-02 14:36:55
+     * @mbg.generated 2018-07-13 10:31:47
      */
     private Long queryId;
 
     /**
      * 币种
-     * @mbg.generated 2018-07-02 14:36:55
+     * @mbg.generated 2018-07-13 10:31:47
      */
-    private String symbol;
+    private String respBody;
 
     /**
-     * 账户权益
-     * @mbg.generated 2018-07-02 14:36:55
+     * @mbg.generated 2018-07-13 10:31:47
      */
-    private BigDecimal riskRate;
+    private Date createTime;
 
     /**
-     * 交易所服务器时间
-     * @mbg.generated 2018-07-02 14:36:55
+     * @mbg.generated 2018-07-13 10:31:47
      */
-    private BigDecimal accountRights;
-
-    /**
-     * api请求时间
-     * @mbg.generated 2018-07-02 14:36:55
-     */
-    private BigDecimal profitUnreal;
-
-    /**
-     * @mbg.generated 2018-07-02 14:36:55
-     */
-    private BigDecimal profitReal;
-
-    /**
-     * @mbg.generated 2018-07-02 14:36:55
-     */
-    private BigDecimal keepDeposit;
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -77,51 +59,27 @@ public class QuanAccountFutureAsset {
         this.queryId = queryId;
     }
 
-    public String getSymbol() {
-        return symbol;
+    public String getRespBody() {
+        return respBody;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
+    public void setRespBody(String respBody) {
+        this.respBody = respBody;
     }
 
-    public BigDecimal getRiskRate() {
-        return riskRate;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setRiskRate(BigDecimal riskRate) {
-        this.riskRate = riskRate;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public BigDecimal getAccountRights() {
-        return accountRights;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setAccountRights(BigDecimal accountRights) {
-        this.accountRights = accountRights;
-    }
-
-    public BigDecimal getProfitUnreal() {
-        return profitUnreal;
-    }
-
-    public void setProfitUnreal(BigDecimal profitUnreal) {
-        this.profitUnreal = profitUnreal;
-    }
-
-    public BigDecimal getProfitReal() {
-        return profitReal;
-    }
-
-    public void setProfitReal(BigDecimal profitReal) {
-        this.profitReal = profitReal;
-    }
-
-    public BigDecimal getKeepDeposit() {
-        return keepDeposit;
-    }
-
-    public void setKeepDeposit(BigDecimal keepDeposit) {
-        this.keepDeposit = keepDeposit;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

@@ -8,16 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 public interface RedisService {
-    void saveOkUserInfo(Long accountId, List<QuanAccountFutureAsset> list);
+    void saveFutureUserInfo(int exchangeId, Long accountId, QuanAccountFutureAsset futureAsset);
 
-    void saveOkPosition(Long accountId, String symbol, String type, List<QuanAccountFuturePosition> list);
+    QuanAccountFutureAsset getFutureUserInfo(int exchangeId, Long accountId);
+
+    void saveFuturePosition(int exchangeId, Long accountId, QuanAccountFuturePosition position);
+
+    QuanAccountFuturePosition getFuturePosition(int exchangeId, Long accountId);
 
 
     void saveOkTicker(String symbol, String contractType, QuanTickerFuture ticker);
 
-    void saveDepthFuture(int exchangeId,String symbol, String contractType, List<QuanDepthFutureDetail> list);
+    void saveDepthFuture(int exchangeId, String symbol, String contractType, List<QuanDepthFutureDetail> list);
 
-    List<QuanDepthFutureDetail> getDepthFuture(int exchangeId,String symbol, String contractType);
+    List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType);
 
     void saveKlineFuture(int exchangeId, String symbol, String type, String contractType, List<QuanKlineFuture> redisKline);
 

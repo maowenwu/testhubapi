@@ -14,7 +14,7 @@ public class OkFuturePositionJob extends AbstractQuartzJob {
         OkFutureAccountService okFutureAccountService = ApplicationContextHolder.getContext().getBean(OkFutureAccountService.class);
         if (data instanceof QuanJobFuture) {
             QuanJobFuture jobFuture = (QuanJobFuture) data;
-            okFutureAccountService.updateOkPosition(jobFuture.getAccountId(), jobFuture.getSymbol(), jobFuture.getContractType());
+            okFutureAccountService.updateOkPosition(jobFuture.getAccountId());
         }
     }
 }

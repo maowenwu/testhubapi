@@ -14,7 +14,7 @@ public interface OkFutureAccountService {
 
     void updateOkUserInfo(Long accountId);
 
-    void updateOkPosition(Long accountId, String symbol, String contractType);
+    void updateOkPosition(Long accountId);
 
     List<Long> findAccountFutureByExchangeId(int exchangeId);
 

@@ -1,108 +1,39 @@
 package com.huobi.quantification.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 public class QuanAccountFuturePosition {
     /**
-     * @mbg.generated 2018-07-02 14:46:55
+     * @mbg.generated 2018-07-13 17:56:26
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-07-02 14:46:55
+     * @mbg.generated 2018-07-13 17:56:26
      */
     private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-07-02 14:46:55
+     * @mbg.generated 2018-07-13 17:56:26
      */
     private Long queryId;
 
     /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private String contractCode;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private String contractName;
-
-    /**
      * 币种
-     * @mbg.generated 2018-07-02 14:46:55
+     * @mbg.generated 2018-07-13 17:56:26
      */
-    private String symbol;
+    private String respBody;
 
     /**
-     * 账户权益
-     * @mbg.generated 2018-07-02 14:46:55
+     * @mbg.generated 2018-07-13 17:56:26
      */
-    private BigDecimal forceLiquPrice;
+    private Date createTime;
 
     /**
-     * 交易所服务器时间
-     * @mbg.generated 2018-07-02 14:46:55
+     * @mbg.generated 2018-07-13 17:56:26
      */
-    private BigDecimal buyAmount;
-
-    /**
-     * api请求时间
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal buyAvailable;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal buyPriceAvg;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal buyPriceCost;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal buyProfitReal;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal leverRate;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal sellAmount;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal sellAvailable;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal sellPriceAvg;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal sellPriceCost;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private BigDecimal sellProfitReal;
-
-    /**
-     * @mbg.generated 2018-07-02 14:46:55
-     */
-    private Date dateCreate;
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -128,131 +59,27 @@ public class QuanAccountFuturePosition {
         this.queryId = queryId;
     }
 
-    public String getContractCode() {
-        return contractCode;
+    public String getRespBody() {
+        return respBody;
     }
 
-    public void setContractCode(String contractCode) {
-        this.contractCode = contractCode;
+    public void setRespBody(String respBody) {
+        this.respBody = respBody;
     }
 
-    public String getContractName() {
-        return contractName;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setContractName(String contractName) {
-        this.contractName = contractName;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public String getSymbol() {
-        return symbol;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public BigDecimal getForceLiquPrice() {
-        return forceLiquPrice;
-    }
-
-    public void setForceLiquPrice(BigDecimal forceLiquPrice) {
-        this.forceLiquPrice = forceLiquPrice;
-    }
-
-    public BigDecimal getBuyAmount() {
-        return buyAmount;
-    }
-
-    public void setBuyAmount(BigDecimal buyAmount) {
-        this.buyAmount = buyAmount;
-    }
-
-    public BigDecimal getBuyAvailable() {
-        return buyAvailable;
-    }
-
-    public void setBuyAvailable(BigDecimal buyAvailable) {
-        this.buyAvailable = buyAvailable;
-    }
-
-    public BigDecimal getBuyPriceAvg() {
-        return buyPriceAvg;
-    }
-
-    public void setBuyPriceAvg(BigDecimal buyPriceAvg) {
-        this.buyPriceAvg = buyPriceAvg;
-    }
-
-    public BigDecimal getBuyPriceCost() {
-        return buyPriceCost;
-    }
-
-    public void setBuyPriceCost(BigDecimal buyPriceCost) {
-        this.buyPriceCost = buyPriceCost;
-    }
-
-    public BigDecimal getBuyProfitReal() {
-        return buyProfitReal;
-    }
-
-    public void setBuyProfitReal(BigDecimal buyProfitReal) {
-        this.buyProfitReal = buyProfitReal;
-    }
-
-    public BigDecimal getLeverRate() {
-        return leverRate;
-    }
-
-    public void setLeverRate(BigDecimal leverRate) {
-        this.leverRate = leverRate;
-    }
-
-    public BigDecimal getSellAmount() {
-        return sellAmount;
-    }
-
-    public void setSellAmount(BigDecimal sellAmount) {
-        this.sellAmount = sellAmount;
-    }
-
-    public BigDecimal getSellAvailable() {
-        return sellAvailable;
-    }
-
-    public void setSellAvailable(BigDecimal sellAvailable) {
-        this.sellAvailable = sellAvailable;
-    }
-
-    public BigDecimal getSellPriceAvg() {
-        return sellPriceAvg;
-    }
-
-    public void setSellPriceAvg(BigDecimal sellPriceAvg) {
-        this.sellPriceAvg = sellPriceAvg;
-    }
-
-    public BigDecimal getSellPriceCost() {
-        return sellPriceCost;
-    }
-
-    public void setSellPriceCost(BigDecimal sellPriceCost) {
-        this.sellPriceCost = sellPriceCost;
-    }
-
-    public BigDecimal getSellProfitReal() {
-        return sellProfitReal;
-    }
-
-    public void setSellProfitReal(BigDecimal sellProfitReal) {
-        this.sellProfitReal = sellProfitReal;
-    }
-
-    public Date getDateCreate() {
-        return dateCreate;
-    }
-
-    public void setDateCreate(Date dateCreate) {
-        this.dateCreate = dateCreate;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

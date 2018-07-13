@@ -21,17 +21,27 @@ public class RedisServiceImpl implements RedisService {
     private RedissonClient client;
 
     @Override
-    public void saveOkUserInfo(Long accountId, List<QuanAccountFutureAsset> list) {
-        RMap<String, Object> map = client.getMap("quan.account.future.ok.userinfo." + accountId);
-        for (QuanAccountFutureAsset asset : list) {
-            map.put(asset.getSymbol(), asset);
-        }
+    public void saveFutureUserInfo(int exchangeId, Long accountId, QuanAccountFutureAsset futureAsset) {
+        RMap<Long, QuanAccountFutureAsset> map = client.getMap("quan.account.future.userinfo." + exchangeId);
+        map.put(accountId, futureAsset);
     }
 
     @Override
-    public void saveOkPosition(Long accountId, String symbol, String type, List<QuanAccountFuturePosition> list) {
-        RMap<String, Object> map = client.getMap("quan.account.future.ok.position." + accountId + "." + symbol);
-        map.put(type, list);
+    public QuanAccountFutureAsset getFutureUserInfo(int exchangeId, Long accountId) {
+        RMap<Long, QuanAccountFutureAsset> map = client.getMap("quan.account.future.userinfo." + exchangeId);
+        return map.get(accountId);
+    }
+
+    @Override
+    public void saveFuturePosition(int exchangeId, Long accountId, QuanAccountFuturePosition position) {
+        RMap<Long, QuanAccountFuturePosition> map = client.getMap("quan.account.future.position." + exchangeId);
+        map.put(accountId, position);
+    }
+
+    @Override
+    public QuanAccountFuturePosition getFuturePosition(int exchangeId, Long accountId) {
+        RMap<Long, QuanAccountFuturePosition> map = client.getMap("quan.account.future.position." + exchangeId);
+        return map.get(accountId);
     }
 
     @Override

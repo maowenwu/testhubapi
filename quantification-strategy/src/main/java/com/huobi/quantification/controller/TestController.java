@@ -2,6 +2,7 @@ package com.huobi.quantification.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.ServiceResult;
@@ -18,6 +19,9 @@ public class TestController {
 
     @Autowired
     private FutureMarketService futureMarketService;
+
+    @Autowired
+    private FutureAccountService futureAccountService;
 
     @RequestMapping("/testFutureIndex")
     public String testFutureIndex() {
@@ -82,5 +86,38 @@ public class TestController {
         ServiceResult<FutureCurrentPriceRespDto> currentPrice = futureMarketService.getCurrentPrice(reqDto);
         System.out.println(currentPrice);
         return JSON.toJSONString(currentPrice);
+    }
+
+
+
+    @RequestMapping("/testGetBalance")
+    public String testGetBalance() {
+        FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
+        reqDto.setExchangeId(2);
+        reqDto.setAccountId(1L);
+
+        reqDto.setCoinType("btc");
+        reqDto.setTimeout(100);
+        reqDto.setMaxDelay(3);
+
+        ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(reqDto);
+        System.out.println(balance);
+        return JSON.toJSONString(balance);
+    }
+
+
+    @RequestMapping("/testGetPosition")
+    public String testGetPosition() {
+        FuturePositionReqDto reqDto = new FuturePositionReqDto();
+        reqDto.setExchangeId(2);
+        reqDto.setAccountId(1L);
+
+        reqDto.setCoinType("ltc");
+        reqDto.setTimeout(100);
+        reqDto.setMaxDelay(3);
+
+        ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
+        System.out.println(position);
+        return JSON.toJSONString(position);
     }
 }
