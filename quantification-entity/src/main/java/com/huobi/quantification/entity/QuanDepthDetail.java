@@ -19,7 +19,7 @@ public class QuanDepthDetail {
      * 买卖盘类型
      * @mbg.generated 2018-07-02 14:32:37
      */
-    private Byte detailType;
+    private Integer detailType;
 
     /**
      * 价格
@@ -55,15 +55,15 @@ public class QuanDepthDetail {
         this.depthId = depthId;
     }
 
-    public Byte getDetailType() {
-        return detailType;
-    }
+    public Integer getDetailType() {
+		return detailType;
+	}
 
-    public void setDetailType(Byte detailType) {
-        this.detailType = detailType;
-    }
+    public void setDetailType(Integer detailType) {
+		this.detailType = detailType;
+	}
 
-    public BigDecimal getDetailPrice() {
+	public BigDecimal getDetailPrice() {
         return detailPrice;
     }
 

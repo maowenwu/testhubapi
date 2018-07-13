@@ -27,9 +27,11 @@ public interface RedisService {
 
     List<QuanKlineFuture> getKlineFuture(int exchangeId, String symbol, String type, String contractType);
 
-    void saveHuobiTicker(String symbol, QuanTicker ticker);
+    void saveHuobiTicker(int exchangeId, String symbol, QuanTicker ticker);
 
-    void saveHuobiDepth(String symbol, String type, QuanDepth depth);
+    void saveHuobiDepth(int exchangeId, String symbol, QuanDepth depth, List<QuanDepthDetail> list);
+
+    List<QuanDepthDetail> getHuobiDepth(int exchangeId, String symbol);
 
     void saveHuobiAccount(QuanAccount quanAccount);
 

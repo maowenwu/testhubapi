@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -23,7 +24,10 @@ import com.huobi.quantification.dao.QuanDepthMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
 import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
+import com.huobi.quantification.entity.QuanDepthFuture;
+import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanTicker;
+import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.huobi.response.DepthResponse;
@@ -102,7 +106,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		}
 		quanTicker.setTs(parse);
 		quanTickerMapper.insert(quanTicker);
-		redisService.saveHuobiTicker(symbol, quanTicker);
+		redisService.saveHuobiTicker(ExchangeEnum.HUOBI.getExId(),symbol, quanTicker);
 		return null;
 	}
 
@@ -111,10 +115,10 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		params.put("symbol", symbol);
 		params.put("type", type);
 		String body = httpService.doHuobiGet(HttpConstant.HUOBI_DEPTH, params);
-		DepthResponse marketDepth = JSON.parseObject(body, DepthResponse.class);
+		JSONObject jsonObject = JSON.parseObject(body);
 		QuanDepth quanDepth = new QuanDepth();
 		quanDepth.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		String ch = marketDepth.getCh();
+		String ch = jsonObject.getString("ch");
 		ArrayList<String> dbch = new ArrayList<String>();
 		dbch.add("btc-usdt");
 		String[] chSplit = ch.split("\\.");
@@ -131,20 +135,35 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		}
 		quanDepth.setBaseCoin(baseCoin);
 		quanDepth.setQuoteCoin(quoteCoin);
-		String ts = marketDepth.getTs();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		long lt = new Long(ts);
-		Date date = new Date(lt);
-		String format = formatter.format(date);
-		Date parse = null;
-		try {
-			parse = formatter.parse(format);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		quanDepth.setDepthTs(parse);
+		quanDepth.setDepthTs(jsonObject.getDate("ts"));
 		quanDepthMapper.insert(quanDepth);
-		redisService.saveHuobiDepth(symbol, type, quanDepth);
+		List<QuanDepthDetail> list = new ArrayList<>();
+        JSONArray asks = jsonObject.getJSONObject("tick").getJSONArray("asks");
+        for (int i = 0; i < asks.size(); i++) {
+            JSONArray item = asks.getJSONArray(i);
+            QuanDepthDetail depthDetail = new QuanDepthDetail();
+            depthDetail.setDepthId(quanDepth.getId());
+            depthDetail.setDetailType(DepthEnum.ASKS.getIntType());
+            depthDetail.setDetailPrice(item.getBigDecimal(0));
+            depthDetail.setDetailAmount(item.getBigDecimal(1));
+            depthDetail.setDateUpdate(new Date());
+            list.add(depthDetail);
+        }
+        JSONArray bids = jsonObject.getJSONObject("tick").getJSONArray("bids");
+        for (int i = 0; i < bids.size(); i++) {
+            JSONArray item = bids.getJSONArray(i);
+            QuanDepthDetail depthDetail = new QuanDepthDetail();
+            depthDetail.setDepthId(quanDepth.getId());
+            depthDetail.setDetailType(DepthEnum.BIDS.getIntType());
+            depthDetail.setDetailPrice(item.getBigDecimal(0));
+            depthDetail.setDetailAmount(item.getBigDecimal(1));
+            depthDetail.setDateUpdate(new Date());
+            list.add(depthDetail);
+        }
+        for (QuanDepthDetail detail : list) {
+            quanDepthDetailMapper.insert(detail);
+        }
+		redisService.saveHuobiDepth(ExchangeEnum.HUOBI.getExId(),symbol, quanDepth, list);
 		return null;
 	}
 
@@ -155,25 +174,6 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		params.put("size", size);
 		String body = httpService.doGet(HttpConstant.HUOBI_KLINE, params);
 		return null;
-	}
-
-	private void parseAndSaveDepth(String res, OkSymbolEnum symbolEnum, String type) {
-
-		JSONObject jsonObject = JSON.parseObject(res);
-		String data = jsonObject.getString("tick");
-		QuanDepth quanDepth = new QuanDepth();
-		quanDepthMapper.insert(quanDepth);
-		JSONObject temp = JSON.parseObject(data);
-		JSONArray jsarr = temp.getJSONArray("asks");
-		for (int i = 0; i < jsarr.size(); i++) {
-			JSONArray item = jsarr.getJSONArray(i);
-			QuanDepthDetail depthDetail = new QuanDepthDetail();
-			depthDetail.setDetailPrice(item.getBigDecimal(0));
-			// depthDetail.setDetailAmount(item.getDouble(1));
-			depthDetail.setDepthId(quanDepth.getId());
-			quanDepthDetailMapper.insert(depthDetail);
-		}
-
 	}
 
 	@Override

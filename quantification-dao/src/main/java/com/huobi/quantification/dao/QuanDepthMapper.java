@@ -1,8 +1,8 @@
 package com.huobi.quantification.dao;
 
-import com.huobi.quantification.entity.QuanDepth;
-
 import java.util.List;
+
+import com.huobi.quantification.entity.QuanDepth;
 
 public interface QuanDepthMapper {
     int deleteByPrimaryKey(Long id);
@@ -14,4 +14,6 @@ public interface QuanDepthMapper {
     List<QuanDepth> selectAll();
 
     int updateByPrimaryKey(QuanDepth record);
+    
+    int insertAndGetId(QuanDepth record);
 }

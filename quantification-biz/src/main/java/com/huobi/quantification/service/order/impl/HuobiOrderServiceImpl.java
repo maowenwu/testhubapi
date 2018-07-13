@@ -20,6 +20,7 @@ import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatus;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
 import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
@@ -160,6 +161,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		JSONObject jsonObject = JSON.parseObject(body);
 		JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
 		QuanOrder quanOrder = new QuanOrder();
+		quanOrder.setExchangeId(ExchangeEnum.HUOBI.getExId());
 		quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
 		quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
 		quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));

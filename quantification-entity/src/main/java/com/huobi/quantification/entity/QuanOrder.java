@@ -92,6 +92,10 @@ public class QuanOrder {
      * @mbg.generated 2018-07-02 14:32:37
      */
     private Date orderFinishedAt;
+    
+    private int exchangeId;
+    
+    private BigDecimal innerId;
 
     public Long getId() {
         return id;
@@ -212,4 +216,21 @@ public class QuanOrder {
     public void setOrderFinishedAt(Date orderFinishedAt) {
         this.orderFinishedAt = orderFinishedAt;
     }
+
+	public int getExchangeId() {
+		return exchangeId;
+	}
+
+	public void setExchangeId(int exchangeId) {
+		this.exchangeId = exchangeId;
+	}
+
+	public BigDecimal getInnerId() {
+		return innerId;
+	}
+
+	public void setInnerId(BigDecimal innerId) {
+		this.innerId = innerId;
+	}
+    
 }

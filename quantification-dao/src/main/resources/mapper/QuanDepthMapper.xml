@@ -18,6 +18,14 @@
     values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, 
       #{quoteCoin,jdbcType=VARCHAR}, #{depthTs,jdbcType=TIMESTAMP})
   </insert>
+  
+  <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="id">
+    insert into quan_depth (id, exchange_id, base_coin, 
+      quote_coin, depth_ts)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, 
+      #{quoteCoin,jdbcType=VARCHAR}, #{depthTs,jdbcType=TIMESTAMP})
+  </insert>
+  
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanDepth">
     update quan_depth
     set exchange_id = #{exchangeId,jdbcType=BIGINT},

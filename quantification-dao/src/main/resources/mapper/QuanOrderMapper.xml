@@ -17,6 +17,8 @@
     <result column="order_created_at" jdbcType="TIMESTAMP" property="orderCreatedAt" />
     <result column="order_canceled_at" jdbcType="TIMESTAMP" property="orderCanceledAt" />
     <result column="order_finished_at" jdbcType="TIMESTAMP" property="orderFinishedAt" />
+    <result column="order_inner_id" jdbcType="BIGINT" property="innerId" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_order
@@ -27,14 +29,14 @@
       order_type, order_state, order_account_id, 
       order_amount, order_field_amount, order_field_cash_amount, 
       order_field_fees, order_price, order_source, 
-      order_created_at, order_canceled_at, order_finished_at
-      )
+      order_created_at, order_canceled_at, order_finished_at, 
+      order_inner_id, exchange_id)
     values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
-      #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}
-      )
+      #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
+      #{innerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrder">
     update quan_order
@@ -51,20 +53,24 @@
       order_source = #{orderSource,jdbcType=VARCHAR},
       order_created_at = #{orderCreatedAt,jdbcType=TIMESTAMP},
       order_canceled_at = #{orderCanceledAt,jdbcType=TIMESTAMP},
-      order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP}
+      order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP},
+      order_inner_id = #{innerId,jdbcType=BIGINT},
+      exchange_id = #{exchangeId,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
     order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
-    order_source, order_created_at, order_canceled_at, order_finished_at
+    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
+    exchange_id
     from quan_order
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
     order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
-    order_source, order_created_at, order_canceled_at, order_finished_at
+    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
+    exchange_id
     from quan_order
   </select>
 </mapper>
