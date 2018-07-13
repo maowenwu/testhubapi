@@ -1,6 +1,7 @@
 package com.huobi.quantification.service.redis.impl;
 
 import com.huobi.quantification.entity.*;
+import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.redis.RedisService;
 import org.redisson.api.RList;
 import org.redisson.api.RMap;
@@ -137,4 +138,16 @@ public class RedisServiceImpl implements RedisService {
         RMap<String, QuanTradeFuture> map = client.getMap("quan.market.future.trade." + exId + "." + symbol);
         return map.get(contractType);
     }
+
+	@Override
+	public void setHuobiCurrentPrice(int exId, String symbol, TradeResponse trade) {
+		RMap<String, TradeResponse> map = client.getMap("quan.market.spot.trade." + exId);
+		map.put(symbol, trade);
+	}
+
+	@Override
+	public TradeResponse getHuobiCurrentPrice(int exchangeId, String symbol) {
+		RMap<String, TradeResponse> map = client.getMap("quan.market.spot.trade." + exchangeId);
+		return map.get(symbol);
+	}
 }

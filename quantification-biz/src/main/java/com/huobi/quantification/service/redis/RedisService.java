@@ -1,6 +1,7 @@
 package com.huobi.quantification.service.redis;
 
 import com.huobi.quantification.entity.*;
+import com.huobi.quantification.huobi.response.TradeResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -43,4 +44,8 @@ public interface RedisService {
     void saveCurrentPrice(int exId, String symbol, String contractType, QuanTradeFuture tradeFuture);
 
     QuanTradeFuture getCurrentPrice(int exId, String symbol, String contractType);
+
+	void setHuobiCurrentPrice(int exId, String symbol, TradeResponse trade);
+
+	TradeResponse getHuobiCurrentPrice(int exchangeId, String symbol);
 }

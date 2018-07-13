@@ -1,5 +1,7 @@
 package com.huobi.quantification.huobi.response;
 
+import java.util.Date;
+
 /**
  * 
  * @author shaoxiaofeng
@@ -18,7 +20,7 @@ public class TradeResponse {
 
     private String status;
     private String ch;
-    private long ts;
+    private Date ts;
     public String errCode;
     public String errMsg;
     private Trade tick;
@@ -39,15 +41,15 @@ public class TradeResponse {
         this.ch = ch;
     }
 
-    public long getTs() {
-        return ts;
-    }
+    public Date getTs() {
+		return ts;
+	}
 
-    public void setTs(long ts) {
-        this.ts = ts;
-    }
+	public void setTs(Date ts) {
+		this.ts = ts;
+	}
 
-    public String getErrCode() {
+	public String getErrCode() {
         return errCode;
     }
 

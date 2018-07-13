@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.huobi.response.DepthResponse;
 import com.huobi.quantification.huobi.response.Merged;
+import com.huobi.quantification.huobi.response.Trade;
+import com.huobi.quantification.huobi.response.TradeDetail;
+import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.HuobiMarketService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -186,6 +190,41 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		logger.info("[Depth][symbol={},type={}]任务开始",symbol,type);
 		getDepth(symbol, type);
 		logger.info("[Ticker][symbol={},type={}]任务结束，耗时：" + stopwatch , symbol , type);
+	}
+
+	@Override
+	public void updateCurrentPrice(String symbol) {
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		logger.info("[Depth][symbol={},type={}]任务开始",symbol);
+		TradeResponse trade = queryCurrentPriceByApi(symbol);
+		redisService.setHuobiCurrentPrice(ExchangeEnum.HUOBI.getExId(),symbol, trade);
+		logger.info("[Ticker][symbol={},type={}]任务结束，耗时：" + stopwatch , symbol);
+	}
+
+	private TradeResponse queryCurrentPriceByApi(String symbol) {
+		Map<String, String> params = new HashMap<>();
+		params.put("symbol", symbol);
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TRADE, params);
+		TradeResponse trade = new TradeResponse();
+		Trade tick = new Trade();
+		TradeDetail data = new TradeDetail();
+		JSONObject parseObject = JSON.parseObject(body);
+		JSONObject jsonObject = parseObject.getJSONObject("tick");
+		JSONArray jsonArray = jsonObject.getJSONArray("data");
+		JSONObject jsonObject2 = jsonArray.getJSONObject(0);
+		data.setAmount(jsonObject2.getBigDecimal("amount"));
+		data.setDirection(jsonObject2.getString("direction"));
+		data.setId(jsonObject2.getLong("id"));
+		data.setPrice(jsonObject2.getBigDecimal("price"));
+		data.setTs(jsonObject2.getDate("ts"));
+		tick.setData(data);
+		tick.setId(jsonObject.getInteger("id"));
+		tick.setTs(jsonObject.getDate("ts"));
+		trade.setTick(tick);
+		trade.setCh(parseObject.getString("ch"));
+		trade.setStatus("status");
+		trade.setTs(parseObject.getDate("ts"));
+		return trade;
 	}
 
 }
