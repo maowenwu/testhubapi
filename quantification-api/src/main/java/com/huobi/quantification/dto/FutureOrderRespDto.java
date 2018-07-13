@@ -1,6 +1,6 @@
 package com.huobi.quantification.dto;
 
-public class FutureOrderResponseDto {
+public class FutureOrderRespDto {
 
 
 }

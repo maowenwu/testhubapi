@@ -1,13 +1,13 @@
 package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.FutureOrderRequestDto;
-import com.huobi.quantification.dto.FutureOrderResponseDto;
+import com.huobi.quantification.dto.FutureOrderReqDto;
+import com.huobi.quantification.dto.FutureOrderRespDto;
 
 public interface FutureOrderService {
 
 
-    ServiceResult<FutureOrderResponseDto> placeOrder(FutureOrderRequestDto futureOrderRequestDto);
+    ServiceResult<FutureOrderRespDto> placeOrder(FutureOrderReqDto futureOrderReqDto);
 
     ServiceResult placeBatchOrders(int exchangeId, long accountID, Object orders, boolean parallel, int timeInterval, boolean sync);
 

@@ -2,15 +2,15 @@ package com.huobi.quantification.provider;
 
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.FutureOrderRequestDto;
-import com.huobi.quantification.dto.FutureOrderResponseDto;
+import com.huobi.quantification.dto.FutureOrderReqDto;
+import com.huobi.quantification.dto.FutureOrderRespDto;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FutureOrderServiceImpl implements FutureOrderService {
 
     @Override
-    public ServiceResult<FutureOrderResponseDto> placeOrder(FutureOrderRequestDto futureOrderRequestDto) {
+    public ServiceResult<FutureOrderRespDto> placeOrder(FutureOrderReqDto futureOrderReqDto) {
         return null;
     }
 

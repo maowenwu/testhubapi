@@ -2,7 +2,7 @@ package com.huobi.quantification.dto;
 
 import java.math.BigDecimal;
 
-public class FutureOrderRequestDto {
+public class FutureOrderReqDto {
     private int exchangeId;
     private long accountId;
     private String baseCoin;
