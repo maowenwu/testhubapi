@@ -73,4 +73,29 @@
     exchange_id
     from quan_order
   </select>
+  
+
+
+  <select id="selectList" resultMap="BaseResultMap">
+    select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
+    order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
+    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
+    exchange_id
+    from quan_order
+    		<where>
+			<if test="exchangeId != null">
+				and exchange_id=#{exchangeId}
+			</if>    		
+			<if test="orderAccountId != null">
+				and order_account_id=#{orderAccountId}
+			</if>
+			<if test="orderInnerId != null">
+				and order_inner_id=#{orderInnerId}
+			</if>			
+			<if test="orderType != null">
+				and order_type=#{orderType}
+			</if>
+		</where>  
+  </select>  
+ 
 </mapper>

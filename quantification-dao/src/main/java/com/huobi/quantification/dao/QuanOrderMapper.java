@@ -14,4 +14,6 @@ public interface QuanOrderMapper {
     List<QuanOrder> selectAll();
 
     int updateByPrimaryKey(QuanOrder record);
+    
+    List<QuanOrder> selectList(QuanOrder record);
 }
