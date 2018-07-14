@@ -95,7 +95,7 @@ public class QuanOrder {
     
     private int exchangeId;
     
-    private BigDecimal innerId;
+    private Long innerId;
 
     public Long getId() {
         return id;
@@ -225,11 +225,11 @@ public class QuanOrder {
 		this.exchangeId = exchangeId;
 	}
 
-	public BigDecimal getInnerId() {
+	public Long getInnerId() {
 		return innerId;
 	}
 
-	public void setInnerId(BigDecimal innerId) {
+	public void setInnerId(Long innerId) {
 		this.innerId = innerId;
 	}
     
