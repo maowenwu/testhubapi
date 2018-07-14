@@ -44,6 +44,11 @@
 			<artifactId>bcprov-ext-jdk15on</artifactId>
 			<version>1.59</version>
 		</dependency>
+	<dependency>
+		<groupId>com.xiaoleilu</groupId>
+		<artifactId>hutool-all</artifactId>
+		<version>3.0.1</version>
+	</dependency>
     </dependencies>
 
 </project>
