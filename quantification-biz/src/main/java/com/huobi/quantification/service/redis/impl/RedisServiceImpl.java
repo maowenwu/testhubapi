@@ -97,12 +97,6 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public void saveHuobiAccount(QuanAccount quanAccount) {
-		RMap<String, Object> map = client.getMap("quan.account.huobi");
-		map.put(String.valueOf(quanAccount.getAccountSourceId()), quanAccount);
-	}
-
-	@Override
 	public void saveOkOrder(String symbol, String contractType, QuanOrderFuture orderFuture) {
 		RMap<String, Object> map = client
 				.getMap("quan.order.ok." + orderFuture.getOrderAccountId() + "." + symbol + "." + contractType);
@@ -121,15 +115,15 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId) {
-		RMap<String, Object> map = client.getMap("quan.accout.huobi.accountasset." + accountId);
-		map.put(quanAccountAsset.getCoin(), quanAccountAsset);
+	public void saveHuobiAccountAsset(List<QuanAccountAsset> quanAccountAsset, long accountId, int exchangeId) {
+		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.accout.huobi.accountasset." + exchangeId);
+		map.put(accountId, quanAccountAsset);
 	}
 
 	@Override
 	public void saveHuobiOrder(QuanOrder quanOrder) {
-		RMap<String, Object> map = client.getMap("quan.order.huobi" + quanOrder.getOrderSourceId());
-		map.put(quanOrder.getOrderAccountId() + "", quanOrder);
+		RMap<Long, QuanOrder> map = client.getMap("quan.order.huobi" + quanOrder.getOrderSourceId());
+		map.put(quanOrder.getOrderAccountId(), quanOrder);
 	}
 
 	@Override
@@ -196,5 +190,11 @@ public class RedisServiceImpl implements RedisService {
 	public List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period) {
 		RMap<String, List<QuanKline>> map = client.getMap("quan.market.spot.kline." + exchangeId + "." + period);
 		return map.get(symbol);
+	}
+
+	@Override
+	public List<QuanAccountAsset> getSpotUserInfo(long accountId, int exchangeId) {
+		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.accout.huobi.accountasset." + exchangeId);
+		return map.get(accountId);
 	}
 }

@@ -105,7 +105,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
                         continue;
                     }
                     Date ts = huobiDepths.get(0).getDateUpdate();
-                    System.out.println("currentPriceRespDto时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
+                    System.out.println("getSpotDepth时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
                     System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
                     if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
                     	SpotDepthRespDto respDto = new SpotDepthRespDto();

@@ -55,7 +55,6 @@ public class AccountHuobiServiceImplTest {
 		quanAccount.setState(temp.getString("state"));
 		JSONArray jsarr = temp.getJSONArray("list");
 		quanAccountMapper.insert(quanAccount);
-		redisService.saveHuobiAccount(quanAccount);
 		QuanAccountAsset quanAccountAsset = new QuanAccountAsset();
 		QuanAccountAsset tempAccount = new QuanAccountAsset();
 		for (int i = 0; i < jsarr.size(); i++) {
@@ -63,14 +62,15 @@ public class AccountHuobiServiceImplTest {
 			if (i > 0 && tempAccount.getCoin().equals(list.getString("currency"))) {
 				if (list.getString("type").equals("frozen")) {
 					quanAccountAsset.setFrozen(new BigDecimal(list.getString("balance")));
+					quanAccountAsset.setTotal(quanAccountAsset.getFrozen().add(quanAccountAsset.getAvailable()));
 					quanAccountAssetMapper.insert(quanAccountAsset);
-					redisService.saveHuobiAccountAsset(quanAccountAsset,quanAccount.getAccountSourceId());
 				}
 				continue;
 			}
 			quanAccountAsset.setAccountId(quanAccount.getAccountSourceId());
 			quanAccountAsset.setCoin(list.getString("currency"));
 			quanAccountAsset.setDataUpdate(new Date());
+			quanAccountAsset.setTs(new Date());
 			if (list.getString("type").equals("trade")) {
 				quanAccountAsset.setAvailable(new BigDecimal(list.getString("balance")));
 			}

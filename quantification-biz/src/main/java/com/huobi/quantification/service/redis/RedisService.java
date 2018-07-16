@@ -33,13 +33,11 @@ public interface RedisService {
 
     List<QuanDepthDetail> getHuobiDepth(int exchangeId, String symbol);
 
-    void saveHuobiAccount(QuanAccount quanAccount);
-
     void saveOkOrder(String symbol, String contractType, QuanOrderFuture orderFuture);
 
     Map<String, QuanOrderFuture> getOkOrder(Long accountId, String symbol, String contractType);
 
-    void saveHuobiAccountAsset(QuanAccountAsset quanAccountAsset, Long accountId);
+    void saveHuobiAccountAsset(List<QuanAccountAsset> quanAssetList, long accountId, int exchangId);
 
     void saveHuobiOrder(QuanOrder quanOrder);
 
@@ -58,4 +56,6 @@ public interface RedisService {
 	void saveKline(int exchangeId, String symbol, String period, List<QuanKline> quanKline);
 
 	List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period);
+
+	List<QuanAccountAsset> getSpotUserInfo(long accountId, int exchangeId);
 }

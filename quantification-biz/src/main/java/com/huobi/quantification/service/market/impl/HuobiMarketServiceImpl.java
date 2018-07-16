@@ -25,14 +25,10 @@ import com.huobi.quantification.dao.QuanKlineMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
 import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
-import com.huobi.quantification.entity.QuanDepthFuture;
-import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OkSymbolEnum;
-import com.huobi.quantification.huobi.response.DepthResponse;
 import com.huobi.quantification.huobi.response.Merged;
 import com.huobi.quantification.huobi.response.Trade;
 import com.huobi.quantification.huobi.response.TradeDetail;
@@ -68,6 +64,11 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", symbol);
 		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TICKER, params);
+		parseAndSaveTicker(symbol , body);
+		return null;
+	}
+
+	private void parseAndSaveTicker(String symbol, String body) {
 		QuanTicker quanTicker = new QuanTicker();
 		JSONObject jsonObject = JSON.parseObject(body);
 		String data = jsonObject.getString("tick");
@@ -111,7 +112,6 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		quanTicker.setTs(parse);
 		quanTickerMapper.insert(quanTicker);
 		redisService.saveHuobiTicker(ExchangeEnum.HUOBI.getExId(),symbol, quanTicker);
-		return null;
 	}
 
 	public Object getDepth(String symbol, String type) {
@@ -119,6 +119,11 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		params.put("symbol", symbol);
 		params.put("type", type);
 		String body = httpService.doHuobiGet(HttpConstant.HUOBI_DEPTH, params);
+		parseAndSaveDepth(symbol, body , type);
+		return null;
+	}
+
+	private void parseAndSaveDepth(String symbol, String body, String type) {
 		JSONObject jsonObject = JSON.parseObject(body);
 		QuanDepth quanDepth = new QuanDepth();
 		quanDepth.setExchangeId(ExchangeEnum.HUOBI.getExId());
@@ -168,7 +173,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
             quanDepthDetailMapper.insert(detail);
         }
 		redisService.saveHuobiDepth(ExchangeEnum.HUOBI.getExId(),symbol, quanDepth, list);
-		return null;
+		
 	}
 
 	public Object getKline(String symbol, String period, String size) {
