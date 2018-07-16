@@ -34,6 +34,11 @@ public class AsyncUtils {
         return future;
     }
 
+    public static <T> Future<T> submit(Callable<T> task) {
+        Future<T> future = executor.submit(task);
+        return future;
+    }
+
     /**
      * 方法超时后会设置中断标志，使用该方法需要自行处理中断
      *

@@ -49,6 +49,7 @@ public class HttpConstant {
     public static final String HUOBI_FUTURE_TICKER = "http://127.0.0.1:8882/market/detail/merged";
     public static final String HUOBI_FUTURE_DEPTH = "http://127.0.0.1:8882/market/depth";
     public static final String HUOBI_FUTURE_KLINE = "http://127.0.0.1:8882/market/history/kline";
+    public static final String HUOBI_FUTURE_TRADE = "http://127.0.0.1:8882/market/history/trade";
 
     // account相关
     public static final String HUOBI_FUTURE_ACCOUNTINFO = "https://api.hcontract.com/contract/v1/contract_accountinfo";

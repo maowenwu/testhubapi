@@ -1,11 +1,12 @@
 package com.huobi.quantification.service.account;
 
-import com.huobi.quantification.response.future.HuobiFutureAccountInfoResponse;
-import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
-
 public interface HuobiFutureAccountService {
 
-    HuobiFutureAccountInfoResponse queryAccountInfoByAPI(String symbol);
+    String queryUserInfoByAPI(Long accountId);
 
-    HuobiFuturePositionResponse queryPositionByAPI(String symbol);
+    String queryPositionByAPI(Long accountId);
+
+    void updateHuobiUserInfo(Long accountId);
+
+    void updateHuobiPosition(Long accountId);
 }

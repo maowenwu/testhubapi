@@ -1,16 +1,24 @@
 package com.huobi.quantification.service.account.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.response.future.HuobiFutureAccountInfoResponse;
+import com.huobi.quantification.entity.QuanAccountFutureAsset;
+import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
+import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.service.account.HuobiFutureAccountService;
 import com.huobi.quantification.service.http.HttpService;
+import com.huobi.quantification.service.redis.RedisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.HashMap;
 
 @DependsOn("httpServiceImpl")
@@ -21,19 +29,57 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
     @Autowired
     private HttpService httpService;
 
+    @Autowired
+    private RedisService redisService;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
-    public HuobiFutureAccountInfoResponse queryAccountInfoByAPI(String symbol) {
+    public String queryUserInfoByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
         String body = httpService.doPost(HttpConstant.HUOBI_FUTURE_ACCOUNTINFO, params);
-        return JSON.parseObject(body, HuobiFutureAccountInfoResponse.class);
+        return body;
     }
 
     @Override
-    public HuobiFuturePositionResponse queryPositionByAPI(String symbol) {
+    public String queryPositionByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
         String body = httpService.doPost(HttpConstant.HUOBI_FUTURE_POSITION, params);
-        return JSON.parseObject(body, HuobiFuturePositionResponse.class);
+        return body;
+    }
+
+    @Override
+    public void updateHuobiUserInfo(Long accountId) {
+        Stopwatch started = Stopwatch.createStarted();
+        Date now = new Date();
+        logger.info("[HuobiUserInfo][accountId={}]任务开始", accountId);
+        long queryId = System.currentTimeMillis();
+        String body = queryUserInfoByAPI(accountId);
+        QuanAccountFutureAsset futureAsset = new QuanAccountFutureAsset();
+        futureAsset.setAccountSourceId(accountId);
+        futureAsset.setQueryId(queryId);
+        futureAsset.setRespBody(body);
+        futureAsset.setCreateTime(now);
+        futureAsset.setUpdateTime(now);
+
+        redisService.saveFutureUserInfo(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, futureAsset);
+        logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
+    }
+
+    @Override
+    public void updateHuobiPosition(Long accountId) {
+        Stopwatch started = Stopwatch.createStarted();
+        Date now = new Date();
+        logger.info("[HuobiPosition][accountId={}]任务开始", accountId);
+        long queryId = System.currentTimeMillis();
+        String body = queryPositionByAPI(accountId);
+        QuanAccountFuturePosition position = new QuanAccountFuturePosition();
+        position.setAccountSourceId(accountId);
+        position.setQueryId(queryId);
+        position.setRespBody(body);
+        position.setCreateTime(now);
+        position.setUpdateTime(now);
+        redisService.saveFuturePosition(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, position);
+        logger.info("[HuobiPosition][accountId={},]任务结束，耗时：" + started, accountId);
     }
 }

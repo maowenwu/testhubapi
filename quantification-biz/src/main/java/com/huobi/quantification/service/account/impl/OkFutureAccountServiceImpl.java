@@ -55,6 +55,11 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
     private QuanAccountFutureSecretMapper quanAccountFutureSecretMapper;
 
 
+    /**
+     * 用户资产采用json格式保存
+     *
+     * @param accountId
+     */
     public void updateOkUserInfo(Long accountId) {
         Stopwatch started = Stopwatch.createStarted();
         Date now = new Date();

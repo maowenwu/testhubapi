@@ -1,6 +1,7 @@
 package com.huobi.quantification.response.future;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -8,10 +9,9 @@ import java.util.List;
  */
 public class HuobiFutureKlineResponse {
 
-
     private String ch;
     private String status;
-    private long ts;
+    private Date ts;
     private List<DataBean> data;
 
     public String getCh() {
@@ -30,11 +30,11 @@ public class HuobiFutureKlineResponse {
         this.status = status;
     }
 
-    public long getTs() {
+    public Date getTs() {
         return ts;
     }
 
-    public void setTs(long ts) {
+    public void setTs(Date ts) {
         this.ts = ts;
     }
 

@@ -6,9 +6,25 @@ import com.huobi.quantification.dto.FutureOrderRespDto;
 
 public interface FutureOrderService {
 
-
+    /**
+     * 下单
+     *
+     * @param futureOrderReqDto
+     * @return
+     */
     ServiceResult<FutureOrderRespDto> placeOrder(FutureOrderReqDto futureOrderReqDto);
 
+    /**
+     * 批量下单
+     *
+     * @param exchangeId
+     * @param accountID
+     * @param orders
+     * @param parallel
+     * @param timeInterval
+     * @param sync
+     * @return
+     */
     ServiceResult placeBatchOrders(int exchangeId, long accountID, Object orders, boolean parallel, int timeInterval, boolean sync);
 
     /**

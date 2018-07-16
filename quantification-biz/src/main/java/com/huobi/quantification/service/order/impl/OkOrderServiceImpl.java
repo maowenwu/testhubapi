@@ -9,10 +9,12 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.constant.OkRestErrorCode;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
+import com.huobi.quantification.dto.FutureOrderRespDto;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.enums.*;
+import com.huobi.quantification.response.future.OKFutureOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OkOrderService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -213,7 +215,16 @@ public class OkOrderServiceImpl implements OkOrderService {
     }
 
     @Override
-    public ServiceResult placeOkOrder(OkTradeOrderDto order) {
+    public Long placeOkOrder(OkTradeOrderDto order) {
+        OKFutureOrderResponse response = placeOkOrderByAPI(order);
+        if (response.isResult()) {
+            return response.getOrderId();
+        } else {
+            throw new RuntimeException(OkRestErrorCode.findErrorMessageByCode(response.getErrorCode()));
+        }
+    }
+
+    private OKFutureOrderResponse placeOkOrderByAPI(OkTradeOrderDto order) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", order.getSymbol());
         params.put("contract_type", order.getContractType());
@@ -225,28 +236,7 @@ public class OkOrderServiceImpl implements OkOrderService {
             params.put("lever_rate", String.valueOf(order.getLeverRate()));
         }
         String body = httpService.doOkSignedPost(order.getAccountId(), HttpConstant.OK_TRADE, params);
-        JSONObject jsonObject = JSON.parseObject(body);
-        ServiceResult<Long> result = new ServiceResult<>();
-        if (jsonObject.getBoolean("result")) {
-            Long orderId = jsonObject.getLong("order_id");
-            QuanOrderFuture orderFuture = new QuanOrderFuture();
-            orderFuture.setStrategyName(order.getStrategyName());
-            orderFuture.setStrategyVersion(order.getStrategyVersion());
-            orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
-            orderFuture.setOrderAccountId(order.getAccountId());
-            orderFuture.setOrderSourceId(orderId);
-            orderFuture.setUpdateDate(new Date());
-            quanOrderFutureMapper.insert(orderFuture);
-
-            result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-            result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-            result.setData(orderId);
-        } else {
-            Integer errorCode = jsonObject.getInteger("error_code");
-            result.setCode(errorCode);
-            result.setMessage(OkRestErrorCode.findErrorMessageByCode(errorCode));
-        }
-        return result;
+        return JSON.parseObject(body, OKFutureOrderResponse.class);
     }
 
     @Override

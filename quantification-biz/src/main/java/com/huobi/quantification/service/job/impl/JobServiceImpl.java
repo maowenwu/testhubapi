@@ -5,6 +5,7 @@ import com.huobi.quantification.dao.QuanJobMapper;
 import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.job.huobi.future.*;
 import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
 import com.huobi.quantification.job.huobi.spot.HuobiOrderJob;
 import com.huobi.quantification.job.huobi.spot.HuobiTickerJob;
@@ -72,6 +73,35 @@ public class JobServiceImpl implements JobService {
                     break;
                 case 8:
                     clazz = OkFutureCurrentPriceJob.class;
+                    break;
+                default:
+                    clazz = null;
+            }
+        }else if(exchangeId==ExchangeEnum.HUOBI.getExId()){
+            switch (jobType) {
+                case 1:
+                    clazz = HuobiFutureDepthJob.class;
+                    break;
+                case 2:
+                    clazz = HuobiFutureKlineJob.class;
+                    break;
+              /*  case 3:
+                    clazz = OkFutureTickerJob.class;
+                    break;*/
+                case 4:
+                    clazz = HuobiFutureUserInfoJob.class;
+                    break;
+                case 5:
+                    clazz = HuobiFuturePositionJob.class;
+                    break;
+            /*    case 6:
+                    clazz = OkFutureOrderJob.class;
+                    break;*/
+                case 7:
+                    clazz = HuobiFutureIndexJob.class;
+                    break;
+                case 8:
+                    clazz = HuobiFutureCurrentPriceJob.class;
                     break;
                 default:
                     clazz = null;

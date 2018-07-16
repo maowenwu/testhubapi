@@ -18,17 +18,7 @@ public class OkFutureOrderServiceImplTest {
     @Autowired
     private FutureOrderService okOrderServiceFacade;
 */
-    @Test
-    public void cancelOkOrder(){
-        OkCancelOrderDto okCancelOrderDto = new OkCancelOrderDto();
-        okCancelOrderDto.setAccountId(1L);
-        okCancelOrderDto.setSymbol("btc_usd");
-        okCancelOrderDto.setContractType("this_week");
-        okCancelOrderDto.setOrderId("1038730059004928");
-       /* ServiceResult serviceResult =
-                okOrderServiceFacade.cancelOkOrder(okCancelOrderDto);
-        System.out.println(serviceResult);*/
-    }
+
 
 
     @Test

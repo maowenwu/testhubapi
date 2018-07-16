@@ -13,6 +13,8 @@ import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
+import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
 import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.response.future.OKFutureUserinfoResponse;
 import com.huobi.quantification.service.redis.RedisService;
@@ -80,8 +82,41 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     private FutureBalanceRespDto parseBalanceResp(int exchangeId, String coinType, QuanAccountFutureAsset futureAsset) {
         if (exchangeId == ExchangeEnum.OKEX.getExId()) {
             return parseOkFutureBalanceResp(coinType, futureAsset);
+        } else if (exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+            return parseHuobiFutureBalanceResp(coinType, futureAsset);
         }
         throw new UnsupportedOperationException("不支持该交易所" + exchangeId);
+    }
+
+    private FutureBalanceRespDto parseHuobiFutureBalanceResp(String coinType, QuanAccountFutureAsset futureAsset) {
+        FutureBalanceRespDto respDto = new FutureBalanceRespDto();
+        respDto.setTs(futureAsset.getUpdateTime());
+        HuobiFutureUserInfoResponse userinfoResponse = JSON.parseObject(futureAsset.getRespBody(), HuobiFutureUserInfoResponse.class);
+        Map<String, FutureBalanceRespDto.DataBean> data = new ConcurrentHashMap<>();
+        List<HuobiFutureUserInfoResponse.DataBean> dataBeans = userinfoResponse.getData();
+        for (HuobiFutureUserInfoResponse.DataBean dataBean : dataBeans) {
+            data.put(dataBean.getSymbol(), convertToDto(dataBean));
+        }
+        if (StringUtils.isNotEmpty(coinType)) {
+            data.forEach((k, v) -> {
+                if (!k.equalsIgnoreCase(coinType)) {
+                    data.remove(k);
+                }
+            });
+        }
+        respDto.setData(data);
+        return respDto;
+    }
+
+    private FutureBalanceRespDto.DataBean convertToDto(HuobiFutureUserInfoResponse.DataBean dataBean) {
+        FutureBalanceRespDto.DataBean respDto = new FutureBalanceRespDto.DataBean();
+        respDto.setMarginBalance(dataBean.getMarginBalance());
+        respDto.setProfitReal(dataBean.getProfitReal());
+        respDto.setProfitUnreal(dataBean.getProfitUnreal());
+        respDto.setRiskRate(dataBean.getRiskRate());
+        // 持仓保证金
+        respDto.setMarginPosition(dataBean.getMarginPosition());
+        return respDto;
     }
 
     private FutureBalanceRespDto parseOkFutureBalanceResp(String coinType, QuanAccountFutureAsset futureAsset) {
@@ -163,8 +198,47 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     private FuturePositionRespDto parsePositionResp(int exchangeId, String coinType, QuanAccountFuturePosition position) {
         if (exchangeId == ExchangeEnum.OKEX.getExId()) {
             return parseOkFuturePositionResp(coinType, position);
+        } else if (exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+            return parseHuobiFuturePositionResp(coinType, position);
         }
         throw new UnsupportedOperationException("不支持该交易所" + exchangeId);
+
+    }
+
+    private FuturePositionRespDto parseHuobiFuturePositionResp(String coinType, QuanAccountFuturePosition position) {
+        FuturePositionRespDto respDto = new FuturePositionRespDto();
+        HuobiFuturePositionResponse response = JSON.parseObject(position.getRespBody(), HuobiFuturePositionResponse.class);
+        List<FuturePositionRespDto.DataBean> beanList = new ArrayList<>();
+        response.getData().forEach((e) -> {
+            FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
+            dataBean.setContractCode(e.getContractCode());
+            dataBean.setBaseCoin(null);
+            dataBean.setQuoteCoin(null);
+            dataBean.setContractType(e.getContractType());
+            dataBean.setLongAmount(e.getVolume());
+            dataBean.setLongAvailable(e.getAvailable());
+            // 多仓冻结张数
+            dataBean.setLongFrozen(e.getFrozen());
+            dataBean.setLongCostOpen(e.getCostOpen());
+            // 多仓持仓均价
+            dataBean.setLongCostHold(e.getCostHold());
+            // 多仓未实现盈亏
+            dataBean.setLongProfitUnreal(e.getProfitUnreal());
+            // 多仓收益率
+            dataBean.setLongProfitRate(e.getProfitRate());
+            dataBean.setLeverRate(e.getLeverRate());
+            beanList.add(dataBean);
+        });
+        Map<String, List<FuturePositionRespDto.DataBean>> dataMap = beanList.stream().collect(Collectors.groupingByConcurrent((a) -> a.getBaseCoin().toLowerCase()));
+        if (StringUtils.isNotEmpty(coinType)) {
+            dataMap.forEach((k, v) -> {
+                if (!k.equalsIgnoreCase(coinType)) {
+                    dataMap.remove(k);
+                }
+            });
+        }
+        respDto.setData(dataMap);
+        return respDto;
 
     }
 

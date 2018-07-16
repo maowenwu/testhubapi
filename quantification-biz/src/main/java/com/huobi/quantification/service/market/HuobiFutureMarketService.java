@@ -34,4 +34,12 @@ public interface HuobiFutureMarketService {
      */
     HuobiFutureDepthResponse queryDepthByAPI(String symbol, String contractType, String type);
 
+    void updateHuobiCurrentPrice(String symbol, String contractType);
+
+    void updateHuobiDepth(String symbol, String contractType);
+
+    void updateHuobiKline(String symbol, String contractType, String period);
+
+    void updateHuobiIndex(String symbol);
+
 }

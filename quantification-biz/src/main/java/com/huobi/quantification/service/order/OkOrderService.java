@@ -1,6 +1,7 @@
 package com.huobi.quantification.service.order;
 
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dto.FutureOrderRespDto;
 import com.huobi.quantification.dto.OkCancelOrderDto;
 import com.huobi.quantification.dto.OkTradeOrderDto;
 
@@ -43,7 +44,7 @@ public interface OkOrderService {
      *
      * @return
      */
-    ServiceResult placeOkOrder(OkTradeOrderDto order);
+    Long placeOkOrder(OkTradeOrderDto order);
 
     /**
      * 批量下单

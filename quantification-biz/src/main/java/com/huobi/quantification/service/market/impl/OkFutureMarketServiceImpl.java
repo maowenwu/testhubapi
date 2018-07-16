@@ -107,7 +107,7 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
 
     public void updateOkDepth(String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
-        logger.info("[深度][symbol={},contractType={}]任务开始", symbol, contractType);
+        logger.info("[OK深度][symbol={},contractType={}]任务开始", symbol, contractType);
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
@@ -115,7 +115,7 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
         params.put("merge", "0");
         String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
         parseAndSaveQuanDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
-        logger.info("[深度][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
+        logger.info("[OK深度][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
     private void parseAndSaveQuanDepth(String body, OkSymbolEnum symbolEnum, String contractType) {
