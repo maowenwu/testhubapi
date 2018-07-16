@@ -22,8 +22,10 @@ import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
+import com.huobi.quantification.dao.QuanKlineMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
 import com.huobi.quantification.entity.QuanDepth;
+import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.huobi.response.DepthResponse;
@@ -42,6 +44,8 @@ public class MarketHuobiServiceTest {
 	private QuanDepthMapper quanDepthMapper;
 	@Autowired
 	private QuanTickerMapper quanTickerMapper;
+	@Autowired
+	private QuanKlineMapper quanKlineMapper;
 	@Autowired
 	private HttpService httpService;
 
@@ -169,5 +173,36 @@ public class MarketHuobiServiceTest {
 		System.err.println("price:"+data.getPrice());
 		System.err.println("tick.ts:"+tick.getTs());
 		System.err.println("ch:"+trade.getCh());
+	}
+	
+	@Test
+	public void getKline() {
+		Map<String, String> params = new HashMap<>();
+		params.put("symbol", "btcusdt");
+		params.put("period", "1day");
+		params.put("size", "200");
+		String body = httpService.doHuobiGet(HttpConstant.HUOBI_KLINE, params);
+		JSONObject jsonObject = JSON.parseObject(body);
+		if (jsonObject.getString("status").equals("ok")) {
+			JSONArray jsonArray = jsonObject.getJSONArray("data");
+			QuanKline quanKline = new QuanKline();
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject klineObject = jsonArray.getJSONObject(i);
+				quanKline.setId(klineObject.getLong("id"));
+				quanKline.setAmount(klineObject.getBigDecimal("amount"));
+				quanKline.setClose(klineObject.getBigDecimal("close"));
+				quanKline.setCount(klineObject.getBigDecimal("count"));
+				quanKline.setExchangeId(1);
+				quanKline.setHigh(klineObject.getBigDecimal("high"));
+				quanKline.setLow(klineObject.getBigDecimal("low"));
+				quanKline.setOpen(klineObject.getBigDecimal("open"));
+				quanKline.setPeriod("1day");
+				quanKline.setSize(Long.parseLong("200"));
+				quanKline.setSymbol("btcusdt");
+				quanKline.setTs(jsonObject.getDate("ts"));
+				quanKline.setVol(klineObject.getBigDecimal("vol"));
+				quanKlineMapper.insert(quanKline);
+			}
+		}
 	}
 }

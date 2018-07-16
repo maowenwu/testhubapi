@@ -54,4 +54,8 @@ public interface RedisService {
 	void setHuobiCurrentPrice(int exId, String symbol, TradeResponse trade);
 
 	TradeResponse getHuobiCurrentPrice(int exchangeId, String symbol);
+
+	void saveKline(int exchangeId, String symbol, String period, List<QuanKline> quanKline);
+
+	List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period);
 }

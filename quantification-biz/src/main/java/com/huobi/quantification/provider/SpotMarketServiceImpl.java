@@ -16,11 +16,17 @@ import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.common.util.DateUtils;
+import com.huobi.quantification.dto.FutureKlineReqDto;
+import com.huobi.quantification.dto.FutureKlineRespDto;
 import com.huobi.quantification.dto.SpotCurrentPriceReqDto;
 import com.huobi.quantification.dto.SpotCurrentPriceRespDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotDepthRespDto;
+import com.huobi.quantification.dto.SpotKlineReqDto;
+import com.huobi.quantification.dto.SpotKlineRespDto;
 import com.huobi.quantification.entity.QuanDepthDetail;
+import com.huobi.quantification.entity.QuanKline;
+import com.huobi.quantification.entity.QuanKlineFuture;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
@@ -149,4 +155,59 @@ public class SpotMarketServiceImpl implements SpotMarketService {
         return dataBean;
     }
 
+	@Override
+	public ServiceResult<SpotKlineRespDto> getSpotKline(SpotKlineReqDto depthReqDto) {
+        ServiceResult<SpotKlineRespDto> serviceResult = new ServiceResult<>();
+        try {
+        	SpotKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
+                while (!Thread.interrupted()) {
+                    // 从redis读取最新K线
+                    List<QuanKline> klineSpots = redisService.getKlineSpot(depthReqDto.getExchangeId(),
+                    		getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(),
+                    				depthReqDto.getQuoteCoin()), depthReqDto.getPeriod());
+                    if (CollectionUtils.isEmpty(klineSpots)) {
+                        continue;
+                    }
+                    Date ts = klineSpots.get(klineSpots.size() - 1).getTs();
+                    if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
+                    	SpotKlineRespDto respDto = new SpotKlineRespDto();
+                        respDto.setTs(ts);
+                        respDto.setData(convertToDto(klineSpots));
+                        return respDto;
+                    } else {
+                        continue;
+                    }
+                }
+                return null;
+            }, depthReqDto.getTimeout());
+            serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+            serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+            serviceResult.setData(klineRespDto);
+        } catch (ExecutionException e) {
+            logger.error("执行异常：", e);
+            serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
+            serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+        } catch (TimeoutException e) {
+            logger.error("超时异常：", e);
+            serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
+            serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+        }
+        return serviceResult;
+    }
+
+    private List<SpotKlineRespDto.DataBean> convertToDto(List<QuanKline> klineSpots) {
+        List<SpotKlineRespDto.DataBean> dataBeans = new ArrayList<>();
+        for (QuanKline kline : klineSpots) {
+        	SpotKlineRespDto.DataBean bean = new SpotKlineRespDto.DataBean();
+            bean.setId(kline.getId());
+            bean.setAmount(kline.getAmount());
+            bean.setOpen(kline.getOpen());
+            bean.setClose(kline.getClose());
+            bean.setLow(kline.getLow());
+            bean.setHigh(kline.getHigh());
+            bean.setVol(kline.getVol());
+            dataBeans.add(bean);
+        }
+        return dataBeans;
+    }
 }

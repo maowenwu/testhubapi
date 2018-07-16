@@ -15,6 +15,7 @@ import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanIndexFuture;
+import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanKlineFuture;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderFuture;
@@ -182,6 +183,18 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public List<QuanDepthDetail> getHuobiDepth(int exchangeId, String symbol) {
 		RMap<String, List<QuanDepthDetail>> map = client.getMap("quan.market.spot.depth." + exchangeId);
+		return map.get(symbol);
+	}
+
+	@Override
+	public void saveKline(int exchangeId, String symbol, String period, List<QuanKline> quanKline) {
+		RMap<String, List<QuanKline>> map = client.getMap("quan.market.spot.kline." + exchangeId + "." + period);
+		map.put(symbol, quanKline);
+	}
+
+	@Override
+	public List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period) {
+		RMap<String, List<QuanKline>> map = client.getMap("quan.market.spot.kline." + exchangeId + "." + period);
 		return map.get(symbol);
 	}
 }
