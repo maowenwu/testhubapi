@@ -33,6 +33,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		entity.setExchangeId(reqDto.getExchangeID());
 		entity.setOrderAccountId(reqDto.getAccountID());
 		for (int i = 0; ArrayUtil.isNotEmpty(reqDto.getInnerOrderID()) && i < reqDto.getInnerOrderID().length; i++) {
+			// 根据三个条件查询订单 ,一个InnerOrderID只会对应一个订单信息（唯一）
 			entity.setInnerId(reqDto.getInnerOrderID()[i]);
 			List<QuanOrder> list = quanOrderMapper.selectList(entity);
 			if (CollectionUtil.isNotEmpty(list)) {
@@ -48,7 +49,24 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
 	@Override
 	public ServiceResult<List<SpotOrderRespDto>> getOrderByExOrderID(SpotOrderReqExchangeDto reqDto) {
-		return null;
+		List<SpotOrderRespDto> resultList = new ArrayList<>();
+		ServiceResult<List<SpotOrderRespDto>> serviceResult = new ServiceResult<>();
+		QuanOrder entity = new QuanOrder();
+		entity.setExchangeId(reqDto.getExchangeID());
+		entity.setOrderAccountId(reqDto.getAccountID());
+		for (int i = 0; ArrayUtil.isNotEmpty(reqDto.getExOrderID()) && i < reqDto.getExOrderID().length; i++) {
+			// 根据三个条件查询订单 ,一个exOrderID可能会对应多个订单信息
+			entity.setOrderSourceId(reqDto.getExOrderID()[i]);
+			List<QuanOrder> list = quanOrderMapper.selectList(entity);
+			if (CollectionUtil.isNotEmpty(list)) {
+				List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
+				resultList.addAll(result);
+			}
+		}
+		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		serviceResult.setData(resultList);
+		return serviceResult;
 	}
 
 	@Override
@@ -58,7 +76,20 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
 	@Override
 	public ServiceResult<SpotOrderRespDto> getOrderByStatus(SpotOrderReqStatusDto reqDto) {
-		return null;
+		ServiceResult<SpotOrderRespDto> serviceResult = new ServiceResult<>();
+		QuanOrder entity = new QuanOrder();
+		entity.setExchangeId(reqDto.getExchangeID());
+		entity.setOrderAccountId(reqDto.getAccountID());
+		entity.setOrderState(reqDto.getStatus());
+		// 根据三个条件查询订单 ,正常情况下，返回结果中，一个InnerOrderID只会对应一个订单信息（唯一）
+		List<QuanOrder> list = quanOrderMapper.selectList(entity);
+		if (CollectionUtil.isNotEmpty(list)) {
+			SpotOrderRespDto result = copySpotOrderToSpotOrderRespDto(list.get(0));
+			serviceResult.setData(result);
+		}
+		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		return serviceResult;
 	}
 
 	/**
@@ -86,6 +117,20 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		result.setDealCashAmount(quanOrder.getOrderFieldCashAmount());
 		// result.setRemainingQty();
 		result.setFees(quanOrder.getOrderFieldFees());
+		return result;
+	}
+
+	/**
+	 * 将数据库查到的实体(list)转换为对应的响应输出结果List<SpotOrderRespDto>
+	 * 
+	 * @param list list
+	 * @return List<SpotOrderRespDto>
+	 */
+	public List<SpotOrderRespDto> copySpotOrderListToSpotOrderRespLIstDto(List<QuanOrder> list) {
+		List<SpotOrderRespDto> result = new ArrayList<>();
+		for (QuanOrder temp : list) {
+			result.add(copySpotOrderToSpotOrderRespDto(temp));
+		}
 		return result;
 	}
 

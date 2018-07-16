@@ -12,7 +12,7 @@ public class SpotOrderReqExchangeDto implements Serializable {
 
 	private static final long serialVersionUID = -4127302173955071604L;
 
-	private Long exchangeID;// 交易所ID
+	private int exchangeID;// 交易所ID
 	private Long accountID;// 账户ID
 	private Long[] exOrderID;// 数组
 	private String baseCoin;
@@ -20,11 +20,11 @@ public class SpotOrderReqExchangeDto implements Serializable {
 	private Long timeout;
 	private Long maxDelay;
 
-	public Long getExchangeID() {
+	public int getExchangeID() {
 		return exchangeID;
 	}
 
-	public void setExchangeID(Long exchangeID) {
+	public void setExchangeID(int exchangeID) {
 		this.exchangeID = exchangeID;
 	}
 
