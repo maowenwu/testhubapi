@@ -14,6 +14,8 @@ import com.huobi.quantification.dto.SpotOrderReqInnerDto;
 import com.huobi.quantification.dto.SpotOrderReqLinkDto;
 import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
+import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
+import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.xiaoleilu.hutool.util.ArrayUtil;
@@ -132,6 +134,12 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			result.add(copySpotOrderToSpotOrderRespDto(temp));
 		}
 		return result;
+	}
+
+	@Override
+	public ServiceResult<SpotPlaceOrderRespDto> placeOrder(SpotPlaceOrderReqDto reqDto) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -8,6 +8,8 @@ import com.huobi.quantification.dto.SpotOrderReqInnerDto;
 import com.huobi.quantification.dto.SpotOrderReqLinkDto;
 import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
+import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
+import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 
 public interface SpotOrderService {
 	/**
@@ -37,5 +39,10 @@ public interface SpotOrderService {
 	 * @return
 	 */
 	ServiceResult<SpotOrderRespDto> getOrderByStatus(SpotOrderReqStatusDto reqDto);
-
+	
+	/**
+	 * 下单接口
+	 * @return
+	 */
+	ServiceResult<SpotPlaceOrderRespDto> placeOrder(SpotPlaceOrderReqDto reqDto);
 }
