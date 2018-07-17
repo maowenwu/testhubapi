@@ -10,13 +10,17 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.constant.OkRestErrorCode;
 import com.huobi.quantification.dao.QuanOrderMapper;
+import com.huobi.quantification.dto.HuobiTradeOrderDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
@@ -24,6 +28,8 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatus;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
 import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
+import com.huobi.quantification.response.future.OKFutureOrderResponse;
+import com.huobi.quantification.response.spot.HuobiSpotOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -32,6 +38,8 @@ import com.huobi.quantification.service.redis.RedisService;
  * @author shaoxiaofeng
  * @since 2018/6/26
  */
+@Service
+@Transactional
 public class HuobiOrderServiceImpl implements HuobiOrderService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -101,24 +109,25 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	 *
 	 * @return
 	 */
-	public Object placeHuobiOrder() {
+	public Long placeHuobiOrder(HuobiTradeOrderDto orderDto) {
+		HuobiSpotOrderResponse response = placeOkOrderByAPI(orderDto);
+        if (response.getStatus().equals("ok")) {
+            return response.getOrderId();
+        } else {
+            throw new RuntimeException(response.getErrorCode());
+        }
+	}
+
+	private HuobiSpotOrderResponse placeOkOrderByAPI(HuobiTradeOrderDto orderDto) {
 		CreateOrderRequest createOrderReq = new CreateOrderRequest();
-		createOrderReq.accountId = "4232061";
-		createOrderReq.amount = "1";
-		createOrderReq.price = "0.001";
-		createOrderReq.symbol = "eosbtc";
-		createOrderReq.type = CreateOrderRequest.OrderType.BUY_LIMIT;
-		createOrderReq.source = "api";
-		String result = httpService.doHuobiPost(HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
-		JSONObject parseObject = JSON.parseObject(result);
-		if (parseObject.getString("status").equals("ok")) {
-			Map<String, String> params = new HashMap<>();
-			String orderId = parseObject.getString("data");
-			params.put("order-id", orderId);
-			String body = httpService.doHuobiGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", orderId),params);
-			parseAndSaveOrderInfo(body);
-		}
-		return null;
+		createOrderReq.accountId = String.valueOf(orderDto.getAccountId());
+		createOrderReq.amount = orderDto.getAmount().toString();
+		createOrderReq.price = orderDto.getPrice().toString();
+		createOrderReq.symbol = orderDto.getSymbol();
+		createOrderReq.type = orderDto.getType();
+		createOrderReq.source = orderDto.getSource();
+		String body = httpService.doHuobiPost(HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
+		return JSON.parseObject(body, HuobiSpotOrderResponse.class);
 	}
 
 	/**

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,10 @@ import org.springframework.stereotype.Service;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanOrderMapper;
+import com.huobi.quantification.dto.FutureOrderRespDto;
+import com.huobi.quantification.dto.HuobiTradeOrderDto;
 import com.huobi.quantification.dto.SpotOrderReqCancelDto;
 import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
@@ -21,8 +26,10 @@ import com.huobi.quantification.dto.SpotOrderRespDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanOrder;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.http.HttpService;
+import com.huobi.quantification.service.order.HuobiOrderService;
 import com.xiaoleilu.hutool.util.ArrayUtil;
 import com.xiaoleilu.hutool.util.CollectionUtil;
 
@@ -32,6 +39,8 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
 	
+	@Autowired
+	private HuobiOrderService huobiOrderService;
 
 	@Autowired
 	private HttpService httpService;
@@ -147,8 +156,51 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
 	@Override
 	public ServiceResult<SpotPlaceOrderRespDto> placeOrder(SpotPlaceOrderReqDto reqDto) {
-		// TODO Auto-generated method stub
-		return null;
+		HuobiTradeOrderDto orderDto = new HuobiTradeOrderDto();
+		orderDto.setAccountId(reqDto.getAccountId());
+		if (reqDto.getOrderType().contains("market")) {
+			orderDto.setAmount(reqDto.getCashAmount());
+		}else {
+			orderDto.setPrice(reqDto.getPrice());
+			orderDto.setAmount(reqDto.getQuantity());
+		}
+		orderDto.setSource("api");
+		orderDto.setSymbol(getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()));
+		orderDto.setType(reqDto.getOrderType());
+		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
+		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
+        serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+        serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+        
+        SpotPlaceOrderRespDto respDto = new SpotPlaceOrderRespDto();
+        QuanOrder quanOrder = new QuanOrder();
+        quanOrder.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        quanOrder.setOrderAccountId(reqDto.getAccountId());
+        if (reqDto.isSync()) {
+			try {
+				quanOrder.setOrderSourceId(orderIdFuture.get());
+				respDto.setExOrderId(orderIdFuture.get());
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}catch (ExecutionException e) {
+                e.printStackTrace();
+                serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+                serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
+            }
+		}
+        quanOrderMapper.insert(quanOrder);
+        respDto.setLinkOrderId(reqDto.getLinkOrderId());
+        respDto.setInnerOrderId(quanOrder.getId());
+        serviceResult.setData(respDto);
+		return serviceResult;
+	}
+	
+	private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
+		if (exchangeId == ExchangeEnum.HUOBI.getExId()) {
+			return baseCoin.toLowerCase() + quoteCoin.toLowerCase();
+		} else {
+			throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
+		}
 	}
 	
 	@Override
