@@ -8,11 +8,14 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dto.SpotOrderReqCancelDto;
+import com.huobi.quantification.dto.SpotOrderReqCancelDto.Orders;
 import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
 import com.huobi.quantification.dto.SpotOrderReqLinkDto;
@@ -152,12 +155,50 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	}
 	
 	@Override
-	public ServiceResult<Map<String, Object>> cancelOrder(SpotOrderReqCancelDto reqDto) {
-        Map<String, String> params = new HashMap<>();
-        params.put("path", "11111");
-        String body = httpService.doHuobiPost(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "11111"), params);
-        System.out.println("=========="+body);
-		return null;
+	public  ServiceResult<Map<String, Object>> cancelOrder(SpotOrderReqCancelDto reqDto){
+		ServiceResult<Map<String, Object>> serviceResult = new ServiceResult<>();
+		Boolean status=true;
+		List<Long>  successList=new ArrayList<>();
+		List<Map<String,Object>> failList=new ArrayList<>();
+		Map<String,Object> resultMap=new HashMap<>();
+		String orderId="7933854403";
+		//根据exchangeID accountID orders查询orderId
+		List<Orders> orderList=reqDto.getOrders();
+		for(int i=0;i<orderList.size();i++) {
+			QuanOrder entity=new QuanOrder();
+			entity.setExchangeId(reqDto.getExchangeID());
+			entity.setOrderAccountId(reqDto.getAccountID());
+			entity.setId(orderList.get(i).getInnerOrderID());
+			entity.setOrderSourceId(orderList.get(i).getExOrderID());
+			List<QuanOrder> resultList = quanOrderMapper.selectList(entity);
+			for(QuanOrder temp:resultList) {
+				orderId=String.valueOf(temp.getOrderSourceId());
+				String body =httpService.doHuobiPost(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", orderId), null);
+				JSONObject parseObject = JSON.parseObject(body);
+				if("ok".equalsIgnoreCase(parseObject.getString("status"))) {
+					successList.add(temp.getOrderSourceId());
+				}else {
+					Map<String, Object> failMap=new HashMap<>();
+					failMap.put("innerOrderID", temp.getOrderSourceId());
+					failMap.put("error_code", "????");
+					status=false;
+					failList.add(failMap);
+				}
+			}
+		}
+		
+		if(status) {
+			resultMap.put("status", "ok");
+		}
+		resultMap.put("success", successList);
+		resultMap.put("fail", failList);
+        serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		serviceResult.setData(resultMap);
+		return serviceResult;
 	}
+	
+	
 
+	
 }

@@ -1,6 +1,7 @@
 package com.huobi.quantification.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 撤销订单-根据内部orderID
@@ -16,55 +17,7 @@ public class SpotOrderReqCancelDto implements Serializable {
 	private boolean parallel;
 	private Long timeInterval;
 	private boolean sync;
-
-	class Orders {
-		private int innerOrderID;
-		private Long exOrderID;
-		private int linkOrderID;
-		private String baseCoin;
-		private String QuoteCoin;
-
-		public int getInnerOrderID() {
-			return innerOrderID;
-		}
-
-		public void setInnerOrderID(int innerOrderID) {
-			this.innerOrderID = innerOrderID;
-		}
-
-		public Long getExOrderID() {
-			return exOrderID;
-		}
-
-		public void setExOrderID(Long exOrderID) {
-			this.exOrderID = exOrderID;
-		}
-
-		public int getLinkOrderID() {
-			return linkOrderID;
-		}
-
-		public void setLinkOrderID(int linkOrderID) {
-			this.linkOrderID = linkOrderID;
-		}
-
-		public String getBaseCoin() {
-			return baseCoin;
-		}
-
-		public void setBaseCoin(String baseCoin) {
-			this.baseCoin = baseCoin;
-		}
-
-		public String getQuoteCoin() {
-			return QuoteCoin;
-		}
-
-		public void setQuoteCoin(String quoteCoin) {
-			QuoteCoin = quoteCoin;
-		}
-
-	}
+	private List<Orders> orders;
 
 	public int getExchangeID() {
 		return exchangeID;
@@ -104,6 +57,63 @@ public class SpotOrderReqCancelDto implements Serializable {
 
 	public void setSync(boolean sync) {
 		this.sync = sync;
+	}
+
+	public List<Orders> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Orders> orders) {
+		this.orders = orders;
+	}
+
+	public class Orders {
+		private Long innerOrderID;
+		private Long exOrderID;
+		private int linkOrderID;
+		private String baseCoin;
+		private String QuoteCoin;
+
+		public Long getInnerOrderID() {
+			return innerOrderID;
+		}
+
+		public void setInnerOrderID(Long innerOrderID) {
+			this.innerOrderID = innerOrderID;
+		}
+
+		public Long getExOrderID() {
+			return exOrderID;
+		}
+
+		public void setExOrderID(Long exOrderID) {
+			this.exOrderID = exOrderID;
+		}
+
+		public int getLinkOrderID() {
+			return linkOrderID;
+		}
+
+		public void setLinkOrderID(int linkOrderID) {
+			this.linkOrderID = linkOrderID;
+		}
+
+		public String getBaseCoin() {
+			return baseCoin;
+		}
+
+		public void setBaseCoin(String baseCoin) {
+			this.baseCoin = baseCoin;
+		}
+
+		public String getQuoteCoin() {
+			return QuoteCoin;
+		}
+
+		public void setQuoteCoin(String quoteCoin) {
+			QuoteCoin = quoteCoin;
+		}
+
 	}
 
 }
