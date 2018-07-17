@@ -1,14 +1,18 @@
 package com.huobi.quantification.provider;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanOrderMapper;
+import com.huobi.quantification.dto.SpotOrderReqCancelDto;
 import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
 import com.huobi.quantification.dto.SpotOrderReqLinkDto;
@@ -18,6 +22,7 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.service.http.HttpService;
 import com.xiaoleilu.hutool.util.ArrayUtil;
 import com.xiaoleilu.hutool.util.CollectionUtil;
 
@@ -26,6 +31,10 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
+	
+
+	@Autowired
+	private HttpService httpService;
 
 	@Override
 	public ServiceResult<List<SpotOrderRespDto>> getOrderByInnerOrderID(SpotOrderReqInnerDto reqDto) {
@@ -139,6 +148,15 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	@Override
 	public ServiceResult<SpotPlaceOrderRespDto> placeOrder(SpotPlaceOrderReqDto reqDto) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public ServiceResult<Map<String, Object>> cancelOrder(SpotOrderReqCancelDto reqDto) {
+        Map<String, String> params = new HashMap<>();
+        params.put("path", "11111");
+        String body = httpService.doHuobiPost(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "11111"), params);
+        System.out.println("=========="+body);
 		return null;
 	}
 
