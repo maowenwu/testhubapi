@@ -7,11 +7,12 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
@@ -33,12 +34,14 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
+import com.xiaoleilu.hutool.json.JSONObject;
+import com.xiaoleilu.hutool.json.JSONUtil;
 import com.xiaoleilu.hutool.util.ArrayUtil;
 import com.xiaoleilu.hutool.util.CollectionUtil;
 
 @Service
 public class SpotOrderServiceImpl implements SpotOrderService {
-
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
 	
@@ -213,20 +216,22 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		List<Long>  successList=new ArrayList<>();
 		List<Map<String,Object>> failList=new ArrayList<>();
 		Map<String,Object> resultMap=new HashMap<>();
-		String orderId="7933854403";
+		String orderId="";
 		//根据exchangeID accountID orders查询orderId
 		List<Orders> orderList=reqDto.getOrders();
 		for(int i=0;i<orderList.size();i++) {
 			QuanOrder entity=new QuanOrder();
 			entity.setExchangeId(reqDto.getExchangeID());
 			entity.setOrderAccountId(reqDto.getAccountID());
-			entity.setId(orderList.get(i).getInnerOrderID());
-			entity.setOrderSourceId(orderList.get(i).getExOrderID());
+			JSONObject json=JSONUtil.parseObj(orderList.get(i));
+			entity.setId(json.getLong("innerOrderID"));
+			entity.setOrderSourceId(json.getLong("exOrderID"));
 			List<QuanOrder> resultList = quanOrderMapper.selectList(entity);
 			for(QuanOrder temp:resultList) {
 				orderId=String.valueOf(temp.getOrderSourceId());
 				String body =httpService.doHuobiPost(reqDto.getAccountID(),HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", orderId), null);
-				JSONObject parseObject = JSON.parseObject(body);
+				logger.info("订单号:{}取消订单返回的结果为:{}",temp.getOrderSourceId(),body);
+				com.alibaba.fastjson.JSONObject parseObject = JSON.parseObject(body);
 				if("ok".equalsIgnoreCase(parseObject.getString("status"))) {
 					successList.add(temp.getOrderSourceId());
 				}else {

@@ -1,6 +1,7 @@
 package com.huobi.quantification.service.order.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +40,19 @@ public class SpotOrderServiceImplTest {
 	public void cancelOrder() {
 		System.out.println("1==============");
 		String param="{\r\n" + 
-				"    \"exchangeID\":123,\r\n" + 
-				"    \"accountID\":1234,\r\n" + 
+				"    \"exchangeID\":0,\r\n" + 
+				"    \"accountID\":4295363,\r\n" + 
 				"    \"orders\":[\r\n" + 
 				"        {\r\n" + 
-				"            \"innerOrderID\":111,\r\n" + 
-				"            \"exOrderID\":222,\r\n" + 
+				"            \"innerOrderID\":8,\r\n" + 
+				"            \"exOrderID\":null,\r\n" + 
+				"            \"linkOrderID\":\"\",\r\n" + 
+				"            \"baseCoin\":444,\r\n" + 
+				"            \"QuoteCoin\":5555\r\n" + 
+				"        },\r\n" + 
+				"        {\r\n" + 
+				"            \"innerOrderID\":null,\r\n" + 
+				"            \"exOrderID\":7945903430,\r\n" + 
 				"            \"linkOrderID\":333,\r\n" + 
 				"            \"baseCoin\":444,\r\n" + 
 				"            \"QuoteCoin\":5555\r\n" + 
@@ -54,20 +62,27 @@ public class SpotOrderServiceImplTest {
 		//1、使用JSONObject
 		JSONObject json=JSONUtil.parseObj(param);
 		SpotOrderReqCancelDto result=JSONUtil.toBean(json,SpotOrderReqCancelDto.class);
-		spotOrderServiceImpl.cancelOrder(result);
-		System.out.println(result);
+		ServiceResult<Map<String, Object>> resultMap=spotOrderServiceImpl.cancelOrder(result);
+		System.out.println("==========resultMap:"+JSONUtil.toJsonStr(resultMap));
 		System.out.println("2==============");
 	}
 	
 	public static void main(String[] args) {
 		System.out.println("1==============");
 		String param="{\r\n" + 
-				"    \"exchangeID\":123,\r\n" + 
-				"    \"accountID\":1234,\r\n" + 
+				"    \"exchangeID\":0,\r\n" + 
+				"    \"accountID\":4295363,\r\n" + 
 				"    \"orders\":[\r\n" + 
 				"        {\r\n" + 
-				"            \"innerOrderID\":111,\r\n" + 
-				"            \"exOrderID\":222,\r\n" + 
+				"            \"innerOrderID\":8,\r\n" + 
+				"            \"exOrderID\":12,\r\n" + 
+				"            \"linkOrderID\":\"\",\r\n" + 
+				"            \"baseCoin\":444,\r\n" + 
+				"            \"QuoteCoin\":5555\r\n" + 
+				"        },\r\n" + 
+				"        {\r\n" + 
+				"            \"innerOrderID\":13,\r\n" + 
+				"            \"exOrderID\":7945903430,\r\n" + 
 				"            \"linkOrderID\":333,\r\n" + 
 				"            \"baseCoin\":444,\r\n" + 
 				"            \"QuoteCoin\":5555\r\n" + 
