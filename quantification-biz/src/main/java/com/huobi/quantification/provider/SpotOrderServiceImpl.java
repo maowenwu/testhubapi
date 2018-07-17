@@ -225,7 +225,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			List<QuanOrder> resultList = quanOrderMapper.selectList(entity);
 			for(QuanOrder temp:resultList) {
 				orderId=String.valueOf(temp.getOrderSourceId());
-				String body =httpService.doHuobiPost(HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", orderId), null);
+				String body =httpService.doHuobiPost(reqDto.getAccountID(),HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", orderId), null);
 				JSONObject parseObject = JSON.parseObject(body);
 				if("ok".equalsIgnoreCase(parseObject.getString("status"))) {
 					successList.add(temp.getOrderSourceId());

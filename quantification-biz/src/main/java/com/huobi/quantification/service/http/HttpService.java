@@ -18,7 +18,7 @@ public interface HttpService {
 
     String doOkSignedPost(Long accountId, String url, Map<String, String> params) throws HttpRequestException;
 
-    String doHuobiGet(String uri, Map<String, String> params) throws HttpRequestException;
+    String doHuobiGet(Long accountId,String uri, Map<String, String> params) throws HttpRequestException;
     
-    String doHuobiPost(String uri ,Object object) throws HttpRequestException;
+    String doHuobiPost(Long accountId,String uri ,Object object) throws HttpRequestException;
 }

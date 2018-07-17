@@ -23,14 +23,6 @@ public class OkHttpClientUtils {
 
     private AtomicInteger numRequestFaild = new AtomicInteger(0);
     
-    private String accessKeyId = "b3ee28b9-82506e4a-d1f8c9dc-b5ce3";
-
-	private String accessKeySecret = "2d88904d-75c15363-3d0d6d14-25e23";
-
-	private String privateKey = "MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQgxUfNT6yYQVQCqVOOhtzyY+fJK3SRyrCOX6dxdf6neo+hRANCAATXHSW7bstRT7/PK9JckRCZJnTKZQ7JoABSpwnPgRgU9LRQV1U6Awgmvd4CmlMBdg7rLF8yLxmylT3+RjMfLjmZ";
-	
-	private String assetPassword = "zxcv8529";
-	
 	static final MediaType JSON = MediaType.parse("application/json");
 
     private OkHttpClientUtils(ProxyConfig proxyConfig) {
@@ -125,9 +117,9 @@ public class OkHttpClientUtils {
         }
     }
     
-    public String call(String method, String uri, Object object, Map<String, String> params) {
+    public String call(String accessKeyId, String accessKeySecret,String method, String uri, Object object, Map<String, String> params) {
         ApiSignature sign = new ApiSignature();
-        sign.createSignature(this.accessKeyId, this.accessKeySecret,this.privateKey, method, uri, params);
+        sign.createSignature(accessKeyId, accessKeySecret, method, uri, params);
         try {
             Request.Builder builder = null;
             if ("POST".equals(method)) {
@@ -135,9 +127,6 @@ public class OkHttpClientUtils {
                 builder = new Request.Builder().url(uri + "?" + toQueryString(params)).post(body);
             } else {
                 builder = new Request.Builder().url(uri + "?" + toQueryString(params)).get();
-            }
-            if (this.assetPassword != null) {
-                builder.addHeader("AuthData", authData());
             }
             Request request = builder.build();
             Response response = httpClient.newCall(request).execute();
@@ -153,24 +142,6 @@ public class OkHttpClientUtils {
             return entry.getKey() + "=" + ApiSignature.urlEncode(entry.getValue());
         }).collect(Collectors.toList()));
     }
-      
-    private String authData() {
-           MessageDigest md = null;
-           try {
-               md = MessageDigest.getInstance("MD5");
-           } catch (NoSuchAlgorithmException e) {
-               throw new RuntimeException(e);
-           }
-           md.update(this.assetPassword.getBytes(StandardCharsets.UTF_8));
-           md.update("hello, moto".getBytes(StandardCharsets.UTF_8));
-           Map<String, String> map = new HashMap<>();
-           map.put("assetPwd", DatatypeConverter.printHexBinary(md.digest()).toLowerCase());
-           try {
-               return ApiSignature.urlEncode(JsonUtil.writeValue(map));
-           } catch (IOException e) {
-               throw new RuntimeException("Get json failed: " + e.getMessage());
-           }
-       }
 
     private void reset() {
         numRequestFaild.set(0);

@@ -44,7 +44,7 @@ public class AccountHuobiServiceImplTest {
 	public void updateAccount() {
 		Map<String, String> params = new HashMap<>();
 		params.put("account-id", "4232061");
-		String doHuobiGet = httpService.doHuobiGet(HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", "4232061"),
+		String doHuobiGet = httpService.doHuobiGet(4232061L,HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", "4232061"),
 				params);
 		JSONObject jsonObject = JSON.parseObject(doHuobiGet);
 		String data = jsonObject.getString("data");
@@ -85,7 +85,7 @@ public class AccountHuobiServiceImplTest {
 	@Test
     public void accounts (){
 		String result ="";
-		result=httpService.doHuobiGet("https://api.huobipro.com"+"/v1/account/accounts",new HashMap<>());
+		result=httpService.doHuobiGet(4232061L,"https://api.huobipro.com"+"/v1/account/accounts",new HashMap<>());
 		System.out.println("========="+result);
 	}
 	

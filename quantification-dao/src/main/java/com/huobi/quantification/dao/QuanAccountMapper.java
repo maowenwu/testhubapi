@@ -13,4 +13,6 @@ public interface QuanAccountMapper {
     List<QuanAccount> selectAll();
 
     int updateByPrimaryKey(QuanAccount record);
+
+	List<Long> selectByExchangeId(int exchangeId);
 }

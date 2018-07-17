@@ -8,34 +8,34 @@ import com.huobi.quantification.dto.HuobiTradeOrderDto;
  */
 public interface HuobiOrderService {
 	
-	void updateHuobiOrder(Long orderId);
+	void updateHuobiOrder(Long accountId, Long orderId);
 	  /**
      * 获取订单信息
      *
      * @return
      */
-    Object getHuobiOrderInfo();
+    Object getHuobiOrderInfo(Long accountId);
 
     /**
      * 批量获取订单信息
      *
      * @return
      */
-    Object getHuobiOrdersInfo();
+    Object getHuobiOrdersInfo(Long accountId);
 
     /**
      * 查询成交（时间顺序）
      *
      * @return
      */
-    Object getHuobiOrdersHistory(Long orderId);
+    Object getHuobiOrdersHistory(Long accountId, Long orderId);
     
     /**
      * 获取所有当前帐号下未成交订单
      * 
      * @return
      */
-    Object getHuobiOpenOrders();
+    Object getHuobiOpenOrders(Long accountId);
     /**
      * 下单
      *
@@ -48,19 +48,19 @@ public interface HuobiOrderService {
      *
      * @return
      */
-    Object placeHuobikOrders();
+    Object placeHuobikOrders(Long accountId);
 
     /**
      * 撤单
      *
      * @return
      */
-    Object cancelHuobiOrder(Long orderId);
+    Object cancelHuobiOrder(Long accountId, Long orderId);
 
     /**
      * 批量撤单
      *
      * @return
      */
-    Object cancelHuobiOrders();
+    Object cancelHuobiOrders(Long accountId);
 }

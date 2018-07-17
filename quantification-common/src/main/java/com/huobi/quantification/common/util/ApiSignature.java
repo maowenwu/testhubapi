@@ -4,12 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.Security;
-import java.security.Signature;
-import java.security.interfaces.ECPrivateKey;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +16,6 @@ import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +35,7 @@ public class ApiSignature {
      * @param uri          请求路径，注意不含?以及后的参数，例如"/v1/api/info"
      * @param params       原始请求参数，以Key-Value存储，注意Value不要编码
      */
-    public void createSignature(String appKey, String appSecretKey, String privateKey, String method,
+    public void createSignature(String appKey, String appSecretKey, String method,
                                 String uri, Map<String, String> params) {
         StringBuilder sb = new StringBuilder(1024);
         int index = uri.indexOf(".com");
@@ -65,7 +59,6 @@ public class ApiSignature {
         }
         // remove last '&':
         sb.deleteCharAt(sb.length() - 1);
-//        System.out.println("sb:" + sb);
         // sign:
         Mac hmacSha256 = null;
         try {
@@ -82,19 +75,8 @@ public class ApiSignature {
         byte[] hash = hmacSha256.doFinal(payload.getBytes(StandardCharsets.UTF_8));
         String actualSign = Base64.getEncoder().encodeToString(hash);
         params.put("Signature", actualSign);
-        //PrivateSignature
-        byte[] signData = null;
-        try {
-            signData = sign(actualSign.getBytes(), privateKey);
-            String  privateSignature = Base64.getEncoder().encodeToString(signData);
-            params.put("PrivateSignature", privateSignature);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-//        Set<String> keySet = params.keySet();
-//        for (String string : keySet) {
-//        	System.out.println(string + ":" + params.get(string));
-//		}
+        
+
         if (log.isDebugEnabled()) {
             log.debug("Dump parameters:");
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -102,36 +84,6 @@ public class ApiSignature {
             }
         }
     }
-    /**
-     * 
-     * @param data
-     * @param privateKey
-     * @return
-     * @throws Exception
-     */
-    public  byte[] sign(byte[] data, String privateKeyStr) throws Exception  {
-        Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-          
-        byte[] keyBytes = Base64.getDecoder().decode(privateKeyStr);
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("EC", "BC");
-        ECPrivateKey privateKey = (ECPrivateKey) keyFactory.generatePrivate(keySpec);
-       
-//        byte[] server_sec1 = DatatypeConverter.parseBase64Binary(privateKeyStr);
-//        ASN1Sequence seq = ASN1Sequence.getInstance(server_sec1);
-//        org.bouncycastle.asn1.sec.ECPrivateKey pKey = org.bouncycastle.asn1.sec.ECPrivateKey.getInstance(seq);
-//        AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, pKey.getParameters());
-//        byte[] server_pkcs8 = new PrivateKeyInfo(algId, pKey).getEncoded();
-//        KeyFactory fact = KeyFactory.getInstance ("EC","BC");
-//        PrivateKey privateKey = fact.generatePrivate (new PKCS8EncodedKeySpec(server_pkcs8));
-      
-        Signature ecdsaSign = Signature.getInstance("SHA256withECDSA", new BouncyCastleProvider());
-        ecdsaSign.initSign(privateKey);
-        ecdsaSign.update(data);
-        byte[] signData = ecdsaSign.sign();
-        return signData;
-   }
-
     /**
      * 使用标准URL Encode编码。注意和JDK默认的不同，空格被编码为%20而不是+。
      *

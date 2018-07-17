@@ -13,4 +13,6 @@ public interface QuanAccountSecretMapper {
     List<QuanAccountSecret> selectAll();
 
     int updateByPrimaryKey(QuanAccountSecret record);
+
+	List<QuanAccountSecret> selectByAccountId(Long id);
 }

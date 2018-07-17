@@ -16,7 +16,7 @@ public class HuobiOrderJob extends AbstractQuartzJob{
 		if (data instanceof QuanJob) {
 			QuanJob job = (QuanJob) data;
 		}
-		bean.updateHuobiOrder(123L);
+		bean.updateHuobiOrder(123L, 456L);
 	}
 
 }

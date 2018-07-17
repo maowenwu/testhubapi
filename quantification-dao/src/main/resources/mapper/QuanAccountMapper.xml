@@ -35,6 +35,10 @@
     from quan_account
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByExchangeId" resultType="java.lang.Long">
+    select account_source_id from quan_account
+    where exchange_id = #{exchangeId,jdbcType=INTEGER}
+  </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, exchange_id, account_source_id, accounts_type, accounts_name, state
     from quan_account

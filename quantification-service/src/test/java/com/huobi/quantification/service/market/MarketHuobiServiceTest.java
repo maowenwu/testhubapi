@@ -54,7 +54,7 @@ public class MarketHuobiServiceTest {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", "ethusdt");
 		params.put("type", "step1");
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_DEPTH, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_DEPTH, params);
 		DepthResponse marketDepth = JSON.parseObject(body, DepthResponse.class);
 		QuanDepth quanDepth = new QuanDepth();
 		quanDepth.setExchangeId(ExchangeEnum.HUOBI.getExId());
@@ -95,7 +95,7 @@ public class MarketHuobiServiceTest {
 	public void getTicker() {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", "ethusdt");
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TICKER, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_TICKER, params);
 		QuanTicker quanTicker = new QuanTicker();
 		JSONObject jsonObject = JSON.parseObject(body);
 		String data = jsonObject.getString("tick");
@@ -150,7 +150,7 @@ public class MarketHuobiServiceTest {
 	public void getTrade() {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", "ethusdt");
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TRADE, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_TRADE, params);
 		TradeResponse trade = new TradeResponse();
 		Trade tick = new Trade();
 		TradeDetail data = new TradeDetail();
@@ -181,7 +181,7 @@ public class MarketHuobiServiceTest {
 		params.put("symbol", "btcusdt");
 		params.put("period", "1day");
 		params.put("size", "200");
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_KLINE, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_KLINE, params);
 		JSONObject jsonObject = JSON.parseObject(body);
 		if (jsonObject.getString("status").equals("ok")) {
 			JSONArray jsonArray = jsonObject.getJSONArray("data");

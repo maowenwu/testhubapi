@@ -63,7 +63,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 	public Object getTicker(String symbol) {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", symbol);
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TICKER, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_TICKER, params);
 		parseAndSaveTicker(symbol , body);
 		return null;
 	}
@@ -118,7 +118,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", symbol);
 		params.put("type", type);
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_DEPTH, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_DEPTH, params);
 		parseAndSaveDepth(symbol, body , type);
 		return null;
 	}
@@ -181,7 +181,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		params.put("symbol", symbol);
 		params.put("period", period);
 		params.put("size", size);
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_KLINE, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_KLINE, params);
 		parseAndSaveKline(body, symbol, ExchangeEnum.HUOBI.getExId(), period, size);
 		return null;
 	}
@@ -243,7 +243,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 	private TradeResponse queryCurrentPriceByApi(String symbol) {
 		Map<String, String> params = new HashMap<>();
 		params.put("symbol", symbol);
-		String body = httpService.doHuobiGet(HttpConstant.HUOBI_TRADE, params);
+		String body = httpService.doGet(HttpConstant.HUOBI_TRADE, params);
 		TradeResponse trade = new TradeResponse();
 		Trade tick = new Trade();
 		TradeDetail data = new TradeDetail();
@@ -265,5 +265,4 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		trade.setTs(parseObject.getDate("ts"));
 		return trade;
 	}
-
 }

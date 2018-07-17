@@ -1,5 +1,20 @@
 package com.huobi.quantification.service.http.impl;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.huobi.quantification.common.api.HuobiSignature;
 import com.huobi.quantification.common.api.OkSignature;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.common.util.OkHttpClientUtils;
@@ -7,16 +22,6 @@ import com.huobi.quantification.common.util.ProxyConfig;
 import com.huobi.quantification.dao.QuanProxyIpMapper;
 import com.huobi.quantification.entity.QuanProxyIp;
 import com.huobi.quantification.service.http.HttpService;
-
-import okhttp3.MediaType;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author zhangl
@@ -34,6 +39,9 @@ public class HttpServiceImpl implements HttpService {
 
     @Autowired
     private OkSecretHolder okSecretHolder;
+    
+    @Autowired
+    private HuobiSecretHolder huobiSecretHolder;
 
     private Timer timer = new Timer();
     
@@ -104,16 +112,20 @@ public class HttpServiceImpl implements HttpService {
     }
     
     @Override
-	public String doHuobiGet(String uri, Map<String, String> params) throws HttpRequestException {
+	public String doHuobiGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException {
 		if (params == null) {
 			params = new HashMap<>();
 		}
-		return getHttpClientUtils().call("GET", uri, null, params);
+		HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
+		return getHttpClientUtils().call(huobiSignature.getAccessKey(),huobiSignature.getSecretKey(),
+				"GET", uri, null, params);
 	}
 
 	@Override
-	public String doHuobiPost(String uri, Object object) throws HttpRequestException {
-		return getHttpClientUtils().call("POST", uri, object, new HashMap<String, String>());
+	public String doHuobiPost(Long accountId, String uri, Object object) throws HttpRequestException {
+		HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
+		return getHttpClientUtils().call(huobiSignature.getAccessKey(),huobiSignature.getSecretKey(),
+				"POST", uri, object, new HashMap<String, String>());
 	}
 
 
