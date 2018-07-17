@@ -14,7 +14,7 @@ public class SpotPlaceOrderReqDto implements Serializable{
 	private BigDecimal quantity;
 	private BigDecimal cashAmount;
 	private long linkOrderId;
-	private String sync;
+	private boolean sync;
 	public int getExchangeId() {
 		return exchangeId;
 	}
@@ -75,10 +75,10 @@ public class SpotPlaceOrderReqDto implements Serializable{
 	public void setLinkOrderId(long linkOrderId) {
 		this.linkOrderId = linkOrderId;
 	}
-	public String getSync() {
+	public boolean isSync() {
 		return sync;
 	}
-	public void setSync(String sync) {
+	public void setSync(boolean sync) {
 		this.sync = sync;
 	}
 }

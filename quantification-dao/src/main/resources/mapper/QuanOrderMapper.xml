@@ -24,7 +24,7 @@
     delete from quan_order
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrder">
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrder" useGeneratedKeys="true" keyProperty="id">
     insert into quan_order (id, order_source_id, order_symbol, 
       order_type, order_state, order_account_id, 
       order_amount, order_field_amount, order_field_cash_amount, 

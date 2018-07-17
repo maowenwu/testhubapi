@@ -1,4 +1,7 @@
 package com.huobi.quantification.service.order;
+
+import com.huobi.quantification.dto.HuobiTradeOrderDto;
+
 /**
  * @author shaoxiaofeng
  * @since 2018/6/26
@@ -38,7 +41,7 @@ public interface HuobiOrderService {
      *
      * @return
      */
-    Object placeHuobiOrder();
+    Long placeHuobiOrder(HuobiTradeOrderDto orderDto);
 
     /**
      * 批量下单
