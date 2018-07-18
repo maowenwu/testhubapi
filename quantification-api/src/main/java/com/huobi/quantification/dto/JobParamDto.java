@@ -7,6 +7,7 @@ public class JobParamDto implements Serializable {
     private Long accountId;
     private String symbol;
     private String contractType;
+    private String klineType;
 
     public Long getAccountId() {
         return accountId;
@@ -30,5 +31,13 @@ public class JobParamDto implements Serializable {
 
     public void setContractType(String contractType) {
         this.contractType = contractType;
+    }
+
+    public String getKlineType() {
+        return klineType;
+    }
+
+    public void setKlineType(String klineType) {
+        this.klineType = klineType;
     }
 }

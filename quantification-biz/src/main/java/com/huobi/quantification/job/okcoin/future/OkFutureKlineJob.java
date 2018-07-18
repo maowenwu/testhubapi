@@ -13,6 +13,6 @@ public class OkFutureKlineJob extends AbstractQuartzJob {
     @Override
     public void execute(JobParamDto data) {
         OkFutureMarketService okFutureMarketService = ApplicationContextHolder.getContext().getBean(OkFutureMarketService.class);
-        okFutureMarketService.updateOkFutureKline(data.getSymbol(), "1min", data.getContractType());
+        okFutureMarketService.updateOkFutureKline(data.getSymbol(), data.getKlineType(), data.getContractType());
     }
 }
