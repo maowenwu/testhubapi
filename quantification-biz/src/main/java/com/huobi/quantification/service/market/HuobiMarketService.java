@@ -48,4 +48,6 @@ public interface HuobiMarketService {
 	void updateHuobiDepth(String symbol,String type);
 	
 	void updateCurrentPrice(String symbol);
+	
+	void updateKline(String symbol, String KlineType, String size);
 }

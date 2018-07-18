@@ -9,15 +9,12 @@ import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.market.HuobiMarketService;
 
 @DisallowConcurrentExecution
-public class HuobiTickerJob extends AbstractQuartzJob{
+public class HuobiKlineJob extends AbstractQuartzJob{
 
 	@Override
 	public void execute(JobParamDto data) {
 		HuobiMarketService marketHuobiService = ApplicationContextHolder.getContext().getBean(HuobiMarketService.class);
-		/*if (data instanceof QuanJob) {
-			QuanJob jobdata = (QuanJob)data;
-			marketHuobiService.updateHuobiTicker(jobdata.getSymbol());
-		}*/
+		marketHuobiService.updateKline(data.getSymbol(), data.getKlineType(), data.getSize()+"");
 	}
 
 }

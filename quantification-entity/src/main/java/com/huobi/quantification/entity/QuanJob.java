@@ -3,63 +3,48 @@ package com.huobi.quantification.entity;
 import java.util.Date;
 
 public class QuanJob {
-    /**
-     * @mbg.generated 2018-07-04 17:21:27
+	 /**
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private Integer jobType;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private String jobName;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
-    private Long accountId;
+    private String jobParam;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
-     */
-    private String symbol;
-
-    /**
-     * @mbg.generated 2018-07-04 17:21:27
-     */
-    private String type;
-
-    /**
-     * @mbg.generated 2018-07-04 17:21:27
-     */
-    private String ipId;
-
-    /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private String cron;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private Integer state;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private Date updateDate;
 
     /**
-     * @mbg.generated 2018-07-04 17:21:27
+     * @mbg.generated 2018-07-18 18:56:24
      */
     private Date createDate;
 
@@ -95,36 +80,12 @@ public class QuanJob {
         this.jobName = jobName;
     }
 
-    public Long getAccountId() {
-        return accountId;
+    public String getJobParam() {
+        return jobParam;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
-    }
-
-    public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getIpId() {
-        return ipId;
-    }
-
-    public void setIpId(String ipId) {
-        this.ipId = ipId;
+    public void setJobParam(String jobParam) {
+        this.jobParam = jobParam;
     }
 
     public String getCron() {

@@ -227,16 +227,16 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		logger.info("[Depth][symbol={},type={}]任务开始",symbol,type);
 		getDepth(symbol, type);
-		logger.info("[Ticker][symbol={},type={}]任务结束，耗时：" + stopwatch , symbol , type);
+		logger.info("[Depth][symbol={},type={}]任务结束，耗时：" + stopwatch , symbol , type);
 	}
 
 	@Override
 	public void updateCurrentPrice(String symbol) {
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		logger.info("[Depth][symbol={},type={}]任务开始",symbol);
+		logger.info("[CurrentPrice][symbol={}]任务开始",symbol);
 		TradeResponse trade = queryCurrentPriceByApi(symbol);
 		redisService.setHuobiCurrentPrice(ExchangeEnum.HUOBI.getExId(),symbol, trade);
-		logger.info("[Ticker][symbol={},type={}]任务结束，耗时：" + stopwatch , symbol);
+		logger.info("[CurrentPrice][symbol={}]任务结束，耗时：" + stopwatch , symbol);
 	}
 
 	private TradeResponse queryCurrentPriceByApi(String symbol) {
@@ -263,5 +263,13 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		trade.setStatus("status");
 		trade.setTs(parseObject.getDate("ts"));
 		return trade;
+	}
+
+	@Override
+	public void updateKline(String symbol, String KlineType, String size) {
+		Stopwatch stopwatch = Stopwatch.createStarted();
+		logger.info("[Kline][symbol={},KlineType={},size={}]任务开始",symbol,KlineType,size);
+		getKline(symbol, KlineType, size);
+		logger.info("[Kline][symbol={},KlineType={},size={}]任务结束，耗时：" + stopwatch , symbol,KlineType,size);
 	}
 }

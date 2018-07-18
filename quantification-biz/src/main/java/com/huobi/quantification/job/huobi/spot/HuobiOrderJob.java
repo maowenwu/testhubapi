@@ -14,10 +14,7 @@ public class HuobiOrderJob extends AbstractQuartzJob{
 	@Override
 	public void execute(JobParamDto data) {
 		HuobiOrderService bean = ApplicationContextHolder.getContext().getBean(HuobiOrderService.class);
-		/*if (data instanceof QuanJob) {
-			QuanJob job = (QuanJob) data;
-		}
-		bean.updateHuobiOrder(123L, 456L);*/
+		bean.updateHuobiOrder(data.getAccountId(), data.getOrderId());
 	}
 
 }

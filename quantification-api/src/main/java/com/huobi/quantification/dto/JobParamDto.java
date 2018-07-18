@@ -8,8 +8,19 @@ public class JobParamDto implements Serializable {
     private String symbol;
     private String contractType;
     private String klineType;
+    private String depthType;
+    private Long orderId;
+    private int size;
 
-    public Long getAccountId() {
+    public Long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+
+	public Long getAccountId() {
         return accountId;
     }
 
@@ -40,4 +51,20 @@ public class JobParamDto implements Serializable {
     public void setKlineType(String klineType) {
         this.klineType = klineType;
     }
+
+	public String getDepthType() {
+		return depthType;
+	}
+
+	public void setDepthType(String depthType) {
+		this.depthType = depthType;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
 }

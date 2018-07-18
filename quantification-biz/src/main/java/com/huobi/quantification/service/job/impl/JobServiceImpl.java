@@ -10,7 +10,7 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.job.huobi.future.*;
 import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
 import com.huobi.quantification.job.huobi.spot.HuobiOrderJob;
-import com.huobi.quantification.job.huobi.spot.HuobiTickerJob;
+import com.huobi.quantification.job.huobi.spot.HuobiKlineJob;
 import com.huobi.quantification.job.huobi.spot.HuobiAccountJob;
 import com.huobi.quantification.job.okcoin.future.*;
 import com.huobi.quantification.quartz.QuartzManager;
@@ -60,7 +60,7 @@ public class JobServiceImpl implements JobService {
 
         Map<Integer, Class> huobiSpotTypeClass = new HashMap<>();
         huobiSpotTypeClass.put(1, HuobiDepthJob.class);
-        huobiSpotTypeClass.put(2, HuobiTickerJob.class);
+        huobiSpotTypeClass.put(2, HuobiKlineJob.class);
         huobiSpotTypeClass.put(3, HuobiAccountJob.class);
         huobiSpotTypeClass.put(4, HuobiOrderJob.class);
         jobMap.put(ExchangeEnum.HUOBI.getExId(), huobiSpotTypeClass);
@@ -92,7 +92,8 @@ public class JobServiceImpl implements JobService {
                 if (jobClass == null) {
                     continue;
                 }
-                quartzManager.addJobNoRepeat(quanJob.getJobName(), jobClass, quanJob.getCron(), quanJob);
+                JobParamDto jobParamDto = JSON.parseObject(quanJob.getJobParam() ,JobParamDto.class);
+                quartzManager.addJobNoRepeat(quanJob.getJobName(), jobClass, quanJob.getCron(), jobParamDto);
             } else {
                 quartzManager.removeJobNoRepeat(quanJob.getJobName());
             }

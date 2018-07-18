@@ -13,10 +13,7 @@ public class HuobiDepthJob extends AbstractQuartzJob{
 	@Override
 	public void execute(JobParamDto data) {
 		HuobiMarketService marketHuobiService = ApplicationContextHolder.getContext().getBean(HuobiMarketService.class);
-		/*if (data instanceof QuanJob) {
-			QuanJob jobData = (QuanJob)data;
-			marketHuobiService.updateHuobiDepth(jobData.getSymbol(),jobData.getType());
-		}*/
+		marketHuobiService.updateHuobiDepth(data.getSymbol(), data.getDepthType());
 	}
 
 }
