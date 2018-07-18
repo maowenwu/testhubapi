@@ -1,5 +1,6 @@
 package com.huobi.quantification.job;
 
+import com.huobi.quantification.dto.JobParamDto;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -10,9 +11,9 @@ public abstract class AbstractQuartzJob implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         JobDataMap mergedJobDataMap = jobExecutionContext.getMergedJobDataMap();
-        Object data = mergedJobDataMap.get("data");
+        JobParamDto data = (JobParamDto) mergedJobDataMap.get("data");
         execute(data);
     }
 
-    public abstract void execute(Object data);
+    public abstract void execute(JobParamDto data);
 }

@@ -23,6 +23,24 @@ public class TestController {
     @Autowired
     private FutureAccountService futureAccountService;
 
+    @Autowired
+    private JobManageService jobManageService;
+
+    @RequestMapping("/testStartFutureJob")
+    public String testStartFutureJob() {
+        FutureJobReqDto reqDto = new FutureJobReqDto();
+        reqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
+        reqDto.setJobType(OkJobTypeEnum.Depth.getJobType());
+        reqDto.setCron("0/1 * * * * ?");
+        JobParamDto jobParamDto = new JobParamDto();
+        jobParamDto.setSymbol("btc_usd");
+        jobParamDto.setContractType("this_week");
+        reqDto.setJobParamDto(jobParamDto);
+        ServiceResult serviceResult = jobManageService.stopFutureJob(reqDto);
+        System.out.println(serviceResult);
+        return JSON.toJSONString(serviceResult);
+    }
+
     @RequestMapping("/testFutureIndex")
     public String testFutureIndex() {
         FutureCurrentIndexReqDto reqDto = new FutureCurrentIndexReqDto();

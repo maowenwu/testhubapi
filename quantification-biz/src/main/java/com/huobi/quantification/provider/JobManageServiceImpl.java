@@ -1,8 +1,11 @@
 package com.huobi.quantification.provider;
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanJobFutureMapper;
+import com.huobi.quantification.dto.FutureJobReqDto;
+import com.huobi.quantification.dto.JobParamDto;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import org.slf4j.Logger;
@@ -21,12 +24,12 @@ public class JobManageServiceImpl implements JobManageService {
     private QuanJobFutureMapper quanJobFutureMapper;
 
     @Override
-    public ServiceResult startFutureJob(int exchangeId, int jobType, Long accountId, String symbol, String contractType, String cron) {
+    public ServiceResult startFutureJob(FutureJobReqDto jobReqDto) {
         ServiceResult result = new ServiceResult();
         try {
-            updateJobFuture(exchangeId, jobType, accountId, symbol, contractType, cron, 1);
+            updateJobFuture(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(), jobReqDto.getCron(), 1);
         } catch (Exception e) {
-            logger.error("启动任务异常exchangeId={}，jobType={}", exchangeId, jobType, e);
+            logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
             result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
             result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
             return result;
@@ -37,12 +40,12 @@ public class JobManageServiceImpl implements JobManageService {
     }
 
     @Override
-    public ServiceResult stopFutureJob(int exchangeId, int jobType, Long accountId, String symbol, String contractType, String cron) {
+    public ServiceResult stopFutureJob(FutureJobReqDto jobReqDto) {
         ServiceResult result = new ServiceResult();
         try {
-            updateJobFuture(exchangeId, jobType, accountId, symbol, contractType, cron, 0);
+            updateJobFuture(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(), jobReqDto.getCron(), 0);
         } catch (Exception e) {
-            logger.error("停止任务异常exchangeId={}，jobType={}", exchangeId, jobType, e);
+            logger.error("停止任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
             result.setCode(ServiceErrorEnum.JOB_STOP_ERROR.getCode());
             result.setMessage(ServiceErrorEnum.JOB_STOP_ERROR.getMessage());
             return result;
@@ -52,14 +55,13 @@ public class JobManageServiceImpl implements JobManageService {
         return result;
     }
 
-    private void updateJobFuture(int exchangeId, int jobType, Long accountId, String symbol, String contractType, String cron, int state) {
+    private void updateJobFuture(int exchangeId, int jobType, JobParamDto jobParamDto, String cron, int state) {
         QuanJobFuture jobFuture = new QuanJobFuture();
         jobFuture.setExchangeId(exchangeId);
         jobFuture.setJobType(jobType);
-        jobFuture.setJobName(genJobName(exchangeId, jobType, accountId, symbol, contractType));
-        jobFuture.setAccountId(accountId);
-        jobFuture.setSymbol(symbol);
-        jobFuture.setContractType(contractType);
+        // JobName需要唯一
+        jobFuture.setJobName(genJobName(exchangeId, jobType, jobParamDto));
+        jobFuture.setJobParam(JSON.toJSONString(jobParamDto));
         jobFuture.setCron(cron);
         jobFuture.setState(state);
         jobFuture.setCreateDate(new Date());
@@ -67,18 +69,12 @@ public class JobManageServiceImpl implements JobManageService {
         quanJobFutureMapper.insertOrUpdate(jobFuture);
     }
 
-    private String genJobName(int exchangeId, int jobType, Long accountId, String symbol, String contractType) {
+    private String genJobName(int exchangeId, int jobType, JobParamDto jobParamDto) {
         StringBuffer buffer = new StringBuffer();
         buffer.append(exchangeId).append("_")
                 .append(jobType).append("_");
-        if (accountId != null) {
-            buffer.append(accountId).append("_");
-        }
-        if (symbol != null) {
-            buffer.append(symbol).append("_");
-        }
-        if (contractType != null) {
-            buffer.append(contractType).append("_");
+        if (jobParamDto != null) {
+            buffer.append(JSON.toJSON(jobParamDto));
         }
         return buffer.toString();
     }

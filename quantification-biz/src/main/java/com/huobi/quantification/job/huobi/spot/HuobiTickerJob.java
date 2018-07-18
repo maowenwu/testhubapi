@@ -1,5 +1,6 @@
 package com.huobi.quantification.job.huobi.spot;
 
+import com.huobi.quantification.dto.JobParamDto;
 import org.quartz.DisallowConcurrentExecution;
 
 import com.huobi.quantification.common.context.ApplicationContextHolder;
@@ -11,12 +12,12 @@ import com.huobi.quantification.service.market.HuobiMarketService;
 public class HuobiTickerJob extends AbstractQuartzJob{
 
 	@Override
-	public void execute(Object data) {
+	public void execute(JobParamDto data) {
 		HuobiMarketService marketHuobiService = ApplicationContextHolder.getContext().getBean(HuobiMarketService.class);
-		if (data instanceof QuanJob) {
+		/*if (data instanceof QuanJob) {
 			QuanJob jobdata = (QuanJob)data;
 			marketHuobiService.updateHuobiTicker(jobdata.getSymbol());
-		}
+		}*/
 	}
 
 }

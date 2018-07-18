@@ -6,10 +6,7 @@
         <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
         <result column="job_type" jdbcType="INTEGER" property="jobType"/>
         <result column="job_name" jdbcType="VARCHAR" property="jobName"/>
-        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
-        <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
-        <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
-        <result column="ip_id" jdbcType="VARCHAR" property="ipId"/>
+        <result column="job_param" jdbcType="VARCHAR" property="jobParam"/>
         <result column="cron" jdbcType="VARCHAR" property="cron"/>
         <result column="state" jdbcType="INTEGER" property="state"/>
         <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
@@ -21,26 +18,27 @@
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.QuanJobFuture">
     insert into quan_job_future (id, exchange_id, job_type, 
-      job_name, account_id, symbol, 
-      contract_type, ip_id, cron, 
+      job_name, job_param, cron, 
       state, update_date, create_date
       )
     values (#{id,jdbcType=INTEGER}, #{exchangeId,jdbcType=INTEGER}, #{jobType,jdbcType=INTEGER}, 
-      #{jobName,jdbcType=VARCHAR}, #{accountId,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR}, 
-      #{contractType,jdbcType=VARCHAR}, #{ipId,jdbcType=VARCHAR}, #{cron,jdbcType=VARCHAR}, 
+      #{jobName,jdbcType=VARCHAR}, #{jobParam,jdbcType=VARCHAR}, #{cron,jdbcType=VARCHAR}, 
       #{state,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}
       )
   </insert>
-
+    <insert id="insertOrUpdate">
+    INSERT INTO quan_job_future
+    (`exchange_id`, `job_type`, `job_name`, `job_param`, `cron`, `state`, `update_date`, `create_date`)
+    VALUES (#{exchangeId}, #{jobType}, #{jobName}, #{jobParam}, #{cron}, #{state}, #{createDate}, #{updateDate})
+    ON DUPLICATE KEY UPDATE `exchange_id`=#{exchangeId},`job_type`=#{jobType},`job_name`=#{jobName},`job_param`=#{jobParam},
+    `cron`=#{cron},`state`=#{state},`update_date`=#{updateDate}
+  </insert>
     <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanJobFuture">
     update quan_job_future
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
       job_type = #{jobType,jdbcType=INTEGER},
       job_name = #{jobName,jdbcType=VARCHAR},
-      account_id = #{accountId,jdbcType=BIGINT},
-      symbol = #{symbol,jdbcType=VARCHAR},
-      contract_type = #{contractType,jdbcType=VARCHAR},
-      ip_id = #{ipId,jdbcType=VARCHAR},
+      job_param = #{jobParam,jdbcType=VARCHAR},
       cron = #{cron,jdbcType=VARCHAR},
       state = #{state,jdbcType=INTEGER},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
@@ -48,28 +46,14 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, exchange_id, job_type, job_name, account_id, symbol, contract_type, ip_id, 
-    cron, state, update_date, create_date
+    select id, exchange_id, job_type, job_name, job_param, cron, state, update_date, 
+    create_date
     from quan_job_future
     where id = #{id,jdbcType=INTEGER}
   </select>
     <select id="selectAll" resultMap="BaseResultMap">
-    select id, exchange_id, job_type, job_name, account_id, symbol, contract_type, ip_id, 
-    cron, state, update_date, create_date
+    select id, exchange_id, job_type, job_name, job_param, cron, state, update_date, 
+    create_date
     from quan_job_future
   </select>
-
-    <insert id="insertOrUpdate">
-      insert into quan_job_future (id, exchange_id, job_type,
-      job_name, account_id, symbol,
-      contract_type, ip_id, cron,
-      state, update_date, create_date
-      )
-    values (#{id,jdbcType=INTEGER}, #{exchangeId,jdbcType=INTEGER}, #{jobType,jdbcType=INTEGER},
-      #{jobName,jdbcType=VARCHAR}, #{accountId,jdbcType=BIGINT}, #{symbol,jdbcType=VARCHAR},
-      #{contractType,jdbcType=VARCHAR}, #{ipId,jdbcType=VARCHAR}, #{cron,jdbcType=VARCHAR},
-      #{state,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}, #{createDate,jdbcType=TIMESTAMP}
-      ) ON DUPLICATE KEY UPDATE exchange_id=#{exchangeId},job_type=#{jobType},job_name=#{jobName},
-      account_id=#{accountId},symbol=#{symbol},contract_type=#{contractType},cron=#{cron},state=#{state},update_date=#{updateDate}
-  </insert>
 </mapper>

@@ -1,12 +1,13 @@
 package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dto.FutureJobReqDto;
 
 public interface JobManageService {
 
 
-    ServiceResult startFutureJob(int exchangeId, int jobType, Long accountId, String symbol, String contractType, String cron);
+    ServiceResult startFutureJob(FutureJobReqDto jobReqDto);
 
-    ServiceResult stopFutureJob(int exchangeId, int jobType, Long accountId, String symbol, String contractType, String cron);
+    ServiceResult stopFutureJob(FutureJobReqDto jobReqDto);
 
 }
