@@ -116,7 +116,7 @@ public class RedisServiceImpl implements RedisService {
 
 	@Override
 	public void saveHuobiAccountAsset(List<QuanAccountAsset> quanAccountAsset, long accountId, int exchangeId) {
-		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.accout.huobi.accountasset." + exchangeId);
+		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.huobi.accountasset." + exchangeId);
 		map.put(accountId, quanAccountAsset);
 	}
 
@@ -194,7 +194,7 @@ public class RedisServiceImpl implements RedisService {
 
 	@Override
 	public List<QuanAccountAsset> getSpotUserInfo(long accountId, int exchangeId) {
-		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.accout.huobi.accountasset." + exchangeId);
+		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.huobi.accountasset." + exchangeId);
 		return map.get(accountId);
 	}
 }

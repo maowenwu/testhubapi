@@ -2,6 +2,7 @@ package com.huobi.quantification.provider;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -81,7 +82,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 		respDto.setTs(assets.get(0).getTs());
 		List<Map<String, SpotBalanceRespDto.DataBean>> data = new ArrayList<>();
 		for (QuanAccountAsset quanAccountAsset : assets) {
-			Map<String, SpotBalanceRespDto.DataBean> dataBean = new ConcurrentHashMap<>();
+			Map<String, SpotBalanceRespDto.DataBean> dataBean = new HashMap<>();
 			dataBean.put(quanAccountAsset.getCoin(), convertToDto(quanAccountAsset));
 			data.add(dataBean);
 		}
