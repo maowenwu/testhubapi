@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -78,15 +79,17 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 	private SpotBalanceRespDto parseHuobiSpotBalanceResp(List<QuanAccountAsset> assets) {
 		SpotBalanceRespDto respDto = new SpotBalanceRespDto();
 		respDto.setTs(assets.get(0).getTs());
-		Map<String, SpotBalanceRespDto.DataBean> data = new ConcurrentHashMap<>();
+		List<Map<String, SpotBalanceRespDto.DataBean>> data = new ArrayList<>();
 		for (QuanAccountAsset quanAccountAsset : assets) {
-			data.put(quanAccountAsset.getCoin(), convertToDto(quanAccountAsset));
+			Map<String, SpotBalanceRespDto.DataBean> dataBean = new ConcurrentHashMap<>();
+			dataBean.put(quanAccountAsset.getCoin(), convertToDto(quanAccountAsset));
+			data.add(dataBean);
 		}
 		respDto.setData(data);
 		return respDto;
 	}
 
-	private DataBean convertToDto(QuanAccountAsset quanAccountAsset) {
+	private SpotBalanceRespDto.DataBean convertToDto(QuanAccountAsset quanAccountAsset) {
 		SpotBalanceRespDto.DataBean respDto = new SpotBalanceRespDto.DataBean();
 		respDto.setAvailable(quanAccountAsset.getAvailable());
 		respDto.setFrozen(quanAccountAsset.getFrozen());

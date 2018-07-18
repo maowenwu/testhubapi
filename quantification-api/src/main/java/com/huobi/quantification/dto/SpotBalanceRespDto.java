@@ -3,13 +3,12 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
-
-import com.huobi.quantification.dto.FutureBalanceRespDto.DataBean;
 
 public class SpotBalanceRespDto implements Serializable{
 	private Date ts;
-    private Map<String,DataBean> data;
+    private List<Map<String, DataBean>> data;
 
     public Date getTs() {
         return ts;
@@ -19,16 +18,16 @@ public class SpotBalanceRespDto implements Serializable{
         this.ts = ts;
     }
 
-    public Map<String, DataBean> getData() {
-        return data;
-    }
+	public List<Map<String, DataBean>> getData() {
+		return data;
+	}
 
-    public void setData(Map<String, DataBean> data) {
-        this.data = data;
-    }
-    
-    public static class DataBean implements Serializable{
-    	private BigDecimal total;
+	public void setData(List<Map<String, DataBean>> data) {
+		this.data = data;
+	}
+
+	public static class DataBean implements Serializable{
+		private BigDecimal total;
     	private BigDecimal available;
     	private BigDecimal frozen;
     	

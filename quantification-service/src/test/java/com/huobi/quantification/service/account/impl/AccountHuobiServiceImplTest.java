@@ -1,6 +1,7 @@
 package com.huobi.quantification.service.account.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +59,7 @@ public class AccountHuobiServiceImplTest {
 		quanAccountMapper.insert(quanAccount);
 		QuanAccountAsset quanAccountAsset = new QuanAccountAsset();
 		QuanAccountAsset tempAccount = new QuanAccountAsset();
+		ArrayList<QuanAccountAsset> assets = new ArrayList<>();
 		for (int i = 0; i < jsarr.size(); i++) {
 			JSONObject list = jsarr.getJSONObject(i);
 			if (i > 0 && tempAccount.getCoin().equals(list.getString("currency"))) {
@@ -65,18 +67,20 @@ public class AccountHuobiServiceImplTest {
 					quanAccountAsset.setFrozen(new BigDecimal(list.getString("balance")));
 					quanAccountAsset.setTotal(quanAccountAsset.getFrozen().add(quanAccountAsset.getAvailable()));
 					quanAccountAssetMapper.insert(quanAccountAsset);
+					assets.add(quanAccountAsset);
 				}
 				continue;
 			}
 			quanAccountAsset.setAccountId(quanAccount.getAccountSourceId());
 			quanAccountAsset.setCoin(list.getString("currency"));
-			quanAccountAsset.setDataUpdate(new Date());
 			quanAccountAsset.setTs(new Date());
+			quanAccountAsset.setDataUpdate(new Date());
 			if (list.getString("type").equals("trade")) {
 				quanAccountAsset.setAvailable(new BigDecimal(list.getString("balance")));
 			}
 			tempAccount = quanAccountAsset;
 		}
+		redisService.saveHuobiAccountAsset(assets, quanAccount.getAccountSourceId(), quanAccount.getExchangeId());
 	}
 
 	/**
