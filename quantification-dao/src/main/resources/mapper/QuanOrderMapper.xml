@@ -90,10 +90,10 @@
 				and order_account_id=#{orderAccountId}
 			</if>
 			<if test="orderSourceId != null">
-				and order_account_id=#{orderSourceId}
+				and order_source_id=#{orderSourceId}
 			</if>
 			<if test="innerId != null">
-				and order_inner_id=#{innerId}
+				and id=#{innerId}
 			</if>			
 			<if test="orderType != null">
 				and order_type=#{orderType}
