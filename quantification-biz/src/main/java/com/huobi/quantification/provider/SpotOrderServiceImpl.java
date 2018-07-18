@@ -55,18 +55,9 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		List<SpotOrderRespDto> resultList = new ArrayList<>();
 		ServiceResult<List<SpotOrderRespDto>> serviceResult = new ServiceResult<>();
 		QuanOrder entity = new QuanOrder();
-		Integer exchangeID=reqDto.getExchangeID();
-		Long accountID=reqDto.getAccountID();
-		Long [] innerOrderIDs=reqDto.getInnerOrderID();
-		if(null==exchangeID || null==accountID || ArrayUtil.isEmpty(innerOrderIDs) ) {
-			serviceResult.setCode(ServiceErrorEnum.PARAM_MISS.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.PARAM_MISS.getMessage());
-			serviceResult.setData(null);
-			return serviceResult;
-		}
 		entity.setExchangeId(reqDto.getExchangeID());
 		entity.setOrderAccountId(reqDto.getAccountID());
-		for (int i = 0; i < reqDto.getInnerOrderID().length; i++) {
+		for (int i = 0; ArrayUtil.isNotEmpty(reqDto.getInnerOrderID()) && i < reqDto.getInnerOrderID().length; i++) {
 			// 根据三个条件查询订单 ,一个InnerOrderID只会对应一个订单信息（唯一）
 			entity.setId(reqDto.getInnerOrderID()[i]);
 			List<QuanOrder> list = quanOrderMapper.selectList(entity);
