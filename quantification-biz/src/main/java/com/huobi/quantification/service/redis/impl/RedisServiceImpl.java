@@ -169,7 +169,7 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public void saveHuobiDepth(int exchangeId, String symbol, QuanDepth depth, List<QuanDepthDetail> list) {
+	public void saveHuobiDepth(int exchangeId, String symbol, List<QuanDepthDetail> list) {
 		RMap<String, List<QuanDepthDetail>> map = client.getMap("quan.market.spot.depth." + exchangeId);
 		map.put(symbol, list);
 	}

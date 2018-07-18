@@ -29,7 +29,7 @@ public interface RedisService {
 
     void saveHuobiTicker(int exchangeId, String symbol, QuanTicker ticker);
 
-    void saveHuobiDepth(int exchangeId, String symbol, QuanDepth depth, List<QuanDepthDetail> list);
+    void saveHuobiDepth(int exchangeId, String symbol, List<QuanDepthDetail> list);
 
     List<QuanDepthDetail> getHuobiDepth(int exchangeId, String symbol);
 

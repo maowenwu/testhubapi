@@ -14,6 +14,6 @@ public interface SpotMarketService {
 
 	ServiceResult<SpotDepthRespDto> getSpotDepth(SpotDepthReqDto depthReqDto);
 	
-	ServiceResult<SpotKlineRespDto> getSpotKline(SpotKlineReqDto depthReqDto);
+	ServiceResult<SpotKlineRespDto> getSpotKline(SpotKlineReqDto klineReqDto);
 	
 }

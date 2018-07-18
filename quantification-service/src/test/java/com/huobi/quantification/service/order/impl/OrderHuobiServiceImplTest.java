@@ -47,40 +47,40 @@ public class OrderHuobiServiceImplTest {
 		createOrderReq.type = CreateOrderRequest.OrderType.BUY_LIMIT;
 		createOrderReq.source = "api";
 		String result = httpService.doHuobiPost(4232061L,HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
-		HuobiSpotOrderResponse parseObject = JSON.parseObject(result, HuobiSpotOrderResponse.class);
-		if (parseObject.getStatus().equals("ok")) {
-			System.err.println(parseObject.getStatus());
-			System.err.println(parseObject.getOrderId());
-		}else {
-			System.err.println(parseObject.getStatus());
-			System.err.println(parseObject.getErrorCode());
-		}
-//		JSONObject parseObject = JSON.parseObject(result);
-//		if (parseObject.getString("status").equals("ok")) {
-//			Map<String, String> params = new HashMap<>();
-//			String data = parseObject.getString("data");
-//			params.put("order-id", data);
-//			String body = httpService.doHuobiGet(HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", data),params);
-//			JSONObject jsonObject = JSON.parseObject(body);
-//			JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
-//			QuanOrder quanOrder = new QuanOrder();
-//			quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
-//			quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
-//			quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));
-//			quanOrder.setOrderAmount(new BigDecimal(jsonObjectdata.getString("amount")));
-//			quanOrder.setOrderPrice(new BigDecimal(jsonObjectdata.getString("price")));
-//			quanOrder.setOrderCreatedAt(jsonObjectdata.getDate("created-at"));
-//			quanOrder.setOrderType(jsonObjectdata.getString("type"));
-//			quanOrder.setOrderFieldAmount(new BigDecimal(jsonObjectdata.getString("field-amount")));
-//			quanOrder.setOrderFieldCashAmount(new BigDecimal(jsonObjectdata.getString("field-cash-amount")));
-//			quanOrder.setOrderFieldFees(new BigDecimal(jsonObjectdata.getString("field-fees")));
-//			quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
-//			quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
-//			quanOrder.setOrderSource(jsonObjectdata.getString("source"));
-//			quanOrder.setOrderState(jsonObjectdata.getString("state"));
-//			quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
-//			quanOrderMapper.insert(quanOrder);
+//		HuobiSpotOrderResponse parseObject = JSON.parseObject(result, HuobiSpotOrderResponse.class);
+//		if (parseObject.getStatus().equals("ok")) {
+//			System.err.println(parseObject.getStatus());
+//			System.err.println(parseObject.getOrderId());
+//		}else {
+//			System.err.println(parseObject.getStatus());
+//			System.err.println(parseObject.getErrorCode());
 //		}
+		JSONObject parseObject = JSON.parseObject(result);
+		if (parseObject.getString("status").equals("ok")) {
+			Map<String, String> params = new HashMap<>();
+			String data = parseObject.getString("data");
+			params.put("order-id", data);
+			String body = httpService.doHuobiGet(4232061L,HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", data),params);
+			JSONObject jsonObject = JSON.parseObject(body);
+			JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+			QuanOrder quanOrder = new QuanOrder();
+			quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
+			quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
+			quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));
+			quanOrder.setOrderAmount(new BigDecimal(jsonObjectdata.getString("amount")));
+			quanOrder.setOrderPrice(new BigDecimal(jsonObjectdata.getString("price")));
+			quanOrder.setOrderCreatedAt(jsonObjectdata.getDate("created-at"));
+			quanOrder.setOrderType(jsonObjectdata.getString("type"));
+			quanOrder.setOrderFieldAmount(new BigDecimal(jsonObjectdata.getString("field-amount")));
+			quanOrder.setOrderFieldCashAmount(new BigDecimal(jsonObjectdata.getString("field-cash-amount")));
+			quanOrder.setOrderFieldFees(new BigDecimal(jsonObjectdata.getString("field-fees")));
+			quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
+			quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
+			quanOrder.setOrderSource(jsonObjectdata.getString("source"));
+			quanOrder.setOrderState(jsonObjectdata.getString("state"));
+			quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
+			quanOrderMapper.insert(quanOrder);
+		}
 	}
 	
 	@Test

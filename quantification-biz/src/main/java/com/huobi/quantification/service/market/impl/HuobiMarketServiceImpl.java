@@ -145,7 +145,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		quanDepth.setBaseCoin(baseCoin);
 		quanDepth.setQuoteCoin(quoteCoin);
 		quanDepth.setDepthTs(jsonObject.getDate("ts"));
-		quanDepthMapper.insert(quanDepth);
+		quanDepthMapper.insertAndGetId(quanDepth);
 		List<QuanDepthDetail> list = new ArrayList<>();
         JSONArray asks = jsonObject.getJSONObject("tick").getJSONArray("asks");
         for (int i = 0; i < asks.size(); i++) {
@@ -172,8 +172,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         for (QuanDepthDetail detail : list) {
             quanDepthDetailMapper.insert(detail);
         }
-		redisService.saveHuobiDepth(ExchangeEnum.HUOBI.getExId(),symbol, quanDepth, list);
-		
+		redisService.saveHuobiDepth(ExchangeEnum.HUOBI.getExId(),symbol, list);
 	}
 
 	public Object getKline(String symbol, String period, String size) {
