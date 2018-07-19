@@ -191,14 +191,41 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	}
 
 	@Override
-	public void updateHuobiOrder(Long accountId, Long orderId) {
+	public void updateHuobiOrder(Long accountId, String symbol) {
 		Stopwatch started = Stopwatch.createStarted();
-		logger.info("[HuobiOrder][orderId={}]任务开始", orderId);
+		logger.info("[HuobiOrder][accountId={}]任务开始", accountId);
+		List<Long> listIds = quanOrderMapper.selectByOrderInfo(accountId, "submitting" , symbol);
 		Map<String, String> params = new HashMap<>();
-		params.put("order-id", orderId + "");
-		String body = httpService.doHuobiGet(accountId, HttpConstant.HUOBI_ORDERDETAIL, params);
-		parseAndSaveOrderInfo(body);
-		logger.info("[HuobiOrder][orderId={}]任务结束，耗时：" + started, orderId);
+		for (Long orderId : listIds) {
+			params.put("order-id", orderId + "");
+			String body = httpService.doHuobiGet(accountId, HttpConstant.HUOBI_ORDERDETAIL, params);
+			updateHuobiOrderInfo(body, orderId);
+		}
+		logger.info("[HuobiOrder][accountId={}]任务结束，耗时：" + started, accountId);
+	}
+
+	private void updateHuobiOrderInfo(String body, Long orderId) {
+		JSONObject jsonObject = JSON.parseObject(body);
+		JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+		QuanOrder quanOrder = new QuanOrder();
+		quanOrder.setExchangeId(ExchangeEnum.HUOBI.getExId());
+		quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
+		quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
+		quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));
+		quanOrder.setOrderAmount(new BigDecimal(jsonObjectdata.getString("amount")));
+		quanOrder.setOrderPrice(new BigDecimal(jsonObjectdata.getString("price")));
+		quanOrder.setOrderCreatedAt(jsonObjectdata.getDate("created-at"));
+		quanOrder.setOrderType(jsonObjectdata.getString("type"));
+		quanOrder.setOrderFieldAmount(new BigDecimal(jsonObjectdata.getString("field-amount")));
+		quanOrder.setOrderFieldCashAmount(new BigDecimal(jsonObjectdata.getString("field-cash-amount")));
+		quanOrder.setOrderFieldFees(new BigDecimal(jsonObjectdata.getString("field-fees")));
+		quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
+		quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
+		quanOrder.setOrderSource(jsonObjectdata.getString("source"));
+		quanOrder.setOrderState(jsonObjectdata.getString("state"));
+		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
+		quanOrderMapper.updateOrderByOrderId(quanOrder);
+		redisService.saveHuobiOrder(quanOrder);
 	}
 
 	/**

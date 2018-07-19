@@ -13,7 +13,7 @@ public interface HuobiOrderService {
 	 * @param accountId
 	 * @param orderId
 	 */
-	void updateHuobiOrder(Long accountId, Long orderId);
+	void updateHuobiOrder(Long accountId, String symbol);
 	  /**
      * 获取订单信息
      *
