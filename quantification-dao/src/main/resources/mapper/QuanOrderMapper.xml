@@ -92,9 +92,12 @@
 			<if test="orderSourceId != null">
 				and order_source_id=#{orderSourceId}
 			</if>
-			<if test="innerId != null">
-				and id=#{innerId}
-			</if>			
+			<if test="id != null">
+				and id=#{id}
+			</if>	
+			<if test="orderState != null">
+				and order_state=#{orderState}
+			</if>					
 			<if test="orderType != null">
 				and order_type=#{orderType}
 			</if>

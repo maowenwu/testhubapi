@@ -19,28 +19,28 @@ public interface SpotOrderService {
 	 * 正常情况下，返回结果中，一个InnerOrderID只会对应一个订单信息（唯一）
 	 * @return
 	 */
-	ServiceResult<List<SpotOrderRespDto>> getOrderByInnerOrderID(SpotOrderReqInnerDto reqDto);
+	ServiceResult<Map<String,Object>> getOrderByInnerOrderID(SpotOrderReqInnerDto reqDto);
 
 	/**
 	 * 查询订单-根据交易所orderid 
 	 * 正常情况下，返回结果中，一个exOrderID可能会对应多个订单信息
 	 * @return
 	 */
-	ServiceResult<List<SpotOrderRespDto>> getOrderByExOrderID(SpotOrderReqExchangeDto reqDto);
+	ServiceResult<Map<String,Object>> getOrderByExOrderID(SpotOrderReqExchangeDto reqDto);
 
 	/**
 	 * 查询订单-根据关联orderid
 	 *正常情况下，返回结果中，一个linkOrderID可能对应多个订单（linkOrderID不唯一）
 	 * @return
 	 */
-	ServiceResult<List<SpotOrderRespDto>> getOrderByLinkOrderID(SpotOrderReqLinkDto reqDto);
+	ServiceResult<Map<String,Object>> getOrderByLinkOrderID(SpotOrderReqLinkDto reqDto);
 
 	/**
 	 * 查询订单-根据订单状态
 	 *正常情况下，返回结果中，一个InnerOrderID只会对应一个订单信息（唯一）
 	 * @return
 	 */
-	ServiceResult<SpotOrderRespDto> getOrderByStatus(SpotOrderReqStatusDto reqDto);
+	ServiceResult<List<SpotOrderRespDto>> getOrderByStatus(SpotOrderReqStatusDto reqDto);
 	
 	/**
 	 * 下单接口

@@ -14,7 +14,9 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.SpotOrderReqCancelDto;
+import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
+import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
 import com.huobi.quantification.provider.SpotOrderServiceImpl;
 import com.xiaoleilu.hutool.json.JSONObject;
@@ -29,9 +31,39 @@ public class SpotOrderServiceImplTest {
 	@Test
 	public void getOrderByInnerOrderID() {
 		SpotOrderReqInnerDto entity = new SpotOrderReqInnerDto();
-		ServiceResult<List<SpotOrderRespDto>> result = spotOrderServiceImpl.getOrderByInnerOrderID(entity);
+		entity.setExchangeID(0);
+		entity.setAccountID(4295363l);
+		Long[] innerOrderID = { 35L, 36L };
+		entity.setInnerOrderID(innerOrderID);
+		ServiceResult<Map<String, Object>> result = spotOrderServiceImpl.getOrderByInnerOrderID(entity);
 		System.out.println("=====code:" + result.getCode());
-		System.out.println("=====list:" + result.getData());
+		System.out.println("=====size:" + result.getData().size());
+		System.out.println("====result:" + JSON.toJSONString(result));
+	}
+
+	@Test
+	public void getOrderByStatus() {
+		SpotOrderReqStatusDto entity = new SpotOrderReqStatusDto();
+		entity.setExchangeID(0);
+		entity.setAccountID(4295363l);
+		entity.setStatus("submitted");
+		ServiceResult<List<SpotOrderRespDto>> result = spotOrderServiceImpl.getOrderByStatus(entity);
+		System.out.println("=====code:" + result.getCode());
+		System.out.println("=====size:" + result.getData().size());
+		System.out.println("====result:" + JSON.toJSONString(result));
+	}
+
+	@Test
+	public void getOrderByExOrderID() {
+		SpotOrderReqExchangeDto entity = new SpotOrderReqExchangeDto();
+		entity.setExchangeID(0);
+		entity.setAccountID(4295363l);
+		Long[] exOrderID = { 8010718329L, 36L };
+		entity.setExOrderID(exOrderID);
+		ServiceResult<Map<String, Object>> result = spotOrderServiceImpl.getOrderByExOrderID(entity);
+		System.out.println("=====code:" + result.getCode());
+		System.out.println("=====size:" + result.getData().size());
+		System.out.println("====result:" + JSON.toJSONString(result));
 	}
 
 	/**
@@ -78,23 +110,23 @@ public class SpotOrderServiceImplTest {
 		System.out.println("1==============");
 		Map<String, Object> resultMap = new HashMap<>();
 		String param = "{\"status\":\"ok\",\"data\":{\"success\":[],\"failed\":[{\"err-msg\":\"the order state is error\",\"order-id\":\"7996038802\",\"err-code\":\"order-orderstate-error\"},{\"err-msg\":\"the order state is error\",\"order-id\":\"7996039844\",\"err-code\":\"order-orderstate-error\"},{\"err-msg\":\"the order state is error\",\"order-id\":\"7996040440\",\"err-code\":\"order-orderstate-error\"}]}}";
-		Map maps = (Map)JSON.parse(param);
-		Object object=maps.get("data");
-		Map<String, Object> objectMap = (Map<String, Object>)JSON.parse(object.toString());
-		List successMap = (List)JSON.parse(objectMap.get("success").toString());
-		List<Map> failMap =(List<Map>)JSON.parse(objectMap.get("failed").toString());
-		for(Map tempMap:failMap) {
-			tempMap.put("innerOrderID",tempMap.get("order-id"));
-			tempMap.put("error_code",tempMap.get("err-code"));
+		Map maps = (Map) JSON.parse(param);
+		Object object = maps.get("data");
+		Map<String, Object> objectMap = (Map<String, Object>) JSON.parse(object.toString());
+		List successMap = (List) JSON.parse(objectMap.get("success").toString());
+		List<Map> failMap = (List<Map>) JSON.parse(objectMap.get("failed").toString());
+		for (Map tempMap : failMap) {
+			tempMap.put("innerOrderID", tempMap.get("order-id"));
+			tempMap.put("error_code", tempMap.get("err-code"));
 			tempMap.remove("order-id");
 			tempMap.remove("err-code");
 			tempMap.remove("err-msg");
 		}
 		resultMap.put("success", successMap);
 		resultMap.put("fail", failMap);
-		System.out.println("=========="+successMap);
-		System.out.println("=========="+failMap);
-		System.out.println("=========="+resultMap);
+		System.out.println("==========" + successMap);
+		System.out.println("==========" + failMap);
+		System.out.println("==========" + resultMap);
 
 	}
 

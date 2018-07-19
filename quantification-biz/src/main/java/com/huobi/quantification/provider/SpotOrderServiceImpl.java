@@ -36,7 +36,8 @@ import com.huobi.quantification.service.order.HuobiOrderService;
 import com.xiaoleilu.hutool.json.JSONObject;
 import com.xiaoleilu.hutool.json.JSONUtil;
 import com.xiaoleilu.hutool.util.ArrayUtil;
-import com.xiaoleilu.hutool.util.CollectionUtil;
+
+import io.netty.util.internal.StringUtil;
 
 @Service
 public class SpotOrderServiceImpl implements SpotOrderService {
@@ -51,76 +52,91 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	private HttpService httpService;
 
 	@Override
-	public ServiceResult<List<SpotOrderRespDto>> getOrderByInnerOrderID(SpotOrderReqInnerDto reqDto) {
-		List<SpotOrderRespDto> resultList = new ArrayList<>();
-		ServiceResult<List<SpotOrderRespDto>> serviceResult = new ServiceResult<>();
+	public ServiceResult<Map<String, Object>> getOrderByInnerOrderID(SpotOrderReqInnerDto reqDto) {
+		ServiceResult<Map<String, Object>> serviceResult = new ServiceResult<>();
+		Map<String, Object> map = new HashMap<>();
 		QuanOrder entity = new QuanOrder();
-        Integer exchangeID=reqDto.getExchangeID();
-        Long accountID=reqDto.getAccountID();
-        Long [] innerOrderIDs=reqDto.getInnerOrderID();
-        if(null==exchangeID || null==accountID || ArrayUtil.isEmpty(innerOrderIDs) ) {
-            serviceResult.setCode(ServiceErrorEnum.PARAM_MISS.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.PARAM_MISS.getMessage());
-            serviceResult.setData(null);
-            return serviceResult;
-        }
+		Integer exchangeID = reqDto.getExchangeID();
+		Long accountID = reqDto.getAccountID();
+		Long[] innerOrderIDs = reqDto.getInnerOrderID();
+		if (null == exchangeID || null == accountID || ArrayUtil.isEmpty(innerOrderIDs)) {
+			serviceResult.setCode(ServiceErrorEnum.PARAM_MISS.getCode());
+			serviceResult.setMessage(ServiceErrorEnum.PARAM_MISS.getMessage());
+			serviceResult.setData(null);
+			return serviceResult;
+		}
 		entity.setExchangeId(reqDto.getExchangeID());
 		entity.setOrderAccountId(reqDto.getAccountID());
 		for (int i = 0; ArrayUtil.isNotEmpty(reqDto.getInnerOrderID()) && i < reqDto.getInnerOrderID().length; i++) {
 			// 根据三个条件查询订单 ,一个InnerOrderID只会对应一个订单信息（唯一）
 			entity.setId(reqDto.getInnerOrderID()[i]);
 			List<QuanOrder> list = quanOrderMapper.selectList(entity);
-			if (CollectionUtil.isNotEmpty(list)) {
-				SpotOrderRespDto result = copySpotOrderToSpotOrderRespDto(list.get(0));
-				resultList.add(result);
-			}
+			List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
+			map.put(String.valueOf(reqDto.getInnerOrderID()[i]), result);
 		}
+		Map<String, Object> resultMap = new HashMap<>();
+		resultMap.put("status", "ok");
+		resultMap.put("data", map);
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-		serviceResult.setData(resultList);
+		serviceResult.setData(resultMap);
 		return serviceResult;
 	}
 
 	@Override
-	public ServiceResult<List<SpotOrderRespDto>> getOrderByExOrderID(SpotOrderReqExchangeDto reqDto) {
-		List<SpotOrderRespDto> resultList = new ArrayList<>();
-		ServiceResult<List<SpotOrderRespDto>> serviceResult = new ServiceResult<>();
+	public ServiceResult<Map<String, Object>> getOrderByExOrderID(SpotOrderReqExchangeDto reqDto) {
+		Map<String, Object> map = new HashMap<>();
+		ServiceResult<Map<String, Object>> serviceResult = new ServiceResult<>();
 		QuanOrder entity = new QuanOrder();
-		entity.setExchangeId(reqDto.getExchangeID());
-		entity.setOrderAccountId(reqDto.getAccountID());
-		for (int i = 0; ArrayUtil.isNotEmpty(reqDto.getExOrderID()) && i < reqDto.getExOrderID().length; i++) {
+		Integer exchangeID = reqDto.getExchangeID();
+		Long accountID = reqDto.getAccountID();
+		Long[] exOrderIDs = reqDto.getExOrderID();
+		if (null == exchangeID || null == accountID || ArrayUtil.isEmpty(exOrderIDs)) {
+			serviceResult.setCode(ServiceErrorEnum.PARAM_MISS.getCode());
+			serviceResult.setMessage(ServiceErrorEnum.PARAM_MISS.getMessage());
+			serviceResult.setData(null);
+			return serviceResult;
+		}
+		entity.setExchangeId(exchangeID);
+		entity.setOrderAccountId(accountID);
+		for (int i = 0; i < reqDto.getExOrderID().length; i++) {
 			// 根据三个条件查询订单 ,一个exOrderID可能会对应多个订单信息
 			entity.setOrderSourceId(reqDto.getExOrderID()[i]);
 			List<QuanOrder> list = quanOrderMapper.selectList(entity);
-			if (CollectionUtil.isNotEmpty(list)) {
-				List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
-				resultList.addAll(result);
-			}
+			List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
+			map.put(String.valueOf(reqDto.getExOrderID()[i]), result);
 		}
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-		serviceResult.setData(resultList);
+		serviceResult.setData(map);
 		return serviceResult;
 	}
 
 	@Override
-	public ServiceResult<List<SpotOrderRespDto>> getOrderByLinkOrderID(SpotOrderReqLinkDto reqDto) {
+	public ServiceResult<Map<String,Object>> getOrderByLinkOrderID(SpotOrderReqLinkDto reqDto) {
 		return null;
 	}
 
 	@Override
-	public ServiceResult<SpotOrderRespDto> getOrderByStatus(SpotOrderReqStatusDto reqDto) {
-		ServiceResult<SpotOrderRespDto> serviceResult = new ServiceResult<>();
+	public ServiceResult<List<SpotOrderRespDto>> getOrderByStatus(SpotOrderReqStatusDto reqDto) {
+		ServiceResult<List<SpotOrderRespDto>> serviceResult = new ServiceResult<>();
 		QuanOrder entity = new QuanOrder();
-		entity.setExchangeId(reqDto.getExchangeID());
-		entity.setOrderAccountId(reqDto.getAccountID());
-		entity.setOrderState(reqDto.getStatus());
+		Integer exchangeID = reqDto.getExchangeID();
+		Long accountID = reqDto.getAccountID();
+		String status=reqDto.getStatus();
+		if (null == exchangeID || null == accountID ||StringUtil.isNullOrEmpty(status)) {
+			serviceResult.setCode(ServiceErrorEnum.PARAM_MISS.getCode());
+			serviceResult.setMessage(ServiceErrorEnum.PARAM_MISS.getMessage());
+			serviceResult.setData(null);
+			return serviceResult;
+		}
+		entity.setExchangeId(exchangeID);
+		entity.setOrderAccountId(accountID);
+		entity.setOrderState(status);
 		// 根据三个条件查询订单 ,正常情况下，返回结果中，一个InnerOrderID只会对应一个订单信息（唯一）
 		List<QuanOrder> list = quanOrderMapper.selectList(entity);
-		if (CollectionUtil.isNotEmpty(list)) {
-			SpotOrderRespDto result = copySpotOrderToSpotOrderRespDto(list.get(0));
-			serviceResult.setData(result);
-		}
+		List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
+		serviceResult.setData(result);
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		return serviceResult;
@@ -231,9 +247,9 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		for (int i = 0; i < orderList.size(); i++) {
 			JSONObject json = JSONUtil.parseObj(orderList.get(i));
 			QuanOrder entity = new QuanOrder();
-			Long innerOrderID=json.getLong("innerOrderID");
-			Long exOrderID=json.getLong("exOrderID");
-			if(null==innerOrderID && null==exOrderID) {//三种orderID至少填写一种 ,linkId待定
+			Long innerOrderID = json.getLong("innerOrderID");
+			Long exOrderID = json.getLong("exOrderID");
+			if (null == innerOrderID && null == exOrderID) {// 三种orderID至少填写一种 ,linkId待定
 				continue;
 			}
 			entity.setId(innerOrderID);
@@ -246,62 +262,62 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			}
 		}
 		com.alibaba.fastjson.JSONObject parseObject = null;
-		if (reqDto.isSync()) {//暂时只处理同步
-		if (!reqDto.isParallel()) {//单个撤销订单
-			for (Long tempOrderId : orderIds) {
-				String body = "";
-				try {
-					body = httpService.doHuobiPost(reqDto.getAccountID(),
-							HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", String.valueOf(tempOrderId)),
-							null);
-					Thread.sleep(reqDto.getTimeInterval() == null ? 100L : reqDto.getTimeInterval());
-					logger.info("订单号:{}取消订单返回的结果为:{}", String.valueOf(tempOrderId), body);
-					parseObject = JSON.parseObject(body);
-					errorCode = parseObject.getString("err-code");
-				} catch (Exception e) {
-					logger.error("订单号:{}取消订单发生了异常:{}", String.valueOf(tempOrderId), e);
-					errorCode = String.valueOf(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
+		if (reqDto.isSync()) {// 暂时只处理同步
+			if (!reqDto.isParallel()) {// 单个撤销订单
+				for (Long tempOrderId : orderIds) {
+					String body = "";
+					try {
+						body = httpService.doHuobiPost(reqDto.getAccountID(), HttpConstant.HUOBI_SUBMITCANCEL
+								.replaceAll("\\{order-id\\}", String.valueOf(tempOrderId)), null);
+						Thread.sleep(reqDto.getTimeInterval() == null ? 100L : reqDto.getTimeInterval());
+						logger.info("订单号:{}取消订单返回的结果为:{}", String.valueOf(tempOrderId), body);
+						parseObject = JSON.parseObject(body);
+						errorCode = parseObject.getString("err-code");
+					} catch (Exception e) {
+						logger.error("订单号:{}取消订单发生了异常:{}", String.valueOf(tempOrderId), e);
+						errorCode = String.valueOf(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
+					}
+					if (null != parseObject && "ok".equalsIgnoreCase(parseObject.getString("status"))) {
+						successList.add(tempOrderId);
+					} else {
+						Map<String, Object> failMap = new HashMap<>();
+						failMap.put("innerOrderID", String.valueOf(tempOrderId));
+						failMap.put("error_code", errorCode);
+						status = false;
+						failList.add(failMap);
+					}
 				}
-				if (null != parseObject && "ok".equalsIgnoreCase(parseObject.getString("status"))) {
-					successList.add(tempOrderId);
-				} else {
-					Map<String, Object> failMap = new HashMap<>();
-					failMap.put("innerOrderID", String.valueOf(tempOrderId));
-					failMap.put("error_code", errorCode);
-					status = false;
-					failList.add(failMap);
+				resultMap.put("success", successList);
+				resultMap.put("fail", failList);
+				serviceResult.setData(resultMap);
+			} else {
+				// 调用批量撤销接口单次不超过50个订单id
+				Map<String, Object> paramMap = new HashMap<>();
+				List<String> list = new ArrayList<>();
+				for (Long temp : orderIds) {
+					list.add(temp.toString());
 				}
+				for (int i = 0; 50 * i <= list.size(); i++) {
+					paramMap.put("order-ids", list.subList(50 * i, 50));
+					logger.info("批量取消订单的请求orderIds为:{}", list.subList(50 * i, 50));
+					try {
+						String body = httpService.doHuobiPost(reqDto.getAccountID(), HttpConstant.HUOBI_BATCHCANCEL,
+								paramMap);
+						logger.info("批量取消订单返回的结果为:{}", body);
+						resultMap = parseData(body);
+					} catch (Exception e) {
+						logger.error("批量取消订单发生了异常:{}", e);
+						status = false;
+					}
+				}
+
 			}
-			resultMap.put("success", successList);
-			resultMap.put("fail", failList);
+			if (status) {
+				resultMap.put("status", "ok");
+			}
+			serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+			serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 			serviceResult.setData(resultMap);
-		} else {
-			// 调用批量撤销接口单次不超过50个订单id
-			Map<String, Object> paramMap = new HashMap<>();
-			List<String> list = new ArrayList<>();
-			for (Long temp : orderIds) {
-				list.add(temp.toString());
-			}
-			for(int i=0;50*i<=list.size();i++) {
-				paramMap.put("order-ids", list.subList(50*i, 50));
-				logger.info("批量取消订单的请求orderIds为:{}", list.subList(50*i, 50));
-				try {
-					String body = httpService.doHuobiPost(reqDto.getAccountID(), HttpConstant.HUOBI_BATCHCANCEL, paramMap);
-					logger.info("批量取消订单返回的结果为:{}", body);
-					resultMap = parseData(body);
-				} catch (Exception e) {
-					logger.error("批量取消订单发生了异常:{}", e);
-					status = false;
-				}
-			}
-			
-		}
-		if (status) {
-			resultMap.put("status", "ok");
-		}
-		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-		serviceResult.setData(resultMap);
 		}
 		return serviceResult;
 	}
