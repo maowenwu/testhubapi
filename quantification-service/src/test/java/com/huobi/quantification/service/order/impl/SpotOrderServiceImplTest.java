@@ -13,12 +13,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.dto.SpotOrderBatchCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderReqCancelDto;
 import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
 import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
 import com.huobi.quantification.provider.SpotOrderServiceImpl;
+import com.huobi.quantification.service.http.HttpService;
 import com.xiaoleilu.hutool.json.JSONObject;
 import com.xiaoleilu.hutool.json.JSONUtil;
 
@@ -27,6 +30,9 @@ import com.xiaoleilu.hutool.json.JSONUtil;
 public class SpotOrderServiceImplTest {
 	@Autowired
 	private SpotOrderServiceImpl spotOrderServiceImpl;
+
+	@Autowired
+	private HttpService httpService;
 
 	@Test
 	public void getOrderByInnerOrderID() {
@@ -104,30 +110,13 @@ public class SpotOrderServiceImplTest {
 		System.out.println("2==============");
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void main(String[] args) {
-
-		System.out.println("1==============");
-		Map<String, Object> resultMap = new HashMap<>();
-		String param = "{\"status\":\"ok\",\"data\":{\"success\":[],\"failed\":[{\"err-msg\":\"the order state is error\",\"order-id\":\"7996038802\",\"err-code\":\"order-orderstate-error\"},{\"err-msg\":\"the order state is error\",\"order-id\":\"7996039844\",\"err-code\":\"order-orderstate-error\"},{\"err-msg\":\"the order state is error\",\"order-id\":\"7996040440\",\"err-code\":\"order-orderstate-error\"}]}}";
-		Map maps = (Map) JSON.parse(param);
-		Object object = maps.get("data");
-		Map<String, Object> objectMap = (Map<String, Object>) JSON.parse(object.toString());
-		List successMap = (List) JSON.parse(objectMap.get("success").toString());
-		List<Map> failMap = (List<Map>) JSON.parse(objectMap.get("failed").toString());
-		for (Map tempMap : failMap) {
-			tempMap.put("innerOrderID", tempMap.get("order-id"));
-			tempMap.put("error_code", tempMap.get("err-code"));
-			tempMap.remove("order-id");
-			tempMap.remove("err-code");
-			tempMap.remove("err-msg");
-		}
-		resultMap.put("success", successMap);
-		resultMap.put("fail", failMap);
-		System.out.println("==========" + successMap);
-		System.out.println("==========" + failMap);
-		System.out.println("==========" + resultMap);
-
+	@Test
+	public void batchCancelOpenOrdershcancel() {
+		Map<String, Object> param = new HashMap<>();
+		param.put("account-id", 4295363l);
+		param.put("symbol", "btcusdt");
+		String body = httpService.doHuobiPost(4295363l, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
+		System.err.println("=============" + body);
 	}
 
 }

@@ -40,13 +40,13 @@ public class OrderHuobiServiceImplTest {
 	@Test
 	public void CreateOrders() {
 		CreateOrderRequest createOrderReq = new CreateOrderRequest();
-		createOrderReq.accountId = "4232061";
+		createOrderReq.accountId = "4295363";
 		createOrderReq.amount = "1";
-		createOrderReq.price = "0.001";
-		createOrderReq.symbol = "eosbtc";
+		createOrderReq.price = "0.02";
+		createOrderReq.symbol = "eosusdt";
 		createOrderReq.type = CreateOrderRequest.OrderType.BUY_LIMIT;
 		createOrderReq.source = "api";
-		String result = httpService.doHuobiPost(4232061L,HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
+		String result = httpService.doHuobiPost(4295363L,HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
 //		HuobiSpotOrderResponse parseObject = JSON.parseObject(result, HuobiSpotOrderResponse.class);
 //		if (parseObject.getStatus().equals("ok")) {
 //			System.err.println(parseObject.getStatus());
@@ -55,6 +55,7 @@ public class OrderHuobiServiceImplTest {
 //			System.err.println(parseObject.getStatus());
 //			System.err.println(parseObject.getErrorCode());
 //		}
+		System.out.println("result========="+result);
 		JSONObject parseObject = JSON.parseObject(result);
 		if (parseObject.getString("status").equals("ok")) {
 			Map<String, String> params = new HashMap<>();

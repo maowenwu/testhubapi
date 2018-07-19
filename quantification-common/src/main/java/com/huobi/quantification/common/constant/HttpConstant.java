@@ -43,7 +43,8 @@ public class HttpConstant {
     public static final String HUOBI_ORDERDETAIL = HUOBI_HOST + "/v1/order/orders/{order-id}";
     public static final String HUOBI_OPENORDERS = HUOBI_HOST + "/v1/order/openOrders";
     public static final String HUOBI_MATCHRESULTS = HUOBI_HOST + "/v1/order/orders/{order-id}/matchresults";
-
+    public static final String HUOBI_BATCHCANCELOPENORDERS = HUOBI_HOST + "/v1/order/orders/batchCancelOpenOrders"; 
+    
     /********HUOBI 期货********/
     // market 相关
     public static final String HUOBI_FUTURE_TICKER = "http://127.0.0.1:8882/market/detail/merged";
