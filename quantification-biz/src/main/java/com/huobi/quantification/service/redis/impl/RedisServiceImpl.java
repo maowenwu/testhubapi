@@ -99,12 +99,12 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public void saveOkOrder(String symbol, String contractType, QuanOrderFuture orderFuture) {
 		RMap<String, Object> map = client
-				.getMap("quan.order.ok." + orderFuture.getOrderAccountId() + "." + symbol + "." + contractType);
+				.getMap("quan.order.ok." + orderFuture.getAccountId() + "." + symbol + "." + contractType);
 		map.put(genOkOrderKey(orderFuture), orderFuture);
 	}
 
 	private String genOkOrderKey(QuanOrderFuture orderFuture) {
-		return "" + orderFuture.getOrderSourceId();
+		return "" + orderFuture.getExOrderId();
 	}
 
 	@Override
