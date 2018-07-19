@@ -218,6 +218,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 				serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
 			}
 		}
+		quanOrder.setOrderState("submitting");
 		quanOrderMapper.insert(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());
