@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huobi.quantification.dao.QuanJobFutureMapper">
-    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanJobFuture">
+<mapper namespace="com.huobi.quantification.dao.QuanJobMapper">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanJob">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
         <result column="job_type" jdbcType="INTEGER" property="jobType"/>

@@ -12,6 +12,7 @@ import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
 import com.huobi.quantification.job.huobi.spot.HuobiOrderJob;
 import com.huobi.quantification.job.huobi.spot.HuobiKlineJob;
 import com.huobi.quantification.job.huobi.spot.HuobiAccountJob;
+import com.huobi.quantification.job.huobi.spot.HuobiCurrentPriceJob;
 import com.huobi.quantification.job.okcoin.future.*;
 import com.huobi.quantification.quartz.QuartzManager;
 import com.huobi.quantification.service.job.JobService;
@@ -63,6 +64,7 @@ public class JobServiceImpl implements JobService {
         huobiSpotTypeClass.put(2, HuobiKlineJob.class);
         huobiSpotTypeClass.put(3, HuobiAccountJob.class);
         huobiSpotTypeClass.put(4, HuobiOrderJob.class);
+        huobiSpotTypeClass.put(5, HuobiCurrentPriceJob.class);
         jobMap.put(ExchangeEnum.HUOBI.getExId(), huobiSpotTypeClass);
     }
 

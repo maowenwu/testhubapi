@@ -7,7 +7,12 @@ import com.huobi.quantification.dto.HuobiTradeOrderDto;
  * @since 2018/6/26
  */
 public interface HuobiOrderService {
-	
+	/**
+	 * 定时更新订单详情
+	 * 
+	 * @param accountId
+	 * @param orderId
+	 */
 	void updateHuobiOrder(Long accountId, Long orderId);
 	  /**
      * 获取订单信息

@@ -1,7 +1,8 @@
 package com.huobi.quantification.dao;
 
-import com.huobi.quantification.entity.QuanJob;
 import java.util.List;
+
+import com.huobi.quantification.entity.QuanJob;
 
 public interface QuanJobMapper {
     int deleteByPrimaryKey(Integer id);
@@ -13,4 +14,6 @@ public interface QuanJobMapper {
     List<QuanJob> selectAll();
 
     int updateByPrimaryKey(QuanJob record);
+    
+    void insertOrUpdate(QuanJob job);
 }
