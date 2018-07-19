@@ -1,8 +1,7 @@
 package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.FutureOrderReqDto;
-import com.huobi.quantification.dto.FutureOrderRespDto;
+import com.huobi.quantification.dto.*;
 
 public interface FutureOrderService {
 
@@ -17,36 +16,31 @@ public interface FutureOrderService {
     /**
      * 批量下单
      *
-     * @param exchangeId
-     * @param accountID
-     * @param orders
-     * @param parallel
-     * @param timeInterval
-     * @param sync
+     * @param batchOrderReqDto
      * @return
      */
-    ServiceResult placeBatchOrders(int exchangeId, long accountID, Object orders, boolean parallel, int timeInterval, boolean sync);
+    ServiceResult<FutureBatchOrderRespDto> placeBatchOrders(FutureBatchOrderReqDto batchOrderReqDto);
 
     /**
      * 查询订单-根据内部orderid
      *
      * @return
      */
-    ServiceResult getOrderByInnerOrderID();
+    ServiceResult getOrderByInnerOrderId();
 
     /**
      * 查询订单-根据交易所orderid
      *
      * @return
      */
-    ServiceResult getOrderByExOrderID();
+    ServiceResult getOrderByExOrderId();
 
     /**
      * 查询订单-根据关联orderid
      *
      * @return
      */
-    ServiceResult getOrderByLinkOrderID();
+    ServiceResult getOrderByLinkOrderId();
 
     /**
      * 查询订单-根据订单状态
@@ -60,16 +54,16 @@ public interface FutureOrderService {
      *
      * @return
      */
-    ServiceResult cancelOrder();
+    ServiceResult cancelOrder(FutureCancelOrderReqDto cancelOrderReqDto);
 
 
     /**
      * 撤销活跃订单
      *
-     * @param id
+     * @param orderReqDto
      * @return
      */
-    ServiceResult cancelOrder(Object id);
+    ServiceResult cancelActiveOrder(FutureActiveOrderReqDto orderReqDto);
 
 
 }

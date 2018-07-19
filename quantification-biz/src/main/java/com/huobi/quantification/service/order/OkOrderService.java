@@ -1,9 +1,10 @@
 package com.huobi.quantification.service.order;
 
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.FutureOrderRespDto;
-import com.huobi.quantification.dto.OkCancelOrderDto;
-import com.huobi.quantification.dto.OkTradeOrderDto;
+import com.huobi.quantification.request.future.FutureOkBatchOrderRequest;
+import com.huobi.quantification.request.future.FutureOkCancelOrderRequest;
+import com.huobi.quantification.request.future.FutureOkOrderRequest;
+import com.huobi.quantification.response.future.OKFutureCancelOrderResponse;
 
 /**
  * @author zhangl
@@ -44,21 +45,21 @@ public interface OkOrderService {
      *
      * @return
      */
-    Long placeOkOrder(OkTradeOrderDto order);
+    Long placeOkOrder(FutureOkOrderRequest order);
 
     /**
      * 批量下单
      *
      * @return
      */
-    ServiceResult placeOkOrders();
+    ServiceResult placeOkOrders(FutureOkBatchOrderRequest batchOrderRequest);
 
     /**
      * 合约撤单
      *
      * @return
      */
-    ServiceResult cancelOkOrder(OkCancelOrderDto cancelOrderDto);
+    OKFutureCancelOrderResponse cancelOkOrder(FutureOkCancelOrderRequest cancelOrderRequest);
 
     /**
      * 合约批量撤单

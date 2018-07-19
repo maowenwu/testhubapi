@@ -5,120 +5,145 @@ import java.util.Date;
 
 public class QuanOrderFuture {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private Long id;
+    private Long innerOrderId;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
     private Long strategyVersion;
 
     /**
-     * 交易所id
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
     private Integer exchangeId;
 
     /**
-     * 账户 ID
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private Long orderAccountId;
+    private Long accountId;
+
+    /**
+     * 交易所id
+     * @mbg.generated 2018-07-19 13:41:19
+     */
+    private Long exOrderId;
+
+    /**
+     * 账户 ID
+     * @mbg.generated 2018-07-19 13:41:19
+     */
+    private Long linkOrderId;
 
     /**
      * 火币或ok返回的订单id
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private Long orderSourceId;
+    private String baseCoin;
 
     /**
      * 合约名称
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private String contractName;
+    private String quoteCoin;
 
     /**
      * btc_usd   ltc_usd    eth_usd    etc_usd    bch_usd
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private String orderSymbol;
+    private String contractType;
 
     /**
      * 订单类型 1：开多 2：开空 3：平多 4： 平空
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private Integer orderType;
+    private String contractCode;
 
     /**
      * 订单状态(0等待成交 1部分成交 2全部成交 -1撤单 4撤单处理中 5撤单中)
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private Integer orderStatus;
+    private String status;
 
     /**
      * 委托数量
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private BigDecimal orderAmount;
+    private Integer side;
 
     /**
      * 成交数量
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private BigDecimal orderDealAmount;
+    private Integer offset;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private BigDecimal unitAmount;
+    private Integer lever;
 
     /**
      * 手续费
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private BigDecimal orderFee;
+    private String orderType;
 
     /**
      * 订单价格
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
     private BigDecimal orderPrice;
 
     /**
      * 平均价格
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private BigDecimal orderPriceAvg;
+    private BigDecimal orderQty;
 
     /**
      * 杠杆倍数  value:10\20  默认10 
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
-    private BigDecimal orderLeverRate;
+    private BigDecimal dealQty;
+
+    /**
+     * @mbg.generated 2018-07-19 13:41:19
+     */
+    private BigDecimal remainingQty;
+
+    /**
+     * @mbg.generated 2018-07-19 13:41:19
+     */
+    private BigDecimal marginFrozen;
+
+    /**
+     * @mbg.generated 2018-07-19 13:41:19
+     */
+    private BigDecimal fees;
 
     /**
      * 委托时间
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
     private Date createDate;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-19 13:41:19
      */
     private Date updateDate;
 
-    public Long getId() {
-        return id;
+    public Long getInnerOrderId() {
+        return innerOrderId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setInnerOrderId(Long innerOrderId) {
+        this.innerOrderId = innerOrderId;
     }
 
     public String getStrategyName() {
@@ -145,84 +170,100 @@ public class QuanOrderFuture {
         this.exchangeId = exchangeId;
     }
 
-    public Long getOrderAccountId() {
-        return orderAccountId;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setOrderAccountId(Long orderAccountId) {
-        this.orderAccountId = orderAccountId;
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
-    public Long getOrderSourceId() {
-        return orderSourceId;
+    public Long getExOrderId() {
+        return exOrderId;
     }
 
-    public void setOrderSourceId(Long orderSourceId) {
-        this.orderSourceId = orderSourceId;
+    public void setExOrderId(Long exOrderId) {
+        this.exOrderId = exOrderId;
     }
 
-    public String getContractName() {
-        return contractName;
+    public Long getLinkOrderId() {
+        return linkOrderId;
     }
 
-    public void setContractName(String contractName) {
-        this.contractName = contractName;
+    public void setLinkOrderId(Long linkOrderId) {
+        this.linkOrderId = linkOrderId;
     }
 
-    public String getOrderSymbol() {
-        return orderSymbol;
+    public String getBaseCoin() {
+        return baseCoin;
     }
 
-    public void setOrderSymbol(String orderSymbol) {
-        this.orderSymbol = orderSymbol;
+    public void setBaseCoin(String baseCoin) {
+        this.baseCoin = baseCoin;
     }
 
-    public Integer getOrderType() {
+    public String getQuoteCoin() {
+        return quoteCoin;
+    }
+
+    public void setQuoteCoin(String quoteCoin) {
+        this.quoteCoin = quoteCoin;
+    }
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Integer getSide() {
+        return side;
+    }
+
+    public void setSide(Integer side) {
+        this.side = side;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getLever() {
+        return lever;
+    }
+
+    public void setLever(Integer lever) {
+        this.lever = lever;
+    }
+
+    public String getOrderType() {
         return orderType;
     }
 
-    public void setOrderType(Integer orderType) {
+    public void setOrderType(String orderType) {
         this.orderType = orderType;
-    }
-
-    public Integer getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(Integer orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public BigDecimal getOrderAmount() {
-        return orderAmount;
-    }
-
-    public void setOrderAmount(BigDecimal orderAmount) {
-        this.orderAmount = orderAmount;
-    }
-
-    public BigDecimal getOrderDealAmount() {
-        return orderDealAmount;
-    }
-
-    public void setOrderDealAmount(BigDecimal orderDealAmount) {
-        this.orderDealAmount = orderDealAmount;
-    }
-
-    public BigDecimal getUnitAmount() {
-        return unitAmount;
-    }
-
-    public void setUnitAmount(BigDecimal unitAmount) {
-        this.unitAmount = unitAmount;
-    }
-
-    public BigDecimal getOrderFee() {
-        return orderFee;
-    }
-
-    public void setOrderFee(BigDecimal orderFee) {
-        this.orderFee = orderFee;
     }
 
     public BigDecimal getOrderPrice() {
@@ -233,20 +274,44 @@ public class QuanOrderFuture {
         this.orderPrice = orderPrice;
     }
 
-    public BigDecimal getOrderPriceAvg() {
-        return orderPriceAvg;
+    public BigDecimal getOrderQty() {
+        return orderQty;
     }
 
-    public void setOrderPriceAvg(BigDecimal orderPriceAvg) {
-        this.orderPriceAvg = orderPriceAvg;
+    public void setOrderQty(BigDecimal orderQty) {
+        this.orderQty = orderQty;
     }
 
-    public BigDecimal getOrderLeverRate() {
-        return orderLeverRate;
+    public BigDecimal getDealQty() {
+        return dealQty;
     }
 
-    public void setOrderLeverRate(BigDecimal orderLeverRate) {
-        this.orderLeverRate = orderLeverRate;
+    public void setDealQty(BigDecimal dealQty) {
+        this.dealQty = dealQty;
+    }
+
+    public BigDecimal getRemainingQty() {
+        return remainingQty;
+    }
+
+    public void setRemainingQty(BigDecimal remainingQty) {
+        this.remainingQty = remainingQty;
+    }
+
+    public BigDecimal getMarginFrozen() {
+        return marginFrozen;
+    }
+
+    public void setMarginFrozen(BigDecimal marginFrozen) {
+        this.marginFrozen = marginFrozen;
+    }
+
+    public BigDecimal getFees() {
+        return fees;
+    }
+
+    public void setFees(BigDecimal fees) {
+        this.fees = fees;
     }
 
     public Date getCreateDate() {

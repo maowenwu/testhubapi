@@ -9,11 +9,14 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.constant.OkRestErrorCode;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
-import com.huobi.quantification.dto.FutureOrderRespDto;
-import com.huobi.quantification.dto.OkCancelOrderDto;
-import com.huobi.quantification.dto.OkTradeOrderDto;
 import com.huobi.quantification.entity.QuanOrderFuture;
-import com.huobi.quantification.enums.*;
+import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OrderStatus;
+import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.request.future.FutureOkBatchOrderRequest;
+import com.huobi.quantification.request.future.FutureOkCancelOrderRequest;
+import com.huobi.quantification.request.future.FutureOkOrderRequest;
+import com.huobi.quantification.response.future.OKFutureCancelOrderResponse;
 import com.huobi.quantification.response.future.OKFutureOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OkOrderService;
@@ -65,14 +68,14 @@ public class OkOrderServiceImpl implements OkOrderService {
         logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
         List<QuanOrderFuture> unfinishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.UNFINISH);
         // 查找出订单状态不为已完成、撤单的订单
-        List<Long> orderIds = quanOrderFutureMapper.selectUnfinishOrderSourceId();
-        List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
+        //List<Long> orderIds = quanOrderFutureMapper.selectUnfinishOrderSourceId();
+       /* List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);*/
 
         List<QuanOrderFuture> updateOrders = new ArrayList<>();
         updateOrders.addAll(unfinishOrder);
-        updateOrders.addAll(orderFutures);
+        /*updateOrders.addAll(orderFutures);*/
         for (QuanOrderFuture orderFuture : updateOrders) {
-            quanOrderFutureMapper.insertOrUpdate(orderFuture);
+            //quanOrderFutureMapper.insertOrUpdate(orderFuture);
         }
         logger.info("[OkOrder][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
@@ -81,16 +84,16 @@ public class OkOrderServiceImpl implements OkOrderService {
         Map<String, QuanOrderFuture> ordersMap = redisService.getOkOrder(accountId, symbol, contractType);
         List<Long> orderIds = new ArrayList<>();
         for (QuanOrderFuture orderFuture : ordersMap.values()) {
-            if (orderFuture.getOrderStatus() == null || !orderFuture.getOrderStatus().equals(2)) {
+           /* if (orderFuture.getOrderStatus() == null || !orderFuture.getOrderStatus().equals(2)) {
                 orderIds.add(orderFuture.getOrderSourceId());
-            }
+            }*/
         }
         if (CollectionUtils.isEmpty(orderIds)) {
             return new ArrayList<>();
         }
         List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
         for (QuanOrderFuture orderFuture : orderFutures) {
-            ordersMap.put(orderFuture.getOrderSourceId() + "", orderFuture);
+            /*ordersMap.put(orderFuture.getOrderSourceId() + "", orderFuture);*/
         }
         return orderFutures;
     }
@@ -166,7 +169,7 @@ public class OkOrderServiceImpl implements OkOrderService {
             for (int i = 0; i < orders.size(); i++) {
                 JSONObject order = orders.getJSONObject(i);
                 QuanOrderFuture orderFuture = parseOkFutureOrder(order);
-                orderFuture.setOrderAccountId(accountId);
+               /* orderFuture.setOrderAccountId(accountId);*/
                 orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
                 list.add(orderFuture);
             }
@@ -175,7 +178,7 @@ public class OkOrderServiceImpl implements OkOrderService {
     }
 
     private QuanOrderFuture parseOkFutureOrder(JSONObject order) {
-        QuanOrderFuture orderFuture = new QuanOrderFuture();
+       /* QuanOrderFuture orderFuture = new QuanOrderFuture();
         orderFuture.setOrderAmount(order.getBigDecimal("amount"));
         orderFuture.setContractName(order.getString("contract_name"));
         orderFuture.setCreateDate(new Date(order.getLong("create_date")));
@@ -190,7 +193,8 @@ public class OkOrderServiceImpl implements OkOrderService {
         orderFuture.setUnitAmount(order.getBigDecimal("unit_amount"));
         orderFuture.setOrderLeverRate(order.getBigDecimal("lever_rate"));
         orderFuture.setUpdateDate(new Date());
-        return orderFuture;
+        return orderFuture;*/
+        return null;
     }
 
     @Override
@@ -215,7 +219,7 @@ public class OkOrderServiceImpl implements OkOrderService {
     }
 
     @Override
-    public Long placeOkOrder(OkTradeOrderDto order) {
+    public Long placeOkOrder(FutureOkOrderRequest order) {
         OKFutureOrderResponse response = placeOkOrderByAPI(order);
         if (response.isResult()) {
             return response.getOrderId();
@@ -224,7 +228,7 @@ public class OkOrderServiceImpl implements OkOrderService {
         }
     }
 
-    private OKFutureOrderResponse placeOkOrderByAPI(OkTradeOrderDto order) {
+    private OKFutureOrderResponse placeOkOrderByAPI(FutureOkOrderRequest order) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", order.getSymbol());
         params.put("contract_type", order.getContractType());
@@ -240,35 +244,24 @@ public class OkOrderServiceImpl implements OkOrderService {
     }
 
     @Override
-    public ServiceResult placeOkOrders() {
+    public ServiceResult placeOkOrders(FutureOkBatchOrderRequest request) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", "btc_usd");
         params.put("contract_type", "this_week");
         params.put("orders_data", "[{price:6050,amount:0.0001,type:1,match_price:0}]");
         params.put("lever_rate", "10");
-        //String result = httpService.doOkSignedPost(HttpConstant.OK_BATCH_TRADE, params);
+        String result = httpService.doOkSignedPost(request.getAccountId(), HttpConstant.OK_BATCH_TRADE, params);
         return null;
     }
 
     @Override
-    public ServiceResult<String> cancelOkOrder(OkCancelOrderDto cancelOrderDto) {
+    public OKFutureCancelOrderResponse cancelOkOrder(FutureOkCancelOrderRequest cancelOrderDto) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", cancelOrderDto.getSymbol());
         params.put("contract_type", cancelOrderDto.getContractType());
         params.put("order_id", cancelOrderDto.getOrderId());
         String body = httpService.doOkSignedPost(cancelOrderDto.getAccountId(), HttpConstant.OK_CANCEL, params);
-        JSONObject jsonObject = JSON.parseObject(body);
-        ServiceResult<String> result = new ServiceResult<>();
-        if (jsonObject.getBoolean("result")) {
-            result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-            result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-            result.setData(jsonObject.getString("order_id"));
-        } else {
-            Integer errorCode = jsonObject.getInteger("error_code");
-            result.setCode(errorCode);
-            result.setMessage(OkRestErrorCode.findErrorMessageByCode(errorCode));
-        }
-        return result;
+        return JSON.parseObject(body, OKFutureCancelOrderResponse.class);
     }
 
     @Override

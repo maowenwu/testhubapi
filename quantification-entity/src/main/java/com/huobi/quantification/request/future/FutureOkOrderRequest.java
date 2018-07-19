@@ -1,9 +1,7 @@
-package com.huobi.quantification.dto;
+package com.huobi.quantification.request.future;
 
-public class OkTradeOrderDto {
+public class FutureOkOrderRequest {
 
-    private String strategyName;
-    private Long strategyVersion;
     private Long accountId;
 
     private String symbol;
@@ -12,24 +10,8 @@ public class OkTradeOrderDto {
     private String amount;
     private int type;
     private int matchPrice;
-    private Integer leverRate;
+    private String leverRate;
 
-
-    public String getStrategyName() {
-        return strategyName;
-    }
-
-    public void setStrategyName(String strategyName) {
-        this.strategyName = strategyName;
-    }
-
-    public Long getStrategyVersion() {
-        return strategyVersion;
-    }
-
-    public void setStrategyVersion(Long strategyVersion) {
-        this.strategyVersion = strategyVersion;
-    }
 
     public Long getAccountId() {
         return accountId;
@@ -87,11 +69,11 @@ public class OkTradeOrderDto {
         this.matchPrice = matchPrice;
     }
 
-    public Integer getLeverRate() {
+    public String getLeverRate() {
         return leverRate;
     }
 
-    public void setLeverRate(Integer leverRate) {
+    public void setLeverRate(String leverRate) {
         this.leverRate = leverRate;
     }
 }

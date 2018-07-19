@@ -1,9 +1,6 @@
 package com.huobi.quantification.service.order.impl;
 
 import com.huobi.quantification.ServiceApplication;
-import com.huobi.quantification.dto.OkCancelOrderDto;
-import com.huobi.quantification.dto.OkTradeOrderDto;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,19 +18,6 @@ public class OkFutureOrderServiceImplTest {
 
 
 
-    @Test
-    public void placeOkOrder(){
-        OkTradeOrderDto orderDto = new OkTradeOrderDto();
-        orderDto.setAccountId(1L);
-        orderDto.setSymbol("btc_usd");
-        orderDto.setContractType("this_week");
-        orderDto.setPrice("6400");
-        orderDto.setAmount("1");
-        orderDto.setType(1);
-        orderDto.setMatchPrice(0);
-        orderDto.setLeverRate(10);
-        /*ServiceResult serviceResult = okOrderServiceFacade.placeOkOrder(orderDto);
-        System.out.println(serviceResult);*/
-    }
+
 
 }

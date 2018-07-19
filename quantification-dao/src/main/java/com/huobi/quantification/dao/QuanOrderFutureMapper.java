@@ -1,22 +1,21 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanOrderFuture;
+
 import java.util.List;
 
 public interface QuanOrderFutureMapper {
-    int deleteByPrimaryKey(Long id);
+    int deleteByPrimaryKey(Long innerOrderId);
 
     int insert(QuanOrderFuture record);
 
-    QuanOrderFuture selectByPrimaryKey(Long id);
+    int insertSelective(QuanOrderFuture record);
 
-    List<QuanOrderFuture> selectAll();
+    QuanOrderFuture selectByPrimaryKey(Long innerOrderId);
+
+    List<QuanOrderFuture> selectBySelective(QuanOrderFuture record);
+
+    int updateByPrimaryKeySelective(QuanOrderFuture record);
 
     int updateByPrimaryKey(QuanOrderFuture record);
-
-    void insertOrUpdate(QuanOrderFuture orderFuture);
-
-    List<Long> selectUnfinishOrderSourceId();
-
-
 }

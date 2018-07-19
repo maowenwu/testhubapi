@@ -1,12 +1,15 @@
-package com.huobi.quantification.dto;
+package com.huobi.quantification.request.future;
 
-public class OkCancelOrderDto {
+import java.util.List;
+
+public class FutureOkBatchOrderRequest {
 
     private Long accountId;
 
     private String symbol;
     private String contractType;
-    private String orderId;
+    private List<FutureOkBatchOrder> orders;
+    private Integer leverRate;
 
 
     public Long getAccountId() {
@@ -33,11 +36,19 @@ public class OkCancelOrderDto {
         this.contractType = contractType;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public List<FutureOkBatchOrder> getOrders() {
+        return orders;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setOrders(List<FutureOkBatchOrder> orders) {
+        this.orders = orders;
+    }
+
+    public Integer getLeverRate() {
+        return leverRate;
+    }
+
+    public void setLeverRate(Integer leverRate) {
+        this.leverRate = leverRate;
     }
 }
