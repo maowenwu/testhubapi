@@ -7,11 +7,9 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanDepthFutureDetail;
 import com.huobi.quantification.entity.QuanIndexFuture;

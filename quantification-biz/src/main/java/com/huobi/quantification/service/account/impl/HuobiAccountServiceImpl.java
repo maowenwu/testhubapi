@@ -21,7 +21,6 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountAssetMapper;
 import com.huobi.quantification.dao.QuanAccountMapper;
 import com.huobi.quantification.dao.QuanAccountSecretMapper;
-import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountSecret;
 import com.huobi.quantification.enums.ExchangeEnum;

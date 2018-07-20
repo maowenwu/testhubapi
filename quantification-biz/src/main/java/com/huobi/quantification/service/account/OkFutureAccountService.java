@@ -1,9 +1,8 @@
 package com.huobi.quantification.service.account;
 
-import com.huobi.quantification.entity.QuanAccountFutureSecret;
-import com.huobi.quantification.enums.OkContractType;
-
 import java.util.List;
+
+import com.huobi.quantification.entity.QuanAccountFutureSecret;
 
 /**
  * @author zhangl

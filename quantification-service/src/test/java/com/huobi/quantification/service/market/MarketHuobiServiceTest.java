@@ -31,7 +31,6 @@ import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.huobi.response.DepthResponse;
 import com.huobi.quantification.huobi.response.Merged;
 import com.huobi.quantification.huobi.response.Trade;
 import com.huobi.quantification.huobi.response.TradeDetail;

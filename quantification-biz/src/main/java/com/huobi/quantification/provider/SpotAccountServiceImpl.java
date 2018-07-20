@@ -5,20 +5,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
-import com.huobi.quantification.dto.SpotBalanceRespDto.DataBean;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;

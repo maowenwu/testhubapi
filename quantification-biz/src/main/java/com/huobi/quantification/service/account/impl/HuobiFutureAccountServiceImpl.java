@@ -1,16 +1,8 @@
 package com.huobi.quantification.service.account.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.google.common.base.Stopwatch;
-import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
-import com.huobi.quantification.response.future.OKFuturePositionResponse;
-import com.huobi.quantification.service.account.HuobiFutureAccountService;
-import com.huobi.quantification.service.http.HttpService;
-import com.huobi.quantification.service.redis.RedisService;
+import java.util.Date;
+import java.util.HashMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +10,14 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
+import com.google.common.base.Stopwatch;
+import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.entity.QuanAccountFutureAsset;
+import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.service.account.HuobiFutureAccountService;
+import com.huobi.quantification.service.http.HttpService;
+import com.huobi.quantification.service.redis.RedisService;
 
 @DependsOn("httpServiceImpl")
 @Service

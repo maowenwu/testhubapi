@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.huobi.quantification.common.api.HuobiSignature;
-import com.huobi.quantification.entity.QuanAccount;
-import com.huobi.quantification.entity.QuanAccountFutureSecret;
 import com.huobi.quantification.entity.QuanAccountSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.service.account.HuobiAccountService;

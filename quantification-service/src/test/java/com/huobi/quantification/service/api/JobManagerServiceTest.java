@@ -8,7 +8,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.api.future.JobManageService;
-import com.huobi.quantification.dto.FutureJobReqDto;
 import com.huobi.quantification.dto.JobParamDto;
 import com.huobi.quantification.dto.JobReqDto;
 import com.huobi.quantification.enums.ExchangeEnum;

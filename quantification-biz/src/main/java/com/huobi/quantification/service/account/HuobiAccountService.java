@@ -2,7 +2,6 @@ package com.huobi.quantification.service.account;
 
 import java.util.List;
 
-import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountSecret;
 
 /**

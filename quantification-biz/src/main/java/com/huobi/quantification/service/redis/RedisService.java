@@ -1,11 +1,22 @@
 package com.huobi.quantification.service.redis;
 
-import com.huobi.quantification.entity.*;
-import com.huobi.quantification.huobi.response.TradeResponse;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+
+import com.huobi.quantification.entity.QuanAccountAsset;
+import com.huobi.quantification.entity.QuanAccountFutureAsset;
+import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.entity.QuanDepthDetail;
+import com.huobi.quantification.entity.QuanDepthFutureDetail;
+import com.huobi.quantification.entity.QuanIndexFuture;
+import com.huobi.quantification.entity.QuanKline;
+import com.huobi.quantification.entity.QuanKlineFuture;
+import com.huobi.quantification.entity.QuanOrder;
+import com.huobi.quantification.entity.QuanOrderFuture;
+import com.huobi.quantification.entity.QuanTicker;
+import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.entity.QuanTradeFuture;
+import com.huobi.quantification.huobi.response.TradeResponse;
 
 public interface RedisService {
     void saveFutureUserInfo(int exchangeId, Long accountId, QuanAccountFutureAsset futureAsset);

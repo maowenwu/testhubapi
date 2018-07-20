@@ -1,5 +1,17 @@
 package com.huobi.quantification.service.market.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -11,7 +23,12 @@ import com.huobi.quantification.dao.QuanDepthFutureDetailMapper;
 import com.huobi.quantification.dao.QuanDepthFutureMapper;
 import com.huobi.quantification.dao.QuanKlineFutureMapper;
 import com.huobi.quantification.dao.QuanTickerFutureMapper;
-import com.huobi.quantification.entity.*;
+import com.huobi.quantification.entity.QuanDepthFuture;
+import com.huobi.quantification.entity.QuanDepthFutureDetail;
+import com.huobi.quantification.entity.QuanIndexFuture;
+import com.huobi.quantification.entity.QuanKlineFuture;
+import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.entity.QuanTradeFuture;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
@@ -20,13 +37,6 @@ import com.huobi.quantification.response.future.OKFutureIndexResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.OkFutureMarketService;
 import com.huobi.quantification.service.redis.RedisService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
 
 /**
  * @author zhangl

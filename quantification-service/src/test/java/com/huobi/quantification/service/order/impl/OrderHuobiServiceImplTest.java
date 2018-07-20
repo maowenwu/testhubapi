@@ -16,12 +16,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanOrderMapper;
-import com.huobi.quantification.dao.QuanOrderMatchResultMapper;
 import com.huobi.quantification.entity.QuanOrder;
-import com.huobi.quantification.entity.QuanOrderMatchResult;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
 import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
-import com.huobi.quantification.response.spot.HuobiSpotOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 
 @SpringBootTest(classes = ServiceApplication.class)
@@ -30,9 +27,6 @@ public class OrderHuobiServiceImplTest {
 
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
-
-	@Autowired
-	private QuanOrderMatchResultMapper quanOrderMatchResultMapper;
 
 	@Autowired
 	private HttpService httpService;
