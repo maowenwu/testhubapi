@@ -18,7 +18,7 @@ public class JobInitializer implements ApplicationListener<ContextRefreshedEvent
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-			quartzManager.addJobNoRepeat("FutureJobScanner", FutureJobScanner.class, "0 0 0/1 * * ?", null);
+			quartzManager.addJobNoRepeat("FutureJobScanner", FutureJobScanner.class, "0 0 * * * ?", null);
 			quartzManager.addJobNoRepeat("SpotJobScanner", SpotJobScanner.class, "0/1 * * * * ?", null);
 		}
 	}
