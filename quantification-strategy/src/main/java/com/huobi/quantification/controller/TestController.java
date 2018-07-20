@@ -28,11 +28,11 @@ public class TestController {
 
     @RequestMapping("/testStartFutureJob")
     public String testStartFutureJob() {
-        jobManageService.addOkFutureCurrentPriceJob("btc_usd", "this_week", "0/1 * * * * ?", true);
-        jobManageService.addOkFutureDepthJob("btc_usd", "this_week", "0/1 * * * * ?", true);
-        jobManageService.addOkFutureIndexJob("btc_usd", "0/1 * * * * ?", true);
-        jobManageService.addOkFutureKlineJob("btc_usd", "5min", "this_week", "0/1 * * * * ?", true);
-        jobManageService.addOkFutureOrderJob(1L, "btc_usd", "this_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureCurrentPriceJob("etc_usd", "next_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureDepthJob("etc_usd", "next_week", "0/1 * * * * ?", true);
+       /* jobManageService.addOkFutureIndexJob("etc_usd", "0/1 * * * * ?", true);*/
+        jobManageService.addOkFutureKlineJob("etc_usd", "1min", "next_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureOrderJob(1L, "etc_usd", "next_week", "0/1 * * * * ?", true);
         jobManageService.addOkFuturePositionJob(1L, "0/1 * * * * ?", true);
         jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", true);
         return JSON.toJSONString(true);
