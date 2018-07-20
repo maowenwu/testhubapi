@@ -28,18 +28,14 @@ public class TestController {
 
     @RequestMapping("/testStartFutureJob")
     public String testStartFutureJob() {
-        FutureJobReqDto reqDto = new FutureJobReqDto();
-        reqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        reqDto.setJobType(OkJobTypeEnum.Ticker.getJobType());
-        reqDto.setCron("0/1 * * * * ?");
-        JobParamDto jobParamDto = new JobParamDto();
-        jobParamDto.setSymbol("btc_usd");
-        jobParamDto.setContractType("this_week");
-        jobParamDto.setKlineType("5min");
-        reqDto.setJobParamDto(jobParamDto);
-        ServiceResult serviceResult = jobManageService.startFutureJob(reqDto);
-        System.out.println(serviceResult);
-        return JSON.toJSONString(serviceResult);
+        jobManageService.addOkFutureCurrentPriceJob("btc_usd", "this_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureDepthJob("btc_usd", "this_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureIndexJob("btc_usd", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureKlineJob("btc_usd", "5min", "this_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureOrderJob(1L, "btc_usd", "this_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFuturePositionJob(1L, "0/1 * * * * ?", true);
+        jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", true);
+        return JSON.toJSONString(true);
     }
 
     @RequestMapping("/testFutureIndex")
@@ -106,7 +102,6 @@ public class TestController {
         System.out.println(currentPrice);
         return JSON.toJSONString(currentPrice);
     }
-
 
 
     @RequestMapping("/testGetBalance")
