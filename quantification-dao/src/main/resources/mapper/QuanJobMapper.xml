@@ -27,7 +27,7 @@
       )
   </insert>
     <insert id="insertOrUpdate">
-    INSERT INTO quan_job_future
+    INSERT INTO quan_job
     (`exchange_id`, `job_type`, `job_name`, `job_param`, `cron`, `state`, `update_date`, `create_date`)
     VALUES (#{exchangeId}, #{jobType}, #{jobName}, #{jobParam}, #{cron}, #{state}, #{createDate}, #{updateDate})
     ON DUPLICATE KEY UPDATE `exchange_id`=#{exchangeId},`job_type`=#{jobType},`job_name`=#{jobName},`job_param`=#{jobParam},

@@ -16,6 +16,7 @@ import com.huobi.quantification.dao.QuanJobFutureMapper;
 import com.huobi.quantification.dao.QuanJobMapper;
 import com.huobi.quantification.dto.FutureJobReqDto;
 import com.huobi.quantification.dto.JobParamDto;
+import com.huobi.quantification.dto.JobReqDto;
 import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ServiceErrorEnum;
@@ -100,6 +101,22 @@ public class JobManageServiceImpl implements JobManageService {
         result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
         return result;
     }
+	@Override
+	public ServiceResult startSpotJob(JobReqDto jobReqDto) {
+		ServiceResult result = new ServiceResult();
+		try {
+			updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
+					jobReqDto.getCron(), 1);
+		} catch (Exception e) {
+			logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
+			result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
+			result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
+			return result;
+		}
+		result.setCode(ServiceErrorEnum.SUCCESS.getCode());
+		result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		return result;
+	}
 
     @Override
     public ServiceResult stopSpotJob(FutureJobReqDto jobReqDto) {
@@ -257,4 +274,20 @@ public class JobManageServiceImpl implements JobManageService {
         }
         return addFutureJob(jobReqDto);
     }
+	@Override
+	public ServiceResult stopSpotJob(JobReqDto jobReqDto) {
+		ServiceResult result = new ServiceResult();
+		try {
+			updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
+					jobReqDto.getCron(), 0);
+		} catch (Exception e) {
+			logger.error("停止任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
+			result.setCode(ServiceErrorEnum.JOB_STOP_ERROR.getCode());
+			result.setMessage(ServiceErrorEnum.JOB_STOP_ERROR.getMessage());
+			return result;
+		}
+		result.setCode(ServiceErrorEnum.SUCCESS.getCode());
+		result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		return result;
+	}
 }
