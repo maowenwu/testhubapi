@@ -13,11 +13,11 @@
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
     </resultMap>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from quan_job_future
+    delete from quan_job
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.QuanJob">
-    insert into quan_job_future (id, exchange_id, job_type, 
+    insert into quan_job (id, exchange_id, job_type, 
       job_name, job_param, cron, 
       state, update_date, create_date
       )
@@ -34,7 +34,7 @@
     `cron`=#{cron},`state`=#{state},`update_date`=#{updateDate}
   </insert>
     <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanJobFuture">
-    update quan_job_future
+    update quan_job
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
       job_type = #{jobType,jdbcType=INTEGER},
       job_name = #{jobName,jdbcType=VARCHAR},
@@ -48,12 +48,12 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, exchange_id, job_type, job_name, job_param, cron, state, update_date, 
     create_date
-    from quan_job_future
+    from quan_job
     where id = #{id,jdbcType=INTEGER}
   </select>
     <select id="selectAll" resultMap="BaseResultMap">
     select id, exchange_id, job_type, job_name, job_param, cron, state, update_date, 
     create_date
-    from quan_job_future
+    from quan_job
   </select>
 </mapper>
