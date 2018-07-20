@@ -4,47 +4,52 @@ import java.util.Date;
 
 public class QuanJobFuture {
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private Integer jobType;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private String jobName;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private String jobParam;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
+     */
+    private String jobDesc;
+
+    /**
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private String cron;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private Integer state;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private Date updateDate;
 
     /**
-     * @mbg.generated 2018-07-18 18:56:24
+     * @mbg.generated 2018-07-20 14:45:57
      */
     private Date createDate;
 
@@ -86,6 +91,14 @@ public class QuanJobFuture {
 
     public void setJobParam(String jobParam) {
         this.jobParam = jobParam;
+    }
+
+    public String getJobDesc() {
+        return jobDesc;
+    }
+
+    public void setJobDesc(String jobDesc) {
+        this.jobDesc = jobDesc;
     }
 
     public String getCron() {

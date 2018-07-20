@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanJobFuture;
+
 import java.util.List;
 
 public interface QuanJobFutureMapper {
@@ -8,11 +9,16 @@ public interface QuanJobFutureMapper {
 
     int insert(QuanJobFuture record);
 
+    int insertSelective(QuanJobFuture record);
+
     QuanJobFuture selectByPrimaryKey(Integer id);
 
-    List<QuanJobFuture> selectAll();
+    int updateByPrimaryKeySelective(QuanJobFuture record);
 
     int updateByPrimaryKey(QuanJobFuture record);
 
     void insertOrUpdate(QuanJobFuture jobFuture);
+
+    List<QuanJobFuture> selectAll();
+
 }

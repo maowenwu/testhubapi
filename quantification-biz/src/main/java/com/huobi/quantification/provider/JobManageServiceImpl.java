@@ -36,7 +36,7 @@ public class JobManageServiceImpl implements JobManageService {
         ServiceResult result = new ServiceResult();
         try {
             updateJobFuture(jobReqDto.getExchangeId(), jobReqDto.getJobType(),
-                    jobReqDto.getJobParamDto(), jobReqDto.getCron(), jobReqDto.getState());
+                    jobReqDto.getJobParamDto(), jobReqDto.getJobDesc(), jobReqDto.getCron(), jobReqDto.getState());
         } catch (Exception e) {
             logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
             result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
@@ -48,13 +48,14 @@ public class JobManageServiceImpl implements JobManageService {
         return result;
     }
 
-    private void updateJobFuture(int exchangeId, int jobType, JobParamDto jobParamDto, String cron, int state) {
+    private void updateJobFuture(int exchangeId, int jobType, JobParamDto jobParamDto, String jobDesc, String cron, int state) {
         QuanJobFuture jobFuture = new QuanJobFuture();
         jobFuture.setExchangeId(exchangeId);
         jobFuture.setJobType(jobType);
         // JobName需要唯一
         jobFuture.setJobName(genJobName(exchangeId, jobType, jobParamDto));
         jobFuture.setJobParam(JSON.toJSONString(jobParamDto));
+        jobFuture.setJobDesc(jobDesc);
         jobFuture.setCron(cron);
         jobFuture.setState(state);
         jobFuture.setCreateDate(new Date());
@@ -86,29 +87,29 @@ public class JobManageServiceImpl implements JobManageService {
     }
 
 
-	@Override
-	public ServiceResult startSpotJob(JobReqDto jobReqDto) {
-		ServiceResult result = new ServiceResult();
-		try {
-			updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
-					jobReqDto.getCron(), 1);
-		} catch (Exception e) {
-			logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-			result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
-			result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
-			return result;
-		}
-		result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-		result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-		return result;
-	}
+    @Override
+    public ServiceResult startSpotJob(JobReqDto jobReqDto) {
+        ServiceResult result = new ServiceResult();
+        try {
+            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
+                    jobReqDto.getCron(), 1);
+        } catch (Exception e) {
+            logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
+            result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
+            result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
+            return result;
+        }
+        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
+        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+        return result;
+    }
 
     @Override
     public ServiceResult addOkFutureCurrentPriceJob(String symbol, String contractType, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.CurrentPrice.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.CurrentPrice.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setContractType(contractType);
@@ -128,7 +129,7 @@ public class JobManageServiceImpl implements JobManageService {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.Depth.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.Depth.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setContractType(contractType);
@@ -148,7 +149,7 @@ public class JobManageServiceImpl implements JobManageService {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.Index.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.Index.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
 
@@ -167,7 +168,7 @@ public class JobManageServiceImpl implements JobManageService {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.Kline.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.Kline.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setKlineType(period);
@@ -188,7 +189,7 @@ public class JobManageServiceImpl implements JobManageService {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.Order.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.Order.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
         paramDto.setSymbol(symbol);
@@ -209,7 +210,7 @@ public class JobManageServiceImpl implements JobManageService {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.Position.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.Position.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
 
@@ -228,7 +229,7 @@ public class JobManageServiceImpl implements JobManageService {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
         jobReqDto.setJobType(OkJobTypeEnum.UserInfo.getJobType());
-
+        jobReqDto.setJobDesc(OkJobTypeEnum.UserInfo.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
 
@@ -241,20 +242,21 @@ public class JobManageServiceImpl implements JobManageService {
         }
         return addFutureJob(jobReqDto);
     }
-	@Override
-	public ServiceResult stopSpotJob(JobReqDto jobReqDto) {
-		ServiceResult result = new ServiceResult();
-		try {
-			updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
-					jobReqDto.getCron(), 0);
-		} catch (Exception e) {
-			logger.error("停止任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-			result.setCode(ServiceErrorEnum.JOB_STOP_ERROR.getCode());
-			result.setMessage(ServiceErrorEnum.JOB_STOP_ERROR.getMessage());
-			return result;
-		}
-		result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-		result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-		return result;
-	}
+
+    @Override
+    public ServiceResult stopSpotJob(JobReqDto jobReqDto) {
+        ServiceResult result = new ServiceResult();
+        try {
+            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
+                    jobReqDto.getCron(), 0);
+        } catch (Exception e) {
+            logger.error("停止任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
+            result.setCode(ServiceErrorEnum.JOB_STOP_ERROR.getCode());
+            result.setMessage(ServiceErrorEnum.JOB_STOP_ERROR.getMessage());
+            return result;
+        }
+        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
+        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+        return result;
+    }
 }
