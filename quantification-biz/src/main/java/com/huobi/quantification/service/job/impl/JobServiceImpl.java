@@ -69,8 +69,15 @@ public class JobServiceImpl implements JobService {
         jobMap.put(ExchangeEnum.HUOBI.getExId(), huobiSpotTypeClass);
     }
 
+    private boolean flag = true;
+
     @Override
     public void updateFutureJobScheduler() {
+        if (flag) {
+            flag = false;
+        } else {
+            return;
+        }
         List<QuanJobFuture> jobFutures = quanJobFutureMapper.selectAll();
         for (QuanJobFuture jobFuture : jobFutures) {
             if (jobFuture.getState().equals(1)) {
