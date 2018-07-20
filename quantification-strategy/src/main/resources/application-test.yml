@@ -1,0 +1,4 @@
+
+
+zookeeper:
+  address: 172.18.6.200:2181

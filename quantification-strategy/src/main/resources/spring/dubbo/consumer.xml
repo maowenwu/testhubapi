@@ -4,7 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
     <dubbo:application name="consumer-of-helloworld-app"/>
-    <dubbo:registry address="zookeeper://127.0.0.1:2181"/>
+
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
 
     <dubbo:reference id="accountService" interface="com.huobi.quantification.api.future.FutureAccountService"/>
     <dubbo:reference id="marketService" interface="com.huobi.quantification.api.future.FutureMarketService"/>
