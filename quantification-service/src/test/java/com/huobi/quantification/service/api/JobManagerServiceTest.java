@@ -8,9 +8,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.api.future.JobManageService;
-import com.huobi.quantification.dto.JobParamDto;
-import com.huobi.quantification.dto.JobReqDto;
-import com.huobi.quantification.enums.ExchangeEnum;
 
 /**
  * 用于JobManagerService接口的测试
@@ -26,14 +23,10 @@ public class JobManagerServiceTest {
 	
 	@Test
 	public void testAddJob() {
-		JobReqDto JobReqDto = new JobReqDto();
-		JobReqDto.setCron("0/1 * * * * * ?");
-		JobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		JobReqDto.setJobType(1);
-		JobParamDto jobParamDto = new JobParamDto();
-		jobParamDto.setDepthType("step1");
-		jobParamDto.setSymbol("ethusdt");
-		JobReqDto.setJobParamDto(jobParamDto);
-		jobManageService.startSpotJob(JobReqDto);
+		jobManageService.addHuobiSpotDepthJob("ethusdt", "step1", "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotCurrentPriceJob("ethusdt", "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotKlineJob("ethusdt", "1day", 200, "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotOrderJob("ethusdt", 4232061L, "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotAccountJob(4232061L, "0/1 * * * * ?", true);
 	}
 }

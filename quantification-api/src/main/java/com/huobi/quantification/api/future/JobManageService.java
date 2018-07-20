@@ -1,28 +1,31 @@
 package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.JobReqDto;
 
 public interface JobManageService {
 
-    ServiceResult addOkFutureCurrentPriceJob(String symbol, String contractType, String cron, boolean enable);
+	ServiceResult addOkFutureCurrentPriceJob(String symbol, String contractType, String cron, boolean enable);
 
-    ServiceResult addOkFutureDepthJob(String symbol, String contractType, String cron, boolean enable);
+	ServiceResult addOkFutureDepthJob(String symbol, String contractType, String cron, boolean enable);
 
-    ServiceResult addOkFutureIndexJob(String symbol, String cron, boolean enable);
+	ServiceResult addOkFutureIndexJob(String symbol, String cron, boolean enable);
 
-    ServiceResult addOkFutureKlineJob(String symbol, String period, String contractType, String cron, boolean enable);
+	ServiceResult addOkFutureKlineJob(String symbol, String period, String contractType, String cron, boolean enable);
 
-    ServiceResult addOkFutureOrderJob(Long accountId, String symbol, String contractType, String cron, boolean enable);
+	ServiceResult addOkFutureOrderJob(Long accountId, String symbol, String contractType, String cron, boolean enable);
 
-    ServiceResult addOkFuturePositionJob(Long accountId, String cron, boolean enable);
+	ServiceResult addOkFuturePositionJob(Long accountId, String cron, boolean enable);
 
-    ServiceResult addOkFutureUserInfoJob(Long accountId, String cron, boolean enable);
+	ServiceResult addOkFutureUserInfoJob(Long accountId, String cron, boolean enable);
 
+	ServiceResult addHuobiSpotAccountJob(Long accountId, String cron, boolean enable);
 
+	ServiceResult addHuobiSpotCurrentPriceJob(String symbol, String cron, boolean enable);
 
-    ServiceResult startSpotJob(JobReqDto jobReqDto);
+	ServiceResult addHuobiSpotDepthJob(String symbol, String depthType, String cron, boolean enable);
 
-    ServiceResult stopSpotJob(JobReqDto jobReqDto);
+	ServiceResult addHuobiSpotKlineJob(String symbol, String klineType, int size, String cron, boolean enable);
+
+	ServiceResult addHuobiSpotOrderJob(String symbol, Long accountId, String cron, boolean enable);
 
 }

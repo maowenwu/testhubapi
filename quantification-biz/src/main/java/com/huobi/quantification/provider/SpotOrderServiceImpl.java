@@ -1,6 +1,7 @@
 package com.huobi.quantification.provider;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,16 +189,20 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	public ServiceResult<SpotPlaceOrderRespDto> placeOrder(SpotPlaceOrderReqDto reqDto) {
 		HuobiTradeOrderDto orderDto = new HuobiTradeOrderDto();
 		orderDto.setAccountId(reqDto.getAccountId());
-		if (reqDto.getOrderType().contains("market")) {
-			orderDto.setAmount(reqDto.getCashAmount());
-		} else {
-			orderDto.setPrice(reqDto.getPrice());
-			orderDto.setAmount(reqDto.getQuantity());
+		if (reqDto.getSide().equals("buy") || reqDto.getSide().equals("sell")) {
+			if (reqDto.getOrderType().contains("market")) {
+				orderDto.setAmount(reqDto.getCashAmount());
+			} else {
+				orderDto.setPrice(reqDto.getPrice());
+				orderDto.setAmount(reqDto.getQuantity());
+			}
+		}else {
+			new RuntimeException(ServiceErrorEnum.PARAM_ERROR.getMessage());
 		}
 		orderDto.setSource("api");
 		String symbol = getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin());
 		orderDto.setSymbol(symbol);
-		orderDto.setType(reqDto.getOrderType());
+		orderDto.setType(reqDto.getSide() + "-" +reqDto.getOrderType());
 		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
@@ -221,6 +226,11 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		}
 		quanOrder.setOrderState("submitting");
 		quanOrder.setOrderSymbol(symbol);
+		quanOrder.setOrderType(reqDto.getSide() + "-" +reqDto.getOrderType());
+		quanOrder.setOrderAmount(orderDto.getAmount());
+		quanOrder.setOrderPrice(reqDto.getPrice());
+		quanOrder.setOrderSource("api");
+		quanOrder.setOrderCreatedAt(new Date());
 		quanOrderMapper.insert(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());

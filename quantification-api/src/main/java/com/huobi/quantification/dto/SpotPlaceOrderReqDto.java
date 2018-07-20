@@ -8,7 +8,7 @@ public class SpotPlaceOrderReqDto implements Serializable{
 	private long accountId;
 	private String baseCoin;
 	private String quoteCoin;
-	private int side;
+	private String side;
 	private String orderType;
 	private BigDecimal price;
 	private BigDecimal quantity;
@@ -39,10 +39,10 @@ public class SpotPlaceOrderReqDto implements Serializable{
 	public void setQuoteCoin(String quoteCoin) {
 		this.quoteCoin = quoteCoin;
 	}
-	public int getSide() {
+	public String getSide() {
 		return side;
 	}
-	public void setSide(int side) {
+	public void setSide(String side) {
 		this.side = side;
 	}
 	public String getOrderType() {

@@ -1,5 +1,6 @@
 package com.huobi.quantification.service.order.impl;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,9 @@ import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
 import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
+import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
+import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.provider.SpotOrderServiceImpl;
 import com.huobi.quantification.service.http.HttpService;
 import com.xiaoleilu.hutool.json.JSONObject;
@@ -129,5 +133,21 @@ public class SpotOrderServiceImplTest {
 		String body = httpService.doHuobiPost(4295363l, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
 		System.err.println("=============" + body);
 	}
-
+	
+	@Test
+	public void orderPlace() {
+		SpotPlaceOrderReqDto reqDto = new SpotPlaceOrderReqDto();
+		reqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+		reqDto.setAccountId(4295363);
+		reqDto.setBaseCoin("btc");
+		reqDto.setQuoteCoin("usdt");
+		reqDto.setSide("buy");
+		reqDto.setOrderType("limit");
+		reqDto.setPrice(new BigDecimal("0.01"));
+		reqDto.setQuantity(new BigDecimal("1"));
+		reqDto.setLinkOrderId(123);
+		reqDto.setSync(true);
+		ServiceResult<SpotPlaceOrderRespDto> placeOrder = spotOrderServiceImpl.placeOrder(reqDto);
+		System.err.println(JSON.toJSONString(placeOrder));
+	}
 }
