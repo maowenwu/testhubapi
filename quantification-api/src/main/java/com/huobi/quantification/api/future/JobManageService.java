@@ -1,7 +1,6 @@
 package com.huobi.quantification.api.future;
 
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dto.FutureJobReqDto;
 import com.huobi.quantification.dto.JobReqDto;
 
 public interface JobManageService {
@@ -21,9 +20,6 @@ public interface JobManageService {
     ServiceResult addOkFutureUserInfoJob(Long accountId, String cron, boolean enable);
 
 
-
-    ServiceResult startSpotJob(FutureJobReqDto jobReqDto);
-    ServiceResult stopFutureJob(FutureJobReqDto jobReqDto);
 
     ServiceResult startSpotJob(JobReqDto jobReqDto);
 

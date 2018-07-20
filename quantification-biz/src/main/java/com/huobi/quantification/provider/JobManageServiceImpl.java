@@ -85,22 +85,7 @@ public class JobManageServiceImpl implements JobManageService {
         return buffer.toString();
     }
 
-    @Override
-    public ServiceResult startSpotJob(FutureJobReqDto jobReqDto) {
-        ServiceResult result = new ServiceResult();
-        try {
-            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
-                    jobReqDto.getCron(), 1);
-        } catch (Exception e) {
-            logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-            result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
-            result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
-            return result;
-        }
-        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-        return result;
-    }
+
 	@Override
 	public ServiceResult startSpotJob(JobReqDto jobReqDto) {
 		ServiceResult result = new ServiceResult();
@@ -117,24 +102,6 @@ public class JobManageServiceImpl implements JobManageService {
 		result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		return result;
 	}
-
-    @Override
-    public ServiceResult stopSpotJob(FutureJobReqDto jobReqDto) {
-        ServiceResult result = new ServiceResult();
-        try {
-            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
-                    jobReqDto.getCron(), 0);
-        } catch (Exception e) {
-            logger.error("停止任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-            result.setCode(ServiceErrorEnum.JOB_STOP_ERROR.getCode());
-            result.setMessage(ServiceErrorEnum.JOB_STOP_ERROR.getMessage());
-            return result;
-        }
-        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-        return result;
-    }
-
 
     @Override
     public ServiceResult addOkFutureCurrentPriceJob(String symbol, String contractType, String cron, boolean enable) {
