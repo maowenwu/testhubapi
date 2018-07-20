@@ -130,6 +130,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		String ch = jsonObject.getString("ch");
 		ArrayList<String> dbch = new ArrayList<String>();
 		dbch.add("btc-usdt");
+		dbch.add("eth-usdt");
 		String[] chSplit = ch.split("\\.");
 		String baseCoinAndQuoteCoin = chSplit[1];
 		String baseCoin = "";

@@ -14,6 +14,7 @@ import com.huobi.quantification.dao.QuanJobFutureMapper;
 import com.huobi.quantification.dao.QuanJobMapper;
 import com.huobi.quantification.dto.FutureJobReqDto;
 import com.huobi.quantification.dto.JobParamDto;
+import com.huobi.quantification.dto.JobReqDto;
 import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ServiceErrorEnum;
@@ -101,7 +102,7 @@ public class JobManageServiceImpl implements JobManageService {
 	}
 
 	@Override
-	public ServiceResult startSpotJob(FutureJobReqDto jobReqDto) {
+	public ServiceResult startSpotJob(JobReqDto jobReqDto) {
 		ServiceResult result = new ServiceResult();
 		try {
 			updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
@@ -118,7 +119,7 @@ public class JobManageServiceImpl implements JobManageService {
 	}
 
 	@Override
-	public ServiceResult stopSpotJob(FutureJobReqDto jobReqDto) {
+	public ServiceResult stopSpotJob(JobReqDto jobReqDto) {
 		ServiceResult result = new ServiceResult();
 		try {
 			updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),

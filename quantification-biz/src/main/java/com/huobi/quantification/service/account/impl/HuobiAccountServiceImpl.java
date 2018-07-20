@@ -56,26 +56,26 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 		params.put("account-id", accountId);
 		String body = httpService.doHuobiGet(Long.parseLong(accountId),
 				HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
-		parseAndaccounts(body);
+		parseAndSaveAccounts(body);
 		return null;
 	}
 
-	private void parseAndaccounts(String accountres) {
+	private void parseAndSaveAccounts(String accountres) {
 		JSONObject jsonObject = JSON.parseObject(accountres);
 		String data = jsonObject.getString("data");
 		JSONObject temp = JSON.parseObject(data);
-		QuanAccount quanAccount = new QuanAccount();
-		quanAccount.setAccountSourceId(temp.getLong("id"));
-		quanAccount.setAccountsType(temp.getString("type"));
-		quanAccount.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		quanAccount.setState(temp.getString("state"));
+//		QuanAccount quanAccount = new QuanAccount();
+//		quanAccount.setAccountSourceId(temp.getLong("id"));
+//		quanAccount.setAccountsType(temp.getString("type"));
+//		quanAccount.setExchangeId(ExchangeEnum.HUOBI.getExId());
+//		quanAccount.setState(temp.getString("state"));
 		JSONArray jsarr = temp.getJSONArray("list");
-		quanAccountMapper.insert(quanAccount);
+//		quanAccountMapper.insert(quanAccount);
 		List<QuanAccountAsset> assets = new ArrayList<>();
 		for (int i = 0; i < jsarr.size(); i++) {
 			if (i % 2 == 0) {
 				QuanAccountAsset tempAccount = new QuanAccountAsset();
-				tempAccount.setAccountId(quanAccount.getAccountSourceId());
+				tempAccount.setAccountId(temp.getLong("id"));
 				JSONObject json1 = jsarr.getJSONObject(i);
 				JSONObject json2 = jsarr.getJSONObject(i + 1);
 				if (json1.getString("type").equals("trade")) {
@@ -97,7 +97,7 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 			}
 			continue;
 		}
-		redisService.saveHuobiAccountAsset(assets, quanAccount.getAccountSourceId(), quanAccount.getExchangeId());
+		redisService.saveHuobiAccountAsset(assets, temp.getLong("id"), ExchangeEnum.HUOBI.getExId());
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 		params.put("account-id", accountId);
 		String body = httpService.doHuobiGet(Long.parseLong(accountId),
 				HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
-		parseAndaccounts(body);
+		parseAndSaveAccounts(body);
 		logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
 	}
 
