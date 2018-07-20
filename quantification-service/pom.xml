@@ -73,7 +73,7 @@
 
 
     <build>
-        <finalName>contract-index-service</finalName>
+        <finalName>quantification-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
