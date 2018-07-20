@@ -28,13 +28,13 @@ public class TestController {
 
     @RequestMapping("/testStartFutureJob")
     public String testStartFutureJob() {
-        jobManageService.addOkFutureCurrentPriceJob("etc_usd", "next_week", "0/1 * * * * ?", true);
-        jobManageService.addOkFutureDepthJob("etc_usd", "next_week", "0/1 * * * * ?", true);
-       /* jobManageService.addOkFutureIndexJob("etc_usd", "0/1 * * * * ?", true);*/
-        jobManageService.addOkFutureKlineJob("etc_usd", "1min", "next_week", "0/1 * * * * ?", true);
-        jobManageService.addOkFutureOrderJob(1L, "etc_usd", "next_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureCurrentPriceJob("bch_usd", "next_week", "0/1 * * * * ?", true);
+       /* jobManageService.addOkFutureDepthJob("bch_usd", "next_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureIndexJob("bch_usd", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureKlineJob("bch_usd", "5min", "next_week", "0/1 * * * * ?", true);
+        jobManageService.addOkFutureOrderJob(1L, "bch_usd", "next_week", "0/1 * * * * ?", true);
         jobManageService.addOkFuturePositionJob(1L, "0/1 * * * * ?", true);
-        jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", true);
+        jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", true);*/
         return JSON.toJSONString(true);
     }
 
