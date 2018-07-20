@@ -1,0 +1,1 @@
+nohup java -jar  quantification-service.jar -Dspring.profiles.active=test >/dev/null &
