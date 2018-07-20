@@ -16,7 +16,7 @@
     <dubbo:service interface="com.huobi.quantification.api.future.FutureAccountService" ref="futureAccountServiceImpl" />
     <dubbo:service interface="com.huobi.quantification.api.future.FutureMarketService" ref="futureMarketServiceImpl" />
     <dubbo:service interface="com.huobi.quantification.api.future.FutureOrderService" ref="futureOrderServiceImpl" />
-    <dubbo:service interface="com.huobi.quantification.api.future.JobManageService" ref="jobManageService" />
+    <dubbo:service timeout="360000000" interface="com.huobi.quantification.api.future.JobManageService" ref="jobManageService" />
 
 
 
