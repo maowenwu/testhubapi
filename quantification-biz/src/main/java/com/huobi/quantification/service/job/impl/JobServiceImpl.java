@@ -7,6 +7,7 @@ import com.huobi.quantification.dto.JobParamDto;
 import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OkJobTypeEnum;
 import com.huobi.quantification.job.huobi.future.*;
 import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
 import com.huobi.quantification.job.huobi.spot.HuobiOrderJob;
@@ -39,14 +40,14 @@ public class JobServiceImpl implements JobService {
 
     static {
         Map<Integer, Class> okFutureTypeClass = new HashMap<>();
-        okFutureTypeClass.put(1, OkFutureDepthJob.class);
-        okFutureTypeClass.put(2, OkFutureKlineJob.class);
-        okFutureTypeClass.put(3, OkFutureTickerJob.class);
-        okFutureTypeClass.put(4, OkFutureUserInfoJob.class);
-        okFutureTypeClass.put(5, OkFuturePositionJob.class);
-        okFutureTypeClass.put(6, OkFutureOrderJob.class);
-        okFutureTypeClass.put(7, OkFutureIndexJob.class);
-        okFutureTypeClass.put(8, OkFutureCurrentPriceJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.Depth.getJobType(), OkFutureDepthJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.Kline.getJobType(), OkFutureKlineJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.Ticker.getJobType(), OkFutureTickerJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.UserInfo.getJobType(), OkFutureUserInfoJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.Position.getJobType(), OkFuturePositionJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.Order.getJobType(), OkFutureOrderJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.Index.getJobType(), OkFutureIndexJob.class);
+        okFutureTypeClass.put(OkJobTypeEnum.CurrentPrice.getJobType(), OkFutureCurrentPriceJob.class);
         jobMap.put(ExchangeEnum.OKEX.getExId(), okFutureTypeClass);
 
         Map<Integer, Class> huobiFutureTypeClass = new HashMap<>();
@@ -94,7 +95,7 @@ public class JobServiceImpl implements JobService {
                 if (jobClass == null) {
                     continue;
                 }
-                JobParamDto jobParamDto = JSON.parseObject(quanJob.getJobParam() ,JobParamDto.class);
+                JobParamDto jobParamDto = JSON.parseObject(quanJob.getJobParam(), JobParamDto.class);
                 quartzManager.addJobNoRepeat(quanJob.getJobName(), jobClass, quanJob.getCron(), jobParamDto);
             } else {
                 quartzManager.removeJobNoRepeat(quanJob.getJobName());

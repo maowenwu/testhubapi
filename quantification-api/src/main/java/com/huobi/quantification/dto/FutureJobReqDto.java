@@ -8,7 +8,7 @@ public class FutureJobReqDto implements Serializable {
     private int jobType;
     private JobParamDto jobParamDto;
     private  String cron;
-
+    private int state;
     public int getExchangeId() {
         return exchangeId;
     }
@@ -39,5 +39,13 @@ public class FutureJobReqDto implements Serializable {
 
     public void setCron(String cron) {
         this.cron = cron;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

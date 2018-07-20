@@ -30,14 +30,14 @@ public class TestController {
     public String testStartFutureJob() {
         FutureJobReqDto reqDto = new FutureJobReqDto();
         reqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        reqDto.setJobType(OkJobTypeEnum.Kline.getJobType());
+        reqDto.setJobType(OkJobTypeEnum.Ticker.getJobType());
         reqDto.setCron("0/1 * * * * ?");
         JobParamDto jobParamDto = new JobParamDto();
         jobParamDto.setSymbol("btc_usd");
         jobParamDto.setContractType("this_week");
         jobParamDto.setKlineType("5min");
         reqDto.setJobParamDto(jobParamDto);
-        ServiceResult serviceResult = jobManageService.stopFutureJob(reqDto);
+        ServiceResult serviceResult = jobManageService.startFutureJob(reqDto);
         System.out.println(serviceResult);
         return JSON.toJSONString(serviceResult);
     }
