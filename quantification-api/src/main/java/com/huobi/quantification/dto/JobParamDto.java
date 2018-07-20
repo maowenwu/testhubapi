@@ -9,15 +9,7 @@ public class JobParamDto implements Serializable {
 	private String klineType;
 	private String depthType;
 	private Long orderId;
-	private int size;
-
-	public Long getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
-	}
+	private Integer size;
 
 	public Long getAccountId() {
 		return accountId;
@@ -59,11 +51,19 @@ public class JobParamDto implements Serializable {
 		this.depthType = depthType;
 	}
 
-	public int getSize() {
+	public Long getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
+
+	public Integer getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
+	public void setSize(Integer size) {
 		this.size = size;
 	}
 }
