@@ -166,7 +166,7 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureKlineJob(String symbol, String period, String contractType, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.Index.getJobType());
+        jobReqDto.setJobType(OkJobTypeEnum.Kline.getJobType());
 
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
