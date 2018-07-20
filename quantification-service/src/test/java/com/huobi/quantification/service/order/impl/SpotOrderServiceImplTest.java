@@ -14,7 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.dto.SpotOrderBatchCancelReqDto;
+import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dto.SpotOrderReqCancelDto;
 import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
 import com.huobi.quantification.dto.SpotOrderReqInnerDto;
@@ -33,6 +33,17 @@ public class SpotOrderServiceImplTest {
 
 	@Autowired
 	private HttpService httpService;
+	
+	@Autowired
+	private QuanOrderMapper quanOrderMapper;
+	
+	@Test
+	public void testUpdateOrderMapper() {
+		List<Long> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(1000L, "filled", "ethusdt");
+		for (Long long1 : selectByOrderInfo) {
+			System.err.println(long1);
+		}
+	}
 
 	@Test
 	public void getOrderByInnerOrderID() {

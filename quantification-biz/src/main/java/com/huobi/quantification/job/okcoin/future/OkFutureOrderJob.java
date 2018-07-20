@@ -1,11 +1,11 @@
 package com.huobi.quantification.job.okcoin.future;
 
+import org.quartz.DisallowConcurrentExecution;
+
 import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.dto.JobParamDto;
-import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.order.OkOrderService;
-import org.quartz.DisallowConcurrentExecution;
 
 @DisallowConcurrentExecution
 public class OkFutureOrderJob extends AbstractQuartzJob {

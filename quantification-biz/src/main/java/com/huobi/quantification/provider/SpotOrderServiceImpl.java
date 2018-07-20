@@ -195,7 +195,8 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			orderDto.setAmount(reqDto.getQuantity());
 		}
 		orderDto.setSource("api");
-		orderDto.setSymbol(getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()));
+		String symbol = getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin());
+		orderDto.setSymbol(symbol);
 		orderDto.setType(reqDto.getOrderType());
 		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
@@ -219,6 +220,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			}
 		}
 		quanOrder.setOrderState("submitting");
+		quanOrder.setOrderSymbol(symbol);
 		quanOrderMapper.insert(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());
