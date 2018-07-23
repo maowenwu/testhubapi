@@ -38,9 +38,23 @@
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
       #{innerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrder">
+  <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="id">
+  	insert into quan_order (id, order_source_id, order_symbol, 
+      order_type, order_state, order_account_id, 
+      order_amount, order_field_amount, order_field_cash_amount, 
+      order_field_fees, order_price, order_source, 
+      order_created_at, order_canceled_at, order_finished_at, 
+      order_inner_id, exchange_id)
+    values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
+      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR}, #{orderAccountId,jdbcType=BIGINT}, 
+      #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
+      #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
+      #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
+      #{innerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
+  </insert>
+  <update id="updateOrderByOrderId" parameterType="com.huobi.quantification.entity.QuanOrder">
     update quan_order
-    set order_source_id = #{orderSourceId,jdbcType=BIGINT},
+    set 
       order_symbol = #{orderSymbol,jdbcType=VARCHAR},
       order_type = #{orderType,jdbcType=VARCHAR},
       order_state = #{orderState,jdbcType=VARCHAR},
@@ -58,9 +72,10 @@
       exchange_id = #{exchangeId,jdbcType=INTEGER}
     where order_source_id = #{orderSourceId,jdbcType=BIGINT}
   </update>
-  <update id="updateOrderByOrderId" parameterType="com.huobi.quantification.entity.QuanOrder">
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrder">
     update quan_order
-    set order_symbol = #{orderSymbol,jdbcType=VARCHAR},
+    set order_source_id = #{orderSourceId,jdbcType=BIGINT},
+      order_symbol = #{orderSymbol,jdbcType=VARCHAR},
       order_type = #{orderType,jdbcType=VARCHAR},
       order_state = #{orderState,jdbcType=VARCHAR},
       order_account_id = #{orderAccountId,jdbcType=BIGINT},

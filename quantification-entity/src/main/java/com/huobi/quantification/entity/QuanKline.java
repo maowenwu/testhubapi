@@ -5,77 +5,67 @@ import java.util.Date;
 
 public class QuanKline {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private Long tickId;
-
-    /**
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private String klineType;
-
-    /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private String period;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private Long size;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal high;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal open;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal low;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal close;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal count;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private BigDecimal vol;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-23 20:12:56
      */
     private Date ts;
 
@@ -93,22 +83,6 @@ public class QuanKline {
 
     public void setExchangeId(Integer exchangeId) {
         this.exchangeId = exchangeId;
-    }
-
-    public Long getTickId() {
-        return tickId;
-    }
-
-    public void setTickId(Long tickId) {
-        this.tickId = tickId;
-    }
-
-    public String getKlineType() {
-        return klineType;
-    }
-
-    public void setKlineType(String klineType) {
-        this.klineType = klineType;
     }
 
     public String getSymbol() {

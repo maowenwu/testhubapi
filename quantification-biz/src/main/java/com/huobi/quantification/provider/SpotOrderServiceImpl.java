@@ -188,6 +188,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	@Override
 	public ServiceResult<SpotPlaceOrderRespDto> placeOrder(SpotPlaceOrderReqDto reqDto) {
 		HuobiTradeOrderDto orderDto = new HuobiTradeOrderDto();
+		QuanOrder quanOrder = new QuanOrder();
 		orderDto.setAccountId(reqDto.getAccountId());
 		//验证参数
 		if ("buy".equals(reqDto.getSide()) || "sell".equals(reqDto.getSide())) {
@@ -204,15 +205,21 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		String symbol = getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin());
 		orderDto.setSymbol(symbol);
 		orderDto.setType(reqDto.getSide() + "-" +reqDto.getOrderType());
+		quanOrder.setExchangeId(reqDto.getExchangeId());
+		quanOrder.setOrderAccountId(reqDto.getAccountId());
+		quanOrder.setOrderAmount(orderDto.getAmount());
+		quanOrder.setOrderPrice(orderDto.getPrice());
+		quanOrder.setOrderCreatedAt(new Date());
+		quanOrder.setOrderSource(orderDto.getSource());
+		quanOrder.setOrderState("submitting");
+		quanOrder.setOrderSymbol(symbol);
+		quanOrder.setOrderType(orderDto.getType());
+		quanOrderMapper.insertAndGetId(quanOrder);
 		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-
 		SpotPlaceOrderRespDto respDto = new SpotPlaceOrderRespDto();
-		QuanOrder quanOrder = new QuanOrder();
-		quanOrder.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		quanOrder.setOrderAccountId(reqDto.getAccountId());
 		if (reqDto.isSync()) {
 			try {
 				quanOrder.setOrderSourceId(orderIdFuture.get());
@@ -225,14 +232,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 				serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
 			}
 		}
-		quanOrder.setOrderState("submitting");
-		quanOrder.setOrderSymbol(symbol);
-		quanOrder.setOrderType(reqDto.getSide() + "-" +reqDto.getOrderType());
-		quanOrder.setOrderAmount(orderDto.getAmount());
-		quanOrder.setOrderPrice(reqDto.getPrice());
-		quanOrder.setOrderSource("api");
-		quanOrder.setOrderCreatedAt(new Date());
-		quanOrderMapper.insert(quanOrder);
+		quanOrderMapper.updateByPrimaryKey(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());
 		serviceResult.setData(respDto);

@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanKline">
     <result column="id" jdbcType="BIGINT" property="id" />
     <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
-    <result column="tick_id" jdbcType="BIGINT" property="tickId" />
-    <result column="kline_type" jdbcType="VARCHAR" property="klineType" />
     <result column="symbol" jdbcType="VARCHAR" property="symbol" />
     <result column="period" jdbcType="VARCHAR" property="period" />
     <result column="size" jdbcType="BIGINT" property="size" />
@@ -19,20 +17,18 @@
     <result column="ts" jdbcType="TIMESTAMP" property="ts" />
   </resultMap>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanKline">
-    insert into quan_kline (id, exchange_id, tick_id, 
-      kline_type, symbol, period, 
-      size, high, open, low, 
-      close, count, amount, 
-      vol, ts)
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{tickId,jdbcType=BIGINT}, 
-      #{klineType,jdbcType=VARCHAR}, #{symbol,jdbcType=VARCHAR}, #{period,jdbcType=VARCHAR}, 
-      #{size,jdbcType=BIGINT}, #{high,jdbcType=DECIMAL}, #{open,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, 
-      #{close,jdbcType=DECIMAL}, #{count,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL}, 
-      #{vol,jdbcType=DECIMAL}, #{ts,jdbcType=TIMESTAMP})
+    insert into quan_kline (id, exchange_id, symbol, 
+      period, size, high, 
+      open, low, close, count, 
+      amount, vol, ts)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, 
+      #{period,jdbcType=VARCHAR}, #{size,jdbcType=BIGINT}, #{high,jdbcType=DECIMAL}, 
+      #{open,jdbcType=DECIMAL}, #{low,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL}, #{count,jdbcType=DECIMAL}, 
+      #{amount,jdbcType=DECIMAL}, #{vol,jdbcType=DECIMAL}, #{ts,jdbcType=TIMESTAMP})
   </insert>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, exchange_id, tick_id, kline_type, symbol, period, size, high, open, low, 
-    close, count, amount, vol, ts
+    select id, exchange_id, symbol, period, size, high, open, low, close, count, amount, 
+    vol, ts
     from quan_kline
   </select>
 </mapper>
