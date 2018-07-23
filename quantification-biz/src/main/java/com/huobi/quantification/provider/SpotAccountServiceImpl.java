@@ -38,15 +38,15 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 		try {
 			SpotBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
-					// 从redis读取最新资产
+					// 从redis读取最新用户资产
 					List<QuanAccountAsset> assets = redisService.getSpotUserInfo(balanceReqDto.getAccountId(),
 							balanceReqDto.getExchangeId());
 					if (assets == null) {
 						continue;
 					}
 					Date ts = assets.get(0).getTs();
-					System.out.println("QuanAccountSpotAsset时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-					System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+					logger.info("QuanAccountSpotAsset时间：{}",DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
+					logger.info("当前时间：{}",DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
 					if (DateUtils.withinMaxDelay(ts, balanceReqDto.getMaxDelay())) {
 						return parseBalanceResp(balanceReqDto.getExchangeId(), assets);
 					} else {

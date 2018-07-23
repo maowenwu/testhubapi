@@ -44,7 +44,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 		try {
 			SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
-					// 从redis读取最新价格
+					// 从redis读取最新成交价格
 					TradeResponse tradeSpot = redisService.getHuobiCurrentPrice(currentPriceReqDto.getExchangeId(),
 							getSymbol(currentPriceReqDto.getExchangeId(), currentPriceReqDto.getBaseCoin(),
 									currentPriceReqDto.getQuoteCoin()));
@@ -52,8 +52,8 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 						continue;
 					}
 					Date ts = tradeSpot.getTick().getTs();
-					System.out.println("currentPriceRespDto时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-					System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+					logger.info("QuanAccountSpotAsset时间：{}",DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
+					logger.info("当前时间：{}",DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
 					if (DateUtils.withinMaxDelay(ts, currentPriceReqDto.getMaxDelay())) {
 						SpotCurrentPriceRespDto respDto = new SpotCurrentPriceRespDto();
 						respDto.setTs(ts);
@@ -94,7 +94,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 		try {
 			SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
-					// 从redis读取最新价格
+					// 从redis读取最新深度
 					List<QuanDepthDetail> huobiDepths = redisService.getHuobiDepth(depthReqDto.getExchangeId(),
 							getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(),
 									depthReqDto.getQuoteCoin()));
@@ -103,8 +103,8 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 						continue;
 					}
 					Date ts = huobiDepths.get(0).getDateUpdate();
-					System.out.println("getSpotDepth时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-					System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+					logger.info("QuanAccountSpotAsset时间：{}",DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
+					logger.info("当前时间：{}",DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
 					if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
 						SpotDepthRespDto respDto = new SpotDepthRespDto();
 						respDto.setTs(ts);
