@@ -185,7 +185,7 @@ public class MarketHuobiServiceTest {
 		data.setPrice(jsonObject2.getBigDecimal("price"));
 		data.setTs(jsonObject2.getDate("ts"));
 		tick.setData(data);
-		tick.setId(jsonObject.getInteger("id"));
+		tick.setId(jsonObject.getLong("id"));
 		tick.setTs(jsonObject.getDate("ts"));
 		trade.setTick(tick);
 		trade.setCh(parseObject.getString("ch"));
@@ -194,7 +194,6 @@ public class MarketHuobiServiceTest {
 		System.err.println("price:"+data.getPrice());
 		System.err.println("tick.ts:"+tick.getTs());
 		System.err.println("ch:"+trade.getCh());
-		redisService.setHuobiCurrentPrice(ExchangeEnum.HUOBI.getExId(), "xrpbtc", trade);
 	}
 	
 	@Test

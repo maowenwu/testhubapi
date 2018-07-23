@@ -19,6 +19,7 @@ import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.entity.QuanTradeFuture;
 import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.redis.RedisService;
@@ -155,8 +156,8 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public void setHuobiCurrentPrice(int exId, String symbol, TradeResponse trade) {
-		RMap<String, TradeResponse> map = client.getMap("quan.market.spot.trade." + exId);
+	public void setHuobiCurrentPrice(int exId, String symbol, QuanTrade trade) {
+		RMap<String, QuanTrade> map = client.getMap("quan.market.spot.trade." + exId);
 		map.put(symbol, trade);
 	}
 

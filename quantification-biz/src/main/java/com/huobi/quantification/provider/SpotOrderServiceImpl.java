@@ -190,7 +190,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		HuobiTradeOrderDto orderDto = new HuobiTradeOrderDto();
 		orderDto.setAccountId(reqDto.getAccountId());
 		//验证参数
-		if (reqDto.getSide().equals("buy") || reqDto.getSide().equals("sell")) {
+		if ("buy".equals(reqDto.getSide()) || "sell".equals(reqDto.getSide())) {
 			if (reqDto.getOrderType().contains("market")) {
 				orderDto.setAmount(reqDto.getCashAmount());
 			} else {

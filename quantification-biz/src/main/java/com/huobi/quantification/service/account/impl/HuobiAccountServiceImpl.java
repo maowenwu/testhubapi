@@ -24,6 +24,7 @@ import com.huobi.quantification.dao.QuanAccountSecretMapper;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.account.HuobiAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -77,15 +78,14 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 				tempAccount.setAccountId(temp.getLong("id"));
 				JSONObject json1 = jsarr.getJSONObject(i);
 				JSONObject json2 = jsarr.getJSONObject(i + 1);
-				if (json1.getString("type").equals("trade")) {
+				if ("trade".equals(json1.getString("type"))) {
 					tempAccount.setAvailable(json1.getBigDecimal("balance"));
-				} else {
-					tempAccount.setFrozen(json1.getBigDecimal("balance"));
 				}
-				if (json2.getString("type").equals("frozen")) {
+				if ("frozen".equals(json2.getString("type"))) {
 					tempAccount.setFrozen(json2.getBigDecimal("balance"));
-				} else {
-					tempAccount.setAvailable(json2.getBigDecimal("balance"));
+				}
+				if (null == tempAccount.getAvailable() || null == tempAccount.getFrozen()) {
+					new RuntimeException("返回数据有误");
 				}
 				tempAccount.setCoin(json1.getString("currency"));
 				tempAccount.setDataUpdate(new Date());

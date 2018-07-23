@@ -23,10 +23,12 @@ import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
 import com.huobi.quantification.dao.QuanKlineMapper;
 import com.huobi.quantification.dao.QuanTickerMapper;
+import com.huobi.quantification.dao.QuanTradeMapper;
 import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanTicker;
+import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.huobi.response.Merged;
@@ -57,6 +59,8 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 	private QuanTickerMapper quanTickerMapper;
 	@Autowired
 	private QuanKlineMapper quanKlineMapper;
+	@Autowired
+	private QuanTradeMapper quanTradeMapper;
 	@Autowired
 	private RedisService redisService;
 
@@ -237,10 +241,26 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		Stopwatch stopwatch = Stopwatch.createStarted();
 		logger.info("[HuobiSpotCurrentPrice][symbol={}]任务开始",symbol);
 		TradeResponse trade = queryCurrentPriceByApi(symbol);
-		redisService.setHuobiCurrentPrice(ExchangeEnum.HUOBI.getExId(),symbol, trade);
+		parseAndSaveTrade(trade, symbol);
 		logger.info("[HuobiSpotCurrentPrice][symbol={}]任务结束，耗时：" + stopwatch , symbol);
 	}
 	
+	private void parseAndSaveTrade(TradeResponse trade, String symbol) {
+		Trade tick = trade.getTick();
+		TradeDetail data = tick.getData();
+		QuanTrade quanTrade = new QuanTrade();
+		quanTrade.setAmount(data.getAmount());
+		quanTrade.setDirection(data.getDirection());
+		quanTrade.setExchangeId(ExchangeEnum.HUOBI.getExId());
+		quanTrade.setPrice(data.getPrice());
+		quanTrade.setQueryId(tick.getId());
+		quanTrade.setSymbol(symbol);
+		quanTrade.setTradeId(data.getId());
+		quanTrade.setTs(data.getTs());
+		redisService.setHuobiCurrentPrice(ExchangeEnum.HUOBI.getExId(),symbol, quanTrade);
+		quanTradeMapper.insert(quanTrade);
+	}
+
 	/**
 	 * 查询当前最新成交价，并转化返回一个对象
 	 * @param symbol
@@ -263,7 +283,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		data.setPrice(jsonObject2.getBigDecimal("price"));
 		data.setTs(jsonObject2.getDate("ts"));
 		tick.setData(data);
-		tick.setId(jsonObject.getInteger("id"));
+		tick.setId(jsonObject.getLong("id"));
 		tick.setTs(jsonObject.getDate("ts"));
 		trade.setTick(tick);
 		trade.setCh(parseObject.getString("ch"));

@@ -15,6 +15,7 @@ import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.entity.QuanTickerFuture;
+import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.entity.QuanTradeFuture;
 import com.huobi.quantification.huobi.response.TradeResponse;
 
@@ -60,7 +61,7 @@ public interface RedisService {
 
     QuanTradeFuture getCurrentPrice(int exId, String symbol, String contractType);
 
-	void setHuobiCurrentPrice(int exId, String symbol, TradeResponse trade);
+	void setHuobiCurrentPrice(int exId, String symbol, QuanTrade trade);
 
 	TradeResponse getHuobiCurrentPrice(int exchangeId, String symbol);
 
