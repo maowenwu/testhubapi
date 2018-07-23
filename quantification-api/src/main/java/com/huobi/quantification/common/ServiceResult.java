@@ -1,5 +1,7 @@
 package com.huobi.quantification.common;
 
+import com.huobi.quantification.enums.ServiceErrorEnum;
+
 import java.io.Serializable;
 
 public class ServiceResult<T> implements Serializable {
@@ -38,5 +40,20 @@ public class ServiceResult<T> implements Serializable {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    public static <T> ServiceResult<T> buildSuccessResult(T t) {
+        ServiceResult<T> serviceResult = new ServiceResult<>();
+        serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+        serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+        serviceResult.setData(t);
+        return serviceResult;
+    }
+
+    public static ServiceResult buildErrorResult(ServiceErrorEnum errorEnum) {
+        ServiceResult serviceResult = new ServiceResult();
+        serviceResult.setCode(errorEnum.getCode());
+        serviceResult.setMessage(errorEnum.getMessage());
+        return serviceResult;
     }
 }

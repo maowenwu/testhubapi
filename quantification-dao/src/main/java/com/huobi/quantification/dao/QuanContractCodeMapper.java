@@ -19,4 +19,8 @@ public interface QuanContractCodeMapper {
 
     /*自定义方法*/
     List<QuanContractCode> selectByExchangeId(int exId);
+
+    QuanContractCode selectContractCode(int exchangeId, String symbol, String contractType);
+
+    QuanContractCode selectContractCodeByCode(int exchangeId, String contractCode);
 }

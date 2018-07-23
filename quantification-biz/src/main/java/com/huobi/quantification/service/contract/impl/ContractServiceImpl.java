@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 public class ContractServiceImpl implements ContractService {
 
-
     @Autowired
     private QuanContractCodeMapper contractCodeMapper;
 
@@ -51,5 +50,15 @@ public class ContractServiceImpl implements ContractService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public QuanContractCode getContractCode(int exchangeId, String symbol, String contractType) {
+        return contractCodeMapper.selectContractCode(exchangeId, symbol, contractType);
+    }
+
+    @Override
+    public QuanContractCode getContractCode(int exchangeId, String contractCode) {
+        return contractCodeMapper.selectContractCodeByCode(exchangeId,contractCode);
     }
 }

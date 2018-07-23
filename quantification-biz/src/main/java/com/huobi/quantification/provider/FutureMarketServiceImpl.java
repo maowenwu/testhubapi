@@ -4,16 +4,16 @@ import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.common.util.DateUtils;
+import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dto.*;
-import com.huobi.quantification.entity.QuanDepthFutureDetail;
-import com.huobi.quantification.entity.QuanIndexFuture;
-import com.huobi.quantification.entity.QuanKlineFuture;
-import com.huobi.quantification.entity.QuanTradeFuture;
+import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.service.contract.ContractService;
 import com.huobi.quantification.service.redis.RedisService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,84 +33,91 @@ public class FutureMarketServiceImpl implements FutureMarketService {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private ContractService contractService;
+
     @Override
     public ServiceResult<FutureCurrentPriceRespDto> getCurrentPrice(FutureCurrentPriceReqDto reqDto) {
-        ServiceResult<FutureCurrentPriceRespDto> serviceResult = new ServiceResult<>();
+        ServiceResult<FutureCurrentPriceRespDto> serviceResult = null;
         try {
             FutureCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新价格
-                    QuanTradeFuture tradeFuture = redisService.getCurrentPrice(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
-                            , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    QuanTradeFuture tradeFuture = null;
+                    if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
+                        QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+                        tradeFuture = redisService.getCurrentPrice(reqDto.getExchangeId(), contractCode.getSymbol(), contractCode.getContractType());
+                    } else {
+                        tradeFuture = redisService.getCurrentPrice(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
+                                , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    }
                     if (tradeFuture == null) {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                     Date ts = tradeFuture.getUpdateTime();
-                    System.out.println("currentPriceRespDto时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-                    System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
                     if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
                         FutureCurrentPriceRespDto respDto = new FutureCurrentPriceRespDto();
                         respDto.setTs(ts);
                         respDto.setCurrentPrice(tradeFuture.getPrice());
                         return respDto;
                     } else {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-            serviceResult.setData(currentPriceRespDto);
+            serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
         } catch (ExecutionException e) {
             logger.error("执行异常：", e);
-            serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
             logger.error("超时异常：", e);
-            serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
         return serviceResult;
     }
 
     @Override
     public ServiceResult<FutureDepthRespDto> getDepth(FutureDepthReqDto reqDto) {
-        ServiceResult<FutureDepthRespDto> serviceResult = new ServiceResult<>();
+        ServiceResult<FutureDepthRespDto> serviceResult = null;
         try {
             FutureDepthRespDto depthRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新K线
-                    List<QuanDepthFutureDetail> depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
-                            , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    List<QuanDepthFutureDetail> depthFuture;
+                    if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
+                        QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+                        depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(), contractCode.getSymbol(), contractCode.getContractType());
+                    } else {
+                        depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
+                                , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    }
                     if (CollectionUtils.isEmpty(depthFuture)) {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                     Date ts = depthFuture.get(0).getDateUpdate();
-                    System.out.println("depth时间：" + DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-                    System.out.println("当前时间：" + DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
                     if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
                         FutureDepthRespDto respDto = new FutureDepthRespDto();
                         respDto.setTs(ts);
                         respDto.setData(convertDepthToDto(depthFuture));
                         return respDto;
                     } else {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-            serviceResult.setData(depthRespDto);
+            serviceResult = ServiceResult.buildSuccessResult(depthRespDto);
         } catch (ExecutionException e) {
             logger.error("执行异常：", e);
-            serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
             logger.error("超时异常：", e);
-            serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
         return serviceResult;
     }
@@ -139,47 +146,53 @@ public class FutureMarketServiceImpl implements FutureMarketService {
 
     @Override
     public ServiceResult<FutureKlineRespDto> getKline(FutureKlineReqDto reqDto) {
-        ServiceResult<FutureKlineRespDto> serviceResult = new ServiceResult<>();
+        ServiceResult<FutureKlineRespDto> serviceResult = null;
         try {
             FutureKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新K线
-                    List<QuanKlineFuture> klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(),
-                            getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()),
-                            reqDto.getPeriod(), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    List<QuanKlineFuture> klineFutures = null;
+                    if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
+                        QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+                        klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(),
+                                contractCode.getSymbol(), reqDto.getPeriod(), contractCode.getContractType());
+                    } else {
+                        klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(),
+                                getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()),
+                                reqDto.getPeriod(), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
+                    }
                     if (CollectionUtils.isEmpty(klineFutures)) {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                     Date ts = klineFutures.get(klineFutures.size() - 1).getTs();
                     if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
                         FutureKlineRespDto respDto = new FutureKlineRespDto();
                         respDto.setTs(ts);
-                        respDto.setData(convertToDto(klineFutures));
+                        respDto.setData(convertToDto(klineFutures, reqDto.getSize()));
                         return respDto;
                     } else {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-            serviceResult.setData(klineRespDto);
+            serviceResult = ServiceResult.buildSuccessResult(klineRespDto);
         } catch (ExecutionException e) {
             logger.error("执行异常：", e);
-            serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
             logger.error("超时异常：", e);
-            serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
         return serviceResult;
     }
 
-    private List<FutureKlineRespDto.DataBean> convertToDto(List<QuanKlineFuture> klineFutures) {
+    private List<FutureKlineRespDto.DataBean> convertToDto(List<QuanKlineFuture> klineFutures, int size) {
         List<FutureKlineRespDto.DataBean> dataBeans = new ArrayList<>();
-        for (QuanKlineFuture future : klineFutures) {
+        for (int i = 0; i < klineFutures.size(); i++) {
+            QuanKlineFuture future = klineFutures.get(i);
             FutureKlineRespDto.DataBean bean = new FutureKlineRespDto.DataBean();
             bean.setId(future.getId());
             bean.setAmount(future.getAmount());
@@ -188,18 +201,22 @@ public class FutureMarketServiceImpl implements FutureMarketService {
             bean.setLow(future.getLow());
             bean.setHigh(future.getHigh());
             dataBeans.add(bean);
+            if (i + 1 >= size) {
+                break;
+            }
         }
         return dataBeans;
     }
 
     @Override
     public ServiceResult<FutureCurrentIndexRespDto> getCurrentIndexPrice(FutureCurrentIndexReqDto reqDto) {
-        ServiceResult<FutureCurrentIndexRespDto> serviceResult = new ServiceResult<>();
+        ServiceResult<FutureCurrentIndexRespDto> serviceResult = null;
         try {
             FutureCurrentIndexRespDto indexRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     QuanIndexFuture futureIndex = redisService.getIndexFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()));
                     if (futureIndex == null) {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                     if (DateUtils.withinMaxDelay(futureIndex.getUpdateTime(), reqDto.getMaxDelay())) {
@@ -208,20 +225,17 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                         respDto.setCurrentIndexPrice(futureIndex.getFutureIndex());
                         return respDto;
                     } else {
+                        ThreadUtils.sleep10();
                         continue;
                     }
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-            serviceResult.setData(indexRespDto);
+            serviceResult = ServiceResult.buildSuccessResult(indexRespDto);
         } catch (ExecutionException e) {
-            serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
-            serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-            serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
         return serviceResult;
     }
