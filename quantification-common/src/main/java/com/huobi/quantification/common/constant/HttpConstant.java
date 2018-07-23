@@ -4,6 +4,7 @@ public class HttpConstant {
 
     /********OK 期货********/
     public static final String OK_HOST = "https://www.okex.com";
+    public static final String OK_CONTRACE_CODE = OK_HOST + "/api/v1/future_hold_amount.do";
     // OK market相关
     public static final String OK_TICKER = OK_HOST + "/api/v1/future_ticker.do";
     public static final String OK_DEPTH = OK_HOST + "/api/v1/future_depth.do";
