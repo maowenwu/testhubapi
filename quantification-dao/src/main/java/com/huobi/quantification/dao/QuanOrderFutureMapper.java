@@ -13,9 +13,11 @@ public interface QuanOrderFutureMapper {
 
     QuanOrderFuture selectByPrimaryKey(Long innerOrderId);
 
-    List<QuanOrderFuture> selectBySelective(QuanOrderFuture record);
-
     int updateByPrimaryKeySelective(QuanOrderFuture record);
 
     int updateByPrimaryKey(QuanOrderFuture record);
+
+    List<QuanOrderFuture> selectBySelective(QuanOrderFuture record);
+
+    List<Long> selectOrderIdBySourceStatus(int exchageId, Long accountId, List<Integer> soutceStatus);
 }

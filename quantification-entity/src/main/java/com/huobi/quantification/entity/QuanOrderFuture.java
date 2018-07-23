@@ -5,136 +5,141 @@ import java.util.Date;
 
 public class QuanOrderFuture {
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Long innerOrderId;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Long strategyVersion;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Long accountId;
 
     /**
      * 交易所id
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Long exOrderId;
 
     /**
      * 账户 ID
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Long linkOrderId;
 
     /**
      * 火币或ok返回的订单id
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private String baseCoin;
 
     /**
      * 合约名称
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private String quoteCoin;
 
     /**
      * btc_usd   ltc_usd    eth_usd    etc_usd    bch_usd
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private String contractType;
 
     /**
      * 订单类型 1：开多 2：开空 3：平多 4： 平空
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private String contractCode;
 
     /**
      * 订单状态(0等待成交 1部分成交 2全部成交 -1撤单 4撤单处理中 5撤单中)
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
-    private String status;
+    private Integer status;
+
+    /**
+     * @mbg.generated 2018-07-23 10:32:50
+     */
+    private Integer sourceStatus;
 
     /**
      * 委托数量
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Integer side;
 
     /**
      * 成交数量
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Integer offset;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Integer lever;
 
     /**
      * 手续费
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private String orderType;
 
     /**
      * 订单价格
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private BigDecimal orderPrice;
 
     /**
      * 平均价格
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private BigDecimal orderQty;
 
     /**
      * 杠杆倍数  value:10\20  默认10 
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private BigDecimal dealQty;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private BigDecimal remainingQty;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private BigDecimal marginFrozen;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private BigDecimal fees;
 
     /**
      * 委托时间
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Date createDate;
 
     /**
-     * @mbg.generated 2018-07-19 13:41:19
+     * @mbg.generated 2018-07-23 10:32:50
      */
     private Date updateDate;
 
@@ -226,12 +231,20 @@ public class QuanOrderFuture {
         this.contractCode = contractCode;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getSourceStatus() {
+        return sourceStatus;
+    }
+
+    public void setSourceStatus(Integer sourceStatus) {
+        this.sourceStatus = sourceStatus;
     }
 
     public Integer getSide() {

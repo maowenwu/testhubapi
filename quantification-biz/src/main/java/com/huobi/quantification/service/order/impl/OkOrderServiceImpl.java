@@ -12,12 +12,12 @@ import com.huobi.quantification.dao.QuanOrderFutureMapper;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatus;
-import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.request.future.FutureOkBatchOrderRequest;
 import com.huobi.quantification.request.future.FutureOkCancelOrderRequest;
 import com.huobi.quantification.request.future.FutureOkOrderRequest;
 import com.huobi.quantification.response.future.OKFutureCancelOrderResponse;
-import com.huobi.quantification.response.future.OKFutureOrderResponse;
+import com.huobi.quantification.response.future.OKFuturePlaceOrderResponse;
+import com.huobi.quantification.response.future.OKFutureQueryOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OkOrderService;
 import com.huobi.quantification.service.redis.RedisService;
@@ -68,13 +68,10 @@ public class OkOrderServiceImpl implements OkOrderService {
         logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
         List<QuanOrderFuture> unfinishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.UNFINISH);
         // 查找出订单状态不为已完成、撤单的订单
-        //List<Long> orderIds = quanOrderFutureMapper.selectUnfinishOrderSourceId();
-       /* List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);*/
-
-        List<QuanOrderFuture> updateOrders = new ArrayList<>();
-        updateOrders.addAll(unfinishOrder);
-        /*updateOrders.addAll(orderFutures);*/
-        for (QuanOrderFuture orderFuture : updateOrders) {
+        List<Integer> status = new ArrayList<>();
+        List<Long> orderIds = quanOrderFutureMapper.selectOrderIdBySourceStatus(ExchangeEnum.OKEX.getExId(), accountId, status);
+        List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
+        for (QuanOrderFuture orderFuture : orderFutures) {
             //quanOrderFutureMapper.insertOrUpdate(orderFuture);
         }
         logger.info("[OkOrder][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
@@ -161,40 +158,37 @@ public class OkOrderServiceImpl implements OkOrderService {
     }
 
     private List<QuanOrderFuture> parseAndSaveOrderInfo(Long accountId, String body) {
-        JSONObject jsonObject = JSON.parseObject(body);
+        OKFutureQueryOrderResponse response = JSON.parseObject(body, OKFutureQueryOrderResponse.class);
         List<QuanOrderFuture> list = new ArrayList<>();
-        boolean b = jsonObject.getBoolean("result");
-        if (b) {
-            JSONArray orders = jsonObject.getJSONArray("orders");
-            for (int i = 0; i < orders.size(); i++) {
-                JSONObject order = orders.getJSONObject(i);
+        if (response.isResult()) {
+            for (OKFutureQueryOrderResponse.OrdersBean order : response.getOrders()) {
                 QuanOrderFuture orderFuture = parseOkFutureOrder(order);
-               /* orderFuture.setOrderAccountId(accountId);*/
                 orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
+                orderFuture.setAccountId(accountId);
                 list.add(orderFuture);
             }
         }
         return list;
     }
 
-    private QuanOrderFuture parseOkFutureOrder(JSONObject order) {
-       /* QuanOrderFuture orderFuture = new QuanOrderFuture();
-        orderFuture.setOrderAmount(order.getBigDecimal("amount"));
-        orderFuture.setContractName(order.getString("contract_name"));
-        orderFuture.setCreateDate(new Date(order.getLong("create_date")));
-        orderFuture.setOrderDealAmount(order.getBigDecimal("deal_amount"));
-        orderFuture.setOrderFee(order.getBigDecimal("fee"));
-        orderFuture.setOrderSourceId(order.getLong("order_id"));
-        orderFuture.setOrderPrice(order.getBigDecimal("price"));
-        orderFuture.setOrderPriceAvg(order.getBigDecimal("price_avg"));
-        orderFuture.setOrderStatus(order.getInteger("status"));
-        orderFuture.setOrderSymbol(order.getString("symbol"));
-        orderFuture.setOrderType(order.getInteger("type"));
-        orderFuture.setUnitAmount(order.getBigDecimal("unit_amount"));
-        orderFuture.setOrderLeverRate(order.getBigDecimal("lever_rate"));
+    private QuanOrderFuture parseOkFutureOrder(OKFutureQueryOrderResponse.OrdersBean order) {
+        QuanOrderFuture orderFuture = new QuanOrderFuture();
+        orderFuture.setExOrderId(order.getOrderId());
+        String symbol = order.getSymbol();
+        String[] split = symbol.split(",");
+        orderFuture.setBaseCoin(split[0]);
+        orderFuture.setQuoteCoin(split[1]);
+
+        //orderFuture.setContractType(null);
+        orderFuture.setContractCode(order.getContractName());
+        orderFuture.setStatus(null);
+        orderFuture.setSourceStatus(order.getStatus());
+        orderFuture.setLever(order.getLeverRate());
+        orderFuture.setOrderPrice(order.getPrice());
+        orderFuture.setOrderQty(order.getPriceAvg());
+        orderFuture.setCreateDate(order.getCreateDate());
         orderFuture.setUpdateDate(new Date());
-        return orderFuture;*/
-        return null;
+        return orderFuture;
     }
 
     @Override
@@ -220,7 +214,7 @@ public class OkOrderServiceImpl implements OkOrderService {
 
     @Override
     public Long placeOkOrder(FutureOkOrderRequest order) {
-        OKFutureOrderResponse response = placeOkOrderByAPI(order);
+        OKFuturePlaceOrderResponse response = placeOkOrderByAPI(order);
         if (response.isResult()) {
             return response.getOrderId();
         } else {
@@ -228,7 +222,7 @@ public class OkOrderServiceImpl implements OkOrderService {
         }
     }
 
-    private OKFutureOrderResponse placeOkOrderByAPI(FutureOkOrderRequest order) {
+    private OKFuturePlaceOrderResponse placeOkOrderByAPI(FutureOkOrderRequest order) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", order.getSymbol());
         params.put("contract_type", order.getContractType());
@@ -240,7 +234,7 @@ public class OkOrderServiceImpl implements OkOrderService {
             params.put("lever_rate", String.valueOf(order.getLeverRate()));
         }
         String body = httpService.doOkSignedPost(order.getAccountId(), HttpConstant.OK_TRADE, params);
-        return JSON.parseObject(body, OKFutureOrderResponse.class);
+        return JSON.parseObject(body, OKFuturePlaceOrderResponse.class);
     }
 
     @Override

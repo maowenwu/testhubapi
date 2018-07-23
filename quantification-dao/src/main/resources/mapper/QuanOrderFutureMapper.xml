@@ -1,376 +1,305 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanOrderFutureMapper">
-  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanOrderFuture">
-    <id column="inner_order_id" jdbcType="BIGINT" property="innerOrderId" />
-    <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
-    <result column="strategy_version" jdbcType="BIGINT" property="strategyVersion" />
-    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
-    <result column="account_id" jdbcType="BIGINT" property="accountId" />
-    <result column="ex_order_id" jdbcType="BIGINT" property="exOrderId" />
-    <result column="link_order_id" jdbcType="BIGINT" property="linkOrderId" />
-    <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
-    <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin" />
-    <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
-    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
-    <result column="status" jdbcType="VARCHAR" property="status" />
-    <result column="side" jdbcType="INTEGER" property="side" />
-    <result column="offset" jdbcType="INTEGER" property="offset" />
-    <result column="lever" jdbcType="INTEGER" property="lever" />
-    <result column="order_type" jdbcType="VARCHAR" property="orderType" />
-    <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
-    <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
-    <result column="deal_qty" jdbcType="DECIMAL" property="dealQty" />
-    <result column="remaining_qty" jdbcType="DECIMAL" property="remainingQty" />
-    <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen" />
-    <result column="fees" jdbcType="DECIMAL" property="fees" />
-    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
-    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanOrderFuture">
+        <id column="inner_order_id" jdbcType="BIGINT" property="innerOrderId"/>
+        <result column="strategy_name" jdbcType="VARCHAR" property="strategyName"/>
+        <result column="strategy_version" jdbcType="BIGINT" property="strategyVersion"/>
+        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
+        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="ex_order_id" jdbcType="BIGINT" property="exOrderId"/>
+        <result column="link_order_id" jdbcType="BIGINT" property="linkOrderId"/>
+        <result column="base_coin" jdbcType="VARCHAR" property="baseCoin"/>
+        <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin"/>
+        <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="source_status" jdbcType="INTEGER" property="sourceStatus"/>
+        <result column="side" jdbcType="INTEGER" property="side"/>
+        <result column="offset" jdbcType="INTEGER" property="offset"/>
+        <result column="lever" jdbcType="INTEGER" property="lever"/>
+        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
+        <result column="order_price" jdbcType="DECIMAL" property="orderPrice"/>
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
+        <result column="deal_qty" jdbcType="DECIMAL" property="dealQty"/>
+        <result column="remaining_qty" jdbcType="DECIMAL" property="remainingQty"/>
+        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen"/>
+        <result column="fees" jdbcType="DECIMAL" property="fees"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     inner_order_id, strategy_name, strategy_version, exchange_id, account_id, ex_order_id, 
-    link_order_id, base_coin, quote_coin, contract_type, contract_code, status, side, 
-    offset, lever, order_type, order_price, order_qty, deal_qty, remaining_qty, margin_frozen, 
-    fees, create_date, update_date
+    link_order_id, base_coin, quote_coin, contract_type, contract_code, status, source_status, 
+    side, offset, lever, order_type, order_price, order_qty, deal_qty, remaining_qty, 
+    margin_frozen, fees, create_date, update_date
   </sql>
-
-  <select id="selectBySelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from quan_order_future
-    <where>
-      <if test="innerOrderId != null">
-        inner_order_id=#{innerOrderId}
-      </if>
-      <if test="strategyName != null">
-        and strategy_name=#{strategyName}
-      </if>
-      <if test="strategyVersion != null">
-         and strategy_version=#{strategyVersion}
-      </if>
-      <if test="exchangeId != null">
-        and exchange_id=#{exchangeId}
-      </if>
-      <if test="accountId != null">
-        and account_id=#{accountId}
-      </if>
-      <if test="exOrderId != null">
-        and ex_order_id=#{exOrderId}
-      </if>
-      <if test="linkOrderId != null">
-        and  link_order_id=#{linkOrderId}
-      </if>
-      <if test="baseCoin != null">
-        and base_coin=#{baseCoin}
-      </if>
-      <if test="quoteCoin != null">
-        and quote_coin=#{quoteCoin}
-      </if>
-      <if test="contractType != null">
-        and  contract_type=#{contractType}
-      </if>
-      <if test="contractCode != null">
-        and  contract_code=#{contractCode}
-      </if>
-      <if test="status != null">
-        and status=#{status}
-      </if>
-      <if test="side != null">
-        and side=#{side}
-      </if>
-      <if test="offset != null">
-        and  offset=#{offset}
-      </if>
-      <if test="lever != null">
-        and lever=#{lever}
-      </if>
-      <if test="orderType != null">
-        and  order_type=#{orderType}
-      </if>
-      <if test="orderPrice != null">
-        and  order_price=#{orderPrice}
-      </if>
-      <if test="orderQty != null">
-        and  order_qty=#{orderQty}
-      </if>
-      <if test="dealQty != null">
-        and deal_qty=#{dealQty}
-      </if>
-      <if test="remainingQty != null">
-        and remaining_qty=#{remainingQty}
-      </if>
-      <if test="marginFrozen != null">
-        and margin_frozen=#{marginFrozen}
-      </if>
-      <if test="fees != null">
-        and fees=#{fees}
-      </if>
-      <if test="createDate != null">
-        and create_date=#{createDate}
-      </if>
-      <if test="updateDate != null">
-        and update_date=#{updateDate}
-      </if>
-    </where>
-  </select>
-
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from quan_order_future
-    where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_order_future
+        where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_order_future
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     insert into quan_order_future (inner_order_id, strategy_name, strategy_version, 
       exchange_id, account_id, ex_order_id, 
       link_order_id, base_coin, quote_coin, 
       contract_type, contract_code, status, 
-      side, offset, lever, 
-      order_type, order_price, order_qty, 
-      deal_qty, remaining_qty, margin_frozen, 
-      fees, create_date, update_date
-      )
+      source_status, side, offset, 
+      lever, order_type, order_price, 
+      order_qty, deal_qty, remaining_qty, 
+      margin_frozen, fees, create_date, 
+      update_date)
     values (#{innerOrderId,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
       #{exchangeId,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, #{exOrderId,jdbcType=BIGINT}, 
       #{linkOrderId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR}, 
-      #{contractType,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
-      #{side,jdbcType=INTEGER}, #{offset,jdbcType=INTEGER}, #{lever,jdbcType=INTEGER}, 
-      #{orderType,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL}, #{orderQty,jdbcType=DECIMAL}, 
-      #{dealQty,jdbcType=DECIMAL}, #{remainingQty,jdbcType=DECIMAL}, #{marginFrozen,jdbcType=DECIMAL}, 
-      #{fees,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
-      )
+      #{contractType,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{sourceStatus,jdbcType=INTEGER}, #{side,jdbcType=INTEGER}, #{offset,jdbcType=INTEGER}, 
+      #{lever,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL}, 
+      #{orderQty,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL}, #{remainingQty,jdbcType=DECIMAL}, 
+      #{marginFrozen,jdbcType=DECIMAL}, #{fees,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
-    insert into quan_order_future
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="innerOrderId != null">
-        inner_order_id,
-      </if>
-      <if test="strategyName != null">
-        strategy_name,
-      </if>
-      <if test="strategyVersion != null">
-        strategy_version,
-      </if>
-      <if test="exchangeId != null">
-        exchange_id,
-      </if>
-      <if test="accountId != null">
-        account_id,
-      </if>
-      <if test="exOrderId != null">
-        ex_order_id,
-      </if>
-      <if test="linkOrderId != null">
-        link_order_id,
-      </if>
-      <if test="baseCoin != null">
-        base_coin,
-      </if>
-      <if test="quoteCoin != null">
-        quote_coin,
-      </if>
-      <if test="contractType != null">
-        contract_type,
-      </if>
-      <if test="contractCode != null">
-        contract_code,
-      </if>
-      <if test="status != null">
-        status,
-      </if>
-      <if test="side != null">
-        side,
-      </if>
-      <if test="offset != null">
-        offset,
-      </if>
-      <if test="lever != null">
-        lever,
-      </if>
-      <if test="orderType != null">
-        order_type,
-      </if>
-      <if test="orderPrice != null">
-        order_price,
-      </if>
-      <if test="orderQty != null">
-        order_qty,
-      </if>
-      <if test="dealQty != null">
-        deal_qty,
-      </if>
-      <if test="remainingQty != null">
-        remaining_qty,
-      </if>
-      <if test="marginFrozen != null">
-        margin_frozen,
-      </if>
-      <if test="fees != null">
-        fees,
-      </if>
-      <if test="createDate != null">
-        create_date,
-      </if>
-      <if test="updateDate != null">
-        update_date,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="innerOrderId != null">
-        #{innerOrderId,jdbcType=BIGINT},
-      </if>
-      <if test="strategyName != null">
-        #{strategyName,jdbcType=VARCHAR},
-      </if>
-      <if test="strategyVersion != null">
-        #{strategyVersion,jdbcType=BIGINT},
-      </if>
-      <if test="exchangeId != null">
-        #{exchangeId,jdbcType=INTEGER},
-      </if>
-      <if test="accountId != null">
-        #{accountId,jdbcType=BIGINT},
-      </if>
-      <if test="exOrderId != null">
-        #{exOrderId,jdbcType=BIGINT},
-      </if>
-      <if test="linkOrderId != null">
-        #{linkOrderId,jdbcType=BIGINT},
-      </if>
-      <if test="baseCoin != null">
-        #{baseCoin,jdbcType=VARCHAR},
-      </if>
-      <if test="quoteCoin != null">
-        #{quoteCoin,jdbcType=VARCHAR},
-      </if>
-      <if test="contractType != null">
-        #{contractType,jdbcType=VARCHAR},
-      </if>
-      <if test="contractCode != null">
-        #{contractCode,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="side != null">
-        #{side,jdbcType=INTEGER},
-      </if>
-      <if test="offset != null">
-        #{offset,jdbcType=INTEGER},
-      </if>
-      <if test="lever != null">
-        #{lever,jdbcType=INTEGER},
-      </if>
-      <if test="orderType != null">
-        #{orderType,jdbcType=VARCHAR},
-      </if>
-      <if test="orderPrice != null">
-        #{orderPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="orderQty != null">
-        #{orderQty,jdbcType=DECIMAL},
-      </if>
-      <if test="dealQty != null">
-        #{dealQty,jdbcType=DECIMAL},
-      </if>
-      <if test="remainingQty != null">
-        #{remainingQty,jdbcType=DECIMAL},
-      </if>
-      <if test="marginFrozen != null">
-        #{marginFrozen,jdbcType=DECIMAL},
-      </if>
-      <if test="fees != null">
-        #{fees,jdbcType=DECIMAL},
-      </if>
-      <if test="createDate != null">
-        #{createDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateDate != null">
-        #{updateDate,jdbcType=TIMESTAMP},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
-    update quan_order_future
-    <set>
-      <if test="strategyName != null">
-        strategy_name = #{strategyName,jdbcType=VARCHAR},
-      </if>
-      <if test="strategyVersion != null">
-        strategy_version = #{strategyVersion,jdbcType=BIGINT},
-      </if>
-      <if test="exchangeId != null">
-        exchange_id = #{exchangeId,jdbcType=INTEGER},
-      </if>
-      <if test="accountId != null">
-        account_id = #{accountId,jdbcType=BIGINT},
-      </if>
-      <if test="exOrderId != null">
-        ex_order_id = #{exOrderId,jdbcType=BIGINT},
-      </if>
-      <if test="linkOrderId != null">
-        link_order_id = #{linkOrderId,jdbcType=BIGINT},
-      </if>
-      <if test="baseCoin != null">
-        base_coin = #{baseCoin,jdbcType=VARCHAR},
-      </if>
-      <if test="quoteCoin != null">
-        quote_coin = #{quoteCoin,jdbcType=VARCHAR},
-      </if>
-      <if test="contractType != null">
-        contract_type = #{contractType,jdbcType=VARCHAR},
-      </if>
-      <if test="contractCode != null">
-        contract_code = #{contractCode,jdbcType=VARCHAR},
-      </if>
-      <if test="status != null">
-        status = #{status,jdbcType=VARCHAR},
-      </if>
-      <if test="side != null">
-        side = #{side,jdbcType=INTEGER},
-      </if>
-      <if test="offset != null">
-        offset = #{offset,jdbcType=INTEGER},
-      </if>
-      <if test="lever != null">
-        lever = #{lever,jdbcType=INTEGER},
-      </if>
-      <if test="orderType != null">
-        order_type = #{orderType,jdbcType=VARCHAR},
-      </if>
-      <if test="orderPrice != null">
-        order_price = #{orderPrice,jdbcType=DECIMAL},
-      </if>
-      <if test="orderQty != null">
-        order_qty = #{orderQty,jdbcType=DECIMAL},
-      </if>
-      <if test="dealQty != null">
-        deal_qty = #{dealQty,jdbcType=DECIMAL},
-      </if>
-      <if test="remainingQty != null">
-        remaining_qty = #{remainingQty,jdbcType=DECIMAL},
-      </if>
-      <if test="marginFrozen != null">
-        margin_frozen = #{marginFrozen,jdbcType=DECIMAL},
-      </if>
-      <if test="fees != null">
-        fees = #{fees,jdbcType=DECIMAL},
-      </if>
-      <if test="createDate != null">
-        create_date = #{createDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updateDate != null">
-        update_date = #{updateDate,jdbcType=TIMESTAMP},
-      </if>
-    </set>
-    where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+        insert into quan_order_future
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="innerOrderId != null">
+                inner_order_id,
+            </if>
+            <if test="strategyName != null">
+                strategy_name,
+            </if>
+            <if test="strategyVersion != null">
+                strategy_version,
+            </if>
+            <if test="exchangeId != null">
+                exchange_id,
+            </if>
+            <if test="accountId != null">
+                account_id,
+            </if>
+            <if test="exOrderId != null">
+                ex_order_id,
+            </if>
+            <if test="linkOrderId != null">
+                link_order_id,
+            </if>
+            <if test="baseCoin != null">
+                base_coin,
+            </if>
+            <if test="quoteCoin != null">
+                quote_coin,
+            </if>
+            <if test="contractType != null">
+                contract_type,
+            </if>
+            <if test="contractCode != null">
+                contract_code,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="sourceStatus != null">
+                source_status,
+            </if>
+            <if test="side != null">
+                side,
+            </if>
+            <if test="offset != null">
+                offset,
+            </if>
+            <if test="lever != null">
+                lever,
+            </if>
+            <if test="orderType != null">
+                order_type,
+            </if>
+            <if test="orderPrice != null">
+                order_price,
+            </if>
+            <if test="orderQty != null">
+                order_qty,
+            </if>
+            <if test="dealQty != null">
+                deal_qty,
+            </if>
+            <if test="remainingQty != null">
+                remaining_qty,
+            </if>
+            <if test="marginFrozen != null">
+                margin_frozen,
+            </if>
+            <if test="fees != null">
+                fees,
+            </if>
+            <if test="createDate != null">
+                create_date,
+            </if>
+            <if test="updateDate != null">
+                update_date,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="innerOrderId != null">
+                #{innerOrderId,jdbcType=BIGINT},
+            </if>
+            <if test="strategyName != null">
+                #{strategyName,jdbcType=VARCHAR},
+            </if>
+            <if test="strategyVersion != null">
+                #{strategyVersion,jdbcType=BIGINT},
+            </if>
+            <if test="exchangeId != null">
+                #{exchangeId,jdbcType=INTEGER},
+            </if>
+            <if test="accountId != null">
+                #{accountId,jdbcType=BIGINT},
+            </if>
+            <if test="exOrderId != null">
+                #{exOrderId,jdbcType=BIGINT},
+            </if>
+            <if test="linkOrderId != null">
+                #{linkOrderId,jdbcType=BIGINT},
+            </if>
+            <if test="baseCoin != null">
+                #{baseCoin,jdbcType=VARCHAR},
+            </if>
+            <if test="quoteCoin != null">
+                #{quoteCoin,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null">
+                #{contractType,jdbcType=VARCHAR},
+            </if>
+            <if test="contractCode != null">
+                #{contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="sourceStatus != null">
+                #{sourceStatus,jdbcType=INTEGER},
+            </if>
+            <if test="side != null">
+                #{side,jdbcType=INTEGER},
+            </if>
+            <if test="offset != null">
+                #{offset,jdbcType=INTEGER},
+            </if>
+            <if test="lever != null">
+                #{lever,jdbcType=INTEGER},
+            </if>
+            <if test="orderType != null">
+                #{orderType,jdbcType=VARCHAR},
+            </if>
+            <if test="orderPrice != null">
+                #{orderPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="orderQty != null">
+                #{orderQty,jdbcType=DECIMAL},
+            </if>
+            <if test="dealQty != null">
+                #{dealQty,jdbcType=DECIMAL},
+            </if>
+            <if test="remainingQty != null">
+                #{remainingQty,jdbcType=DECIMAL},
+            </if>
+            <if test="marginFrozen != null">
+                #{marginFrozen,jdbcType=DECIMAL},
+            </if>
+            <if test="fees != null">
+                #{fees,jdbcType=DECIMAL},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+        update quan_order_future
+        <set>
+            <if test="strategyName != null">
+                strategy_name = #{strategyName,jdbcType=VARCHAR},
+            </if>
+            <if test="strategyVersion != null">
+                strategy_version = #{strategyVersion,jdbcType=BIGINT},
+            </if>
+            <if test="exchangeId != null">
+                exchange_id = #{exchangeId,jdbcType=INTEGER},
+            </if>
+            <if test="accountId != null">
+                account_id = #{accountId,jdbcType=BIGINT},
+            </if>
+            <if test="exOrderId != null">
+                ex_order_id = #{exOrderId,jdbcType=BIGINT},
+            </if>
+            <if test="linkOrderId != null">
+                link_order_id = #{linkOrderId,jdbcType=BIGINT},
+            </if>
+            <if test="baseCoin != null">
+                base_coin = #{baseCoin,jdbcType=VARCHAR},
+            </if>
+            <if test="quoteCoin != null">
+                quote_coin = #{quoteCoin,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null">
+                contract_type = #{contractType,jdbcType=VARCHAR},
+            </if>
+            <if test="contractCode != null">
+                contract_code = #{contractCode,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+            <if test="sourceStatus != null">
+                source_status = #{sourceStatus,jdbcType=INTEGER},
+            </if>
+            <if test="side != null">
+                side = #{side,jdbcType=INTEGER},
+            </if>
+            <if test="offset != null">
+                offset = #{offset,jdbcType=INTEGER},
+            </if>
+            <if test="lever != null">
+                lever = #{lever,jdbcType=INTEGER},
+            </if>
+            <if test="orderType != null">
+                order_type = #{orderType,jdbcType=VARCHAR},
+            </if>
+            <if test="orderPrice != null">
+                order_price = #{orderPrice,jdbcType=DECIMAL},
+            </if>
+            <if test="orderQty != null">
+                order_qty = #{orderQty,jdbcType=DECIMAL},
+            </if>
+            <if test="dealQty != null">
+                deal_qty = #{dealQty,jdbcType=DECIMAL},
+            </if>
+            <if test="remainingQty != null">
+                remaining_qty = #{remainingQty,jdbcType=DECIMAL},
+            </if>
+            <if test="marginFrozen != null">
+                margin_frozen = #{marginFrozen,jdbcType=DECIMAL},
+            </if>
+            <if test="fees != null">
+                fees = #{fees,jdbcType=DECIMAL},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateDate != null">
+                update_date = #{updateDate,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     update quan_order_future
     set strategy_name = #{strategyName,jdbcType=VARCHAR},
       strategy_version = #{strategyVersion,jdbcType=BIGINT},
@@ -382,7 +311,8 @@
       quote_coin = #{quoteCoin,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
       contract_code = #{contractCode,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      source_status = #{sourceStatus,jdbcType=INTEGER},
       side = #{side,jdbcType=INTEGER},
       offset = #{offset,jdbcType=INTEGER},
       lever = #{lever,jdbcType=INTEGER},
@@ -397,4 +327,96 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
   </update>
+
+    <select id="selectBySelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture"
+            resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_order_future
+        <where>
+            <if test="innerOrderId != null">
+                inner_order_id=#{innerOrderId}
+            </if>
+            <if test="strategyName != null">
+                and strategy_name=#{strategyName}
+            </if>
+            <if test="strategyVersion != null">
+                and strategy_version=#{strategyVersion}
+            </if>
+            <if test="exchangeId != null">
+                and exchange_id=#{exchangeId}
+            </if>
+            <if test="accountId != null">
+                and account_id=#{accountId}
+            </if>
+            <if test="exOrderId != null">
+                and ex_order_id=#{exOrderId}
+            </if>
+            <if test="linkOrderId != null">
+                and link_order_id=#{linkOrderId}
+            </if>
+            <if test="baseCoin != null">
+                and base_coin=#{baseCoin}
+            </if>
+            <if test="quoteCoin != null">
+                and quote_coin=#{quoteCoin}
+            </if>
+            <if test="contractType != null">
+                and contract_type=#{contractType}
+            </if>
+            <if test="contractCode != null">
+                and contract_code=#{contractCode}
+            </if>
+            <if test="status != null">
+                and status=#{status}
+            </if>
+            <if test="sourceStatus != null">
+                and source_status=#{sourceStatus}
+            </if>
+            <if test="side != null">
+                and side=#{side}
+            </if>
+            <if test="offset != null">
+                and offset=#{offset}
+            </if>
+            <if test="lever != null">
+                and lever=#{lever}
+            </if>
+            <if test="orderType != null">
+                and order_type=#{orderType}
+            </if>
+            <if test="orderPrice != null">
+                and order_price=#{orderPrice}
+            </if>
+            <if test="orderQty != null">
+                and order_qty=#{orderQty}
+            </if>
+            <if test="dealQty != null">
+                and deal_qty=#{dealQty}
+            </if>
+            <if test="remainingQty != null">
+                and remaining_qty=#{remainingQty}
+            </if>
+            <if test="marginFrozen != null">
+                and margin_frozen=#{marginFrozen}
+            </if>
+            <if test="fees != null">
+                and fees=#{fees}
+            </if>
+            <if test="createDate != null">
+                and create_date=#{createDate}
+            </if>
+            <if test="updateDate != null">
+                and update_date=#{updateDate}
+            </if>
+        </where>
+    </select>
+    <select id="selectOrderIdBySourceStatus" resultType="java.lang.Long">
+        select ex_order_id from quan_order_future where exchange_id=#{exchageId} and account_id=#{accountId}
+        and source_status in
+        <foreach item="item" index="index" collection="soutceStatus" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

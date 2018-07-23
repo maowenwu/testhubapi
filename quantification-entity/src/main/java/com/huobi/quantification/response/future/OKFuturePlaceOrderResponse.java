@@ -2,7 +2,7 @@ package com.huobi.quantification.response.future;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
-public class OKFutureOrderResponse {
+public class OKFuturePlaceOrderResponse {
 
 
     @JSONField(name = "order_id")
