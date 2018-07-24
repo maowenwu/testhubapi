@@ -14,7 +14,7 @@ public class SpotPlaceOrderReqDto implements Serializable{
 	private BigDecimal quantity;
 	private BigDecimal cashAmount;
 	private long linkOrderId;
-	private boolean sync;
+	private boolean sync = true;
 	public int getExchangeId() {
 		return exchangeId;
 	}

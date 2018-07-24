@@ -219,16 +219,20 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		quanOrder.setOrderType(orderDto.getType());
 		quanOrderMapper.insertAndGetId(quanOrder);
 		//下单，并更新数据库
-		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		SpotPlaceOrderRespDto respDto = new SpotPlaceOrderRespDto();
 		if (reqDto.isSync()) {
+			Long orderId = huobiOrderService.placeHuobiOrder(orderDto);
+			quanOrder.setOrderSourceId(orderId);
+			respDto.setExOrderId(orderId);
+			logger.info("同步下单成功，订单号:{}",orderId);
+		}else {
+			Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 			try {
 				quanOrder.setOrderSourceId(orderIdFuture.get());
-				respDto.setExOrderId(orderIdFuture.get());
-				logger.info("下单成功，订单号:{}",orderIdFuture.get());
+				logger.info("异步下单成功，订单号:{}",orderIdFuture.get());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
