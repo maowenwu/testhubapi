@@ -3,36 +3,33 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 /**
- * 查询订单-根据订单状态
+ * 查询订单-根据关联orderid
  * 
  * @author maowenwu
+ *
  */
-public class SpotOrderReqStatusDto implements Serializable {
+public class SpotOrderLinkReqDto implements Serializable {
 
 	private static final long serialVersionUID = 1971969867040987743L;
 
-	private int exchangeID;// 交易所ID
+	private Long exchangeID;// 交易所ID
 	private Long accountID;// 账户ID
-	private String status;
+	private Long[] linkOrderID;// 数组
 	private String baseCoin;
 	private String QuoteCoin;
 	private Long timeout;
 	private Long maxDelay;
 
-	public int getExchangeID() {
+	public Long getExchangeID() {
 		return exchangeID;
 	}
 
-	public void setExchangeID(int exchangeID) {
+	public void setExchangeID(Long exchangeID) {
 		this.exchangeID = exchangeID;
 	}
 
 	public Long getAccountID() {
 		return accountID;
-	}
-
-	public void setAccountID(Long accountID) {
-		this.accountID = accountID;
 	}
 
 	public String getBaseCoin() {
@@ -67,12 +64,16 @@ public class SpotOrderReqStatusDto implements Serializable {
 		this.maxDelay = maxDelay;
 	}
 
-	public String getStatus() {
-		return status;
+	public Long[] getLinkOrderID() {
+		return linkOrderID;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setLinkOrderID(Long[] linkOrderID) {
+		this.linkOrderID = linkOrderID;
+	}
+
+	public void setAccountID(Long accountID) {
+		this.accountID = accountID;
 	}
 
 }

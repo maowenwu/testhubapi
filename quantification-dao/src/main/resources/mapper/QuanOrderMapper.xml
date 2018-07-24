@@ -6,7 +6,7 @@
     <result column="order_source_id" jdbcType="BIGINT" property="orderSourceId" />
     <result column="order_symbol" jdbcType="VARCHAR" property="orderSymbol" />
     <result column="order_type" jdbcType="VARCHAR" property="orderType" />
-    <result column="order_state" jdbcType="VARCHAR" property="orderState" />
+    <result column="order_state" jdbcType="INTEGER" property="orderState" />
     <result column="order_account_id" jdbcType="BIGINT" property="orderAccountId" />
     <result column="order_amount" jdbcType="DECIMAL" property="orderAmount" />
     <result column="order_field_amount" jdbcType="DECIMAL" property="orderFieldAmount" />
@@ -32,7 +32,7 @@
       order_created_at, order_canceled_at, order_finished_at, 
       order_inner_id, exchange_id)
     values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
-      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR}, #{orderAccountId,jdbcType=BIGINT}, 
+      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
@@ -46,7 +46,7 @@
       order_created_at, order_canceled_at, order_finished_at, 
       order_inner_id, exchange_id)
     values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
-      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR}, #{orderAccountId,jdbcType=BIGINT}, 
+      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
@@ -57,7 +57,7 @@
     set 
       order_symbol = #{orderSymbol,jdbcType=VARCHAR},
       order_type = #{orderType,jdbcType=VARCHAR},
-      order_state = #{orderState,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=INTEGER},
       order_account_id = #{orderAccountId,jdbcType=BIGINT},
       order_amount = #{orderAmount,jdbcType=DECIMAL},
       order_field_amount = #{orderFieldAmount,jdbcType=DECIMAL},
@@ -77,7 +77,7 @@
     set order_source_id = #{orderSourceId,jdbcType=BIGINT},
       order_symbol = #{orderSymbol,jdbcType=VARCHAR},
       order_type = #{orderType,jdbcType=VARCHAR},
-      order_state = #{orderState,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=INTEGER},
       order_account_id = #{orderAccountId,jdbcType=BIGINT},
       order_amount = #{orderAmount,jdbcType=DECIMAL},
       order_field_amount = #{orderFieldAmount,jdbcType=DECIMAL},
@@ -132,9 +132,45 @@
 			<if test="orderType != null">
 				and order_type=#{orderType}
 			</if>
+			<if test="orderSymbol != null">
+				and order_symbol=#{orderSymbol}
+			</if>			
 		</where>  
   </select>  
   <select id="selectByOrderInfo" resultType="java.lang.Long">
   	select order_source_id from quan_order where order_account_id =#{accountId} and order_state=#{orderState} and order_symbol=#{symbol}
   </select>
+
+
+	<select id="selectOrderIdsByParams" resultType="java.lang.Long">
+		select order_source_id from quan_order 
+            		<where>
+			<if test="exchangeId != null">
+				and exchange_id=#{exchangeId}
+			</if>    		
+			<if test="orderAccountId != null">
+				and order_account_id=#{orderAccountId}
+			</if>
+			<if test="orderSourceId != null">
+				and order_source_id=#{orderSourceId}
+			</if>
+			<if test="id != null">
+				and id=#{id}
+			</if>	
+			<if test="orderState != null">
+				and order_state=#{orderState}
+			</if>					
+			<if test="orderType != null">
+				and order_type=#{orderType}
+			</if>
+			<if test="orderSymbol != null">
+				and order_symbol=#{orderSymbol}
+			</if>	
+			<if test="flag != null and flag==1">
+				and  (order_state='submitting'  or 
+				order_state='submitted'  or 
+				order_state='partial-filled' )
+			</if>					
+		</where> 
+	</select>
 </mapper>

@@ -12,7 +12,7 @@ public class SpotOrderRespDto implements Serializable {
 	private Long linkOrderID;
 	private Date createTime;
 	private Date updateTime;
-	private String status;
+	private Integer status;
 	private String baseCoin;
 	private String quoteCoin;
 	private String side;// 买入or卖出
@@ -58,11 +58,11 @@ public class SpotOrderRespDto implements Serializable {
 		this.updateTime = updateTime;
 	}
 
-	public String getStatus() {
+	public Integer getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Integer status) {
 		this.status = status;
 	}
 

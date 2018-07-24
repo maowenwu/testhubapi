@@ -31,7 +31,7 @@ public class QuanOrder {
      * 订单状态
      * @mbg.generated 2018-07-02 14:32:37
      */
-    private String orderState;
+    private Integer orderState;
 
     /**
      * 账户 ID
@@ -129,15 +129,15 @@ public class QuanOrder {
         this.orderType = orderType;
     }
 
-    public String getOrderState() {
-        return orderState;
-    }
+    public Integer getOrderState() {
+		return orderState;
+	}
 
-    public void setOrderState(String orderState) {
-        this.orderState = orderState;
-    }
+	public void setOrderState(Integer orderState) {
+		this.orderState = orderState;
+	}
 
-    public Long getOrderAccountId() {
+	public Long getOrderAccountId() {
         return orderAccountId;
     }
 
