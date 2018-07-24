@@ -56,6 +56,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
 	@Override
 	public ServiceResult<Map<String, Object>> getOrderByInnerOrderID(SpotOrderInnerReqDto reqDto) {
+		logger.info("查询订单-根据内部orderid,查询入参为:{}",JSONUtil.toJsonStr(reqDto));
 		ServiceResult<Map<String, Object>> serviceResult = new ServiceResult<>();
 		Map<String, Object> map = new HashMap<>();
 		QuanOrder entity = new QuanOrder();
@@ -70,7 +71,10 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		}
 		entity.setExchangeId(reqDto.getExchangeID());
 		entity.setOrderAccountId(reqDto.getAccountID());
-		for (int i = 0; ArrayUtil.isNotEmpty(reqDto.getInnerOrderID()) && i < reqDto.getInnerOrderID().length; i++) {
+		if(StringUtils.isNoneEmpty(reqDto.getBaseCoin())&&StringUtils.isNoneEmpty(reqDto.getQuoteCoin())) {
+			entity.setOrderSymbol(reqDto.getBaseCoin()+reqDto.getQuoteCoin());
+		}
+		for (int i = 0; i < reqDto.getInnerOrderID().length; i++) {
 			// 根据三个条件查询订单 ,一个InnerOrderID只会对应一个订单信息（唯一）
 			entity.setId(reqDto.getInnerOrderID()[i]);
 			List<QuanOrder> list = quanOrderMapper.selectList(entity);
@@ -83,11 +87,13 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		serviceResult.setData(resultMap);
+		logger.info("查询订单-根据内部orderid,返回的结果为:{}",JSONUtil.toJsonStr(serviceResult));
 		return serviceResult;
 	}
 
 	@Override
 	public ServiceResult<Map<String, Object>> getOrderByExOrderID(SpotOrderExchangeReqDto reqDto) {
+		logger.info("查询订单-根据交易所orderid,查询入参为:{}",JSONUtil.toJsonStr(reqDto));
 		Map<String, Object> map = new HashMap<>();
 		ServiceResult<Map<String, Object>> serviceResult = new ServiceResult<>();
 		QuanOrder entity = new QuanOrder();
@@ -102,6 +108,9 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		}
 		entity.setExchangeId(exchangeID);
 		entity.setOrderAccountId(accountID);
+		if(StringUtils.isNoneEmpty(reqDto.getBaseCoin())&&StringUtils.isNoneEmpty(reqDto.getQuoteCoin())) {
+			entity.setOrderSymbol(reqDto.getBaseCoin()+reqDto.getQuoteCoin());
+		}
 		for (int i = 0; i < reqDto.getExOrderID().length; i++) {
 			// 根据三个条件查询订单 ,一个exOrderID可能会对应多个订单信息
 			entity.setOrderSourceId(reqDto.getExOrderID()[i]);
@@ -112,6 +121,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		serviceResult.setData(map);
+		logger.info("查询订单-根据交易所orderid,返回的结果为:{}",JSONUtil.toJsonStr(serviceResult));
 		return serviceResult;
 	}
 
@@ -122,6 +132,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
 	@Override
 	public ServiceResult<List<SpotOrderRespDto>> getOrderByStatus(SpotOrderStatusReqDto reqDto) {
+		logger.info("查询订单-根据订单状态,查询入参为:{}",JSONUtil.toJsonStr(reqDto));
 		ServiceResult<List<SpotOrderRespDto>> serviceResult = new ServiceResult<>();
 		QuanOrder entity = new QuanOrder();
 		Integer exchangeID = reqDto.getExchangeID();
@@ -136,12 +147,17 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		entity.setExchangeId(exchangeID);
 		entity.setOrderAccountId(accountID);
 		entity.setOrderState(status);
+		if(StringUtils.isNoneEmpty(reqDto.getBaseCoin())&&StringUtils.isNoneEmpty(reqDto.getQuoteCoin())) {
+			entity.setOrderSymbol(reqDto.getBaseCoin()+reqDto.getQuoteCoin());
+		}
 		// 根据三个条件查询订单 ,正常情况下，返回结果中，一个InnerOrderID只会对应一个订单信息（唯一）
 		List<QuanOrder> list = quanOrderMapper.selectList(entity);
 		List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
+		
 		serviceResult.setData(result);
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		logger.info("查询订单-根据订单状态,返回的结果为:{}",JSONUtil.toJsonStr(serviceResult));
 		return serviceResult;
 	}
 
