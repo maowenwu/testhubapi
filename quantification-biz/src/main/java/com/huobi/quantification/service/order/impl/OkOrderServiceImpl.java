@@ -55,10 +55,16 @@ public class OkOrderServiceImpl implements OkOrderService {
         logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
         // 查找出订单状态不为已完成、撤单的订单
         List<Integer> status = new ArrayList<>();
+        status.add(0);//0等待成交
+        status.add(1);//1部分成交
+        status.add(4);//4撤单处理中
+        // 扫描未完结的订单
         List<Long> orderIds = quanOrderFutureMapper.selectOrderIdBySourceStatus(ExchangeEnum.OKEX.getExId(), accountId, status);
-        List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
-        for (QuanOrderFuture orderFuture : orderFutures) {
-            //quanOrderFutureMapper.insertOrUpdate(orderFuture);
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
+            for (QuanOrderFuture orderFuture : orderFutures) {
+                quanOrderFutureMapper.updateByExIdAccountIdExOrderId(orderFuture);
+            }
         }
         logger.info("[OkOrder][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
@@ -153,6 +159,8 @@ public class OkOrderServiceImpl implements OkOrderService {
         // todo 还未确认
         //orderFuture.setMarginFrozen();
 
+        orderFuture.setContractCode(order.getContractName());
+        orderFuture.setFees(order.getFee());
         orderFuture.setSourceStatus(order.getStatus());
         return orderFuture;
     }

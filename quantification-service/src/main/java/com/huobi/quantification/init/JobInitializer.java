@@ -26,6 +26,6 @@ public class JobInitializer implements ApplicationListener<ContextRefreshedEvent
     }
 
     private void addSystemJob() {
-        quartzManager.addJobNoRepeat("OkFutureContractCodeJob", OkFutureContractCodeJob.class, "0/1 * * * * ?", null);
+        //quartzManager.addJobNoRepeat("OkFutureContractCodeJob", OkFutureContractCodeJob.class, "0/1 * * * * ?", null);
     }
 }

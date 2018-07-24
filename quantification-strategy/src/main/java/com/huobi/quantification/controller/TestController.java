@@ -4,6 +4,7 @@ package com.huobi.quantification.controller;
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureMarketService;
+import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
@@ -12,6 +13,8 @@ import com.huobi.quantification.enums.OkJobTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
 
 @RestController
 public class TestController {
@@ -26,15 +29,37 @@ public class TestController {
     @Autowired
     private JobManageService jobManageService;
 
+    @Autowired
+    private FutureOrderService futureOrderService;
+
+    @RequestMapping("/placeOrder")
+    public String placeOrder() {
+        FutureOrderReqDto orderReqDto = new FutureOrderReqDto();
+        orderReqDto.setExchangeId(2);
+        orderReqDto.setAccountId(1L);
+        orderReqDto.setBaseCoin("btc");
+        orderReqDto.setQuoteCoin("usd");
+        orderReqDto.setContractType("this_week");
+        orderReqDto.setSide(1);
+        orderReqDto.setOffset(1);
+        orderReqDto.setPrice(BigDecimal.valueOf(7800));
+        orderReqDto.setQuantity(BigDecimal.ONE);
+        orderReqDto.setLever(10);
+        orderReqDto.setSync(true);
+        ServiceResult<FutureOrderRespDto> serviceResult = futureOrderService.placeOrder(orderReqDto);
+        return JSON.toJSONString(serviceResult);
+    }
+
     @RequestMapping("/testStartFutureJob")
     public String testStartFutureJob() {
-        jobManageService.addOkFutureCurrentPriceJob("bch_usd", "next_week", "0/1 * * * * ?", false);
+       /* jobManageService.addOkFutureCurrentPriceJob("bch_usd", "next_week", "0/1 * * * * ?", false);
         jobManageService.addOkFutureDepthJob("bch_usd", "next_week", "0/1 * * * * ?", false);
         jobManageService.addOkFutureIndexJob("bch_usd", "0/1 * * * * ?", false);
         jobManageService.addOkFutureKlineJob("bch_usd", "5min", "next_week", "0/1 * * * * ?", false);
         jobManageService.addOkFutureOrderJob(1L, "bch_usd", "next_week", "0/1 * * * * ?", false);
         jobManageService.addOkFuturePositionJob(1L, "0/1 * * * * ?", false);
-        jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", false);
+        jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", false);*/
+        jobManageService.addOkFutureOrderJob(1L, "btc_usd", "this_week", "0/1 * * * * ?", true);
         return JSON.toJSONString(true);
     }
 

@@ -1,8 +1,9 @@
 package com.huobi.quantification.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class FutureOrderReqDto {
+public class FutureOrderReqDto implements Serializable {
     private int exchangeId;
     private long accountId;
     private String baseCoin;

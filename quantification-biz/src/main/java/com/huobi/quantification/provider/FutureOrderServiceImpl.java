@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.entity.QuanContractCode;
+import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.service.contract.ContractService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -63,6 +64,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
         orderFuture.setAccountId(reqDto.getAccountId());
         orderFuture.setLinkOrderId(reqDto.getLinkOrderId());
+        orderFuture.setStatus(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
         orderFuture.setCreateDate(new Date());
         orderFuture.setUpdateDate(new Date());
         quanOrderFutureMapper.insert(orderFuture);
@@ -113,6 +115,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         orderFuture.setExOrderId(orderId);
         orderFuture.setContractType(contractType);
         orderFuture.setContractCode(contractCode);
+        orderFuture.setSourceStatus(0);
         quanOrderFutureMapper.updateByPrimaryKeySelective(orderFuture);
         return orderId;
     }

@@ -1,6 +1,8 @@
 package com.huobi.quantification.dto;
 
-public class FutureOrderRespDto {
+import java.io.Serializable;
+
+public class FutureOrderRespDto implements Serializable {
 
     private long innerOrderId;
     private long exOrderId;
