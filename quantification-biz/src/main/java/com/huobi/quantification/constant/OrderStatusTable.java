@@ -26,4 +26,22 @@ public class OrderStatusTable {
             return map.get(orderStatus);
         }
     }
+    
+    public static class HuobiOrderStatus {
+
+        private static Map<String, OrderStatusEnum> map = new HashMap<>();
+
+        static {
+            map.put("submitting", OrderStatusEnum.PRE_SUBMITTED);
+            map.put("submitted", OrderStatusEnum.SUBMITTED);
+            map.put("partial-filled", OrderStatusEnum.PARTIAL_FILLED);
+            map.put("partial-canceled", OrderStatusEnum.PARTIAL_CANCELED);
+            map.put("filled", OrderStatusEnum.FILLED);
+            map.put("canceled", OrderStatusEnum.CANCELED);
+        }
+
+        public static OrderStatusEnum getOrderStatus(String orderStatus) {
+            return map.get(orderStatus);
+        }
+    }
 }

@@ -33,6 +33,7 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
@@ -230,21 +231,25 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		quanOrder.setOrderPrice(orderDto.getPrice());
 		quanOrder.setOrderCreatedAt(new Date());
 		quanOrder.setOrderSource(orderDto.getSource());
-		quanOrder.setOrderState("submitting");
+		quanOrder.setOrderState(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
 		quanOrder.setOrderSymbol(symbol);
 		quanOrder.setOrderType(orderDto.getType());
 		quanOrderMapper.insertAndGetId(quanOrder);
 		//下单，并更新数据库
-		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
 		SpotPlaceOrderRespDto respDto = new SpotPlaceOrderRespDto();
 		if (reqDto.isSync()) {
+			Long orderId = huobiOrderService.placeHuobiOrder(orderDto);
+			quanOrder.setOrderSourceId(orderId);
+			respDto.setExOrderId(orderId);
+			logger.info("同步下单成功，订单号:{}",orderId);
+		}else {
+			Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 			try {
 				quanOrder.setOrderSourceId(orderIdFuture.get());
-				respDto.setExOrderId(orderIdFuture.get());
-				logger.info("下单成功，订单号:{}",orderIdFuture.get());
+				logger.info("异步下单成功，订单号:{}",orderIdFuture.get());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -253,7 +258,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 				serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
 			}
 		}
-		quanOrder.setOrderState("submitted");
+		quanOrder.setOrderState(OrderStatusEnum.SUBMITTED.getOrderStatus());
 		quanOrderMapper.updateByPrimaryKey(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());
