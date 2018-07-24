@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanOrderFuture;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,5 +20,7 @@ public interface QuanOrderFutureMapper {
 
     List<QuanOrderFuture> selectBySelective(QuanOrderFuture record);
 
-    List<Long> selectOrderIdBySourceStatus(int exchangeId, Long accountId, List<Integer> sourceStatus);
+    List<Long> selectOrderIdBySourceStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("sourceStatus") List<Integer> sourceStatus);
+
+    int updateByExIdAccountIdExOrderId(QuanOrderFuture record);
 }
