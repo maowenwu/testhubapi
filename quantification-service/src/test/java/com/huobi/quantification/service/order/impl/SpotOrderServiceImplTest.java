@@ -22,8 +22,8 @@ import com.huobi.quantification.dto.SpotOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto.Orders;
 import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
 import com.huobi.quantification.dto.SpotOrderInnerReqDto;
-import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
+import com.huobi.quantification.dto.SpotOrderStatusReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.enums.ExchangeEnum;
@@ -55,7 +55,7 @@ public class SpotOrderServiceImplTest {
 		SpotOrderInnerReqDto entity = new SpotOrderInnerReqDto();
 		entity.setExchangeID(0);
 		entity.setAccountID(4295363l);
-		Long[] innerOrderID = { 35L, 36L };
+		Long[] innerOrderID = { 35L, 36L};
 		entity.setInnerOrderID(innerOrderID);
 		ServiceResult<Map<String, Object>> result = spotOrderServiceImpl.getOrderByInnerOrderID(entity);
 		System.out.println("=====code:" + result.getCode());
@@ -65,7 +65,7 @@ public class SpotOrderServiceImplTest {
 
 	@Test
 	public void getOrderByStatus() {
-		SpotOrderReqStatusDto entity = new SpotOrderReqStatusDto();
+		SpotOrderStatusReqDto entity = new SpotOrderStatusReqDto();
 		entity.setExchangeID(0);
 		entity.setAccountID(4295363l);
 		entity.setStatus("submitted");
