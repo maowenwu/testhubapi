@@ -30,6 +30,7 @@ import com.huobi.quantification.response.spot.HuobiSpotOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
 import com.huobi.quantification.service.redis.RedisService;
+import com.xiaoleilu.hutool.db.sql.Order;
 
 /**
  * @author shaoxiaofeng
@@ -189,17 +190,22 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	}
 
 	@Override
-	public void updateHuobiOrder(Long accountId, String symbol) {
+	public void updateHuobiOrder() {
 		Stopwatch started = Stopwatch.createStarted();
-		logger.info("[HuobiOrder][accountId={}]任务开始", accountId);
-		List<Long> listIds = quanOrderMapper.selectByOrderInfo(accountId, OrderStatusEnum.PRE_SUBMITTED.getOrderStatus() , symbol);
+		logger.info("[HuobiOrderUpdate]任务开始");
+		List<Integer> states = new ArrayList<>();
+		states.add(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
+		states.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
+		states.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
+		List<QuanOrder> list1 = quanOrderMapper.selectByOrderInfo(states);
 		Map<String, String> params = new HashMap<>();
-		for (Long orderId : listIds) {
-			params.put("order-id", orderId + "");
-			String body = httpService.doHuobiGet(accountId, HttpConstant.HUOBI_ORDERDETAIL, params);
-			updateHuobiOrderInfo(body, orderId);
+		for (QuanOrder quanOrder : list1) {
+			Long orderSourceId = quanOrder.getOrderSourceId();
+			params.put("order-id", orderSourceId + "");
+			String body = httpService.doHuobiGet(quanOrder.getOrderAccountId(), HttpConstant.HUOBI_ORDERDETAIL, params);
+			updateHuobiOrderInfo(body, orderSourceId);
 		}
-		logger.info("[HuobiOrder][accountId={}]任务结束，耗时：" + started, accountId);
+		logger.info("[HuobiOrderUpdate]任务结束，耗时：" + started);
 	}
 
 	private void updateHuobiOrderInfo(String body, Long orderId) {
