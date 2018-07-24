@@ -137,8 +137,13 @@
 			</if>			
 		</where>  
   </select>  
-  <select id="selectByOrderInfo" resultType="java.lang.Long">
-  	select order_source_id from quan_order where order_account_id =#{accountId} and order_state=#{orderState} and order_symbol=#{symbol}
+  <select id="selectByOrderInfo" resultMap="BaseResultMap">
+  	 select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
+    order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
+    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
+    exchange_id
+    from quan_order
+  	where order_state=#{orderState}
   </select>
 
 

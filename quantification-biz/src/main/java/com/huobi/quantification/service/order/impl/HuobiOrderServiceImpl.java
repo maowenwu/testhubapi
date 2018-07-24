@@ -189,17 +189,26 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	}
 
 	@Override
-	public void updateHuobiOrder(Long accountId, String symbol) {
+	public void updateHuobiOrder() {
 		Stopwatch started = Stopwatch.createStarted();
-		logger.info("[HuobiOrder][accountId={}]任务开始", accountId);
-		List<Long> listIds = quanOrderMapper.selectByOrderInfo(accountId, OrderStatusEnum.PRE_SUBMITTED.getOrderStatus() , symbol);
-		Map<String, String> params = new HashMap<>();
-		for (Long orderId : listIds) {
-			params.put("order-id", orderId + "");
-			String body = httpService.doHuobiGet(accountId, HttpConstant.HUOBI_ORDERDETAIL, params);
-			updateHuobiOrderInfo(body, orderId);
+		logger.info("[HuobiOrderUpdate]任务开始");
+		List<QuanOrder> list1 = quanOrderMapper.selectByOrderInfo(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
+		List<QuanOrder> list2 = quanOrderMapper.selectByOrderInfo(OrderStatusEnum.SUBMITTED.getOrderStatus());
+		List<QuanOrder> list3 = quanOrderMapper.selectByOrderInfo(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
+		for (QuanOrder quanOrder : list2) {
+			list1.add(quanOrder);
 		}
-		logger.info("[HuobiOrder][accountId={}]任务结束，耗时：" + started, accountId);
+		for (QuanOrder quanOrder : list3) {
+			list1.add(quanOrder);
+		}
+		Map<String, String> params = new HashMap<>();
+		for (QuanOrder quanOrder : list1) {
+			Long orderSourceId = quanOrder.getOrderSourceId();
+			params.put("order-id", orderSourceId + "");
+			String body = httpService.doHuobiGet(quanOrder.getOrderAccountId(), HttpConstant.HUOBI_ORDERDETAIL, params);
+			updateHuobiOrderInfo(body, orderSourceId);
+		}
+		logger.info("[HuobiOrderUpdate]任务结束，耗时：" + started);
 	}
 
 	private void updateHuobiOrderInfo(String body, Long orderId) {
