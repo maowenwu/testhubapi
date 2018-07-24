@@ -33,6 +33,7 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
@@ -214,7 +215,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		quanOrder.setOrderPrice(orderDto.getPrice());
 		quanOrder.setOrderCreatedAt(new Date());
 		quanOrder.setOrderSource(orderDto.getSource());
-		quanOrder.setOrderState("submitting");
+		quanOrder.setOrderState(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
 		quanOrder.setOrderSymbol(symbol);
 		quanOrder.setOrderType(orderDto.getType());
 		quanOrderMapper.insertAndGetId(quanOrder);
@@ -241,7 +242,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 				serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
 			}
 		}
-		quanOrder.setOrderState("submitted");
+		quanOrder.setOrderState(OrderStatusEnum.SUBMITTED.getOrderStatus());
 		quanOrderMapper.updateByPrimaryKey(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());

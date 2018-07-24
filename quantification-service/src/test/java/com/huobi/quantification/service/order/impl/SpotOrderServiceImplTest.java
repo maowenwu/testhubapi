@@ -27,6 +27,7 @@ import com.huobi.quantification.dto.SpotOrderStatusReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.provider.SpotOrderServiceImpl;
 import com.huobi.quantification.service.http.HttpService;
 
@@ -44,7 +45,7 @@ public class SpotOrderServiceImplTest {
 	
 	@Test
 	public void testUpdateOrderMapper() {
-		List<Long> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(1000L, "filled", "ethusdt");
+		List<Long> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(1000L, OrderStatusEnum.FILLED.getOrderStatus(), "ethusdt");
 		for (Long long1 : selectByOrderInfo) {
 			System.err.println(long1);
 		}

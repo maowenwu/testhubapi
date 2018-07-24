@@ -17,11 +17,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.constant.OrderStatusTable.HuobiOrderStatus;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dto.HuobiTradeOrderDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
 import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
 import com.huobi.quantification.response.spot.HuobiSpotOrderResponse;
@@ -179,7 +181,8 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
 		quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
 		quanOrder.setOrderSource(jsonObjectdata.getString("source"));
-		quanOrder.setOrderState(jsonObjectdata.getString("state"));
+		String state = jsonObjectdata.getString("state");
+		quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(state).getOrderStatus());
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.insert(quanOrder);
 		redisService.saveHuobiOrder(quanOrder);
@@ -189,7 +192,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 	public void updateHuobiOrder(Long accountId, String symbol) {
 		Stopwatch started = Stopwatch.createStarted();
 		logger.info("[HuobiOrder][accountId={}]任务开始", accountId);
-		List<Long> listIds = quanOrderMapper.selectByOrderInfo(accountId, "submitting" , symbol);
+		List<Long> listIds = quanOrderMapper.selectByOrderInfo(accountId, OrderStatusEnum.PRE_SUBMITTED.getOrderStatus() , symbol);
 		Map<String, String> params = new HashMap<>();
 		for (Long orderId : listIds) {
 			params.put("order-id", orderId + "");
@@ -217,7 +220,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
 		quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
 		quanOrder.setOrderSource(jsonObjectdata.getString("source"));
-		quanOrder.setOrderState(jsonObjectdata.getString("state"));
+		quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(jsonObjectdata.getString("state")).getOrderStatus());
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.updateOrderByOrderId(quanOrder);
 		redisService.saveHuobiOrder(quanOrder);
@@ -255,7 +258,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 			quanOrder.setOrderFieldAmount(dataObject.getBigDecimal("filled-amount"));
 			quanOrder.setOrderFieldCashAmount(dataObject.getBigDecimal("filled-fees"));
 			quanOrder.setOrderSource(dataObject.getString("source"));
-			quanOrder.setOrderState(dataObject.getString("state"));
+			quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(dataObject.getString("state")).getOrderStatus());
 		}
 	}
 }

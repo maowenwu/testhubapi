@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.constant.OrderStatusTable.HuobiOrderStatus;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
@@ -72,7 +73,7 @@ public class OrderHuobiServiceImplTest {
 			quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
 			quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
 			quanOrder.setOrderSource(jsonObjectdata.getString("source"));
-			quanOrder.setOrderState(jsonObjectdata.getString("state"));
+			quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(jsonObject.getString("state")).getOrderStatus());
 			quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 			quanOrderMapper.insert(quanOrder);
 		}
@@ -125,7 +126,7 @@ public class OrderHuobiServiceImplTest {
 		quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
 		quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
 		quanOrder.setOrderSource(jsonObjectdata.getString("source"));
-		quanOrder.setOrderState(jsonObjectdata.getString("state"));
+		quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(jsonObjectdata.getString("state")).getOrderStatus());
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.insert(quanOrder);
 	}
@@ -151,7 +152,7 @@ public class OrderHuobiServiceImplTest {
 		quanOrder.setOrderFieldAmount(dataObject.getBigDecimal("filled-amount"));
 		quanOrder.setOrderFieldCashAmount(dataObject.getBigDecimal("filled-fees"));
 		quanOrder.setOrderSource(dataObject.getString("source"));
-		quanOrder.setOrderState(dataObject.getString("state"));
+		quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(dataObject.getString("state")).getOrderStatus());
 		quanOrderMapper.insert(quanOrder);
 	}
 

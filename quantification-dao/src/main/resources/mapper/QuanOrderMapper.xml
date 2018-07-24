@@ -6,7 +6,7 @@
     <result column="order_source_id" jdbcType="BIGINT" property="orderSourceId" />
     <result column="order_symbol" jdbcType="VARCHAR" property="orderSymbol" />
     <result column="order_type" jdbcType="VARCHAR" property="orderType" />
-    <result column="order_state" jdbcType="VARCHAR" property="orderState" />
+    <result column="order_state" jdbcType="INTEGER" property="orderState" />
     <result column="order_account_id" jdbcType="BIGINT" property="orderAccountId" />
     <result column="order_amount" jdbcType="DECIMAL" property="orderAmount" />
     <result column="order_field_amount" jdbcType="DECIMAL" property="orderFieldAmount" />
@@ -32,7 +32,7 @@
       order_created_at, order_canceled_at, order_finished_at, 
       order_inner_id, exchange_id)
     values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
-      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR}, #{orderAccountId,jdbcType=BIGINT}, 
+      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
@@ -46,7 +46,7 @@
       order_created_at, order_canceled_at, order_finished_at, 
       order_inner_id, exchange_id)
     values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
-      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=VARCHAR}, #{orderAccountId,jdbcType=BIGINT}, 
+      #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
@@ -57,7 +57,7 @@
     set 
       order_symbol = #{orderSymbol,jdbcType=VARCHAR},
       order_type = #{orderType,jdbcType=VARCHAR},
-      order_state = #{orderState,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=INTEGER},
       order_account_id = #{orderAccountId,jdbcType=BIGINT},
       order_amount = #{orderAmount,jdbcType=DECIMAL},
       order_field_amount = #{orderFieldAmount,jdbcType=DECIMAL},
@@ -77,7 +77,7 @@
     set order_source_id = #{orderSourceId,jdbcType=BIGINT},
       order_symbol = #{orderSymbol,jdbcType=VARCHAR},
       order_type = #{orderType,jdbcType=VARCHAR},
-      order_state = #{orderState,jdbcType=VARCHAR},
+      order_state = #{orderState,jdbcType=INTEGER},
       order_account_id = #{orderAccountId,jdbcType=BIGINT},
       order_amount = #{orderAmount,jdbcType=DECIMAL},
       order_field_amount = #{orderFieldAmount,jdbcType=DECIMAL},
