@@ -1,17 +1,19 @@
 package com.huobi.quantification.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-public class FutureCancelOrder implements Serializable {
+public class FutureQueryOrderLinkReqDto implements Serializable {
 
     private int exchangeId;
     private long accountId;
-
-    private Long innerOrderId;
-    private Long exOrderId;
-    private Long linkOrderId;
+    private List<Long> linkOrderId;
     private String baseCoin;
     private String quoteCoin;
+    private String contractType;
+    private String contractCode;
+    private long maxDelay;
+
 
     public int getExchangeId() {
         return exchangeId;
@@ -29,27 +31,11 @@ public class FutureCancelOrder implements Serializable {
         this.accountId = accountId;
     }
 
-    public Long getInnerOrderId() {
-        return innerOrderId;
-    }
-
-    public void setInnerOrderId(Long innerOrderId) {
-        this.innerOrderId = innerOrderId;
-    }
-
-    public Long getExOrderId() {
-        return exOrderId;
-    }
-
-    public void setExOrderId(Long exOrderId) {
-        this.exOrderId = exOrderId;
-    }
-
-    public Long getLinkOrderId() {
+    public List<Long> getLinkOrderId() {
         return linkOrderId;
     }
 
-    public void setLinkOrderId(Long linkOrderId) {
+    public void setLinkOrderId(List<Long> linkOrderId) {
         this.linkOrderId = linkOrderId;
     }
 
@@ -67,5 +53,29 @@ public class FutureCancelOrder implements Serializable {
 
     public void setQuoteCoin(String quoteCoin) {
         this.quoteCoin = quoteCoin;
+    }
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public long getMaxDelay() {
+        return maxDelay;
+    }
+
+    public void setMaxDelay(long maxDelay) {
+        this.maxDelay = maxDelay;
     }
 }

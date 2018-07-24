@@ -3,7 +3,7 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class FutureOrderReqDto implements Serializable {
+public class FuturePlaceOrderReqDto implements Serializable {
     private int exchangeId;
     private long accountId;
     private String baseCoin;
@@ -22,7 +22,7 @@ public class FutureOrderReqDto implements Serializable {
     // 杠杆倍数
     private int lever;
     // 关联订单ID（为流动性系统内部订单ID）
-    private long linkOrderId;
+    private Long linkOrderId;
     // 是否同步调用
     private boolean sync;
 
@@ -123,11 +123,11 @@ public class FutureOrderReqDto implements Serializable {
         this.lever = lever;
     }
 
-    public long getLinkOrderId() {
+    public Long getLinkOrderId() {
         return linkOrderId;
     }
 
-    public void setLinkOrderId(long linkOrderId) {
+    public void setLinkOrderId(Long linkOrderId) {
         this.linkOrderId = linkOrderId;
     }
 

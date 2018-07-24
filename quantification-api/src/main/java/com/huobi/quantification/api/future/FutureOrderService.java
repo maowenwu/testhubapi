@@ -10,10 +10,10 @@ public interface FutureOrderService {
     /**
      * 下单
      *
-     * @param futureOrderReqDto
+     * @param futurePlaceOrderReqDto
      * @return
      */
-    ServiceResult<FutureOrderRespDto> placeOrder(FutureOrderReqDto futureOrderReqDto);
+    ServiceResult<FuturePlaceOrderRespDto> placeOrder(FuturePlaceOrderReqDto futurePlaceOrderReqDto);
 
     /**
      * 批量下单
@@ -28,28 +28,28 @@ public interface FutureOrderService {
      *
      * @return
      */
-    ServiceResult getOrderByInnerOrderId();
+    ServiceResult<FutureQueryOrderRespDto> getOrderByInnerOrderId(FutureQueryOrderInnerReqDto orderInnerReqDto);
 
     /**
      * 查询订单-根据交易所orderid
      *
      * @return
      */
-    ServiceResult getOrderByExOrderId();
+    ServiceResult<FutureQueryOrderRespDto> getOrderByExOrderId(FutureQueryOrderExOrderIdReqDto orderExOrderIdReqDto);
 
     /**
      * 查询订单-根据关联orderid
      *
      * @return
      */
-    ServiceResult getOrderByLinkOrderId();
+    ServiceResult<FutureQueryOrderRespDto> getOrderByLinkOrderId(FutureQueryOrderLinkReqDto reqDto);
 
     /**
      * 查询订单-根据订单状态
      *
      * @return
      */
-    ServiceResult getOrderByStatus();
+    ServiceResult<FutureQueryOrderRespDto> getOrderByStatus(FutureQueryOrderStatusReqDto reqDto);
 
     /**
      * 撤销订单-根据内部orderID

@@ -8,13 +8,13 @@ import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
-import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OkJobTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class TestController {
@@ -32,9 +32,28 @@ public class TestController {
     @Autowired
     private FutureOrderService futureOrderService;
 
+    @RequestMapping("/cancelOrder")
+    public String cancelOrder() {
+        FutureCancelOrderReqDto orderReqDto = new FutureCancelOrderReqDto();
+        orderReqDto.setExchangeId(2);
+        orderReqDto.setAccountId(1L);
+
+        List<FutureCancelOrder> orderList = new ArrayList<>();
+        FutureCancelOrder order = new FutureCancelOrder();
+        order.setInnerOrderId(21L);
+        orderList.add(order);
+
+        orderReqDto.setOrders(orderList);
+        orderReqDto.setTimeInterval(100);
+        orderReqDto.setParallel(false);
+        orderReqDto.setSync(true);
+        ServiceResult serviceResult = futureOrderService.cancelOrder(orderReqDto);
+        return JSON.toJSONString(serviceResult);
+    }
+
     @RequestMapping("/placeOrder")
     public String placeOrder() {
-        FutureOrderReqDto orderReqDto = new FutureOrderReqDto();
+        FuturePlaceOrderReqDto orderReqDto = new FuturePlaceOrderReqDto();
         orderReqDto.setExchangeId(2);
         orderReqDto.setAccountId(1L);
         orderReqDto.setBaseCoin("btc");
@@ -46,7 +65,7 @@ public class TestController {
         orderReqDto.setQuantity(BigDecimal.ONE);
         orderReqDto.setLever(10);
         orderReqDto.setSync(true);
-        ServiceResult<FutureOrderRespDto> serviceResult = futureOrderService.placeOrder(orderReqDto);
+        ServiceResult<FuturePlaceOrderRespDto> serviceResult = futureOrderService.placeOrder(orderReqDto);
         return JSON.toJSONString(serviceResult);
     }
 

@@ -4,6 +4,7 @@ import com.huobi.quantification.entity.QuanOrderFuture;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface QuanOrderFutureMapper {
     int deleteByPrimaryKey(Long innerOrderId);
@@ -23,4 +24,10 @@ public interface QuanOrderFutureMapper {
     List<Long> selectOrderIdBySourceStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("sourceStatus") List<Integer> sourceStatus);
 
     int updateByExIdAccountIdExOrderId(QuanOrderFuture record);
+
+    List<QuanOrderFuture> selectByInnerOrderIds(@Param("innerOrderId")List<Long> innerOrderId);
+
+    List<QuanOrderFuture> selectByExOrderIds(Map params);
+
+    List<QuanOrderFuture> selectByLinkOrderIds(Map params);
 }

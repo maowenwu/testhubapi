@@ -1,12 +1,10 @@
 package com.huobi.quantification.provider;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.huobi.quantification.common.util.AsyncUtils;
+import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.service.contract.ContractService;
@@ -18,14 +16,7 @@ import org.springframework.stereotype.Service;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
-import com.huobi.quantification.dto.FutureActiveOrderReqDto;
-import com.huobi.quantification.dto.FutureBatchOrder;
-import com.huobi.quantification.dto.FutureBatchOrderReqDto;
-import com.huobi.quantification.dto.FutureBatchOrderRespDto;
-import com.huobi.quantification.dto.FutureCancelOrder;
-import com.huobi.quantification.dto.FutureCancelOrderReqDto;
-import com.huobi.quantification.dto.FutureOrderReqDto;
-import com.huobi.quantification.dto.FutureOrderRespDto;
+import com.huobi.quantification.dto.FuturePlaceOrderReqDto;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.request.future.FutureOkCancelOrderRequest;
@@ -45,7 +36,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     private ContractService contractService;
 
     @Override
-    public ServiceResult<FutureOrderRespDto> placeOrder(FutureOrderReqDto reqDto) {
+    public ServiceResult<FuturePlaceOrderRespDto> placeOrder(FuturePlaceOrderReqDto reqDto) {
         if (reqDto.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
             return placeOkOrder(reqDto);
         }
@@ -58,7 +49,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
      * @param reqDto
      * @return
      */
-    public ServiceResult<FutureOrderRespDto> placeOkOrder(FutureOrderReqDto reqDto) {
+    public ServiceResult<FuturePlaceOrderRespDto> placeOkOrder(FuturePlaceOrderReqDto reqDto) {
         // 插入order表生成内部订单id
         QuanOrderFuture orderFuture = new QuanOrderFuture();
         orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
@@ -69,7 +60,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         orderFuture.setUpdateDate(new Date());
         quanOrderFutureMapper.insert(orderFuture);
 
-        FutureOrderRespDto respDto = new FutureOrderRespDto();
+        FuturePlaceOrderRespDto respDto = new FuturePlaceOrderRespDto();
         respDto.setInnerOrderId(orderFuture.getInnerOrderId());
         respDto.setLinkOrderId(reqDto.getLinkOrderId());
         if (reqDto.isSync()) {
@@ -85,7 +76,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     }
 
 
-    private Long doPlaceOkOrder(FutureOrderReqDto reqDto, QuanOrderFuture orderFuture) {
+    private Long doPlaceOkOrder(FuturePlaceOrderReqDto reqDto, QuanOrderFuture orderFuture) {
         FutureOkOrderRequest orderRequest = new FutureOkOrderRequest();
         orderRequest.setAccountId(reqDto.getAccountId());
         String symbol = null;
@@ -163,7 +154,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     private ServiceResult<List<FutureBatchOrderRespDto>> placeOkBatchOrder(FutureBatchOrderReqDto reqDto) {
         List<FutureBatchOrderRespDto> list = new ArrayList<>();
         for (FutureBatchOrder order : reqDto.getOrders()) {
-            FutureOrderReqDto orderReqDto = new FutureOrderReqDto();
+            FuturePlaceOrderReqDto orderReqDto = new FuturePlaceOrderReqDto();
             orderReqDto.setExchangeId(reqDto.getExchangeId());
             orderReqDto.setAccountId(reqDto.getAccountId());
             orderReqDto.setSync(reqDto.isSync());
@@ -179,7 +170,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             orderReqDto.setQuantity(order.getQuantity());
             orderReqDto.setLever(order.getLever());
 
-            ServiceResult<FutureOrderRespDto> serviceResult = placeOrder(orderReqDto);
+            ServiceResult<FuturePlaceOrderRespDto> serviceResult = placeOrder(orderReqDto);
             FutureBatchOrderRespDto orderRespDto = new FutureBatchOrderRespDto();
             BeanUtils.copyProperties(serviceResult.getData(), orderRespDto);
             list.add(orderRespDto);
@@ -189,23 +180,69 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     }
 
     @Override
-    public ServiceResult getOrderByInnerOrderId() {
-        return null;
+    public ServiceResult<FutureQueryOrderRespDto> getOrderByInnerOrderId(FutureQueryOrderInnerReqDto reqDto) {
+        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectByInnerOrderIds(reqDto.getInnerOrderId());
+        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
+        orderFutures.forEach(e -> {
+            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
+            BeanUtils.copyProperties(e, dataBean);
+            data.put(e.getInnerOrderId(), dataBean);
+        });
+
+        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
+        respDto.setData(data);
+        return ServiceResult.buildSuccessResult(respDto);
     }
 
     @Override
-    public ServiceResult getOrderByExOrderId() {
-        return null;
+    public ServiceResult<FutureQueryOrderRespDto> getOrderByExOrderId(FutureQueryOrderExOrderIdReqDto reqDto) {
+        Map params = new HashMap();
+        BeanUtils.copyProperties(reqDto, params);
+        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectByExOrderIds(params);
+        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
+        orderFutures.forEach(e -> {
+            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
+            BeanUtils.copyProperties(e, dataBean);
+            data.put(e.getInnerOrderId(), dataBean);
+        });
+
+        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
+        respDto.setData(data);
+        return ServiceResult.buildSuccessResult(respDto);
     }
 
     @Override
-    public ServiceResult getOrderByLinkOrderId() {
-        return null;
+    public ServiceResult<FutureQueryOrderRespDto> getOrderByLinkOrderId(FutureQueryOrderLinkReqDto reqDto) {
+        Map params = new HashMap();
+        BeanUtils.copyProperties(reqDto, params);
+        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectByLinkOrderIds(params);
+        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
+        orderFutures.forEach(e -> {
+            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
+            BeanUtils.copyProperties(e, dataBean);
+            data.put(e.getInnerOrderId(), dataBean);
+        });
+
+        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
+        respDto.setData(data);
+        return ServiceResult.buildSuccessResult(respDto);
     }
 
     @Override
-    public ServiceResult getOrderByStatus() {
-        return null;
+    public ServiceResult<FutureQueryOrderRespDto> getOrderByStatus(FutureQueryOrderStatusReqDto reqDto) {
+        QuanOrderFuture orderFuture = new QuanOrderFuture();
+        BeanUtils.copyProperties(reqDto, orderFuture);
+        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectBySelective(orderFuture);
+        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
+        orderFutures.forEach(e -> {
+            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
+            BeanUtils.copyProperties(e, dataBean);
+            data.put(e.getInnerOrderId(), dataBean);
+        });
+
+        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
+        respDto.setData(data);
+        return ServiceResult.buildSuccessResult(respDto);
     }
 
     @Override
@@ -283,6 +320,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     public ServiceResult cancelActiveOrder(FutureActiveOrderReqDto reqDto) {
         // 查询待撤销订单
         QuanOrderFuture orderFuture = new QuanOrderFuture();
+        BeanUtils.copyProperties(reqDto, orderFuture);
         List<QuanOrderFuture> uncompleteOrders = quanOrderFutureMapper.selectBySelective(orderFuture);
         // 开始撤销订单
         CancelOrderContext orderContext = new CancelOrderContext(reqDto.getExchangeId(),

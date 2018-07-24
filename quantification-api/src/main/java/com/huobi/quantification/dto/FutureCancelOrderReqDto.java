@@ -8,6 +8,7 @@ public class FutureCancelOrderReqDto implements Serializable {
     private long accountId;
     private List<FutureCancelOrder> orders;
     private boolean parallel;
+    // 单位毫秒
     private int timeInterval;
     private boolean sync;
 
