@@ -132,6 +132,9 @@
 			<if test="orderType != null">
 				and order_type=#{orderType}
 			</if>
+			<if test="orderSymbol != null">
+				and order_symbol=#{orderSymbol}
+			</if>			
 		</where>  
   </select>  
   <select id="selectByOrderInfo" resultType="java.lang.Long">
