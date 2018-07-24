@@ -19,5 +19,5 @@ public interface QuanOrderFutureMapper {
 
     List<QuanOrderFuture> selectBySelective(QuanOrderFuture record);
 
-    List<Long> selectOrderIdBySourceStatus(int exchageId, Long accountId, List<Integer> soutceStatus);
+    List<Long> selectOrderIdBySourceStatus(int exchangeId, Long accountId, List<Integer> sourceStatus);
 }

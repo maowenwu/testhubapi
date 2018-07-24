@@ -88,10 +88,12 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         orderRequest.setAccountId(reqDto.getAccountId());
         String symbol = null;
         String contractType = null;
+        String contractCode = null;
         if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
-            QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
-            symbol = contractCode.getSymbol();
-            contractType = contractCode.getContractType();
+            QuanContractCode quanContractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+            symbol = quanContractCode.getSymbol();
+            contractType = quanContractCode.getContractType();
+            contractCode = quanContractCode.getContractCode();
         } else {
             symbol = getOkSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin());
             contractType = reqDto.getContractType();
@@ -109,6 +111,8 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         Long orderId = okOrderService.placeOkOrder(orderRequest);
         // 下单完成后更新交易所id到order表
         orderFuture.setExOrderId(orderId);
+        orderFuture.setContractType(contractType);
+        orderFuture.setContractCode(contractCode);
         quanOrderFutureMapper.updateByPrimaryKeySelective(orderFuture);
         return orderId;
     }

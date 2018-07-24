@@ -1,18 +1,17 @@
 package com.huobi.quantification.service.order.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
-import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.constant.OkRestErrorCode;
+import com.huobi.quantification.common.util.BigDecimalUtils;
+import com.huobi.quantification.constant.OrderStatusTable;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OrderStatus;
-import com.huobi.quantification.request.future.FutureOkBatchOrderRequest;
+import com.huobi.quantification.enums.OffsetEnum;
+import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.request.future.FutureOkCancelOrderRequest;
 import com.huobi.quantification.request.future.FutureOkOrderRequest;
 import com.huobi.quantification.response.future.OKFutureCancelOrderResponse;
@@ -28,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -49,24 +49,10 @@ public class OkOrderServiceImpl implements OkOrderService {
     @Autowired
     private RedisService redisService;
 
-    @Override
-    public ServiceResult getOkOrderInfo() {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", "btc_usd");
-        params.put("contract_type", "this_week");
-        params.put("status", "1");
-        params.put("order_id", "-1");
-        params.put("current_page", "1");
-        params.put("page_length", "50");
-        //String body = httpService.doOkSignedPost(HttpConstant.OK_ORDER_INFO, params);
-        //parseAndSaveOrderInfo(body);
-        return null;
-    }
 
     public void updateOkOrderInfo(Long accountId, String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
-        List<QuanOrderFuture> unfinishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.UNFINISH);
         // 查找出订单状态不为已完成、撤单的订单
         List<Integer> status = new ArrayList<>();
         List<Long> orderIds = quanOrderFutureMapper.selectOrderIdBySourceStatus(ExchangeEnum.OKEX.getExId(), accountId, status);
@@ -109,53 +95,6 @@ public class OkOrderServiceImpl implements OkOrderService {
         return parseAndSaveOrderInfo(accountId, body);
     }
 
-    private List<QuanOrderFuture> queryAllOkOrderInfo(Long accountId, String symbol, String contractType) {
-        List<QuanOrderFuture> list = new ArrayList<>();
-        Stopwatch started = Stopwatch.createStarted();
-        List<QuanOrderFuture> finishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.FINISH);
-        List<QuanOrderFuture> unfinishOrder = queryAllOkOrderInfoByStatus(accountId, symbol, contractType, OrderStatus.UNFINISH);
-        logger.debug("单个订单查询耗时：" + started);
-        list.addAll(finishOrder);
-        list.addAll(unfinishOrder);
-        return list;
-    }
-
-    /**
-     * 按分页的方式读取所有订单
-     *
-     * @param accountId
-     * @param symbol
-     * @param contractType
-     * @param status
-     * @return
-     */
-    private List<QuanOrderFuture> queryAllOkOrderInfoByStatus(Long accountId, String symbol, String contractType, OrderStatus status) {
-        int pageLength = 50;
-        List<QuanOrderFuture> list = new ArrayList<>();
-        int i = 1;
-        while (true) {
-            List<QuanOrderFuture> orderFutures = queryOkOrderInfoByAPI(accountId, symbol, contractType, status, String.valueOf(-1), i, pageLength);
-            i++;
-            if (orderFutures.size() <= 0) {
-                break;
-            }
-            list.addAll(orderFutures);
-        }
-        return list;
-    }
-
-
-    private List<QuanOrderFuture> queryOkOrderInfoByAPI(Long accountId, String symbol, String contractType, OrderStatus status, String orderId, int currentPage, int pageLength) {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
-        params.put("contract_type", contractType);
-        params.put("status", status.getIntStatus() + "");
-        params.put("order_id", orderId);
-        params.put("current_page", currentPage + "");
-        params.put("page_length", pageLength + "");
-        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_ORDER_INFO, params);
-        return parseAndSaveOrderInfo(accountId, body);
-    }
 
     private List<QuanOrderFuture> parseAndSaveOrderInfo(Long accountId, String body) {
         OKFutureQueryOrderResponse response = JSON.parseObject(body, OKFutureQueryOrderResponse.class);
@@ -173,43 +112,66 @@ public class OkOrderServiceImpl implements OkOrderService {
 
     private QuanOrderFuture parseOkFutureOrder(OKFutureQueryOrderResponse.OrdersBean order) {
         QuanOrderFuture orderFuture = new QuanOrderFuture();
+        // 交易所订单id
         orderFuture.setExOrderId(order.getOrderId());
+        // 下单前已填充
+        //orderFuture.setLinkOrderId();
+        // 下单前已填充
+        //orderFuture.setCreateDate();
+        orderFuture.setUpdateDate(new Date());
+        int status = order.getStatus();
+        // 使用程序判断是否是部分成交已撤单状态
+        if (status == -1 && !BigDecimalUtils.equals(order.getDealAmount(), BigDecimal.ZERO)) {
+            // 如果状态为已撤单并且成交量不等于0，那么可以判断为部分成交已撤单
+            status = 5;
+        }
+        orderFuture.setStatus(OrderStatusTable.OkOrderStatus.getOrderStatus(status).getOrderStatus());
         String symbol = order.getSymbol();
-        String[] split = symbol.split(",");
+        String[] split = symbol.split("_");
         orderFuture.setBaseCoin(split[0]);
         orderFuture.setQuoteCoin(split[1]);
-
+        // 下单前已填充
         //orderFuture.setContractType(null);
-        orderFuture.setContractCode(order.getContractName());
-        orderFuture.setStatus(null);
-        orderFuture.setSourceStatus(order.getStatus());
+        // 下单前已填充
+        //orderFuture.setContractCode();
+        orderFuture.setSide(getOkSide(order.getType()).getSideType());
+        orderFuture.setOffset(getOkOffset(order.getType()).getOffset());
+        // 杠杆率
         orderFuture.setLever(order.getLeverRate());
+        orderFuture.setOrderType("limit");
+        // 订单价格
         orderFuture.setOrderPrice(order.getPrice());
-        orderFuture.setOrderQty(order.getPriceAvg());
-        orderFuture.setCreateDate(order.getCreateDate());
-        orderFuture.setUpdateDate(new Date());
+        // 成交均价
+        orderFuture.setDealPrice(order.getPriceAvg());
+        // 委托量
+        orderFuture.setOrderQty(order.getAmount());
+        // 成交量
+        orderFuture.setDealQty(order.getDealAmount());
+        // 未成交量
+        orderFuture.setRemainingQty(order.getAmount().subtract(order.getDealAmount()));
+        // 冻结保证金
+        // todo 还未确认
+        //orderFuture.setMarginFrozen();
+
+        orderFuture.setSourceStatus(order.getStatus());
         return orderFuture;
     }
 
-    @Override
-    public ServiceResult getOkOrdersInfo() {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", "btc_usd");
-        params.put("contract_type", "this_week");
-        params.put("order_id", "1015885804614656");
-        // String body = httpService.doOkSignedPost(HttpConstant.OK_ORDERS_INFO, params);
-        //parseAndSaveOrderInfo(body);
-        return null;
+    private SideEnum getOkSide(int type) {
+        if (type == 1 || type == 3) {
+            return SideEnum.BUY;
+        } else {
+            return SideEnum.SELL;
+        }
     }
 
-    @Override
-    public Object storeOkOrdersHistory() {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", "btc_usd");
-        params.put("date", "2018-06-29");
-        params.put("since", "1015885804614656");
-        //String result = httpService.doOkSignedPost(HttpConstant.OK_TRADES_HISTORY, params);
-        return null;
+
+    private OffsetEnum getOkOffset(int type) {
+        if (type == 1 || type == 2) {
+            return OffsetEnum.LONG;
+        } else {
+            return OffsetEnum.SHORT;
+        }
     }
 
     @Override
@@ -237,16 +199,6 @@ public class OkOrderServiceImpl implements OkOrderService {
         return JSON.parseObject(body, OKFuturePlaceOrderResponse.class);
     }
 
-    @Override
-    public ServiceResult placeOkOrders(FutureOkBatchOrderRequest request) {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", "btc_usd");
-        params.put("contract_type", "this_week");
-        params.put("orders_data", "[{price:6050,amount:0.0001,type:1,match_price:0}]");
-        params.put("lever_rate", "10");
-        String result = httpService.doOkSignedPost(request.getAccountId(), HttpConstant.OK_BATCH_TRADE, params);
-        return null;
-    }
 
     @Override
     public OKFutureCancelOrderResponse cancelOkOrder(FutureOkCancelOrderRequest cancelOrderDto) {
@@ -258,14 +210,5 @@ public class OkOrderServiceImpl implements OkOrderService {
         return JSON.parseObject(body, OKFutureCancelOrderResponse.class);
     }
 
-    @Override
-    public ServiceResult cancelOkOrders() {
-        // order_id以，好分割
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", "");
-        params.put("contract_type", "");
-        params.put("order_id", "");
-        //String result = httpService.doOkSignedPost(HttpConstant.OK_CANCEL, params);
-        return null;
-    }
+
 }

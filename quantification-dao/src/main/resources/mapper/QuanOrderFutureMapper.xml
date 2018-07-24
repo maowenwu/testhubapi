@@ -20,6 +20,7 @@
         <result column="lever" jdbcType="INTEGER" property="lever"/>
         <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
         <result column="order_price" jdbcType="DECIMAL" property="orderPrice"/>
+        <result column="deal_price" jdbcType="DECIMAL" property="dealPrice"/>
         <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
         <result column="deal_qty" jdbcType="DECIMAL" property="dealQty"/>
         <result column="remaining_qty" jdbcType="DECIMAL" property="remainingQty"/>
@@ -31,7 +32,7 @@
     <sql id="Base_Column_List">
     inner_order_id, strategy_name, strategy_version, exchange_id, account_id, ex_order_id, 
     link_order_id, base_coin, quote_coin, contract_type, contract_code, status, source_status, 
-    side, offset, lever, order_type, order_price, order_qty, deal_qty, remaining_qty, 
+    side, offset, lever, order_type, order_price, deal_price, order_qty, deal_qty, remaining_qty, 
     margin_frozen, fees, create_date, update_date
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -44,25 +45,25 @@
     delete from quan_order_future
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
   </delete>
-    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture" useGeneratedKeys="true" keyProperty="inner_order_id">
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     insert into quan_order_future (inner_order_id, strategy_name, strategy_version, 
       exchange_id, account_id, ex_order_id, 
       link_order_id, base_coin, quote_coin, 
       contract_type, contract_code, status, 
       source_status, side, offset, 
       lever, order_type, order_price, 
-      order_qty, deal_qty, remaining_qty, 
-      margin_frozen, fees, create_date, 
-      update_date)
+      deal_price, order_qty, deal_qty, 
+      remaining_qty, margin_frozen, fees, 
+      create_date, update_date)
     values (#{innerOrderId,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
       #{exchangeId,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, #{exOrderId,jdbcType=BIGINT}, 
       #{linkOrderId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR}, 
       #{contractType,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
       #{sourceStatus,jdbcType=INTEGER}, #{side,jdbcType=INTEGER}, #{offset,jdbcType=INTEGER}, 
       #{lever,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL}, 
-      #{orderQty,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL}, #{remainingQty,jdbcType=DECIMAL}, 
-      #{marginFrozen,jdbcType=DECIMAL}, #{fees,jdbcType=DECIMAL}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{updateDate,jdbcType=TIMESTAMP})
+      #{dealPrice,jdbcType=DECIMAL}, #{orderQty,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL}, 
+      #{remainingQty,jdbcType=DECIMAL}, #{marginFrozen,jdbcType=DECIMAL}, #{fees,jdbcType=DECIMAL}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
         insert into quan_order_future
@@ -120,6 +121,9 @@
             </if>
             <if test="orderPrice != null">
                 order_price,
+            </if>
+            <if test="dealPrice != null">
+                deal_price,
             </if>
             <if test="orderQty != null">
                 order_qty,
@@ -198,6 +202,9 @@
             <if test="orderPrice != null">
                 #{orderPrice,jdbcType=DECIMAL},
             </if>
+            <if test="dealPrice != null">
+                #{dealPrice,jdbcType=DECIMAL},
+            </if>
             <if test="orderQty != null">
                 #{orderQty,jdbcType=DECIMAL},
             </if>
@@ -275,6 +282,9 @@
             <if test="orderPrice != null">
                 order_price = #{orderPrice,jdbcType=DECIMAL},
             </if>
+            <if test="dealPrice != null">
+                deal_price = #{dealPrice,jdbcType=DECIMAL},
+            </if>
             <if test="orderQty != null">
                 order_qty = #{orderQty,jdbcType=DECIMAL},
             </if>
@@ -318,6 +328,7 @@
       lever = #{lever,jdbcType=INTEGER},
       order_type = #{orderType,jdbcType=VARCHAR},
       order_price = #{orderPrice,jdbcType=DECIMAL},
+      deal_price = #{dealPrice,jdbcType=DECIMAL},
       order_qty = #{orderQty,jdbcType=DECIMAL},
       deal_qty = #{dealQty,jdbcType=DECIMAL},
       remaining_qty = #{remainingQty,jdbcType=DECIMAL},
@@ -327,6 +338,7 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
   </update>
+
 
     <select id="selectBySelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture"
             resultMap="BaseResultMap">
@@ -388,6 +400,9 @@
             <if test="orderPrice != null">
                 and order_price=#{orderPrice}
             </if>
+            <if test="dealPrice != null">
+                and deal_price=#{dealPrice}
+            </if>
             <if test="orderQty != null">
                 and order_qty=#{orderQty}
             </if>
@@ -412,9 +427,9 @@
         </where>
     </select>
     <select id="selectOrderIdBySourceStatus" resultType="java.lang.Long">
-        select ex_order_id from quan_order_future where exchange_id=#{exchageId} and account_id=#{accountId}
+        select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId}
         and source_status in
-        <foreach item="item" index="index" collection="soutceStatus" open="("
+        <foreach item="item" index="index" collection="sourceStatus" open="("
                  separator="," close=")">
             #{item}
         </foreach>
