@@ -44,7 +44,7 @@
     delete from quan_order_future
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
   </delete>
-    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture" useGeneratedKeys="true" keyProperty="inner_order_id">
     insert into quan_order_future (inner_order_id, strategy_name, strategy_version, 
       exchange_id, account_id, ex_order_id, 
       link_order_id, base_coin, quote_coin, 

@@ -1,6 +1,7 @@
 package com.huobi.quantification.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class FutureBatchOrder implements Serializable {
 
@@ -8,13 +9,13 @@ public class FutureBatchOrder implements Serializable {
     private String quoteCoin;
     private String contractType;
     private String contractCode;
-    private int side;
-    private int offset;
+    private Integer side;
+    private Integer offset;
     private String orderType;
-    private String price;
-    private String quantity;
-    private String lever;
-    private String linkOrderId;
+    private BigDecimal price;
+    private BigDecimal quantity;
+    private Integer lever;
+    private Long linkOrderId;
 
     public String getBaseCoin() {
         return baseCoin;
@@ -48,19 +49,19 @@ public class FutureBatchOrder implements Serializable {
         this.contractCode = contractCode;
     }
 
-    public int getSide() {
+    public Integer getSide() {
         return side;
     }
 
-    public void setSide(int side) {
+    public void setSide(Integer side) {
         this.side = side;
     }
 
-    public int getOffset() {
+    public Integer getOffset() {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public void setOffset(Integer offset) {
         this.offset = offset;
     }
 
@@ -72,35 +73,35 @@ public class FutureBatchOrder implements Serializable {
         this.orderType = orderType;
     }
 
-    public String getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public String getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(String quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 
-    public String getLever() {
+    public Integer getLever() {
         return lever;
     }
 
-    public void setLever(String lever) {
+    public void setLever(Integer lever) {
         this.lever = lever;
     }
 
-    public String getLinkOrderId() {
+    public Long getLinkOrderId() {
         return linkOrderId;
     }
 
-    public void setLinkOrderId(String linkOrderId) {
+    public void setLinkOrderId(Long linkOrderId) {
         this.linkOrderId = linkOrderId;
     }
 }

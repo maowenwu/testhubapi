@@ -49,12 +49,21 @@ public class FuturePositionRespDto implements Serializable {
         private BigDecimal longCostOpen;
         @JSONField(name = "long_cost_hold")
         private BigDecimal longCostHold;
-        @JSONField(name = "long_profit_unreal")
-        private BigDecimal longProfitUnreal;
-        @JSONField(name = "long_profit_rate")
-        private BigDecimal longProfitRate;
         @JSONField(name = "lever_rate")
         private BigDecimal leverRate;
+
+
+
+        @JSONField(name = "short_amount")
+        private BigDecimal shortAmount;
+        @JSONField(name = "short_available")
+        private BigDecimal shortAvailable;
+        @JSONField(name = "short_frozen")
+        private BigDecimal shortFrozen;
+        @JSONField(name = "short_cost_open")
+        private BigDecimal shortCostOpen;
+        @JSONField(name = "short_cost_hold")
+        private BigDecimal shortCostHold;
 
         public String getContractCode() {
             return contractCode;
@@ -128,28 +137,52 @@ public class FuturePositionRespDto implements Serializable {
             this.longCostHold = longCostHold;
         }
 
-        public BigDecimal getLongProfitUnreal() {
-            return longProfitUnreal;
-        }
-
-        public void setLongProfitUnreal(BigDecimal longProfitUnreal) {
-            this.longProfitUnreal = longProfitUnreal;
-        }
-
-        public BigDecimal getLongProfitRate() {
-            return longProfitRate;
-        }
-
-        public void setLongProfitRate(BigDecimal longProfitRate) {
-            this.longProfitRate = longProfitRate;
-        }
-
         public BigDecimal getLeverRate() {
             return leverRate;
         }
 
         public void setLeverRate(BigDecimal leverRate) {
             this.leverRate = leverRate;
+        }
+
+        public BigDecimal getShortAmount() {
+            return shortAmount;
+        }
+
+        public void setShortAmount(BigDecimal shortAmount) {
+            this.shortAmount = shortAmount;
+        }
+
+        public BigDecimal getShortAvailable() {
+            return shortAvailable;
+        }
+
+        public void setShortAvailable(BigDecimal shortAvailable) {
+            this.shortAvailable = shortAvailable;
+        }
+
+        public BigDecimal getShortFrozen() {
+            return shortFrozen;
+        }
+
+        public void setShortFrozen(BigDecimal shortFrozen) {
+            this.shortFrozen = shortFrozen;
+        }
+
+        public BigDecimal getShortCostOpen() {
+            return shortCostOpen;
+        }
+
+        public void setShortCostOpen(BigDecimal shortCostOpen) {
+            this.shortCostOpen = shortCostOpen;
+        }
+
+        public BigDecimal getShortCostHold() {
+            return shortCostHold;
+        }
+
+        public void setShortCostHold(BigDecimal shortCostHold) {
+            this.shortCostHold = shortCostHold;
         }
     }
 }

@@ -3,6 +3,8 @@ package com.huobi.quantification.api.future;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
 
+import java.util.List;
+
 public interface FutureOrderService {
 
     /**
@@ -19,7 +21,7 @@ public interface FutureOrderService {
      * @param batchOrderReqDto
      * @return
      */
-    ServiceResult<FutureBatchOrderRespDto> placeBatchOrders(FutureBatchOrderReqDto batchOrderReqDto);
+    ServiceResult<List<FutureBatchOrderRespDto>> placeBatchOrders(FutureBatchOrderReqDto batchOrderReqDto);
 
     /**
      * 查询订单-根据内部orderid

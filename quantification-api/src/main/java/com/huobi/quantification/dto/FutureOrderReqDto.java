@@ -9,13 +9,20 @@ public class FutureOrderReqDto {
     private String quoteCoin;
     private String contractType;
     private String contractCode;
+    // 买入1，卖出2
     private int side;
+    // 开仓1，平仓2
     private int offset;
+    // limit, market, ioc, limit-maker
     private String orderType;
     private BigDecimal price;
+    // 下单数量
     private BigDecimal quantity;
+    // 杠杆倍数
     private int lever;
+    // 关联订单ID（为流动性系统内部订单ID）
     private long linkOrderId;
+    // 是否同步调用
     private boolean sync;
 
 

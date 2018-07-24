@@ -1,10 +1,15 @@
 package com.huobi.quantification.provider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.huobi.quantification.common.util.AsyncUtils;
+import com.huobi.quantification.entity.QuanContractCode;
+import com.huobi.quantification.service.contract.ContractService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,6 +40,9 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     @Autowired
     private QuanOrderFutureMapper quanOrderFutureMapper;
 
+    @Autowired
+    private ContractService contractService;
+
     @Override
     public ServiceResult<FutureOrderRespDto> placeOrder(FutureOrderReqDto reqDto) {
         if (reqDto.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
@@ -50,11 +58,46 @@ public class FutureOrderServiceImpl implements FutureOrderService {
      * @return
      */
     public ServiceResult<FutureOrderRespDto> placeOkOrder(FutureOrderReqDto reqDto) {
+        // 插入order表生成内部订单id
+        QuanOrderFuture orderFuture = new QuanOrderFuture();
+        orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
+        orderFuture.setAccountId(reqDto.getAccountId());
+        orderFuture.setLinkOrderId(reqDto.getLinkOrderId());
+        orderFuture.setCreateDate(new Date());
+        orderFuture.setUpdateDate(new Date());
+        quanOrderFutureMapper.insert(orderFuture);
+
+        FutureOrderRespDto respDto = new FutureOrderRespDto();
+        respDto.setInnerOrderId(orderFuture.getInnerOrderId());
+        respDto.setLinkOrderId(reqDto.getLinkOrderId());
+        if (reqDto.isSync()) {
+            Long okOrderId = doPlaceOkOrder(reqDto, orderFuture);
+            respDto.setExOrderId(okOrderId);
+        } else {
+            // 异步执行
+            AsyncUtils.runAsyncNoException(() -> {
+                doPlaceOkOrder(reqDto, orderFuture);
+            });
+        }
+        return ServiceResult.buildSuccessResult(respDto);
+    }
+
+
+    private Long doPlaceOkOrder(FutureOrderReqDto reqDto, QuanOrderFuture orderFuture) {
         FutureOkOrderRequest orderRequest = new FutureOkOrderRequest();
         orderRequest.setAccountId(reqDto.getAccountId());
-        String symbol = getOkSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin());
+        String symbol = null;
+        String contractType = null;
+        if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
+            QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+            symbol = contractCode.getSymbol();
+            contractType = contractCode.getContractType();
+        } else {
+            symbol = getOkSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin());
+            contractType = reqDto.getContractType();
+        }
         orderRequest.setSymbol(symbol);
-        orderRequest.setContractType(reqDto.getContractType());
+        orderRequest.setContractType(contractType);
         orderRequest.setPrice(reqDto.getPrice().toString());
         // todo 下单数量，单位
         orderRequest.setAmount(reqDto.getQuantity().toString());
@@ -64,14 +107,10 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         orderRequest.setMatchPrice(0);
         orderRequest.setLeverRate(reqDto.getLever() + "");
         Long orderId = okOrderService.placeOkOrder(orderRequest);
-
-        QuanOrderFuture orderFuture = new QuanOrderFuture();
-        orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
-        orderFuture.setAccountId(reqDto.getAccountId());
+        // 下单完成后更新交易所id到order表
         orderFuture.setExOrderId(orderId);
-        orderFuture.setUpdateDate(new Date());
-        quanOrderFutureMapper.insert(orderFuture);
-        return null;
+        quanOrderFutureMapper.updateByPrimaryKeySelective(orderFuture);
+        return orderId;
     }
 
 
@@ -100,7 +139,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     }
 
     @Override
-    public ServiceResult<FutureBatchOrderRespDto> placeBatchOrders(FutureBatchOrderReqDto reqDto) {
+    public ServiceResult<List<FutureBatchOrderRespDto>> placeBatchOrders(FutureBatchOrderReqDto reqDto) {
         if (reqDto.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
             return placeOkBatchOrder(reqDto);
         }
@@ -114,31 +153,32 @@ public class FutureOrderServiceImpl implements FutureOrderService {
      * @param reqDto
      * @return
      */
-    private ServiceResult<FutureBatchOrderRespDto> placeOkBatchOrder(FutureBatchOrderReqDto reqDto) {
+    private ServiceResult<List<FutureBatchOrderRespDto>> placeOkBatchOrder(FutureBatchOrderReqDto reqDto) {
+        List<FutureBatchOrderRespDto> list = new ArrayList<>();
         for (FutureBatchOrder order : reqDto.getOrders()) {
-            FutureOkOrderRequest orderRequest = new FutureOkOrderRequest();
-            orderRequest.setAccountId(reqDto.getAccountId());
-            String symbol = getOkSymbol(order.getBaseCoin(), order.getQuoteCoin());
-            orderRequest.setSymbol(symbol);
-            orderRequest.setContractType(order.getContractType());
-            orderRequest.setPrice(order.getPrice());
-            // todo 下单数量，单位
-            orderRequest.setAmount(order.getQuantity());
-            int type = getOkOrderType(order.getSide(), order.getOffset());
-            orderRequest.setType(type);
-            // todo 订单类型默认给市价单
-            orderRequest.setMatchPrice(0);
-            orderRequest.setLeverRate(order.getLever());
-            Long orderId = okOrderService.placeOkOrder(orderRequest);
+            FutureOrderReqDto orderReqDto = new FutureOrderReqDto();
+            orderReqDto.setExchangeId(reqDto.getExchangeId());
+            orderReqDto.setAccountId(reqDto.getAccountId());
+            orderReqDto.setSync(reqDto.isSync());
 
-            QuanOrderFuture orderFuture = new QuanOrderFuture();
-            orderFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
-            orderFuture.setAccountId(reqDto.getAccountId());
-            orderFuture.setExOrderId(orderId);
-            orderFuture.setUpdateDate(new Date());
-            quanOrderFutureMapper.insert(orderFuture);
+            orderReqDto.setBaseCoin(order.getBaseCoin());
+            orderReqDto.setQuoteCoin(order.getQuoteCoin());
+            orderReqDto.setContractType(order.getContractType());
+            orderReqDto.setContractCode(order.getContractCode());
+            orderReqDto.setSide(order.getSide());
+            orderReqDto.setOffset(order.getOffset());
+            orderReqDto.setOrderType(order.getOrderType());
+            orderReqDto.setPrice(order.getPrice());
+            orderReqDto.setQuantity(order.getQuantity());
+            orderReqDto.setLever(order.getLever());
+
+            ServiceResult<FutureOrderRespDto> serviceResult = placeOrder(orderReqDto);
+            FutureBatchOrderRespDto orderRespDto = new FutureBatchOrderRespDto();
+            BeanUtils.copyProperties(serviceResult.getData(), orderRespDto);
+            list.add(orderRespDto);
+            sleep(reqDto.getTimeInterval());
         }
-        return null;
+        return ServiceResult.buildSuccessResult(list);
     }
 
     @Override
