@@ -190,7 +190,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		HuobiTradeOrderDto orderDto = new HuobiTradeOrderDto();
 		QuanOrder quanOrder = new QuanOrder();
 		orderDto.setAccountId(reqDto.getAccountId());
-		//验证参数
+		//验证参数,orderDto属性赋值
 		if ("buy".equals(reqDto.getSide()) || "sell".equals(reqDto.getSide())) {
 			if (reqDto.getOrderType().contains("market")) {
 				orderDto.setAmount(reqDto.getCashAmount());
@@ -205,6 +205,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		String symbol = getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin());
 		orderDto.setSymbol(symbol);
 		orderDto.setType(reqDto.getSide() + "-" +reqDto.getOrderType());
+		//quanOrder属性赋值，并持久化保存
 		quanOrder.setExchangeId(reqDto.getExchangeId());
 		quanOrder.setOrderAccountId(reqDto.getAccountId());
 		quanOrder.setOrderAmount(orderDto.getAmount());
@@ -215,6 +216,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		quanOrder.setOrderSymbol(symbol);
 		quanOrder.setOrderType(orderDto.getType());
 		quanOrderMapper.insertAndGetId(quanOrder);
+		//下单，并更新数据库
 		Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
 		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<>();
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
@@ -224,6 +226,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			try {
 				quanOrder.setOrderSourceId(orderIdFuture.get());
 				respDto.setExOrderId(orderIdFuture.get());
+				logger.info("下单成功，订单号:{}",orderIdFuture.get());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (ExecutionException e) {
@@ -232,6 +235,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 				serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
 			}
 		}
+		quanOrder.setOrderState("submitted");
 		quanOrderMapper.updateByPrimaryKey(quanOrder);
 		respDto.setLinkOrderId(reqDto.getLinkOrderId());
 		respDto.setInnerOrderId(quanOrder.getId());
