@@ -19,6 +19,7 @@ import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.util.AsyncUtils;
+import com.huobi.quantification.constant.OrderStatusTable;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dto.HuobiTradeOrderDto;
 import com.huobi.quantification.dto.SpotActiveOrderCancelReqDto;
@@ -40,8 +41,6 @@ import com.huobi.quantification.service.order.HuobiOrderService;
 import com.xiaoleilu.hutool.json.JSONObject;
 import com.xiaoleilu.hutool.json.JSONUtil;
 import com.xiaoleilu.hutool.util.ArrayUtil;
-
-import io.netty.util.internal.StringUtil;
 
 @Service
 public class SpotOrderServiceImpl implements SpotOrderService {
@@ -139,7 +138,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		Integer exchangeID = reqDto.getExchangeID();
 		Long accountID = reqDto.getAccountID();
 		String status=reqDto.getStatus();
-		if (null == exchangeID || null == accountID ||StringUtil.isNullOrEmpty(status)) {
+		if (null == exchangeID || null == accountID ||StringUtils.isEmpty(status)) {
 			serviceResult.setCode(ServiceErrorEnum.PARAM_MISS.getCode());
 			serviceResult.setMessage(ServiceErrorEnum.PARAM_MISS.getMessage());
 			serviceResult.setData(null);
@@ -147,7 +146,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		}
 		entity.setExchangeId(exchangeID);
 		entity.setOrderAccountId(accountID);
-		entity.setOrderState(status);
+		entity.setOrderState(OrderStatusTable.HuobiOrderStatus.getOrderStatus(status).getOrderStatus());
 		if(StringUtils.isNoneEmpty(reqDto.getBaseCoin())&&StringUtils.isNoneEmpty(reqDto.getQuoteCoin())) {
 			entity.setOrderSymbol(reqDto.getBaseCoin()+reqDto.getQuoteCoin());
 		}

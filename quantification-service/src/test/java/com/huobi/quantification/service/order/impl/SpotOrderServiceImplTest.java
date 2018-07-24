@@ -22,7 +22,6 @@ import com.huobi.quantification.dto.SpotOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto.Orders;
 import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
 import com.huobi.quantification.dto.SpotOrderInnerReqDto;
-import com.huobi.quantification.dto.SpotOrderRespDto;
 import com.huobi.quantification.dto.SpotOrderStatusReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
@@ -39,13 +38,14 @@ public class SpotOrderServiceImplTest {
 
 	@Autowired
 	private HttpService httpService;
-	
+
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
-	
+
 	@Test
 	public void testUpdateOrderMapper() {
-		List<Long> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(1000L, OrderStatusEnum.FILLED.getOrderStatus(), "ethusdt");
+		List<Long> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(1000L, OrderStatusEnum.FILLED.getOrderStatus(),
+				"ethusdt");
 		for (Long long1 : selectByOrderInfo) {
 			System.err.println(long1);
 		}
@@ -56,24 +56,9 @@ public class SpotOrderServiceImplTest {
 		SpotOrderInnerReqDto entity = new SpotOrderInnerReqDto();
 		entity.setExchangeID(0);
 		entity.setAccountID(4295363l);
-		Long[] innerOrderID = { 35L, 36L};
+		Long[] innerOrderID = { 35L, 36L };
 		entity.setInnerOrderID(innerOrderID);
-		ServiceResult<Map<String, Object>> result = spotOrderServiceImpl.getOrderByInnerOrderID(entity);
-		System.out.println("=====code:" + result.getCode());
-		System.out.println("=====size:" + result.getData().size());
-		System.out.println("====result:" + JSON.toJSONString(result));
-	}
-
-	@Test
-	public void getOrderByStatus() {
-		SpotOrderStatusReqDto entity = new SpotOrderStatusReqDto();
-		entity.setExchangeID(0);
-		entity.setAccountID(4295363l);
-		entity.setStatus("submitted");
-		ServiceResult<List<SpotOrderRespDto>> result = spotOrderServiceImpl.getOrderByStatus(entity);
-		System.out.println("=====code:" + result.getCode());
-		System.out.println("=====size:" + result.getData().size());
-		System.out.println("====result:" + JSON.toJSONString(result));
+		spotOrderServiceImpl.getOrderByInnerOrderID(entity);
 	}
 
 	@Test
@@ -89,15 +74,26 @@ public class SpotOrderServiceImplTest {
 		System.out.println("====result:" + JSON.toJSONString(result));
 	}
 
+	@Test
+	public void cancelActiveOrder() {
+		SpotActiveOrderCancelReqDto reqDto = new SpotActiveOrderCancelReqDto();
+		reqDto.setExchangeID(1);
+		reqDto.setAccountID(4232061l);
+		reqDto.setParallel(false);
+		reqDto.setBaseCoin("eos");
+		reqDto.setQuoteCoin("btc");
+		spotOrderServiceImpl.cancelOrder(reqDto);
+	}
+
 	/**
 	 * 撤销订单-根据内部orderID
 	 */
 	@Test
 	public void cancelOrder() {
-		SpotOrderCancelReqDto reqDto=new SpotOrderCancelReqDto();
-		List<Orders> list=new  ArrayList<>();
-		Orders order1=new Orders();
-		Orders order2=new Orders();
+		SpotOrderCancelReqDto reqDto = new SpotOrderCancelReqDto();
+		List<Orders> list = new ArrayList<>();
+		Orders order1 = new Orders();
+		Orders order2 = new Orders();
 		order1.setInnerOrderID(2l);
 		order2.setInnerOrderID(3l);
 		list.add(order1);
@@ -108,18 +104,15 @@ public class SpotOrderServiceImplTest {
 		reqDto.setParallel(false);
 		spotOrderServiceImpl.cancelOrder(reqDto);
 	}
-	
-	@Test
-	public void cancelActiveOrder() {
-		SpotActiveOrderCancelReqDto reqDto=new SpotActiveOrderCancelReqDto();
-		reqDto.setExchangeID(1);
-		reqDto.setAccountID(4232061l);
-		reqDto.setParallel(false);
-		reqDto.setBaseCoin("eos");
-		reqDto.setQuoteCoin("btc");
-		spotOrderServiceImpl.cancelOrder(reqDto);
-	}	
 
+	@Test
+	public void getOrderByStatus() {
+		SpotOrderStatusReqDto entity = new SpotOrderStatusReqDto();
+		entity.setExchangeID(0);
+		entity.setAccountID(4295363l);
+		entity.setStatus("submitted");
+		spotOrderServiceImpl.getOrderByStatus(entity);
+	}
 
 	@Test
 	public void batchCancelOpenOrdershcancel() {
@@ -129,7 +122,7 @@ public class SpotOrderServiceImplTest {
 		String body = httpService.doHuobiPost(4295363l, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
 		System.err.println("=============" + body);
 	}
-	
+
 	@Test
 	public void orderPlace() {
 		SpotPlaceOrderReqDto reqDto = new SpotPlaceOrderReqDto();
