@@ -8,13 +8,13 @@ import java.util.List;
  * 
  * @author maowenwu
  */
-public class SpotOrderReqCancelDto implements Serializable {
+public class SpotOrderCancelReqDto implements Serializable {
 
 	private static final long serialVersionUID = 1971969867040987743L;
 
 	private int exchangeID;// 交易所ID
 	private Long accountID;// 账户ID
-	private boolean parallel;
+	private boolean parallel=true;
 	private Long timeInterval;
 	private boolean sync;
 	private List<Orders> orders;
@@ -67,7 +67,7 @@ public class SpotOrderReqCancelDto implements Serializable {
 		this.orders = orders;
 	}
 
-	public class Orders {
+	public static class Orders {
 		private Long innerOrderID;
 		private Long exOrderID;
 		private int linkOrderID;

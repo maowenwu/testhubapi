@@ -3,20 +3,21 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 /**
- * 查询订单-根据内部orderid
+ * 撤销活跃订单
+ * 
  * @author maowenwu
  */
-public class SpotOrderReqInnerDto implements Serializable {
+public class SpotActiveOrderCancelReqDto implements Serializable {
 
-	private static final long serialVersionUID = 1971969867040987743L;
-
+	private static final long serialVersionUID = 1L;
+	
 	private int exchangeID;// 交易所ID
 	private Long accountID;// 账户ID
-	private Long[] innerOrderID;// 内部orderid 数组
 	private String baseCoin;
 	private String QuoteCoin;
-	private Long timeout;
-	private Long maxDelay;
+	private boolean parallel=true;
+	private Long timeInterval;
+	private boolean sync;
 
 	public int getExchangeID() {
 		return exchangeID;
@@ -34,12 +35,28 @@ public class SpotOrderReqInnerDto implements Serializable {
 		this.accountID = accountID;
 	}
 
-	public Long[] getInnerOrderID() {
-		return innerOrderID;
+	public boolean isParallel() {
+		return parallel;
 	}
 
-	public void setInnerOrderID(Long[] innerOrderID) {
-		this.innerOrderID = innerOrderID;
+	public void setParallel(boolean parallel) {
+		this.parallel = parallel;
+	}
+
+	public Long getTimeInterval() {
+		return timeInterval;
+	}
+
+	public void setTimeInterval(Long timeInterval) {
+		this.timeInterval = timeInterval;
+	}
+
+	public boolean isSync() {
+		return sync;
+	}
+
+	public void setSync(boolean sync) {
+		this.sync = sync;
 	}
 
 	public String getBaseCoin() {
@@ -58,20 +75,6 @@ public class SpotOrderReqInnerDto implements Serializable {
 		QuoteCoin = quoteCoin;
 	}
 
-	public Long getTimeout() {
-		return timeout;
-	}
 
-	public void setTimeout(Long timeout) {
-		this.timeout = timeout;
-	}
-
-	public Long getMaxDelay() {
-		return maxDelay;
-	}
-
-	public void setMaxDelay(Long maxDelay) {
-		this.maxDelay = maxDelay;
-	}
 
 }

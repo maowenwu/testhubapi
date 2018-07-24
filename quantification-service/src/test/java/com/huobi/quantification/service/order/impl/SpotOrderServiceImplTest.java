@@ -1,6 +1,7 @@
 package com.huobi.quantification.service.order.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,11 @@ import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanOrderMapper;
-import com.huobi.quantification.dto.SpotOrderReqCancelDto;
-import com.huobi.quantification.dto.SpotOrderReqExchangeDto;
-import com.huobi.quantification.dto.SpotOrderReqInnerDto;
+import com.huobi.quantification.dto.SpotActiveOrderCancelReqDto;
+import com.huobi.quantification.dto.SpotOrderCancelReqDto;
+import com.huobi.quantification.dto.SpotOrderCancelReqDto.Orders;
+import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
+import com.huobi.quantification.dto.SpotOrderInnerReqDto;
 import com.huobi.quantification.dto.SpotOrderReqStatusDto;
 import com.huobi.quantification.dto.SpotOrderRespDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
@@ -26,8 +29,6 @@ import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.provider.SpotOrderServiceImpl;
 import com.huobi.quantification.service.http.HttpService;
-import com.xiaoleilu.hutool.json.JSONObject;
-import com.xiaoleilu.hutool.json.JSONUtil;
 
 @SpringBootTest(classes = ServiceApplication.class)
 @RunWith(SpringRunner.class)
@@ -51,7 +52,7 @@ public class SpotOrderServiceImplTest {
 
 	@Test
 	public void getOrderByInnerOrderID() {
-		SpotOrderReqInnerDto entity = new SpotOrderReqInnerDto();
+		SpotOrderInnerReqDto entity = new SpotOrderInnerReqDto();
 		entity.setExchangeID(0);
 		entity.setAccountID(4295363l);
 		Long[] innerOrderID = { 35L, 36L };
@@ -76,7 +77,7 @@ public class SpotOrderServiceImplTest {
 
 	@Test
 	public void getOrderByExOrderID() {
-		SpotOrderReqExchangeDto entity = new SpotOrderReqExchangeDto();
+		SpotOrderExchangeReqDto entity = new SpotOrderExchangeReqDto();
 		entity.setExchangeID(0);
 		entity.setAccountID(4295363l);
 		Long[] exOrderID = { 8010718329L, 36L };
@@ -92,38 +93,32 @@ public class SpotOrderServiceImplTest {
 	 */
 	@Test
 	public void cancelOrder() {
-		System.out.println("1==============");
-		String param = "{\r\n" + "    \"exchangeID\":0,\r\n" + "    \"accountID\":4295363,\r\n" + "    \"orders\":[\r\n"
-				+ "        {\r\n" + "            \"innerOrderID\":8,\r\n" + "            \"exOrderID\":null,\r\n"
-				+ "            \"linkOrderID\":\"\",\r\n" + "            \"baseCoin\":444,\r\n"
-				+ "            \"QuoteCoin\":5555\r\n" + "        },\r\n" + "        {\r\n"
-				+ "            \"innerOrderID\":null,\r\n" + "            \"exOrderID\":7945903430,\r\n"
-				+ "            \"linkOrderID\":333,\r\n" + "            \"baseCoin\":444,\r\n"
-				+ "            \"QuoteCoin\":5555\r\n" + "        }\r\n" + "    ]\r\n" + "}";
-		// 1、使用JSONObject
-		JSONObject json = JSONUtil.parseObj(param);
-		SpotOrderReqCancelDto result = JSONUtil.toBean(json, SpotOrderReqCancelDto.class);
-		ServiceResult<Map<String, Object>> resultMap = spotOrderServiceImpl.cancelOrder(result);
-		System.out.println("==========resultMap:" + JSONUtil.toJsonStr(resultMap));
-		System.out.println("2==============");
+		SpotOrderCancelReqDto reqDto=new SpotOrderCancelReqDto();
+		List<Orders> list=new  ArrayList<>();
+		Orders order1=new Orders();
+		Orders order2=new Orders();
+		order1.setInnerOrderID(2l);
+		order2.setInnerOrderID(3l);
+		list.add(order1);
+		list.add(order2);
+		reqDto.setExchangeID(1);
+		reqDto.setAccountID(4295363l);
+		reqDto.setOrders(list);
+		reqDto.setParallel(false);
+		spotOrderServiceImpl.cancelOrder(reqDto);
 	}
-
-	/**
-	 * 撤销订单-根据内部orderID
-	 * 
-	 * @throws InterruptedException
-	 */
+	
 	@Test
-	public void batchcancel() throws InterruptedException {
-		System.out.println("1==============");
-		String param = "{\"status\":\"ok\",\"data\":{\"success\":[],\"failed\":[{\"err-msg\":\"the order state is error\",\"order-id\":\"7996038802\",\"err-code\":\"order-orderstate-error\"},{\"err-msg\":\"the order state is error\",\"order-id\":\"7996039844\",\"err-code\":\"order-orderstate-error\"},{\"err-msg\":\"the order state is error\",\"order-id\":\"7996040440\",\"err-code\":\"order-orderstate-error\"}]}}";
-		// 1、使用JSONObject
-		JSONObject json = JSONUtil.parseObj(param);
-		SpotOrderReqCancelDto result = JSONUtil.toBean(json, SpotOrderReqCancelDto.class);
-		ServiceResult<Map<String, Object>> resultMap = spotOrderServiceImpl.cancelOrder(result);
-		System.out.println("==========resultMap:" + JSONUtil.toJsonStr(resultMap));
-		System.out.println("2==============");
-	}
+	public void cancelActiveOrder() {
+		SpotActiveOrderCancelReqDto reqDto=new SpotActiveOrderCancelReqDto();
+		reqDto.setExchangeID(1);
+		reqDto.setAccountID(4232061l);
+		reqDto.setParallel(false);
+		reqDto.setBaseCoin("eos");
+		reqDto.setQuoteCoin("btc");
+		spotOrderServiceImpl.cancelOrder(reqDto);
+	}	
+
 
 	@Test
 	public void batchCancelOpenOrdershcancel() {

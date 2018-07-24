@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -24,4 +25,6 @@ public interface QuanOrderMapper {
 	int updateOrderByOrderId(QuanOrder quanOrder);
 	
 	int insertAndGetId(QuanOrder record);
+	
+	List<Long> selectOrderIdsByParams(Map<String, Object> map);
 }

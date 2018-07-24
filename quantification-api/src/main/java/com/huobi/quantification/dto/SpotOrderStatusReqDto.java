@@ -3,18 +3,17 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 /**
- * 查询订单-根据交易所orderid
+ * 查询订单-根据订单状态
  * 
  * @author maowenwu
- *
  */
-public class SpotOrderReqExchangeDto implements Serializable {
+public class SpotOrderStatusReqDto implements Serializable {
 
-	private static final long serialVersionUID = -4127302173955071604L;
+	private static final long serialVersionUID = 1971969867040987743L;
 
 	private int exchangeID;// 交易所ID
 	private Long accountID;// 账户ID
-	private Long[] exOrderID;// 数组
+	private String status;
 	private String baseCoin;
 	private String QuoteCoin;
 	private Long timeout;
@@ -68,12 +67,12 @@ public class SpotOrderReqExchangeDto implements Serializable {
 		this.maxDelay = maxDelay;
 	}
 
-	public Long[] getExOrderID() {
-		return exOrderID;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setExOrderID(Long[] exOrderID) {
-		this.exOrderID = exOrderID;
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }
