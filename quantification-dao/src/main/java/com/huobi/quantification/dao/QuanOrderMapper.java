@@ -20,8 +20,8 @@ public interface QuanOrderMapper {
     
     List<QuanOrder> selectList(QuanOrder record);
 
-	List<QuanOrder> selectByOrderInfo(@Param("orderState")Integer orderState);
-
+	List<QuanOrder> selectByOrderInfo(@Param("states")List<Integer> states);
+	
 	int updateOrderByOrderId(QuanOrder quanOrder);
 	
 	int insertAndGetId(QuanOrder record);

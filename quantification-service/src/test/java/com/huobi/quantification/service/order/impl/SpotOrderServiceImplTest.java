@@ -45,7 +45,10 @@ public class SpotOrderServiceImplTest {
 
 	@Test
 	public void testUpdateOrderMapper() {
-		List<QuanOrder> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(OrderStatusEnum.FILLED.getOrderStatus());
+		List<Integer> arrayList = new ArrayList<>();
+		arrayList.add(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
+		arrayList.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
+		List<QuanOrder> selectByOrderInfo = quanOrderMapper.selectByOrderInfo(arrayList);
 		for (QuanOrder long1 : selectByOrderInfo) {
 			System.err.println(long1.getOrderSourceId());
 		}
