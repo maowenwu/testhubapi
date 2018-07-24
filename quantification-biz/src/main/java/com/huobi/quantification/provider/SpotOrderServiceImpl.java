@@ -243,6 +243,9 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			Long orderId = huobiOrderService.placeHuobiOrder(orderDto);
 			quanOrder.setOrderSourceId(orderId);
 			respDto.setExOrderId(orderId);
+			respDto.setLinkOrderId(reqDto.getLinkOrderId());
+			respDto.setInnerOrderId(quanOrder.getId());
+			serviceResult.setData(respDto);
 			logger.info("同步下单成功，订单号:{}",orderId);
 		}else {
 			Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
@@ -259,9 +262,6 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		}
 		quanOrder.setOrderState(OrderStatusEnum.SUBMITTED.getOrderStatus());
 		quanOrderMapper.updateByPrimaryKey(quanOrder);
-		respDto.setLinkOrderId(reqDto.getLinkOrderId());
-		respDto.setInnerOrderId(quanOrder.getId());
-		serviceResult.setData(respDto);
 		return serviceResult;
 	}
 
