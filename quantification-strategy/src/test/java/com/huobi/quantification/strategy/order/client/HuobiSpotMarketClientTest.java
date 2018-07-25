@@ -1,7 +1,10 @@
 package com.huobi.quantification.strategy.order.client;
 
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.StrategyApplication;
+import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dto.SpotDepthRespDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ public class HuobiSpotMarketClientTest {
 
     @Test
     public void testGetDepth() {
-        huobiSpotMarketClient.getDepth("btc_usd");
+        ServiceResult<SpotDepthRespDto> btc_usd = huobiSpotMarketClient.getDepth("btc_usd");
+        System.out.println(JSON.toJSONString(btc_usd));
     }
 }

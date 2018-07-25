@@ -21,5 +21,7 @@
     <dubbo:service interface="com.huobi.quantification.api.future.FutureContractService"
                    ref="futureContractServiceImpl"/>
 
-
+    <dubbo:service interface="com.huobi.quantification.api.spot.SpotAccountService" ref="spotAccountServiceImpl"/>
+    <dubbo:service interface="com.huobi.quantification.api.spot.SpotMarketService" ref="spotMarketServiceImpl"/>
+    <dubbo:service interface="com.huobi.quantification.api.spot.SpotOrderService" ref="spotOrderServiceImpl"/>
 </beans>
