@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
 
-    <dubbo:application name="hello-world-app"/>
+    <dubbo:application name="strategy-provider"/>
 
 
     <dubbo:registry protocol="zookeeper" address="${zookeeper.address}"/>

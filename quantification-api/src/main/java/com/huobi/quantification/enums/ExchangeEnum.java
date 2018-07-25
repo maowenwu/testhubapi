@@ -2,7 +2,7 @@ package com.huobi.quantification.enums;
 
 public enum ExchangeEnum {
 
-    HUOBI(1, "houbi"), OKEX(2, "okex");
+    HUOBI_FUTURE(0, "huobi_future"), HUOBI(1, "houbi"), OKEX(2, "okex");
 
     private int exId;
     private String exName;

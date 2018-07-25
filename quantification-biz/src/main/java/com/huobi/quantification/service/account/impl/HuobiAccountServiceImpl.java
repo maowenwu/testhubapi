@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.huobi.quantification.enums.ExchangeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +24,6 @@ import com.huobi.quantification.dao.QuanAccountMapper;
 import com.huobi.quantification.dao.QuanAccountSecretMapper;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountSecret;
-import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.account.HuobiAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;

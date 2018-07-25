@@ -3,6 +3,7 @@ package com.huobi.quantification.service.account.impl;
 import java.util.Date;
 import java.util.HashMap;
 
+import com.huobi.quantification.enums.ExchangeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,6 @@ import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.service.account.HuobiFutureAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;

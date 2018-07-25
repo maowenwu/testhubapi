@@ -26,7 +26,6 @@ import com.huobi.quantification.dto.SpotOrderStatusReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanOrder;
-import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.provider.SpotOrderServiceImpl;
 import com.huobi.quantification.service.http.HttpService;

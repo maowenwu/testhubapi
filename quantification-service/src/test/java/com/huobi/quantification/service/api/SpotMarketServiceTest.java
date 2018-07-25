@@ -16,7 +16,6 @@ import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotDepthRespDto;
 import com.huobi.quantification.dto.SpotKlineReqDto;
 import com.huobi.quantification.dto.SpotKlineRespDto;
-import com.huobi.quantification.enums.ExchangeEnum;
 
 /**
  * 用于API现货接口功能调试

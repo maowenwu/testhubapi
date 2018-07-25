@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.huobi.quantification.enums.ExchangeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ import com.huobi.quantification.dto.FutureQueryOrderRespDto;
 import com.huobi.quantification.dto.FutureQueryOrderStatusReqDto;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.entity.QuanOrderFuture;
-import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.request.future.FutureOkCancelOrderRequest;
 import com.huobi.quantification.request.future.FutureOkOrderRequest;

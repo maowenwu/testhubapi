@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.huobi.quantification.enums.ExchangeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import com.huobi.quantification.entity.QuanIndexFuture;
 import com.huobi.quantification.entity.QuanKlineFuture;
 import com.huobi.quantification.entity.QuanTradeFuture;
 import com.huobi.quantification.enums.DepthEnum;
-import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OkSymbolEnum;
 import com.huobi.quantification.response.future.HuobiFutureDepthResponse;
 import com.huobi.quantification.response.future.HuobiFutureIndexResponse;

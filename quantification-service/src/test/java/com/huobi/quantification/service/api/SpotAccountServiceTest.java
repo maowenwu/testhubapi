@@ -12,7 +12,6 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
-import com.huobi.quantification.enums.ExchangeEnum;
 
 /**
  * 用于SpotAccountService接口的测试

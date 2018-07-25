@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.huobi.quantification.enums.ExchangeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
-import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.service.account.OkFutureAccountService;
 import com.huobi.quantification.service.http.HttpService;
