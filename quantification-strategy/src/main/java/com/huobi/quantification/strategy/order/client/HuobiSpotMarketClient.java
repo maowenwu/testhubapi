@@ -1,5 +1,6 @@
 package com.huobi.quantification.strategy.order.client;
 
+import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.SpotDepthReqDto;
@@ -14,6 +15,9 @@ public class HuobiSpotMarketClient {
     @Autowired
     private SpotMarketService spotMarketService;
 
+    @Autowired
+    private FutureContractService futureContractService;
+
     public ServiceResult<SpotDepthRespDto> getDepth(String symbol) {
         String[] split = symbol.split("_");
         SpotDepthReqDto reqDto = new SpotDepthReqDto();
@@ -21,7 +25,9 @@ public class HuobiSpotMarketClient {
         reqDto.setBaseCoin(split[0]);
         reqDto.setQuoteCoin(split[1]);
         reqDto.setTimeout(100);
-        reqDto.setMaxDelay(1000);
+        reqDto.setMaxDelay(3000);
         return spotMarketService.getSpotDepth(reqDto);
     }
+
+
 }

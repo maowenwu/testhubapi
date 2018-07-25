@@ -21,7 +21,7 @@ public class HuobiSpotMarketClientTest {
 
     @Test
     public void testGetDepth() {
-        ServiceResult<SpotDepthRespDto> btc_usd = huobiSpotMarketClient.getDepth("btc_usd");
+        ServiceResult<SpotDepthRespDto> btc_usd = huobiSpotMarketClient.getDepth("eth_usdt");
         System.out.println(JSON.toJSONString(btc_usd));
     }
 }
