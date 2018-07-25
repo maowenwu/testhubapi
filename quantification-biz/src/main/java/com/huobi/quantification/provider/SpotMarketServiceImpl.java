@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import com.huobi.quantification.enums.ExchangeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.common.util.DateUtils;
+import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dto.SpotCurrentPriceReqDto;
 import com.huobi.quantification.dto.SpotCurrentPriceRespDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
@@ -26,6 +26,7 @@ import com.huobi.quantification.dto.SpotKlineRespDto;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.enums.DepthEnum;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.redis.RedisService;
@@ -40,7 +41,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 
 	@Override
 	public ServiceResult<SpotCurrentPriceRespDto> getCurrentPrice(SpotCurrentPriceReqDto currentPriceReqDto) {
-		ServiceResult<SpotCurrentPriceRespDto> serviceResult = new ServiceResult<>();
+		ServiceResult<SpotCurrentPriceRespDto> serviceResult = null;
 		try {
 			SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
@@ -49,6 +50,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 							getSymbol(currentPriceReqDto.getExchangeId(), currentPriceReqDto.getBaseCoin(),
 									currentPriceReqDto.getQuoteCoin()));
 					if (tradeSpot == null) {
+						ThreadUtils.sleep10();
 						continue;
 					}
 					Date ts = tradeSpot.getTick().getTs();
@@ -60,22 +62,19 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 						respDto.setCurrentPrice(tradeSpot.getTick().getData().getPrice());
 						return respDto;
 					} else {
+						ThreadUtils.sleep10();
 						continue;
 					}
 				}
 				return null;
 			}, currentPriceReqDto.getTimeout());
-			serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-			serviceResult.setData(currentPriceRespDto);
+			serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
 		} catch (ExecutionException e) {
 			logger.error("执行异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
 		} catch (TimeoutException e) {
 			logger.error("超时异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
 		}
 		return serviceResult;
 	}
@@ -90,7 +89,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 
 	@Override
 	public ServiceResult<SpotDepthRespDto> getSpotDepth(SpotDepthReqDto depthReqDto) {
-		ServiceResult<SpotDepthRespDto> serviceResult = new ServiceResult<>();
+		ServiceResult<SpotDepthRespDto> serviceResult = null;
 		try {
 			SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
@@ -100,6 +99,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 									depthReqDto.getQuoteCoin()));
 
 					if (CollectionUtils.isEmpty(huobiDepths)) {
+						ThreadUtils.sleep10();
 						continue;
 					}
 					Date ts = huobiDepths.get(0).getDateUpdate();
@@ -111,22 +111,19 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 						respDto.setData(convertDepthToDto(huobiDepths));
 						return respDto;
 					} else {
+						ThreadUtils.sleep10();
 						continue;
 					}
 				}
 				return null;
 			}, depthReqDto.getTimeout());
-			serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-			serviceResult.setData(currentPriceRespDto);
+			serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
 		} catch (ExecutionException e) {
 			logger.error("执行异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
 		} catch (TimeoutException e) {
 			logger.error("超时异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
 		}
 		return serviceResult;
 	}
@@ -155,7 +152,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 
 	@Override
 	public ServiceResult<SpotKlineRespDto> getSpotKline(SpotKlineReqDto depthReqDto) {
-		ServiceResult<SpotKlineRespDto> serviceResult = new ServiceResult<>();
+		ServiceResult<SpotKlineRespDto> serviceResult = null;
 		try {
 			SpotKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
@@ -166,6 +163,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 											depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()),
 									depthReqDto.getPeriod());
 					if (CollectionUtils.isEmpty(klineSpots)) {
+						ThreadUtils.sleep10();
 						continue;
 					}
 					Date ts = klineSpots.get(klineSpots.size() - 1).getTs();
@@ -175,22 +173,19 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 						respDto.setData(convertToDto(klineSpots));
 						return respDto;
 					} else {
+						ThreadUtils.sleep10();
 						continue;
 					}
 				}
 				return null;
 			}, depthReqDto.getTimeout());
-			serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-			serviceResult.setData(klineRespDto);
+			serviceResult = ServiceResult.buildSuccessResult(klineRespDto);
 		} catch (ExecutionException e) {
 			logger.error("执行异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
 		} catch (TimeoutException e) {
 			logger.error("超时异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
 		}
 		return serviceResult;
 	}

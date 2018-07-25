@@ -1,6 +1,5 @@
 package com.huobi.quantification.provider;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import com.huobi.quantification.enums.ExchangeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +16,11 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.common.util.DateUtils;
+import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.entity.QuanAccountAsset;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.redis.RedisService;
 
@@ -34,7 +34,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 
 	@Override
 	public ServiceResult<SpotBalanceRespDto> getBalance(SpotBalanceReqDto balanceReqDto) {
-		ServiceResult<SpotBalanceRespDto> serviceResult = new ServiceResult<>();
+		ServiceResult<SpotBalanceRespDto> serviceResult = null;
 		try {
 			SpotBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
@@ -42,6 +42,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 					List<QuanAccountAsset> assets = redisService.getSpotUserInfo(balanceReqDto.getAccountId(),
 							balanceReqDto.getExchangeId());
 					if (assets == null) {
+						ThreadUtils.sleep10();
 						continue;
 					}
 					Date ts = assets.get(0).getTs();
@@ -50,22 +51,19 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 					if (DateUtils.withinMaxDelay(ts, balanceReqDto.getMaxDelay())) {
 						return parseBalanceResp(balanceReqDto.getExchangeId(), assets);
 					} else {
+						ThreadUtils.sleep10();
 						continue;
 					}
 				}
 				return null;
 			}, balanceReqDto.getTimeout());
-			serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-			serviceResult.setData(balanceRespDto);
+			serviceResult = ServiceResult.buildSuccessResult(balanceRespDto);
 		} catch (ExecutionException e) {
 			logger.error("执行异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.EXECUTION_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.EXECUTION_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
 		} catch (TimeoutException e) {
 			logger.error("超时异常：", e);
-			serviceResult.setCode(ServiceErrorEnum.TIMEOUT_ERROR.getCode());
-			serviceResult.setMessage(ServiceErrorEnum.TIMEOUT_ERROR.getMessage());
+			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
 		}
 		return serviceResult;
 	}
@@ -80,13 +78,11 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 	private SpotBalanceRespDto parseHuobiSpotBalanceResp(List<QuanAccountAsset> assets) {
 		SpotBalanceRespDto respDto = new SpotBalanceRespDto();
 		respDto.setTs(assets.get(0).getTs());
-		List<Map<String, SpotBalanceRespDto.DataBean>> data = new ArrayList<>();
+		Map<String, SpotBalanceRespDto.DataBean> dataBean = new HashMap<>();
 		for (QuanAccountAsset quanAccountAsset : assets) {
-			Map<String, SpotBalanceRespDto.DataBean> dataBean = new HashMap<>();
 			dataBean.put(quanAccountAsset.getCoin(), convertToDto(quanAccountAsset));
-			data.add(dataBean);
 		}
-		respDto.setData(data);
+		respDto.setData(dataBean);
 		return respDto;
 	}
 

@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SpotBalanceRespDto implements Serializable{
 	private Date ts;
-    private List<Map<String, DataBean>> data;
+    private Map<String, DataBean> data;
 
     public Date getTs() {
         return ts;
@@ -18,13 +18,14 @@ public class SpotBalanceRespDto implements Serializable{
         this.ts = ts;
     }
 
-	public List<Map<String, DataBean>> getData() {
+	public Map<String, DataBean> getData() {
 		return data;
 	}
 
-	public void setData(List<Map<String, DataBean>> data) {
+	public void setData(Map<String, DataBean> data) {
 		this.data = data;
 	}
+
 
 	public static class DataBean implements Serializable{
 		private BigDecimal total;
