@@ -4,21 +4,22 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://dubbo.apache.org/schema/dubbo http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
 
-    <dubbo:application name="hello-world-app"  />
+    <dubbo:application name="hello-world-app"/>
 
 
-    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}"/>
 
 
-    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="dubbo" port="20880"/>
 
+    <dubbo:provider timeout="3000" retries="1" loadbalance="roundrobin" cluster="failfast"></dubbo:provider>
 
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureAccountService" ref="futureAccountServiceImpl" />
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureMarketService" ref="futureMarketServiceImpl" />
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureOrderService" ref="futureOrderServiceImpl" />
-    <dubbo:service interface="com.huobi.quantification.api.future.JobManageService" ref="jobManageService" />
-    <dubbo:service interface="com.huobi.quantification.api.future.FutureContractService" ref="futureContractServiceImpl" />
-
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureAccountService" ref="futureAccountServiceImpl"/>
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureMarketService" ref="futureMarketServiceImpl"/>
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureOrderService" ref="futureOrderServiceImpl"/>
+    <dubbo:service interface="com.huobi.quantification.api.future.JobManageService" ref="jobManageService"/>
+    <dubbo:service interface="com.huobi.quantification.api.future.FutureContractService"
+                   ref="futureContractServiceImpl"/>
 
 
 </beans>
