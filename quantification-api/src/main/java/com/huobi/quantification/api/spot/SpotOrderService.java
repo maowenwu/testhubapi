@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.SpotActiveOrderCancelReqDto;
+import com.huobi.quantification.dto.SpotBatchOrderReqDto;
+import com.huobi.quantification.dto.SpotBatchOrderRespDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
 import com.huobi.quantification.dto.SpotOrderInnerReqDto;
@@ -62,4 +64,11 @@ public interface SpotOrderService {
 	 * @return
 	 */
 	public ServiceResult<Object> cancelOrder(SpotActiveOrderCancelReqDto reqDto);
+	
+	/**
+	 * 批量下单
+	 * @param reqDto
+	 * @return
+	 */
+	public ServiceResult<List<SpotBatchOrderRespDto>> placeBatchOrders(SpotBatchOrderReqDto reqDto);
 }

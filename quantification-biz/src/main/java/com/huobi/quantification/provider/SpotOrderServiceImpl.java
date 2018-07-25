@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +22,12 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.constant.OrderStatusTable;
 import com.huobi.quantification.dao.QuanOrderMapper;
+import com.huobi.quantification.dto.FutureBatchOrderRespDto;
 import com.huobi.quantification.dto.HuobiTradeOrderDto;
 import com.huobi.quantification.dto.SpotActiveOrderCancelReqDto;
+import com.huobi.quantification.dto.SpotBatchOrder;
+import com.huobi.quantification.dto.SpotBatchOrderReqDto;
+import com.huobi.quantification.dto.SpotBatchOrderRespDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto.Orders;
 import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
@@ -475,5 +480,46 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		logger.info("撤销活跃订单返回的总结果为:{}",JSONUtil.toJsonStr(serviceResult));
 		return serviceResult;
 	}
+
+	@Override
+	public ServiceResult<List<SpotBatchOrderRespDto>> placeBatchOrders(SpotBatchOrderReqDto reqDto) {
+		if (reqDto.getExchangeId() == ExchangeEnum.HUOBI.getExId()) {
+			return placeHuobiBatchOrder(reqDto);
+		}
+		return null;
+	}
+
+	private ServiceResult<List<SpotBatchOrderRespDto>> placeHuobiBatchOrder(SpotBatchOrderReqDto reqDto) {
+		List<SpotBatchOrderRespDto> list = new ArrayList<>();
+		for (SpotBatchOrder order : reqDto.getOrders()) {
+			SpotPlaceOrderReqDto orderReqDto = new SpotPlaceOrderReqDto();
+			orderReqDto.setAccountId(reqDto.getAccountId());
+			orderReqDto.setBaseCoin(order.getBaseCoin());
+			orderReqDto.setCashAmount(order.getCashAmount());
+			orderReqDto.setExchangeId(reqDto.getExchangeId());
+			orderReqDto.setLinkOrderId(order.getLinkOrderId());
+			orderReqDto.setOrderType(order.getOrderType());
+			orderReqDto.setPrice(order.getPrice());
+			orderReqDto.setQuantity(order.getQuantity());
+			orderReqDto.setQuoteCoin(order.getQuoteCoin());
+			orderReqDto.setSide(order.getSide());
+			orderReqDto.setSync(reqDto.isSync());
+			
+			ServiceResult<SpotPlaceOrderRespDto> placeOrder = placeOrder(orderReqDto);
+			SpotBatchOrderRespDto orderRespDto = new SpotBatchOrderRespDto();
+			BeanUtils.copyProperties(placeOrder.getData(), orderRespDto);
+			list.add(orderRespDto);
+			sleep(reqDto.getTimeInterval());
+		}
+		return ServiceResult.buildSuccessResult(list);
+	}
+	
+	private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
