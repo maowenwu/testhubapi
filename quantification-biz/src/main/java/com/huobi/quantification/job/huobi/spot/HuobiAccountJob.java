@@ -13,7 +13,7 @@ public class HuobiAccountJob extends AbstractQuartzJob{
 	@Override
 	public void execute(JobParamDto data) {
 		HuobiAccountService bean = ApplicationContextHolder.getContext().getBean(HuobiAccountService.class);
-		bean.updateAccount(data.getAccountId()+"");
+		bean.updateAccount();
 	}
 
 }

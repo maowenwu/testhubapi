@@ -22,6 +22,7 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanAccountAssetMapper;
 import com.huobi.quantification.dao.QuanAccountMapper;
 import com.huobi.quantification.dao.QuanAccountSecretMapper;
+import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountSecret;
 import com.huobi.quantification.service.account.HuobiAccountService;
@@ -99,15 +100,19 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 	}
 
 	@Override
-	public void updateAccount(String accountId) {
+	public void updateAccount() {
+		logger.info("[HuobiUserInfo]任务开始");
 		Stopwatch started = Stopwatch.createStarted();
-		logger.info("[HuobiUserInfo][accountId={}]任务开始", accountId);
-		Map<String, String> params = new HashMap<>();
-		params.put("account-id", accountId);
-		String body = httpService.doHuobiGet(Long.parseLong(accountId),
-				HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId), params);
-		parseAndSaveAccounts(body);
-		logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
+		List<QuanAccount> accounts = quanAccountMapper.selectAll();
+		for (QuanAccount quanAccount : accounts) {
+			Long accountId = quanAccount.getAccountSourceId();
+			Map<String, String> params = new HashMap<>();
+			params.put("account-id", accountId + "");
+			String body = httpService.doHuobiGet(accountId,
+					HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
+			parseAndSaveAccounts(body);
+		}
+		logger.info("[HuobiUserInfo]任务结束，耗时：" + started);
 	}
 
 	@Override

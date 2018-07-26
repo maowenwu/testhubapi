@@ -12,7 +12,7 @@ public interface HuobiAccountService {
 
 	public Object accounts(String accountId);
 
-	void updateAccount(String accountId);
+	void updateAccount();
 
 	public List<Long> findAccountByExchangeId(int exId);
 
