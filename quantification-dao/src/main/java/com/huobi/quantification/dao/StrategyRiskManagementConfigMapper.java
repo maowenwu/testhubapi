@@ -17,4 +17,6 @@ public interface StrategyRiskManagementConfigMapper {
     int updateByPrimaryKey(StrategyRiskManagementConfig record);
 
 	StrategyRiskManagementConfig selectByContractCode(@Param("contractCode")String contractCode);
+	
+	int updateOrderRiskManagement(@Param("contractCode")String contractCode, @Param("orderType")int orderType);
 }

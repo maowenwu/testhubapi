@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dao.StrategyRiskManagementConfigMapper;
 import com.huobi.quantification.dto.SpotCurrentPriceReqDto;
 import com.huobi.quantification.dto.SpotCurrentPriceRespDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
