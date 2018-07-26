@@ -88,7 +88,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 	}
 
 	@Override
-	public ServiceResult<SpotDepthRespDto> getSpotDepth(SpotDepthReqDto depthReqDto) {
+	public ServiceResult<SpotDepthRespDto> getDepth(SpotDepthReqDto depthReqDto) {
 		ServiceResult<SpotDepthRespDto> serviceResult = null;
 		try {
 			SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
@@ -151,7 +151,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 	}
 
 	@Override
-	public ServiceResult<SpotKlineRespDto> getSpotKline(SpotKlineReqDto depthReqDto) {
+	public ServiceResult<SpotKlineRespDto> getKline(SpotKlineReqDto depthReqDto) {
 		ServiceResult<SpotKlineRespDto> serviceResult = null;
 		try {
 			SpotKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {

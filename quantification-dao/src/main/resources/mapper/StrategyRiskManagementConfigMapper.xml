@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.StrategyRiskManagementConfigMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskManagementConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="save_rate" jdbcType="DECIMAL" property="saveRate" />
+    <result column="total_inventory_amount" jdbcType="INTEGER" property="totalInventoryAmount" />
+    <result column="margin_rate_a" jdbcType="DECIMAL" property="marginRateA" />
+    <result column="margin_rate_b" jdbcType="DECIMAL" property="marginRateB" />
+    <result column="margin_rate_c" jdbcType="DECIMAL" property="marginRateC" />
+    <result column="position_a" jdbcType="DECIMAL" property="positionA" />
+    <result column="position_b" jdbcType="DECIMAL" property="positionB" />
+    <result column="once_profit_loss_a" jdbcType="DECIMAL" property="onceProfitLossA" />
+    <result column="once_profit_loss_b" jdbcType="DECIMAL" property="onceProfitLossB" />
+    <result column="total_profit_loss_a" jdbcType="DECIMAL" property="totalProfitLossA" />
+    <result column="total_profit_loss_b" jdbcType="DECIMAL" property="totalProfitLossB" />
+    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+    <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+    <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+    <result column="order_risk_management" jdbcType="INTEGER" property="orderRiskManagement" />
+    <result column="hedging_risk_management" jdbcType="INTEGER" property="hedgingRiskManagement" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from strategy_risk_management_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskManagementConfig">
+    insert into strategy_risk_management_config (id, save_rate, total_inventory_amount, 
+      margin_rate_a, margin_rate_b, margin_rate_c, 
+      position_a, position_b, once_profit_loss_a, 
+      once_profit_loss_b, total_profit_loss_a, total_profit_loss_b, 
+      symbol, contract_type, contract_code, 
+      order_risk_management, hedging_risk_management
+      )
+    values (#{id,jdbcType=INTEGER}, #{saveRate,jdbcType=DECIMAL}, #{totalInventoryAmount,jdbcType=INTEGER}, 
+      #{marginRateA,jdbcType=DECIMAL}, #{marginRateB,jdbcType=DECIMAL}, #{marginRateC,jdbcType=DECIMAL}, 
+      #{positionA,jdbcType=DECIMAL}, #{positionB,jdbcType=DECIMAL}, #{onceProfitLossA,jdbcType=DECIMAL}, 
+      #{onceProfitLossB,jdbcType=DECIMAL}, #{totalProfitLossA,jdbcType=DECIMAL}, #{totalProfitLossB,jdbcType=DECIMAL}, 
+      #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, 
+      #{orderRiskManagement,jdbcType=INTEGER}, #{hedgingRiskManagement,jdbcType=INTEGER}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyRiskManagementConfig">
+    update strategy_risk_management_config
+    set save_rate = #{saveRate,jdbcType=DECIMAL},
+      total_inventory_amount = #{totalInventoryAmount,jdbcType=INTEGER},
+      margin_rate_a = #{marginRateA,jdbcType=DECIMAL},
+      margin_rate_b = #{marginRateB,jdbcType=DECIMAL},
+      margin_rate_c = #{marginRateC,jdbcType=DECIMAL},
+      position_a = #{positionA,jdbcType=DECIMAL},
+      position_b = #{positionB,jdbcType=DECIMAL},
+      once_profit_loss_a = #{onceProfitLossA,jdbcType=DECIMAL},
+      once_profit_loss_b = #{onceProfitLossB,jdbcType=DECIMAL},
+      total_profit_loss_a = #{totalProfitLossA,jdbcType=DECIMAL},
+      total_profit_loss_b = #{totalProfitLossB,jdbcType=DECIMAL},
+      symbol = #{symbol,jdbcType=VARCHAR},
+      contract_type = #{contractType,jdbcType=VARCHAR},
+      contract_code = #{contractCode,jdbcType=VARCHAR},
+      order_risk_management = #{orderRiskManagement,jdbcType=INTEGER},
+      hedging_risk_management = #{hedgingRiskManagement,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, save_rate, total_inventory_amount, margin_rate_a, margin_rate_b, margin_rate_c, 
+    position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 
+    total_profit_loss_b, symbol, contract_type, contract_code, order_risk_management, 
+    hedging_risk_management
+    from strategy_risk_management_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByContractCode" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, save_rate, total_inventory_amount, margin_rate_a, margin_rate_b, margin_rate_c, 
+    position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 
+    total_profit_loss_b, symbol, contract_type, contract_code, order_risk_management, 
+    hedging_risk_management
+    from strategy_risk_management_config
+    where contract_code = #{contractCode,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, save_rate, total_inventory_amount, margin_rate_a, margin_rate_b, margin_rate_c, 
+    position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 
+    total_profit_loss_b, symbol, contract_type, contract_code, order_risk_management, 
+    hedging_risk_management
+    from strategy_risk_management_config
+  </select>
+</mapper>

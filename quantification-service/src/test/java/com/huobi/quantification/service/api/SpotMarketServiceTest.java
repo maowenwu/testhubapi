@@ -41,7 +41,7 @@ public class SpotMarketServiceTest {
 		spotKlineReqDto.setSize(200);
 		spotKlineReqDto.setTimeout(1000 * 20);
 		spotKlineReqDto.setMaxDelay(1000 * 60 * 60);
-		ServiceResult<SpotKlineRespDto> spotKline = spotMarketService.getSpotKline(spotKlineReqDto);
+		ServiceResult<SpotKlineRespDto> spotKline = spotMarketService.getKline(spotKlineReqDto);
 		String jsonString = JSON.toJSONString(spotKline);
 		System.err.println("jsonString:" + jsonString);
 	}
@@ -67,7 +67,7 @@ public class SpotMarketServiceTest {
 		spotDepthReqDto.setQuoteCoin("usdt");
 		spotDepthReqDto.setMaxDelay(1000 * 60 * 60);
 		spotDepthReqDto.setTimeout(1000 * 10);
-		ServiceResult<SpotDepthRespDto> spotDepth = spotMarketService.getSpotDepth(spotDepthReqDto);
+		ServiceResult<SpotDepthRespDto> spotDepth = spotMarketService.getDepth(spotDepthReqDto);
 		String jsonString = JSON.toJSONString(spotDepth);
 		System.err.println("jsonString:" + jsonString);
 	}
