@@ -1,68 +1,40 @@
-package com.huobi.quantification.dto;
+package com.huobi.quantification.strategy.order.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
-public class FuturePositionRespDto implements Serializable {
+public class FuturePosition {
 
 
-    private Date ts;
+    private LongPosi longPosi;
+    private ShortPosi shortPosi;
 
-    private Map<String, List<DataBean>> data;
-
-    public Date getTs() {
-        return ts;
+    public LongPosi getLongPosi() {
+        return longPosi;
     }
 
-    public void setTs(Date ts) {
-        this.ts = ts;
+    public void setLongPosi(LongPosi longPosi) {
+        this.longPosi = longPosi;
     }
 
-    public Map<String, List<DataBean>> getData() {
-        return data;
+    public ShortPosi getShortPosi() {
+        return shortPosi;
     }
 
-    public void setData(Map<String, List<DataBean>> data) {
-        this.data = data;
+    public void setShortPosi(ShortPosi shortPosi) {
+        this.shortPosi = shortPosi;
     }
 
-    public static class DataBean implements Serializable{
-        @JSONField(name = "contract_code")
+    public static class LongPosi {
         private String contractCode;
-        @JSONField(name = "base_coin")
         private String baseCoin;
         private String quoteCoin;
-        @JSONField(name = "contract_type")
         private String contractType;
-        @JSONField(name = "long_amount")
         private BigDecimal longAmount;
-        @JSONField(name = "long_available")
         private BigDecimal longAvailable;
-        @JSONField(name = "long_frozen")
         private BigDecimal longFrozen;
-        @JSONField(name = "long_cost_open")
         private BigDecimal longCostOpen;
-        @JSONField(name = "long_cost_hold")
         private BigDecimal longCostHold;
-        @JSONField(name = "lever_rate")
         private BigDecimal leverRate;
-
-
-        @JSONField(name = "short_amount")
-        private BigDecimal shortAmount;
-        @JSONField(name = "short_available")
-        private BigDecimal shortAvailable;
-        @JSONField(name = "short_frozen")
-        private BigDecimal shortFrozen;
-        @JSONField(name = "short_cost_open")
-        private BigDecimal shortCostOpen;
-        @JSONField(name = "short_cost_hold")
-        private BigDecimal shortCostHold;
 
         public String getContractCode() {
             return contractCode;
@@ -143,6 +115,51 @@ public class FuturePositionRespDto implements Serializable {
         public void setLeverRate(BigDecimal leverRate) {
             this.leverRate = leverRate;
         }
+    }
+
+    public static class ShortPosi {
+        private String contractCode;
+        private String baseCoin;
+        private String quoteCoin;
+        private String contractType;
+        private BigDecimal shortAmount;
+        private BigDecimal shortAvailable;
+        private BigDecimal shortFrozen;
+        private BigDecimal shortCostOpen;
+        private BigDecimal shortCostHold;
+        private BigDecimal leverRate;
+
+        public String getContractCode() {
+            return contractCode;
+        }
+
+        public void setContractCode(String contractCode) {
+            this.contractCode = contractCode;
+        }
+
+        public String getBaseCoin() {
+            return baseCoin;
+        }
+
+        public void setBaseCoin(String baseCoin) {
+            this.baseCoin = baseCoin;
+        }
+
+        public String getQuoteCoin() {
+            return quoteCoin;
+        }
+
+        public void setQuoteCoin(String quoteCoin) {
+            this.quoteCoin = quoteCoin;
+        }
+
+        public String getContractType() {
+            return contractType;
+        }
+
+        public void setContractType(String contractType) {
+            this.contractType = contractType;
+        }
 
         public BigDecimal getShortAmount() {
             return shortAmount;
@@ -183,5 +200,14 @@ public class FuturePositionRespDto implements Serializable {
         public void setShortCostHold(BigDecimal shortCostHold) {
             this.shortCostHold = shortCostHold;
         }
+
+        public BigDecimal getLeverRate() {
+            return leverRate;
+        }
+
+        public void setLeverRate(BigDecimal leverRate) {
+            this.leverRate = leverRate;
+        }
     }
+
 }

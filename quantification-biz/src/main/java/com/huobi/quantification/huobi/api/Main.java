@@ -131,7 +131,7 @@ public class Main {
 
         //------------------------------------------------------ submitcancel 取消订单 -------------------------------------------------------
 
-//    SubmitcancelResponse submitcancel = client.submitcancel(orderId.toString());
+//    SubmitcancelResponse submitcancel = entity.submitcancel(orderId.toString());
 //    print(submitcancel);
 
         //------------------------------------------------------ submitcancel 批量取消订单-------------------------------------------------------
@@ -182,7 +182,7 @@ public class Main {
 
 
 //    // get accounts:
-//    List<Account> accounts1 = client.getAccounts();
+//    List<Account> accounts1 = entity.getAccounts();
 //    print(accounts1);
 
     }
