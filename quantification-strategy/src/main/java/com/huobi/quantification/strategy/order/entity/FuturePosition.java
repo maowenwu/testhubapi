@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.entity;
+package com.huobi.quantification.strategy.order.entity;
 
 import java.math.BigDecimal;
 
