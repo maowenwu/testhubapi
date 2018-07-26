@@ -29,7 +29,7 @@ public class MarketUtil {
 	 */
 	public Map<String, BigDecimal> getHuoBiSpotBuyOneSellOnePrice(SpotDepthReqDto spotDepthReqDto) {
 		logger.info("获取火币现货买一卖一价格请求参数为 {}     ",JSON.toJSONString(spotDepthReqDto));
-		ServiceResult<SpotDepthRespDto> serviceResult=spotMarketService.getSpotDepth(spotDepthReqDto);
+		ServiceResult<SpotDepthRespDto> serviceResult=spotMarketService.getDepth(spotDepthReqDto);
 		BigDecimal buy=serviceResult.getData().getData().getAsks().get(0).getPrice();//买盘,[price(成交价), amount(成交量)], 按price降序,
 		BigDecimal sell=serviceResult.getData().getData().getBids().get(0).getPrice();//卖盘,[price(成交价), amount(成交量)], 按price升序
 		Map<String, BigDecimal> resultMap=new HashMap<>();
