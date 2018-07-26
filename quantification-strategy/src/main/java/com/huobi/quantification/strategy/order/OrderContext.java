@@ -10,6 +10,7 @@ import com.huobi.quantification.dao.StrategyOrderConfigMapper;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.FuturePosition;
 import com.huobi.quantification.strategy.entity.SpotBalance;
 import com.huobi.quantification.strategy.order.entity.*;
