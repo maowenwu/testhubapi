@@ -71,4 +71,16 @@ public interface SpotOrderService {
 	 * @return
 	 */
 	public ServiceResult<List<SpotBatchOrderRespDto>> placeBatchOrders(SpotBatchOrderReqDto reqDto);
+	
+
+	/**
+	 * 批量取消符合条件的订单
+	 * @param accountId
+	 * @param symbol
+	 * @param side
+	 * @param size
+	 * @return
+	 */
+	public ServiceResult<Object> cancelOrder(Long accountId, String symbol, String side, Integer size);
+
 }

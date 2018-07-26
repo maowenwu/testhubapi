@@ -520,5 +520,21 @@ public class SpotOrderServiceImpl implements SpotOrderService {
             e.printStackTrace();
         }
     }
+	
+	
+
+	@Override
+	public ServiceResult<Object> cancelOrder(Long accountId, String symbol, String side, Integer size) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("account-id", accountId);
+		param.put("symbol",symbol);
+		String body = httpService.doHuobiPost(accountId, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
+		ServiceResult<Object> serviceResult = new ServiceResult<>();
+		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
+		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
+		serviceResult.setData(body);
+		return serviceResult;
+	}
+
 
 }
