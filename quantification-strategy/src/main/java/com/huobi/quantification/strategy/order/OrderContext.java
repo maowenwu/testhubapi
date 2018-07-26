@@ -8,9 +8,10 @@ import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyOrderConfigMapper;
 import com.huobi.quantification.dto.*;
-import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.strategy.entity.FuturePosition;
+import com.huobi.quantification.strategy.entity.SpotBalance;
 import com.huobi.quantification.strategy.order.entity.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderContext {
@@ -125,7 +127,7 @@ public class OrderContext {
         return orderConfig;
     }
 
-    private Map<BigDecimal, List<FutureOrder>> getActiveOrderMap() {
+    public Map<BigDecimal, List<FutureOrder>> getActiveOrderMap() {
         ServiceResult<FuturePriceOrderRespDto> activeOrderMap = futureOrderService.getActiveOrderMap(null);
         Map<BigDecimal, List<FuturePriceOrderRespDto.DataBean>> priceOrderMap = activeOrderMap.getData().getPriceOrderMap();
         Map<BigDecimal, List<FutureOrder>> result = new HashMap<>();
@@ -139,5 +141,27 @@ public class OrderContext {
             result.put(k, list);
         });
         return result;
+    }
+
+
+    /**
+     * 取消价格不在深度列表中的所有订单
+     *
+     * @param depthBook
+     */
+    private void cancelOrderNotInDepthBook(DepthBook depthBook) {
+        List<DepthBook.Depth> allDepth = new ArrayList<>();
+        allDepth.addAll(depthBook.getAsks());
+        allDepth.addAll(depthBook.getBids());
+        List<BigDecimal> allPrice = allDepth.stream().map(e -> e.getPrice()).collect(Collectors.toList());
+
+        List<Long> preCancelOrderIds = new ArrayList<>();
+        Map<BigDecimal, List<FutureOrder>> orderMap = getActiveOrderMap();
+        orderMap.forEach((k, v) -> {
+            if (!allPrice.contains(k)) {
+                List<Long> list = v.stream().map(e -> e.getExOrderId()).collect(Collectors.toList());
+                preCancelOrderIds.addAll(list);
+            }
+        });
     }
 }
