@@ -2,22 +2,23 @@ package com.huobi.quantification.strategy.order;
 
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureContractService;
+import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyOrderConfigMapper;
 import com.huobi.quantification.dto.*;
+import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.strategy.order.entity.DepthBook;
-import com.huobi.quantification.strategy.order.entity.FutureBalance;
-import com.huobi.quantification.strategy.order.entity.FuturePosition;
-import com.huobi.quantification.strategy.order.entity.SpotBalance;
+import com.huobi.quantification.strategy.order.entity.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,9 @@ public class OrderContext {
 
     @Autowired
     private StrategyOrderConfigMapper strategyOrderConfigMapper;
+
+    @Autowired
+    private FutureOrderService futureOrderService;
 
     public DepthBook getDepth(String symbol) {
         String[] split = symbol.split("_");
@@ -119,5 +123,21 @@ public class OrderContext {
     public StrategyOrderConfig getStrategyOrderConfig() {
         StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectByPrimaryKey(1);
         return orderConfig;
+    }
+
+    private Map<BigDecimal, List<FutureOrder>> getActiveOrderMap() {
+        ServiceResult<FuturePriceOrderRespDto> activeOrderMap = futureOrderService.getActiveOrderMap(null);
+        Map<BigDecimal, List<FuturePriceOrderRespDto.DataBean>> priceOrderMap = activeOrderMap.getData().getPriceOrderMap();
+        Map<BigDecimal, List<FutureOrder>> result = new HashMap<>();
+        priceOrderMap.forEach((k, v) -> {
+            List<FutureOrder> list = new ArrayList<>();
+            v.forEach(e -> {
+                FutureOrder futureOrder = new FutureOrder();
+                BeanUtils.copyProperties(e, futureOrder);
+                list.add(futureOrder);
+            });
+            result.put(k, list);
+        });
+        return result;
     }
 }

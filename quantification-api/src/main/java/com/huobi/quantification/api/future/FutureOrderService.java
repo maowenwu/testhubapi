@@ -68,4 +68,5 @@ public interface FutureOrderService {
     ServiceResult cancelActiveOrder(FutureActiveOrderReqDto orderReqDto);
 
 
+    ServiceResult<FuturePriceOrderRespDto> getActiveOrderMap(FuturePriceOrderReqDto reqDto);
 }

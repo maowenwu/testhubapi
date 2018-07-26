@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.huobi.quantification.dto.*;
 import com.huobi.quantification.enums.ExchangeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -17,19 +18,6 @@ import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
-import com.huobi.quantification.dto.FutureActiveOrderReqDto;
-import com.huobi.quantification.dto.FutureBatchOrder;
-import com.huobi.quantification.dto.FutureBatchOrderReqDto;
-import com.huobi.quantification.dto.FutureBatchOrderRespDto;
-import com.huobi.quantification.dto.FutureCancelOrder;
-import com.huobi.quantification.dto.FutureCancelOrderReqDto;
-import com.huobi.quantification.dto.FuturePlaceOrderReqDto;
-import com.huobi.quantification.dto.FuturePlaceOrderRespDto;
-import com.huobi.quantification.dto.FutureQueryOrderExOrderIdReqDto;
-import com.huobi.quantification.dto.FutureQueryOrderInnerReqDto;
-import com.huobi.quantification.dto.FutureQueryOrderLinkReqDto;
-import com.huobi.quantification.dto.FutureQueryOrderRespDto;
-import com.huobi.quantification.dto.FutureQueryOrderStatusReqDto;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.enums.OrderStatusEnum;
@@ -378,5 +366,11 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         public int getTimeInterval() {
             return timeInterval;
         }
+    }
+
+    @Override
+    public ServiceResult<FuturePriceOrderRespDto> getActiveOrderMap(FuturePriceOrderReqDto reqDto) {
+        // todo
+        return null;
     }
 }

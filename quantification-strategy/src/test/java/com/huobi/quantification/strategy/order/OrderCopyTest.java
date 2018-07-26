@@ -16,10 +16,10 @@ public class OrderCopyTest {
 
     @Autowired
     private OrderCopy orderCopy;
-    @Test
-    public void getAdjustedDepthBook() {
 
-        DepthBook btc_usdt = orderCopy.getAdjustedDepthBook("btc_usdt");
-        System.out.println(btc_usdt);
+
+    @Test
+    public void copyOrder() {
+        orderCopy.copyOrder();
     }
 }
