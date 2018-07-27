@@ -3,10 +3,15 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 public class SpotBalanceReqDto implements Serializable{
-	private int exchangeId;
-    private long accountId;
-    private long timeout;
-    private long maxDelay;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 167270392398573412L;
+	private int exchangeId;//交易所id
+    private long accountId;//用户id
+    private long timeout = 100;//失效时限
+    private long maxDelay = 1000;//最大延时
     
 	public int getExchangeId() {
 		return exchangeId;

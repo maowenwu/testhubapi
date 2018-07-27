@@ -11,6 +11,10 @@ import java.util.List;
  * @since  2018年7月13日
  */
 public class SpotDepthRespDto implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2135267412924776786L;
 	private Date ts;
     private DataBean data;
 
@@ -31,7 +35,11 @@ public class SpotDepthRespDto implements Serializable{
     }
 
     public static class DataBean implements Serializable {
-        private List<Depth> asks;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 6386914347198020191L;
+		private List<Depth> asks;
         private List<Depth> bids;
 
         public List<Depth> getAsks() {
@@ -52,7 +60,11 @@ public class SpotDepthRespDto implements Serializable{
     }
 
     public static class Depth implements Serializable {
-        private BigDecimal price;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 3011362207412093277L;
+		private BigDecimal price;
         private BigDecimal amount;
 
         public BigDecimal getPrice() {

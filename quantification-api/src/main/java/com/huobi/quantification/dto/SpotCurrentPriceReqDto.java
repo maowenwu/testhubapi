@@ -3,11 +3,15 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 public class SpotCurrentPriceReqDto implements Serializable{
-	private int exchangeId;
-	private String baseCoin;
-	private String quoteCoin;
-	private long timeout;
-	private long maxDelay;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1231522090667031692L;
+	private int exchangeId;//交易所id
+	private String baseCoin;//基础货币
+	private String quoteCoin;//定价货币
+	private long timeout = 100;//失效时间
+	private long maxDelay = 1000;//最大延时
 	public int getExchangeId() {
 		return exchangeId;
 	}

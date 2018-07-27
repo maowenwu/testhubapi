@@ -8,11 +8,15 @@ import java.io.Serializable;
  * @since  2018年7月13日
  */
 public class SpotDepthReqDto implements Serializable{
-	private int exchangeId;
-	private String baseCoin;
-	private String quoteCoin;
-	private long timeout;
-	private long maxDelay;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3686830236901650372L;
+	private int exchangeId;//交易所id
+	private String baseCoin;//基础货币
+	private String quoteCoin;//定价货币
+	private long timeout = 100;//失效时间
+	private long maxDelay = 1000;//最大延时
 	
 	public int getExchangeId() {
 		return exchangeId;

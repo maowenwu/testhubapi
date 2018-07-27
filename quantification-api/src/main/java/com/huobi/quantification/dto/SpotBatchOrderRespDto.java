@@ -1,10 +1,16 @@
 package com.huobi.quantification.dto;
 
-public class SpotBatchOrderRespDto {
+import java.io.Serializable;
 
-    private long innerOrderId;
-    private long exOrderId;
-    private long linkOrderId;
+public class SpotBatchOrderRespDto implements Serializable{
+
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 2270599807867202696L;
+	private long innerOrderId;//内部订单id
+    private long exOrderId;//交易所订单id
+    private long linkOrderId;//关联订单id
 
     public long getInnerOrderId() {
         return innerOrderId;

@@ -3,13 +3,25 @@ package com.huobi.quantification.strategy.risk.entity;
 import java.math.BigDecimal;
 
 public class FutureBalance {
-
+	//用户权益
     private BigDecimal marginBalance;
+    
+    //持仓保证金
     private BigDecimal marginPosition;
+    
+    //冻结保证金
     private BigDecimal marginFrozen;
+    
+    //可用保证金
     private BigDecimal marginAvailable;
+    
+    //已实现盈亏
     private BigDecimal profitReal;
+    
+    //未实现盈亏
     private BigDecimal profitUnreal;
+    
+    //保证金率
     private BigDecimal riskRate;
 
     public BigDecimal getMarginBalance() {

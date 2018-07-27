@@ -3,10 +3,13 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class SpotBalanceRespDto implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1659538573294922052L;
 	private Date ts;
     private Map<String, DataBean> data;
 
@@ -28,9 +31,13 @@ public class SpotBalanceRespDto implements Serializable{
 
 
 	public static class DataBean implements Serializable{
-		private BigDecimal total;
-    	private BigDecimal available;
-    	private BigDecimal frozen;
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8504403035745178930L;
+		private BigDecimal total;//总结
+    	private BigDecimal available;//可用
+    	private BigDecimal frozen;//冻结
     	
 		public BigDecimal getTotal() {
 			return total;

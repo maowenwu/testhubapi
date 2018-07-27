@@ -6,6 +6,10 @@ import java.util.Date;
 
 public class SpotCurrentPriceRespDto implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4623248085162566468L;
 	private Date ts;
 	private BigDecimal currentPrice;
 	

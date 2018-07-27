@@ -4,14 +4,18 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class SpotBatchOrder implements Serializable{
-	private String baseCoin;
-	private String quoteCoin;
-	private String side;
-	private String orderType;
-	private BigDecimal price;
-	private BigDecimal quantity;
-	private BigDecimal cashAmount;
-	private long linkOrderId;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5205468339575483277L;
+	private String baseCoin;//基础货币
+	private String quoteCoin;//定价货币
+	private String side;//数量
+	private String orderType;//订单类型
+	private BigDecimal price;//订单价格
+	private BigDecimal quantity;//数量
+	private BigDecimal cashAmount;//金额（市价单用）
+	private long linkOrderId;//关联订单id
 	public String getBaseCoin() {
 		return baseCoin;
 	}

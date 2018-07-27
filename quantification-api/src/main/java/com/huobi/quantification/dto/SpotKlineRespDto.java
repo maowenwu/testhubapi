@@ -7,6 +7,10 @@ import java.util.List;
 
 
 public class SpotKlineRespDto implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1791019100121511315L;
 	private Date ts;
     private List<DataBean> data;
     
@@ -27,7 +31,11 @@ public class SpotKlineRespDto implements Serializable{
 	}
 
 	public static class DataBean implements Serializable{
-        private Long id;
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 6869911049853624090L;
+		private Long id;
         private BigDecimal amount;
         private BigDecimal count;
         private BigDecimal open;

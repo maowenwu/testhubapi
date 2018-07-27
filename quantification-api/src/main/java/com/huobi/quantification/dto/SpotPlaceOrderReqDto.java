@@ -4,17 +4,21 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class SpotPlaceOrderReqDto implements Serializable{
-	private int exchangeId;
-	private long accountId;
-	private String baseCoin;
-	private String quoteCoin;
-	private String side;
-	private String orderType;
-	private BigDecimal price;
-	private BigDecimal quantity;
-	private BigDecimal cashAmount;
-	private long linkOrderId;
-	private boolean sync = true;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1123551434598744637L;
+	private int exchangeId;//交易所id
+	private long accountId;//用户id
+	private String baseCoin;//基础货币
+	private String quoteCoin;//定价货币
+	private String side;//交易方向
+	private String orderType;//订单类型
+	private BigDecimal price;//下单价格
+	private BigDecimal quantity;//下单数量
+	private BigDecimal cashAmount;//下单金额（市价单用）
+	private long linkOrderId;//关联订单id
+	private boolean sync = true;//异步调用
 	public int getExchangeId() {
 		return exchangeId;
 	}
