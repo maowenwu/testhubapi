@@ -65,6 +65,11 @@
     set order_risk_management = #{orderType,jdbcType=INTEGER}
     where contract_code = #{contractCode,jdbcType=INTEGER}
   </update>
+  <update id="updateHedgingRiskManagement">
+    update strategy_risk_management_config
+    set hedging_risk_management = #{hedgingType,jdbcType=INTEGER}
+    where contract_code = #{contractCode,jdbcType=INTEGER}
+  </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, save_rate, total_inventory_amount, margin_rate_a, margin_rate_b, margin_rate_c, 
     position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 

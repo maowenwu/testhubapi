@@ -2,32 +2,37 @@ package com.huobi.quantification.entity;
 
 public class QuanAccount {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * 交易所id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * 用户id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * 用户类型
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String accountsType;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * 用户名
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String accountsName;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * 用户状态
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String state;
 

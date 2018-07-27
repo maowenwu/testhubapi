@@ -3,53 +3,62 @@ package com.huobi.quantification.entity;
 import java.util.Date;
 
 public class QuanJob {
-	 /**
-     * @mbg.generated 2018-07-20 14:45:57
+    /**
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 交易所id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 任务类型
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer jobType;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 任务名
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String jobName;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 任务所需参数
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String jobParam;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 任务描述
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String jobDesc;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * cron表达式
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String cron;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 状态
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer state;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 更新时间
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date updateDate;
 
     /**
-     * @mbg.generated 2018-07-20 14:45:57
+     * 创建时间
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date createDate;
 

@@ -5,47 +5,55 @@ import java.util.Date;
 
 public class QuanTrade {
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 交易所id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 交易对
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 查询id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long queryId;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 价格
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal price;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 数量
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 描述
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String direction;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 响应时间
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date ts;
 
     /**
-     * @mbg.generated 2018-07-23 11:19:16
+     * 成交id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long tradeId;
 

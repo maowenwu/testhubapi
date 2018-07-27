@@ -5,67 +5,79 @@ import java.util.Date;
 
 public class QuanKline {
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 交易所id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 交易对
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * k线类型
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String period;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 数量
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long size;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 最高价
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal high;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 开盘价
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal open;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 最低价
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal low;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 收盘价,当K线为最晚的一根时，是最新成交价
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal close;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 成交笔数
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal count;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 成交量
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 成交额
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal vol;
 
     /**
-     * @mbg.generated 2018-07-23 20:12:56
+     * 响应时间
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date ts;
 

@@ -5,97 +5,105 @@ import java.util.Date;
 
 public class QuanOrder {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long id;
 
     /**
      * 火币或ok返回的订单id
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long orderSourceId;
 
     /**
      * 交易对
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String orderSymbol;
 
     /**
      * 订单类型
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String orderType;
 
     /**
      * 订单状态
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer orderState;
 
     /**
      * 账户 ID
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long orderAccountId;
 
     /**
      * 订单数量
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal orderAmount;
 
     /**
      * 已成交数量
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal orderFieldAmount;
 
     /**
      * 已成交总金额
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal orderFieldCashAmount;
 
     /**
      * 已成交手续费
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal orderFieldFees;
 
     /**
      * 价格
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal orderPrice;
 
     /**
      * 订单来源
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String orderSource;
 
     /**
      * 订单创建时间
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date orderCreatedAt;
 
     /**
      * 订单撤销时间
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date orderCanceledAt;
 
     /**
      * 订单变为终结态的时间
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date orderFinishedAt;
-    
-    private int exchangeId;
-    
-    private Long innerId;
+
+    /**
+     * 内部id
+     * @mbg.generated 2018-07-27 14:41:01
+     */
+    private Long orderInnerId;
+
+    /**
+     * 交易所id
+     * @mbg.generated 2018-07-27 14:41:01
+     */
+    private Integer exchangeId;
 
     public Long getId() {
         return id;
@@ -130,14 +138,14 @@ public class QuanOrder {
     }
 
     public Integer getOrderState() {
-		return orderState;
-	}
+        return orderState;
+    }
 
-	public void setOrderState(Integer orderState) {
-		this.orderState = orderState;
-	}
+    public void setOrderState(Integer orderState) {
+        this.orderState = orderState;
+    }
 
-	public Long getOrderAccountId() {
+    public Long getOrderAccountId() {
         return orderAccountId;
     }
 
@@ -217,20 +225,19 @@ public class QuanOrder {
         this.orderFinishedAt = orderFinishedAt;
     }
 
-	public int getExchangeId() {
-		return exchangeId;
-	}
+    public Long getOrderInnerId() {
+        return orderInnerId;
+    }
 
-	public void setExchangeId(int exchangeId) {
-		this.exchangeId = exchangeId;
-	}
+    public void setOrderInnerId(Long orderInnerId) {
+        this.orderInnerId = orderInnerId;
+    }
 
-	public Long getInnerId() {
-		return innerId;
-	}
+    public Integer getExchangeId() {
+        return exchangeId;
+    }
 
-	public void setInnerId(Long innerId) {
-		this.innerId = innerId;
-	}
-    
+    public void setExchangeId(Integer exchangeId) {
+        this.exchangeId = exchangeId;
+    }
 }

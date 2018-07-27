@@ -19,4 +19,6 @@ public interface StrategyRiskManagementConfigMapper {
 	StrategyRiskManagementConfig selectByContractCode(@Param("contractCode")String contractCode);
 	
 	int updateOrderRiskManagement(@Param("contractCode")String contractCode, @Param("orderType")int orderType);
+	
+	int updateHedgingRiskManagement(@Param("contractCode")String contractCode, @Param("hedgingType")int hedgingType);
 }

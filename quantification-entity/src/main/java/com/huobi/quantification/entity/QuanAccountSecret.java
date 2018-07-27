@@ -2,22 +2,25 @@ package com.huobi.quantification.entity;
 
 public class QuanAccountSecret {
     /**
-     * @mbg.generated 2018-07-03 10:29:58
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-03 10:29:58
+     * 用户id
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long accountSourceId;
 
     /**
-     * @mbg.generated 2018-07-03 10:29:58
+     * access_key
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String accessKey;
 
     /**
-     * @mbg.generated 2018-07-03 10:29:58
+     * secret_key
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String secretKey;
 

@@ -5,49 +5,49 @@ import java.util.Date;
 
 public class QuanAccountAsset {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Long accountId;
 
     /**
      * 币种
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private String coin;
 
     /**
      * 总量
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal total;
 
     /**
      * 可用
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal available;
 
     /**
      * 冻结
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private BigDecimal frozen;
 
     /**
      * 交易所服务器时间
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date ts;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-07-27 14:41:01
      */
     private Date dataUpdate;
 
