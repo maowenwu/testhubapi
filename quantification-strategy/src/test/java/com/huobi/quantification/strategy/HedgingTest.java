@@ -71,7 +71,7 @@ public class HedgingTest {
 		spotBalanceReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
 		spotBalanceReqDto.setMaxDelay(1000 * 60 * 60);
 		spotBalanceReqDto.setTimeout(1000 * 10);
-		BigDecimal spotCurrentUSDTBalance=accountUtil.getHuobiSpotCurrentUSDTBalance(spotBalanceReqDto, coinType).getAvailable();
+		BigDecimal spotCurrentUSDTBalance=accountUtil.getHuobiSpotCurrentBalance(spotBalanceReqDto, coinType).getAvailable();
 		logger.info("1.获取火币账户余额================================="+spotCurrentUSDTBalance);
 		
 		ServiceResult<BigDecimal> result=futureContractService.getExchangeRateOfUSDT2USD();
@@ -89,7 +89,7 @@ public class HedgingTest {
 		futureBalanceReqDto.setMaxDelay(100000l);
 		futureBalanceReqDto.setTimeout(100000l);
 		accountUtil.getOkFutureBalance(futureBalanceReqDto) ;
-		FutureBalance futureBalance=orderContext.getFutureBalance("usd");
+		FutureBalance futureBalance=accountUtil.getOkFutureBalance(futureBalanceReqDto);
 		BigDecimal okFutureBalance=futureBalance.getMarginBalance();
 		logger.info("ok期货账户期末(即当前)余额USDT为：{}",okFutureBalance);
 		
@@ -145,6 +145,8 @@ public class HedgingTest {
 	}
 	
 	
+	
+	//获取买一卖一价格
 	@Test
 	public void getHuoBiSpotBuyOneSellOnePrice() {
 		SpotDepthReqDto spotDepthReqDto=new SpotDepthReqDto();
@@ -155,6 +157,26 @@ public class HedgingTest {
 		spotDepthReqDto.setTimeout(10000L);
 		marketUtil.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
 	}
+	
+	
+	//获取滑头
+	
+	
+	
+	//测试ok合约账户余额
+	@Test
+	public void getOkFutureBalance() {
+		FutureBalanceReqDto futureBalanceReqDto=new FutureBalanceReqDto();
+		futureBalanceReqDto.setAccountId(2);
+		futureBalanceReqDto.setCoinType("btc");
+		futureBalanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
+		futureBalanceReqDto.setMaxDelay(100000l);
+		futureBalanceReqDto.setTimeout(100000l);
+		FutureBalance futureBalance=accountUtil.getOkFutureBalance(futureBalanceReqDto);
+		BigDecimal okFutureBalance=futureBalance.getMarginBalance();
+		logger.info("ok期货账户期末(即当前)余额USDT为：{}",okFutureBalance);
+	}
+	
 	
 	
 	

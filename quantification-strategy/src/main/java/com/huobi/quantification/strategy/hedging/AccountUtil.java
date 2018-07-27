@@ -31,9 +31,9 @@ public class AccountUtil {
 	@Autowired
 	FutureAccountService futureAccountService;
 
-	// 计算火币现货币币账户期末(即当前)余额USDT
+	// 计算现货币币账户期末(即当前)余额
 
-	public DataBean getHuobiSpotCurrentUSDTBalance(SpotBalanceReqDto spotBalanceReqDto, String coinType) {
+	public DataBean getHuobiSpotCurrentBalance(SpotBalanceReqDto spotBalanceReqDto, String coinType) {
 		logger.info("获取火币现货币币账户请求参数为 {}   {}  ",coinType, JSON.toJSONString(spotBalanceReqDto));
 		ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(spotBalanceReqDto);
 		logger.info("获取火币现货币币账户,币种： {}  的期末余额为：{} ",coinType, JSON.toJSONString(result));
