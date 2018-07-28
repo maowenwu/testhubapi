@@ -4,10 +4,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class QuanOrder {
-    /**
+	 /**
+     * 内部id
      * @mbg.generated 2018-07-27 14:41:01
      */
-    private Long id;
+    private Long orderInnerId;
 
     /**
      * 火币或ok返回的订单id
@@ -94,24 +95,10 @@ public class QuanOrder {
     private Date orderFinishedAt;
 
     /**
-     * 内部id
-     * @mbg.generated 2018-07-27 14:41:01
-     */
-    private Long orderInnerId;
-
-    /**
      * 交易所id
      * @mbg.generated 2018-07-27 14:41:01
      */
     private Integer exchangeId;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public Long getOrderSourceId() {
         return orderSourceId;

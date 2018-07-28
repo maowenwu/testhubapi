@@ -80,7 +80,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 		}
 		for (int i = 0; i < reqDto.getInnerOrderID().length; i++) {
 			// 根据三个条件查询订单 ,一个InnerOrderID只会对应一个订单信息（唯一）
-			entity.setId(reqDto.getInnerOrderID()[i]);
+			entity.setOrderInnerId(reqDto.getInnerOrderID()[i]);
 			List<QuanOrder> list = quanOrderMapper.selectList(entity);
 			List<SpotOrderRespDto> result = copySpotOrderListToSpotOrderRespLIstDto(list);
 			map.put(String.valueOf(reqDto.getInnerOrderID()[i]), result);
@@ -248,7 +248,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			quanOrder.setOrderSourceId(orderId);
 			respDto.setExOrderId(orderId);
 			respDto.setLinkOrderId(reqDto.getLinkOrderId());
-			respDto.setInnerOrderId(quanOrder.getId());
+			respDto.setInnerOrderId(quanOrder.getOrderInnerId());
 			serviceResult.setData(respDto);
 			logger.info("同步下单成功，订单号:{}",orderId);
 		}else {
@@ -302,7 +302,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 			if (null == innerOrderID && null == exOrderID) {// 三种orderID至少填写一种 ,linkId待定
 				continue;
 			}
-			entity.setId(innerOrderID);
+			entity.setOrderInnerId(innerOrderID);
 			entity.setOrderSourceId(exOrderID);
 			entity.setExchangeId(reqDto.getExchangeID());
 			entity.setOrderAccountId(reqDto.getAccountID());

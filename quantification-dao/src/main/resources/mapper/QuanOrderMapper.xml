@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanOrderMapper">
   <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanOrder">
-    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="order_inner_id" jdbcType="BIGINT" property="orderInnerId" />
     <result column="order_source_id" jdbcType="BIGINT" property="orderSourceId" />
     <result column="order_symbol" jdbcType="VARCHAR" property="orderSymbol" />
     <result column="order_type" jdbcType="VARCHAR" property="orderType" />
@@ -17,40 +17,39 @@
     <result column="order_created_at" jdbcType="TIMESTAMP" property="orderCreatedAt" />
     <result column="order_canceled_at" jdbcType="TIMESTAMP" property="orderCanceledAt" />
     <result column="order_finished_at" jdbcType="TIMESTAMP" property="orderFinishedAt" />
-    <result column="order_inner_id" jdbcType="BIGINT" property="orderInnerId" />
     <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_order
-    where id = #{id,jdbcType=BIGINT}
+    where order_inner_id = #{orderInnerId,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrder" useGeneratedKeys="true" keyProperty="id">
-    insert into quan_order (id, order_source_id, order_symbol, 
+    insert into quan_order (order_inner_id, order_source_id, order_symbol, 
       order_type, order_state, order_account_id, 
       order_amount, order_field_amount, order_field_cash_amount, 
       order_field_fees, order_price, order_source, 
       order_created_at, order_canceled_at, order_finished_at, 
-      order_inner_id, exchange_id)
-    values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
+      exchange_id)
+    values (#{orderInnerId,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
-      #{orderInnerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
+       #{exchangeId,jdbcType=INTEGER})
   </insert>
-  <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="id">
-  	insert into quan_order (id, order_source_id, order_symbol, 
+  <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="orderInnerId">
+  	insert into quan_order (order_inner_id, order_source_id, order_symbol, 
       order_type, order_state, order_account_id, 
       order_amount, order_field_amount, order_field_cash_amount, 
       order_field_fees, order_price, order_source, 
       order_created_at, order_canceled_at, order_finished_at, 
-      order_inner_id, exchange_id)
-    values (#{id,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
+      exchange_id)
+    values (#{orderInnerId,jdbcType=BIGINT}, #{orderSourceId,jdbcType=BIGINT}, #{orderSymbol,jdbcType=VARCHAR}, 
       #{orderType,jdbcType=VARCHAR}, #{orderState,jdbcType=INTEGER}, #{orderAccountId,jdbcType=BIGINT}, 
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
-      #{orderInnerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
+      #{exchangeId,jdbcType=INTEGER})
   </insert>
   <update id="updateOrderByOrderId" parameterType="com.huobi.quantification.entity.QuanOrder">
     update quan_order
@@ -68,7 +67,6 @@
       order_created_at = #{orderCreatedAt,jdbcType=TIMESTAMP},
       order_canceled_at = #{orderCanceledAt,jdbcType=TIMESTAMP},
       order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP},
-      order_inner_id = #{orderInnerId,jdbcType=BIGINT},
       exchange_id = #{exchangeId,jdbcType=INTEGER}
     where order_source_id = #{orderSourceId,jdbcType=BIGINT}
   </update>
@@ -88,30 +86,26 @@
       order_created_at = #{orderCreatedAt,jdbcType=TIMESTAMP},
       order_canceled_at = #{orderCanceledAt,jdbcType=TIMESTAMP},
       order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP},
-      order_inner_id = #{orderInnerId,jdbcType=BIGINT},
       exchange_id = #{exchangeId,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
+    where order_inner_id = #{orderInnerId,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
+    select order_inner_id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
     order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
-    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
-    exchange_id
+    order_source, order_created_at, order_canceled_at, order_finished_at, exchange_id
     from quan_order
-    where id = #{id,jdbcType=BIGINT}
+    where order_inner_id = #{orderInnerId,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
+    select  order_inner_id,order_source_id, order_symbol, order_type, order_state, order_account_id, 
     order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
-    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
-    exchange_id
+    order_source, order_created_at, order_canceled_at, order_finished_at, exchange_id
     from quan_order
   </select>
   <select id="selectList" resultMap="BaseResultMap">
-    select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
+    select order_inner_id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
     order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
-    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
-    exchange_id
+    order_source, order_created_at, order_canceled_at, order_finished_at, exchange_id
     from quan_order
     		<where>
 			<if test="exchangeId != null">
@@ -123,8 +117,8 @@
 			<if test="orderSourceId != null">
 				and order_source_id=#{orderSourceId}
 			</if>
-			<if test="id != null">
-				and id=#{id}
+			<if test="order_inner_id != null">
+				and order_inner_id=#{orderInnerId}
 			</if>	
 			<if test="orderState != null">
 				and order_state=#{orderState}
@@ -138,10 +132,9 @@
 		</where>  
   </select>  
   <select id="selectByOrderInfo" parameterType="java.util.List" resultMap="BaseResultMap">
-  	 select id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
+  	 select order_inner_id, order_source_id, order_symbol, order_type, order_state, order_account_id, 
     order_amount, order_field_amount, order_field_cash_amount, order_field_fees, order_price, 
-    order_source, order_created_at, order_canceled_at, order_finished_at, order_inner_id, 
-    exchange_id
+    order_source, order_created_at, order_canceled_at, order_finished_at, exchange_id
     from quan_order where order_state in
     <foreach collection="states" item="states" open="(" separator="," close=")">
     	#{states}
@@ -159,8 +152,8 @@
 			<if test="orderSourceId != null">
 				and order_source_id=#{orderSourceId}
 			</if>
-			<if test="id != null">
-				and id=#{id}
+			<if test="order_inner_id != null">
+				and order_inner_id=#{orderInnerId}
 			</if>	
 			<if test="orderState != null">
 				and order_state=#{orderState}

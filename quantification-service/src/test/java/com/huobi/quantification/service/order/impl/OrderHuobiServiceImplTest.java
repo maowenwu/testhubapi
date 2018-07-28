@@ -57,25 +57,26 @@ public class OrderHuobiServiceImplTest {
 			String data = parseObject.getString("data");
 			params.put("order-id", data);
 			String body = httpService.doHuobiGet(4232061L,HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", data),params);
-			JSONObject jsonObject = JSON.parseObject(body);
-			JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
-			QuanOrder quanOrder = new QuanOrder();
-			quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
-			quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
-			quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));
-			quanOrder.setOrderAmount(new BigDecimal(jsonObjectdata.getString("amount")));
-			quanOrder.setOrderPrice(new BigDecimal(jsonObjectdata.getString("price")));
-			quanOrder.setOrderCreatedAt(jsonObjectdata.getDate("created-at"));
-			quanOrder.setOrderType(jsonObjectdata.getString("type"));
-			quanOrder.setOrderFieldAmount(new BigDecimal(jsonObjectdata.getString("field-amount")));
-			quanOrder.setOrderFieldCashAmount(new BigDecimal(jsonObjectdata.getString("field-cash-amount")));
-			quanOrder.setOrderFieldFees(new BigDecimal(jsonObjectdata.getString("field-fees")));
-			quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
-			quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
-			quanOrder.setOrderSource(jsonObjectdata.getString("source"));
-			quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(jsonObject.getString("state")).getOrderStatus());
-			quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
-			quanOrderMapper.insert(quanOrder);
+			System.err.println(body);
+//			JSONObject jsonObject = JSON.parseObject(body);
+//			JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
+//			QuanOrder quanOrder = new QuanOrder();
+//			quanOrder.setOrderSourceId(jsonObjectdata.getLong("id"));
+//			quanOrder.setOrderSymbol(jsonObjectdata.getString("symbol"));
+//			quanOrder.setOrderAccountId(jsonObjectdata.getLong("account-id"));
+//			quanOrder.setOrderAmount(new BigDecimal(jsonObjectdata.getString("amount")));
+//			quanOrder.setOrderPrice(new BigDecimal(jsonObjectdata.getString("price")));
+//			quanOrder.setOrderCreatedAt(jsonObjectdata.getDate("created-at"));
+//			quanOrder.setOrderType(jsonObjectdata.getString("type"));
+//			quanOrder.setOrderFieldAmount(new BigDecimal(jsonObjectdata.getString("field-amount")));
+//			quanOrder.setOrderFieldCashAmount(new BigDecimal(jsonObjectdata.getString("field-cash-amount")));
+//			quanOrder.setOrderFieldFees(new BigDecimal(jsonObjectdata.getString("field-fees")));
+//			quanOrder.setOrderFinishedAt(jsonObjectdata.getDate("finished-at"));
+//			quanOrder.setOrderAccountId(jsonObjectdata.getLong("user-id"));
+//			quanOrder.setOrderSource(jsonObjectdata.getString("source"));
+//			quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(jsonObject.getString("state")).getOrderStatus());
+//			quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
+//			quanOrderMapper.insert(quanOrder);
 		}
 	}
 	
