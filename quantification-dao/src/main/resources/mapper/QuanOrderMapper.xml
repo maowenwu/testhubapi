@@ -17,7 +17,7 @@
     <result column="order_created_at" jdbcType="TIMESTAMP" property="orderCreatedAt" />
     <result column="order_canceled_at" jdbcType="TIMESTAMP" property="orderCanceledAt" />
     <result column="order_finished_at" jdbcType="TIMESTAMP" property="orderFinishedAt" />
-    <result column="order_inner_id" jdbcType="BIGINT" property="innerId" />
+    <result column="order_inner_id" jdbcType="BIGINT" property="orderInnerId" />
     <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -36,7 +36,7 @@
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
-      #{innerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
+      #{orderInnerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
   </insert>
   <insert id="insertAndGetId" useGeneratedKeys="true" keyProperty="id">
   	insert into quan_order (id, order_source_id, order_symbol, 
@@ -50,7 +50,7 @@
       #{orderAmount,jdbcType=DECIMAL}, #{orderFieldAmount,jdbcType=DECIMAL}, #{orderFieldCashAmount,jdbcType=DECIMAL}, 
       #{orderFieldFees,jdbcType=DECIMAL}, #{orderPrice,jdbcType=DECIMAL}, #{orderSource,jdbcType=VARCHAR}, 
       #{orderCreatedAt,jdbcType=TIMESTAMP}, #{orderCanceledAt,jdbcType=TIMESTAMP}, #{orderFinishedAt,jdbcType=TIMESTAMP}, 
-      #{innerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
+      #{orderInnerId,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER})
   </insert>
   <update id="updateOrderByOrderId" parameterType="com.huobi.quantification.entity.QuanOrder">
     update quan_order
@@ -68,7 +68,7 @@
       order_created_at = #{orderCreatedAt,jdbcType=TIMESTAMP},
       order_canceled_at = #{orderCanceledAt,jdbcType=TIMESTAMP},
       order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP},
-      order_inner_id = #{innerId,jdbcType=BIGINT},
+      order_inner_id = #{orderInnerId,jdbcType=BIGINT},
       exchange_id = #{exchangeId,jdbcType=INTEGER}
     where order_source_id = #{orderSourceId,jdbcType=BIGINT}
   </update>
@@ -88,7 +88,7 @@
       order_created_at = #{orderCreatedAt,jdbcType=TIMESTAMP},
       order_canceled_at = #{orderCanceledAt,jdbcType=TIMESTAMP},
       order_finished_at = #{orderFinishedAt,jdbcType=TIMESTAMP},
-      order_inner_id = #{innerId,jdbcType=BIGINT},
+      order_inner_id = #{orderInnerId,jdbcType=BIGINT},
       exchange_id = #{exchangeId,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -147,8 +147,6 @@
     	#{states}
     </foreach>
   </select>
-
-
 	<select id="selectOrderIdsByParams" resultType="java.lang.Long">
 		select order_source_id from quan_order 
             		<where>
