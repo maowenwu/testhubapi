@@ -1,6 +1,5 @@
 package com.huobi.quantification.strategy.hedging;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -34,9 +33,9 @@ public class AccountUtil {
 	// 计算现货币币账户期末(即当前)余额
 
 	public DataBean getHuobiSpotCurrentBalance(SpotBalanceReqDto spotBalanceReqDto, String coinType) {
-		logger.info("获取火币现货币币账户请求参数为 {}   {}  ",coinType, JSON.toJSONString(spotBalanceReqDto));
+		logger.info("获取火币现货币币账户余额请求参数为  {}   {}  ",coinType, JSON.toJSONString(spotBalanceReqDto));
 		ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(spotBalanceReqDto);
-		logger.info("获取火币现货币币账户,币种： {}  的期末余额为：{} ",coinType, JSON.toJSONString(result));
+		logger.info("获取火币现货币币账户余额,币种： {}  的期末余额为：{} ",coinType, JSON.toJSONString(result));
 		DataBean dataBean = result.getData().getData().get(coinType);
 		return dataBean;
 	}
@@ -60,12 +59,6 @@ public class AccountUtil {
 		}
 	}
 	
-	//计算净寸头
-	public BigDecimal calPosition(BigDecimal spotCurrentBalance,BigDecimal spotLastBalance,BigDecimal futureCurrentBalance,BigDecimal futureLastBalance,BigDecimal rate) {
-		BigDecimal total1=(spotCurrentBalance.subtract(spotLastBalance)).multiply(rate);
-		BigDecimal total2=(futureCurrentBalance.subtract(futureLastBalance));		
-		return total1.subtract(total2);
-	}
 	
 	
 	

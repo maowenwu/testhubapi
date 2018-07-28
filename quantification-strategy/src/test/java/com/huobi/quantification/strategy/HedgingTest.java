@@ -1,8 +1,6 @@
 package com.huobi.quantification.strategy;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,103 +19,83 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
-import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto.DataBean;
+import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.strategy.hedging.AccountUtil;
 import com.huobi.quantification.strategy.hedging.MarketUtil;
+import com.huobi.quantification.strategy.hedging.StartHedging;
+import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 import com.huobi.quantification.strategy.order.OrderContext;
 import com.huobi.quantification.strategy.order.entity.FutureBalance;
 
 @SpringBootTest(classes = StrategyApplication.class)
 @RunWith(SpringRunner.class)
 public class HedgingTest {
-	
+
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	SpotOrderService spotOrderService;
-	
+
 	@Autowired
 	SpotAccountService spotAccountService;
-	
+
 	@Autowired
-	OrderContext  orderContext ;
-	
+	OrderContext orderContext;
+
 	@Autowired
 	FutureContractService futureContractService;
-	
+
 	@Autowired
 	AccountUtil accountUtil;
-	
-	@Autowired 
+
+	@Autowired
 	MarketUtil marketUtil;
-	
-	
 
+	@Autowired
+	StartHedging startHedging;
 
-	//1.撤掉币币账户所有未成交订单  根据交易对撤销
+	// 1.撤掉币币账户所有未成交订单 根据交易对撤销
 	@Test
 	public void test1() {
-		ServiceResult<Object>  result=spotOrderService.cancelOrder(4295363L, "btcusdt", null, null);
-		logger.info("取消订单返回的结果为：{}",JSON.toJSONString(result));
+		ServiceResult<Object> result = spotOrderService.cancelOrder(4295363L, "btcusdt", null, null);
+		logger.info("取消订单返回的结果为：{}", JSON.toJSONString(result));
 	}
-	
-	//2.计算当前的两个账户总的净头寸USDT
+
+	// 2.计算当前的两个账户总的净头寸USDT
 	@Test
 	public void test2() {
-		String coinType="usdt";
+		String coinType = "usdt";
 		SpotBalanceReqDto spotBalanceReqDto = new SpotBalanceReqDto();
 		spotBalanceReqDto.setAccountId(4295363L);
 		spotBalanceReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
 		spotBalanceReqDto.setMaxDelay(1000 * 60 * 60);
 		spotBalanceReqDto.setTimeout(1000 * 10);
-		BigDecimal spotCurrentUSDTBalance=accountUtil.getHuobiSpotCurrentBalance(spotBalanceReqDto, coinType).getAvailable();
-		logger.info("1.获取火币账户余额================================="+spotCurrentUSDTBalance);
-		
-		ServiceResult<BigDecimal> result=futureContractService.getExchangeRateOfUSDT2USD();
-		BigDecimal rateOfUSDT2USD =result.getData();
-		logger.info("2.USDT/USD的利率为：{}",result.getData());
-		if(null ==rateOfUSDT2USD) {//拿到的利率为空，不能进行下面操作
-			//return;
+		BigDecimal spotCurrentUSDTBalance = accountUtil.getHuobiSpotCurrentBalance(spotBalanceReqDto, coinType)
+				.getAvailable();
+		logger.info("1.获取火币账户余额=================================" + spotCurrentUSDTBalance);
+
+		ServiceResult<BigDecimal> result = futureContractService.getExchangeRateOfUSDT2USD();
+		BigDecimal rateOfUSDT2USD = result.getData();
+		logger.info("2.USDT/USD的利率为：{}", result.getData());
+		if (null == rateOfUSDT2USD) {// 拿到的利率为空，不能进行下面操作
+			// return;
 		}
-		
-		
-		FutureBalanceReqDto futureBalanceReqDto=new FutureBalanceReqDto();
+
+		FutureBalanceReqDto futureBalanceReqDto = new FutureBalanceReqDto();
 		futureBalanceReqDto.setAccountId(11111111111111L);
 		futureBalanceReqDto.setCoinType("usd");
 		futureBalanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
 		futureBalanceReqDto.setMaxDelay(100000l);
 		futureBalanceReqDto.setTimeout(100000l);
-		accountUtil.getOkFutureBalance(futureBalanceReqDto) ;
-		FutureBalance futureBalance=accountUtil.getOkFutureBalance(futureBalanceReqDto);
-		BigDecimal okFutureBalance=futureBalance.getMarginBalance();
-		logger.info("ok期货账户期末(即当前)余额USDT为：{}",okFutureBalance);
-		
-		
-		BigDecimal temp=new BigDecimal(0.001);
-		BigDecimal position=accountUtil.calPosition(temp, temp, temp, temp, temp);
-		int compareResutl=position.compareTo(new BigDecimal(0));
-		//-1, 0, or 1
-		if(-1==compareResutl) {
-			
-		}else {
-			
-		}
-		
-		
-		
-	}	
-	
-	
-	//在币币账户，对净头寸进行对冲   --下单
-	@Test
-	public void test3() {
+		accountUtil.getOkFutureBalance(futureBalanceReqDto);
+		FutureBalance futureBalance = accountUtil.getOkFutureBalance(futureBalanceReqDto);
+		BigDecimal okFutureBalance = futureBalance.getMarginBalance();
+		logger.info("ok期货账户期末(即当前)余额USDT为：{}", okFutureBalance);
+
 	}
-	
-	
-	
-	
-	
+
+
 	// 计算火币现货币币账户期末(即当前)余额USDT
 	private DataBean getHuobiSpotCurrentUSDTBalance(int exchangeId, long accountId, String coin) {
 		SpotBalanceReqDto spotBalanceReqDto = new SpotBalanceReqDto();
@@ -130,26 +108,21 @@ public class HedgingTest {
 		DataBean dataBean = result.getData().getData().get(coin);
 		return dataBean;
 	}
-	
-	
-	
-	//计算下单价格
+
+	// 计算下单价格
 	private void getPrice() {
 
 	}
-	
-	
-	//计算下单数量
+
+	// 计算下单数量
 	private void getAccount() {
 
 	}
-	
-	
-	
-	//获取买一卖一价格
+
+	// 获取买一卖一价格
 	@Test
 	public void getHuoBiSpotBuyOneSellOnePrice() {
-		SpotDepthReqDto spotDepthReqDto=new SpotDepthReqDto();
+		SpotDepthReqDto spotDepthReqDto = new SpotDepthReqDto();
 		spotDepthReqDto.setBaseCoin("btc");
 		spotDepthReqDto.setExchangeId(1);
 		spotDepthReqDto.setMaxDelay(10000L);
@@ -157,28 +130,33 @@ public class HedgingTest {
 		spotDepthReqDto.setTimeout(10000L);
 		marketUtil.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
 	}
-	
-	
-	//获取滑头
-	
-	
-	
-	//测试ok合约账户余额
+
+	// 获取滑头
+
+	// 测试ok合约账户余额
 	@Test
 	public void getOkFutureBalance() {
-		FutureBalanceReqDto futureBalanceReqDto=new FutureBalanceReqDto();
+		FutureBalanceReqDto futureBalanceReqDto = new FutureBalanceReqDto();
 		futureBalanceReqDto.setAccountId(2);
 		futureBalanceReqDto.setCoinType("btc");
 		futureBalanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
 		futureBalanceReqDto.setMaxDelay(100000l);
 		futureBalanceReqDto.setTimeout(100000l);
-		FutureBalance futureBalance=accountUtil.getOkFutureBalance(futureBalanceReqDto);
-		BigDecimal okFutureBalance=futureBalance.getMarginBalance();
-		logger.info("ok期货账户期末(即当前)余额USDT为：{}",okFutureBalance);
+		FutureBalance futureBalance = accountUtil.getOkFutureBalance(futureBalanceReqDto);
+		BigDecimal okFutureBalance = futureBalance.getMarginBalance();
+		logger.info("ok期货账户期末(即当前)余额USDT为：{}", okFutureBalance);
 	}
-	
-	
-	
-	
-	
+
+	@Test
+	public void start() {
+		StartHedgingParam startHedgingParam = new StartHedgingParam();
+		startHedgingParam.setBaseCoin("btc");
+		startHedgingParam.setFeeRate(new BigDecimal(0));
+		startHedgingParam.setQuoteCoin("usdt");
+		startHedgingParam.setSlippage(new BigDecimal(0));
+		startHedgingParam.setSpotAccountID(4295363L);
+		startHedgingParam.setSpotExchangeId(1);
+		startHedging.start(startHedgingParam);
+	}
+
 }
