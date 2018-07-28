@@ -13,13 +13,13 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountMapper;
-import com.huobi.quantification.dao.StrategyRiskManagementConfigMapper;
+import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto.DataBean;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
-import com.huobi.quantification.entity.StrategyRiskManagementConfig;
+import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.strategy.risk.entity.FutureBalance;
 import com.huobi.quantification.strategy.risk.entity.SpotBalance;
@@ -36,7 +36,7 @@ public class QuantificationRiskManager {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
-	private StrategyRiskManagementConfigMapper strategyRiskMapper;
+	private StrategyRiskConfigMapper strategyRiskMapper;
 	
 	@Autowired
 	private FutureAccountService futureAccountService;
@@ -76,7 +76,7 @@ public class QuantificationRiskManager {
 		DataBean dataBean = data2.get("btc");
 		BigDecimal marginRate = dataBean.getRiskRate();
 		//获取数据库的保证金率阈值A,B,C，并进行判断
-		StrategyRiskManagementConfig riskManage = strategyRiskMapper.selectByContractCode(contractCode);
+		StrategyRiskConfig riskManage = strategyRiskMapper.selectByContractCode(contractCode);
 		BigDecimal marginRateLimit1 = riskManage.getMarginRateA();
 		BigDecimal marginRateLimit2 = riskManage.getMarginRateB();
 		BigDecimal marginRateLimit3 = riskManage.getMarginRateC();
@@ -160,7 +160,7 @@ public class QuantificationRiskManager {
 		//计算盈利
 		BigDecimal OnceProfitLoss = simpleCountProfitAndLoss(startFuture, endFuture, startSpotCoin1, endSpotCoin1, startSpotCoin2, endSpotCoin2);
 		BigDecimal TotalProfitLoss = new BigDecimal("0.1");
-		StrategyRiskManagementConfig riskManage = strategyRiskMapper.selectByContractCode(contractCode);
+		StrategyRiskConfig riskManage = strategyRiskMapper.selectByContractCode(contractCode);
 		BigDecimal onceProfitLossA = riskManage.getOnceProfitLossA();
 		BigDecimal onceProfitLossB = riskManage.getOnceProfitLossB();
 		BigDecimal totalProfitLossA = riskManage.getTotalProfitLossA();
@@ -265,7 +265,7 @@ public class QuantificationRiskManager {
 		String contractCode = "";
 		BigDecimal position = getCurrentPosition(contractCode);
 		//获取数据库的净头寸阈值A,B
-		StrategyRiskManagementConfig riskMange = strategyRiskMapper.selectByContractCode(contractCode);
+		StrategyRiskConfig riskMange = strategyRiskMapper.selectByContractCode(contractCode);
 		BigDecimal positionA = riskMange.getPositionA();
 		BigDecimal positionB = riskMange.getPositionB();
 		if (position.compareTo(positionB) > 0) {

@@ -1,23 +1,21 @@
 package com.huobi.quantification.service.api;
 
-import com.huobi.quantification.enums.ExchangeEnum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.ServiceApplication;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dao.StrategyRiskManagementConfigMapper;
 import com.huobi.quantification.dto.SpotCurrentPriceReqDto;
 import com.huobi.quantification.dto.SpotCurrentPriceRespDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotDepthRespDto;
 import com.huobi.quantification.dto.SpotKlineReqDto;
 import com.huobi.quantification.dto.SpotKlineRespDto;
+import com.huobi.quantification.enums.ExchangeEnum;
 
 /**
  * 用于API现货接口功能调试
