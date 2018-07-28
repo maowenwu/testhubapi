@@ -26,6 +26,6 @@ public interface JobManageService {
 
 	ServiceResult addHuobiSpotKlineJob(String symbol, String klineType, int size, String cron, boolean enable);
 
-	ServiceResult addHuobiSpotOrderJob(String symbol, Long accountId, String cron, boolean enable);
+	ServiceResult addHuobiSpotOrderJob(String cron, boolean enable);
 
 }

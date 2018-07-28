@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.huobi.quantification.dao.StrategyRiskManagementConfigMapper">
-  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskManagementConfig">
+<mapper namespace="com.huobi.quantification.dao.StrategyRiskConfigMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskConfig">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="save_rate" jdbcType="DECIMAL" property="saveRate" />
     <result column="total_inventory_amount" jdbcType="INTEGER" property="totalInventoryAmount" />
@@ -21,11 +21,11 @@
     <result column="hedging_risk_management" jdbcType="INTEGER" property="hedgingRiskManagement" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from strategy_risk_management_config
+    delete from strategy_risk_config
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskManagementConfig">
-    insert into strategy_risk_management_config (id, save_rate, total_inventory_amount, 
+  <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+    insert into strategy_risk_config (id, save_rate, total_inventory_amount, 
       margin_rate_a, margin_rate_b, margin_rate_c, 
       position_a, position_b, once_profit_loss_a, 
       once_profit_loss_b, total_profit_loss_a, total_profit_loss_b, 
@@ -40,8 +40,8 @@
       #{orderRiskManagement,jdbcType=INTEGER}, #{hedgingRiskManagement,jdbcType=INTEGER}
       )
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyRiskManagementConfig">
-    update strategy_risk_management_config
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+    update strategy_risk_config
     set save_rate = #{saveRate,jdbcType=DECIMAL},
       total_inventory_amount = #{totalInventoryAmount,jdbcType=INTEGER},
       margin_rate_a = #{marginRateA,jdbcType=DECIMAL},
@@ -61,12 +61,12 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <update id="updateOrderRiskManagement">
-    update strategy_risk_management_config
+    update strategy_risk_config
     set order_risk_management = #{orderType,jdbcType=INTEGER}
     where contract_code = #{contractCode,jdbcType=INTEGER}
   </update>
   <update id="updateHedgingRiskManagement">
-    update strategy_risk_management_config
+    update strategy_risk_config
     set hedging_risk_management = #{hedgingType,jdbcType=INTEGER}
     where contract_code = #{contractCode,jdbcType=INTEGER}
   </update>
@@ -75,7 +75,7 @@
     position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 
     total_profit_loss_b, symbol, contract_type, contract_code, order_risk_management, 
     hedging_risk_management
-    from strategy_risk_management_config
+    from strategy_risk_config
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectByContractCode" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -83,7 +83,7 @@
     position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 
     total_profit_loss_b, symbol, contract_type, contract_code, order_risk_management, 
     hedging_risk_management
-    from strategy_risk_management_config
+    from strategy_risk_config
     where contract_code = #{contractCode,jdbcType=VARCHAR}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
@@ -91,6 +91,6 @@
     position_a, position_b, once_profit_loss_a, once_profit_loss_b, total_profit_loss_a, 
     total_profit_loss_b, symbol, contract_type, contract_code, order_risk_management, 
     hedging_risk_management
-    from strategy_risk_management_config
+    from strategy_risk_config
   </select>
 </mapper>

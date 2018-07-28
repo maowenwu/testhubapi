@@ -2,7 +2,7 @@ package com.huobi.quantification.entity;
 
 import java.math.BigDecimal;
 
-public class StrategyRiskManagementConfig {
+public class StrategyRiskConfig {
     /**
      * @mbg.generated 2018-07-26 17:39:17
      */

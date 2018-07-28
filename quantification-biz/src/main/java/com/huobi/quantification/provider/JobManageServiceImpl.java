@@ -336,16 +336,12 @@ public class JobManageServiceImpl implements JobManageService {
 	}
 
 	@Override
-	public ServiceResult addHuobiSpotOrderJob(String symbol, Long accountId, String cron, boolean enable) {
+	public ServiceResult addHuobiSpotOrderJob(String cron, boolean enable) {
 		JobReqDto jobReqDto = new JobReqDto();
 		jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
 		jobReqDto.setJobType(HuobiJobTypeEnum.Order.getJobType());
 		jobReqDto.setJobDesc(HuobiJobTypeEnum.Order.toString());
 		jobReqDto.setCron(cron);
-		JobParamDto jobParamDto = new JobParamDto();
-		jobParamDto.setAccountId(accountId);
-		jobParamDto.setSymbol(symbol);
-		jobReqDto.setJobParamDto(jobParamDto);
 		if (enable) {
 			jobReqDto.setState(1);
 		}else {
