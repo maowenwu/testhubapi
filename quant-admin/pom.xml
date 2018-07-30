@@ -44,6 +44,12 @@
 		<spring-session>1.2.0.RC2</spring-session>
 	</properties>
 	<dependencies>
+	<dependency>
+		<groupId>com.huobi.quantification</groupId>
+		<artifactId>quantification-dao</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	
 		<!-- spring-framework start -->
 		<dependency>
 		    <groupId>ch.qos.logback</groupId>
