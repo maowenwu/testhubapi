@@ -12,11 +12,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.StrategyApplication;
+import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
+import com.huobi.quantification.dto.FuturePositionReqDto;
+import com.huobi.quantification.dto.FuturePositionRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto.DataBean;
@@ -54,6 +58,11 @@ public class HedgingTest {
 
 	@Autowired
 	StartHedging startHedging;
+	@Autowired
+	FutureAccountService  futureAccountService;
+	
+	@Autowired
+	QuanAccountHistoryMapper quanAccountHistoryMapper;
 
 	// 1.撤掉币币账户所有未成交订单 根据交易对撤销
 	@Test
@@ -156,7 +165,28 @@ public class HedgingTest {
 		startHedgingParam.setSlippage(new BigDecimal(0));
 		startHedgingParam.setSpotAccountID(4295363L);
 		startHedgingParam.setSpotExchangeId(1);
-		startHedging.start(startHedgingParam);
+		startHedging.startNormal(startHedgingParam);
 	}
+	
+	@Test
+	public void getFutureBalance() {
+		FuturePositionReqDto balanceReqDto=new FuturePositionReqDto();
+		balanceReqDto.setExchangeId(2);
+		balanceReqDto.setAccountId(2);
+		//balanceReqDto.setCoinType(coinType);
+		balanceReqDto.setMaxDelay(100000l);
+		balanceReqDto.setTimeout(100000l);
+		ServiceResult<FuturePositionRespDto> result=futureAccountService.getPosition(balanceReqDto);
+		logger.info("获取账户余额(权益)"+JSON.toJSONString(result));
+	}
+	
+	
+	@Test
+	public void getAccountHistory() {
+		BigDecimal result=quanAccountHistoryMapper.getInitAmount(111L,1,"","btcusdt");
+		System.out.println("1========="+result);
+	}
+	
+	
 
 }

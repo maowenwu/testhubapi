@@ -42,7 +42,12 @@ public class StartHedging {
 	/*@Autowired
 	private StrategyRiskConfigMapper strategyRiskConfigMapper;*/
 
-	public void start(StartHedgingParam startHedgingParam) {
+	
+	/**
+	 * 周五下午2:00-3:00
+	 * @param startHedgingParam
+	 */
+	public void startNormal(StartHedgingParam startHedgingParam) {
 		try {
 			//0. 判断是否能够对冲
 			/*StrategyRiskConfig strategyRiskConfig=strategyRiskConfigMapper.selectByContractCode(startHedgingParam.getContractCode());
@@ -79,6 +84,11 @@ public class StartHedging {
 		} catch (Exception e) {
 			logger.error("对冲  {} 发生了异常： {}  ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(), e);
 		}
+	}
+	
+	
+	public void startSpecial(StartHedgingParam startHedgingParam) {
+		
 	}
 
 	/**
