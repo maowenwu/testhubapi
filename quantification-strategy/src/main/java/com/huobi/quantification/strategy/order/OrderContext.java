@@ -87,7 +87,7 @@ public class OrderContext {
         reqDto.setQuoteCoin(split[1]);
         reqDto.setTimeout(100);
         reqDto.setMaxDelay(3000);
-        ServiceResult<SpotDepthRespDto> result = spotMarketService.getSpotDepth(reqDto);
+        ServiceResult<SpotDepthRespDto> result = spotMarketService.getDepth(reqDto);
         if (result.isSuccess()) {
             SpotDepthRespDto.DataBean data = result.getData().getData();
             DepthBook depthBook = new DepthBook();
