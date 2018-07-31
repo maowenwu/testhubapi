@@ -181,11 +181,6 @@ public class HedgingTest {
 	}
 	
 	
-	@Test
-	public void getAccountHistory() {
-		BigDecimal result=quanAccountHistoryMapper.getInitAmount(111L,1,"","btcusdt");
-		System.out.println("1========="+result);
-	}
 	
 	
 

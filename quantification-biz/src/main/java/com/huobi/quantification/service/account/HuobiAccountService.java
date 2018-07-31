@@ -2,6 +2,7 @@ package com.huobi.quantification.service.account;
 
 import java.util.List;
 
+import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountSecret;
 
 /**
@@ -11,6 +12,8 @@ import com.huobi.quantification.entity.QuanAccountSecret;
 public interface HuobiAccountService {
 
 	public Object accounts(String accountId);
+	
+	public List<QuanAccountAsset> getAccount(Long accountId);
 
 	void updateAccount();
 

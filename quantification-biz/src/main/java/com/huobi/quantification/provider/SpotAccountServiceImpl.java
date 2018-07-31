@@ -22,6 +22,7 @@ import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.service.account.HuobiAccountService;
 import com.huobi.quantification.service.redis.RedisService;
 
 @Service
@@ -31,6 +32,9 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 
 	@Autowired
 	private RedisService redisService;
+	
+	@Autowired
+	private HuobiAccountService huobiAccountService;
 
 	@Override
 	public ServiceResult<SpotBalanceRespDto> getBalance(SpotBalanceReqDto balanceReqDto) {
@@ -92,6 +96,17 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 		respDto.setFrozen(quanAccountAsset.getFrozen());
 		respDto.setTotal(quanAccountAsset.getTotal());
 		return respDto;
+	}
+
+	@Override
+	public void saveFirstBalance(long accountId, String contractCode) {
+		List<QuanAccountAsset> account = huobiAccountService.getAccount(accountId);
+		redisService.saveFirstSpotAccounts(account, accountId, contractCode);
+	}
+
+	@Override
+	public List<QuanAccountAsset> getFirstBalance(long accountId, String contractCode) {
+		return redisService.getFirstSpotAccounts(accountId, contractCode);
 	}
 
 }

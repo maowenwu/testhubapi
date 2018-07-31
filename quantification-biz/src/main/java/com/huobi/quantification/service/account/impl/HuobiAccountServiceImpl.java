@@ -64,13 +64,7 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 		JSONObject jsonObject = JSON.parseObject(accountres);
 		String data = jsonObject.getString("data");
 		JSONObject temp = JSON.parseObject(data);
-//		QuanAccount quanAccount = new QuanAccount();
-//		quanAccount.setAccountSourceId(temp.getLong("id"));
-//		quanAccount.setAccountsType(temp.getString("type"));
-//		quanAccount.setExchangeId(ExchangeEnum.HUOBI.getExId());
-//		quanAccount.setState(temp.getString("state"));
 		JSONArray jsarr = temp.getJSONArray("list");
-//		quanAccountMapper.insert(quanAccount);
 		List<QuanAccountAsset> assets = new ArrayList<>();
 		for (int i = 0; i < jsarr.size(); i++) {
 			if (i % 2 == 0) {
@@ -125,5 +119,43 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 	public List<QuanAccountSecret> findAccountSecretById(Long accountId) {
 		List<QuanAccountSecret> secrets = quanAccountSecretMapper.selectByAccountId(accountId);
 		return secrets;
+	}
+
+	@Override
+	public List<QuanAccountAsset> getAccount(Long accountId) {
+		Map<String, String> params = new HashMap<>();
+		params.put("account-id", accountId + "");
+		String body = httpService.doHuobiGet(accountId,
+				HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
+		JSONObject jsonObject = JSON.parseObject(body);
+		String data = jsonObject.getString("data");
+		JSONObject temp = JSON.parseObject(data);
+		JSONArray jsarr = temp.getJSONArray("list");
+		List<QuanAccountAsset> assets = new ArrayList<>();
+		for (int i = 0; i < jsarr.size(); i++) {
+			if (i % 2 == 0) {
+				QuanAccountAsset tempAccount = new QuanAccountAsset();
+				tempAccount.setAccountId(temp.getLong("id"));
+				JSONObject json1 = jsarr.getJSONObject(i);
+				JSONObject json2 = jsarr.getJSONObject(i + 1);
+				if ("trade".equals(json1.getString("type"))) {
+					tempAccount.setAvailable(json1.getBigDecimal("balance"));
+				}
+				if ("frozen".equals(json2.getString("type"))) {
+					tempAccount.setFrozen(json2.getBigDecimal("balance"));
+				}
+				if (null == tempAccount.getAvailable() || null == tempAccount.getFrozen()) {
+					new RuntimeException("返回数据有误");
+				}
+				tempAccount.setCoin(json1.getString("currency"));
+				tempAccount.setDataUpdate(new Date());
+				tempAccount.setTs(new Date());
+				tempAccount.setTotal(tempAccount.getAvailable().add(tempAccount.getFrozen()));
+				quanAccountAssetMapper.insert(tempAccount);
+				assets.add(tempAccount);
+			}
+			continue;
+		}
+		return assets;
 	}
 }

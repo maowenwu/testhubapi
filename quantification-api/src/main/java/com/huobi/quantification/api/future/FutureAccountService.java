@@ -24,4 +24,9 @@ public interface FutureAccountService {
      * @return
      */
     ServiceResult<FuturePositionRespDto> getPosition(FuturePositionReqDto positionReqDto);
+    
+    void saveAccountsInfo(Long accountId, String contractCode);
+    
+    ServiceResult<FutureBalanceRespDto> getAccountsInfo(Long accountId, String contractCode);
+
 }

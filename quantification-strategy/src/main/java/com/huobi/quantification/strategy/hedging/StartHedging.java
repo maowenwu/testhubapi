@@ -15,11 +15,9 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
-import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
-import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.strategy.risk.enums.RiskHedgingTypeEnum;
+import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
 
 @Component
 public class StartHedging {
@@ -39,23 +37,30 @@ public class StartHedging {
 
 	@Autowired
 	MarketUtil marketUtil;
-	
-	/*@Autowired
-	private StrategyRiskConfigMapper strategyRiskConfigMapper;*/
+	@Autowired
+	OrderUtil orderUtil;
 
-	
+	@Autowired
+	StrategyRiskConfigMapper strategyRiskConfigMapper;
+
+	@Autowired
+	QuanAccountFuturePositionService quanAccountFuturePositionService;
+
 	/**
-	 * 周五下午2:00-3:00
+	 * 启动普通的对冲
 	 * @param startHedgingParam
 	 */
 	public void startNormal(StartHedgingParam startHedgingParam) {
 		try {
-			//0. 判断是否能够对冲
-			/*StrategyRiskConfig strategyRiskConfig=strategyRiskConfigMapper.selectByContractCode(startHedgingParam.getContractCode());
-			if(RiskHedgingTypeEnum.STOP_HADGING.getHadgingType()==strategyRiskConfig.getHedgingRiskManagement()) {
-				return;  //停止摆单
-			}*/
-			
+			// 0. 判断是否能够对冲
+			/*
+			 * StrategyRiskConfig
+			 * strategyRiskConfig=strategyRiskConfigMapper.selectByContractCode(
+			 * startHedgingParam.getContractCode());
+			 * if(RiskHedgingTypeEnum.STOP_HADGING.getHadgingType()==strategyRiskConfig.
+			 * getHedgingRiskManagement()) { return; //停止摆单 }
+			 */
+
 			// 1.撤掉币币账户所有未成交订单
 			logger.info("1.开始撤掉火币现货账户所有未成交订单");
 			ServiceResult<Object> result = spotOrderService.cancelOrder(startHedgingParam.getSpotAccountID(),
@@ -78,18 +83,17 @@ public class StartHedging {
 
 			// 4. 下单
 			logger.info("4.开始下对冲单");
-			ServiceResult<SpotPlaceOrderRespDto> placeResult = placeHuobiSpotOrder(priceMap, startHedgingParam,
-					positionUSDT);
+			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderUtil.placeHuobiSpotOrder(priceMap,
+					startHedgingParam, positionUSDT);
 			logger.info("4.下对冲单结果为： {}  ", JSON.toJSONString(placeResult));
 
 		} catch (Exception e) {
 			logger.error("对冲  {} 发生了异常： {}  ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(), e);
 		}
 	}
-	
-	
+
 	public void startSpecial(StartHedgingParam startHedgingParam) {
-		
+
 	}
 
 	/**
@@ -111,8 +115,18 @@ public class StartHedging {
 				.getHuobiSpotCurrentBalance(spotBalanceReqDto, startHedgingParam.getQuoteCoin());
 		BigDecimal spotUSDTBalance = spotDataBean.getAvailable();
 
+		// 获取火币现货账户期初USDT余额
+		BigDecimal spotUSDTInitAmount = quanAccountFuturePositionService.getInitAmount(
+				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "spot", "usdt");
+		spotUSDTBalance = spotUSDTBalance.subtract(spotUSDTInitAmount);
+
 		// 2.2 获取火币期货账户期末USD余额 ===========暂时没有接口
 		BigDecimal futureUSDBalance = spotDataBean.getAvailable();
+
+		// 获取火币期货账户期初USD余额
+		BigDecimal futureUSDInitAmount = quanAccountFuturePositionService.getInitAmount(
+				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "future", "usd");
+		futureUSDBalance = futureUSDBalance.subtract(futureUSDInitAmount);
 
 		// 2.3 获取USDT USD的汇率
 		ServiceResult<BigDecimal> rateResult = futureContractService.getExchangeRateOfUSDT2USD();
@@ -121,58 +135,10 @@ public class StartHedging {
 
 		// 2.4 计算净头寸
 		BigDecimal total1 = (spotUSDTBalance.subtract(new BigDecimal(0)));
-		BigDecimal total2 = (futureUSDBalance.subtract(new BigDecimal(0))).divide(rateOfUSDT2USD,8, BigDecimal.ROUND_HALF_DOWN);
-		//暂时只买一半
+		BigDecimal total2 = (futureUSDBalance.subtract(new BigDecimal(0))).divide(rateOfUSDT2USD, 8,
+				BigDecimal.ROUND_HALF_DOWN);
+		// 暂时只买一半
 		return total1.divide(new BigDecimal(2));
-	}
-
-	/**
-	 * 下单
-	 * 
-	 * @param priceMap          下单价格
-	 * @param comparePosition   -1 卖 1买
-	 * @param startHedgingParam
-	 * @param position          寸头
-	 * @return
-	 */
-	private ServiceResult<SpotPlaceOrderRespDto> placeHuobiSpotOrder(Map<String, BigDecimal> priceMap,
-			StartHedgingParam startHedgingParam, BigDecimal position) {
-
-		// -1, 0, or 1 判断买卖方向 --根据positionUSDT净头寸判断
-		int comparePosition = position.compareTo(new BigDecimal(0));
-		ServiceResult<SpotPlaceOrderRespDto> serviceResult = new ServiceResult<SpotPlaceOrderRespDto>();
-		// 封装下单参数
-		SpotPlaceOrderReqDto spotPlaceOrderReqDto = new SpotPlaceOrderReqDto();
-		BigDecimal quantity = new BigDecimal(0.00);// 数量
-		BigDecimal price = new BigDecimal(0.00); // 下单价格
-		String side = "";// 买卖方向
-		String orderType = "";// 买卖方式
-		if (comparePosition == -1) {// USDT不够,需要下卖单，卖出对应的币种
-			side = "sell";
-			orderType = "limit";
-			price = priceMap.get("sellPrice")
-					.multiply((new BigDecimal(1).add(startHedgingParam.getSlippage())));
-			quantity = position.divide(price,4, BigDecimal.ROUND_HALF_DOWN);
-		} else if (comparePosition == 1) {// USDT足够,需要下买单，买入对应的币种
-			side = "buy";
-			orderType = "limit";
-			price = priceMap.get("buyPrice")
-					.multiply((new BigDecimal(1).subtract(startHedgingParam.getSlippage())));
-			quantity = position.divide(price,8, BigDecimal.ROUND_HALF_DOWN).divide((new BigDecimal(1).subtract(startHedgingParam.getFeeRate())),4, BigDecimal.ROUND_HALF_DOWN);
-		}
-
-		spotPlaceOrderReqDto.setAccountId(startHedgingParam.getSpotAccountID());
-		spotPlaceOrderReqDto.setExchangeId(startHedgingParam.getSpotExchangeId());
-		spotPlaceOrderReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
-		spotPlaceOrderReqDto.setQuoteCoin(startHedgingParam.getQuoteCoin());
-		spotPlaceOrderReqDto.setPrice(price.divide(new BigDecimal(1),2,BigDecimal.ROUND_HALF_DOWN));
-		spotPlaceOrderReqDto.setQuantity(quantity);
-		spotPlaceOrderReqDto.setSide(side);
-		spotPlaceOrderReqDto.setOrderType(orderType);
-		logger.info("对冲下单请求参数为：  {} ",JSON.toJSONString(spotPlaceOrderReqDto));
-		serviceResult = spotOrderService.placeOrder(spotPlaceOrderReqDto);
-		return serviceResult;
-
 	}
 
 }
