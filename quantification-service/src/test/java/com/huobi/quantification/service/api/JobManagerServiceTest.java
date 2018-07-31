@@ -26,7 +26,7 @@ public class JobManagerServiceTest {
 //		jobManageService.addHuobiSpotDepthJob("ethusdt", "step1", "0/1 * * * * ?", true);
 //		jobManageService.addHuobiSpotCurrentPriceJob("ethusdt", "0/1 * * * * ?", true);
 //		jobManageService.addHuobiSpotKlineJob("ethusdt", "1day", 200, "0/1 * * * * ?", true);
-		jobManageService.addHuobiSpotOrderJob("0/1 * * * * ?", true);
+		//jobManageService.addHuobiSpotOrderJob("0/1 * * * * ?", true);
 //		jobManageService.addHuobiSpotAccountJob(4232061L, "0/1 * * * * ?", true);
 	}
 }

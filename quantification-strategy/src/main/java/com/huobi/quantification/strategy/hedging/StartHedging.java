@@ -24,6 +24,7 @@ import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositi
 public class StartHedging {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Autowired
 	SpotOrderService spotOrderService;
 	@Autowired

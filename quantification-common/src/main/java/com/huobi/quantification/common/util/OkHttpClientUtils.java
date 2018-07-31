@@ -103,7 +103,7 @@ public class OkHttpClientUtils {
             if (e instanceof SocketTimeoutException) {
                 numRequestFaild.getAndIncrement();
             }
-            throw new HttpRequestException("http执行异常", e);
+            throw new HttpRequestException("http执行异常，url=" + url, e);
         }
         if (response.isSuccessful()) {
             try {
