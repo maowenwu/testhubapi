@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging;
+package com.huobi.quantification.strategy.hedging.service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import com.huobi.quantification.dto.SpotDepthRespDto;
 import com.huobi.quantification.enums.ExchangeEnum;
 
 @Component
-public class MarketUtil {
+public class MarketService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired

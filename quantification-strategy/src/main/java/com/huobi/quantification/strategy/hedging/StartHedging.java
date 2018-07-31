@@ -13,10 +13,11 @@ import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
-import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
-import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.strategy.hedging.service.AccountService;
+import com.huobi.quantification.strategy.hedging.service.MarketService;
+import com.huobi.quantification.strategy.hedging.service.OrderService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
 
 @Component
@@ -26,18 +27,16 @@ public class StartHedging {
 	@Autowired
 	SpotOrderService spotOrderService;
 	@Autowired
-	AccountUtil accountUtil;
+	AccountService accountService;
 
-	@Autowired
-	CommonUtil commonUtil;
 
 	@Autowired
 	FutureContractService futureContractService;
 
 	@Autowired
-	MarketUtil marketUtil;
+	MarketService  marketService;
 	@Autowired
-	OrderUtil orderUtil;
+	OrderService orderService;
 
 	@Autowired
 	StrategyRiskConfigMapper strategyRiskConfigMapper;
@@ -47,6 +46,7 @@ public class StartHedging {
 
 	/**
 	 * 启动普通的对冲
+	 * 
 	 * @param startHedgingParam
 	 */
 	public void startNormal(StartHedgingParam startHedgingParam) {
@@ -76,13 +76,13 @@ public class StartHedging {
 			SpotDepthReqDto spotDepthReqDto = new SpotDepthReqDto();
 			spotDepthReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
 			spotDepthReqDto.setQuoteCoin(startHedgingParam.getQuoteCoin());
-			Map<String, BigDecimal> priceMap = marketUtil.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
+			Map<String, BigDecimal> priceMap = marketService.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
 			logger.info("3. 交易对  {} 买一卖一价格为： {} ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(),
 					JSON.toJSONString(priceMap));
 
 			// 4. 下单
 			logger.info("4.开始下对冲单");
-			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderUtil.placeHuobiSpotOrder(priceMap,
+			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderService.placeHuobiSpotOrder(priceMap,
 					startHedgingParam, positionUSDT);
 			logger.info("4.下对冲单结果为： {}  ", JSON.toJSONString(placeResult));
 
@@ -96,48 +96,41 @@ public class StartHedging {
 	}
 
 	/**
-	 * 计算USDT寸头
+	 * 计算当前的两个账户总的净头寸USDT
 	 * 
 	 * @param startHedgingParam
 	 * @return
 	 */
 	public BigDecimal calUSDTPosition(StartHedgingParam startHedgingParam) {
-		// 2.计算当前的两个账户总的净头寸USDT
 
 		// 2.1 获取火币现货账户期末USDT余额
-		SpotBalanceReqDto spotBalanceReqDto = new SpotBalanceReqDto();
-		spotBalanceReqDto.setAccountId(startHedgingParam.getSpotAccountID());
-		spotBalanceReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		spotBalanceReqDto.setMaxDelay(1000 * 60 * 60);
-		spotBalanceReqDto.setTimeout(1000 * 10);
-		com.huobi.quantification.dto.SpotBalanceRespDto.DataBean spotDataBean = accountUtil
-				.getHuobiSpotCurrentBalance(spotBalanceReqDto, startHedgingParam.getQuoteCoin());
-		BigDecimal spotUSDTBalance = spotDataBean.getAvailable();
-
-		// 获取火币现货账户期初USDT余额
+		BigDecimal spotUSDTBalance = accountService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
+				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin()).getAvailable();
+		// 2.2获取火币现货账户期初USDT余额
 		BigDecimal spotUSDTInitAmount = quanAccountFuturePositionService.getInitAmount(
 				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "spot", "usdt");
-		spotUSDTBalance = spotUSDTBalance.subtract(spotUSDTInitAmount);
-
-		// 2.2 获取火币期货账户期末USD余额 ===========暂时没有接口
-		BigDecimal futureUSDBalance = spotDataBean.getAvailable();
-
-		// 获取火币期货账户期初USD余额
+		
+		
+		// 2.3 获取火币期货账户期末USD余额 
+		BigDecimal futureUSDBalance = accountService.getHuobiFutureBalance(startHedgingParam.getFutureAccountID(),
+				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode()).getMarginAvailable();
+		// 2.4 获取火币期货账户期初USD余额
 		BigDecimal futureUSDInitAmount = quanAccountFuturePositionService.getInitAmount(
 				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "future", "usd");
-		futureUSDBalance = futureUSDBalance.subtract(futureUSDInitAmount);
+		
 
-		// 2.3 获取USDT USD的汇率
+		// 2.5 获取USDT USD的汇率
 		ServiceResult<BigDecimal> rateResult = futureContractService.getExchangeRateOfUSDT2USD();
 		BigDecimal rateOfUSDT2USD = rateResult.getData();
 		logger.info("2.3 USDT/USD的利率为：{}", rateResult.getData());
 
-		// 2.4 计算净头寸
-		BigDecimal total1 = (spotUSDTBalance.subtract(new BigDecimal(0)));
-		BigDecimal total2 = (futureUSDBalance.subtract(new BigDecimal(0))).divide(rateOfUSDT2USD, 8,
+		// 2.6 计算净头寸
+		BigDecimal spotTotal = spotUSDTBalance = spotUSDTBalance.subtract(spotUSDTInitAmount);
+		BigDecimal furureTotal = (futureUSDBalance = futureUSDBalance.subtract(futureUSDInitAmount)).divide(rateOfUSDT2USD, 8,
 				BigDecimal.ROUND_HALF_DOWN);
+		BigDecimal total=spotTotal.subtract(furureTotal);
 		// 暂时只买一半
-		return total1.divide(new BigDecimal(2));
+		return total.divide(new BigDecimal(2));
 	}
 
 }

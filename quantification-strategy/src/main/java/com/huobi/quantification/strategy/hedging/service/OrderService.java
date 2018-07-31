@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging;
+package com.huobi.quantification.strategy.hedging.service;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -13,9 +13,10 @@ import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
+import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 
 @Component
-public class OrderUtil {
+public class OrderService {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	SpotOrderService spotOrderService;
