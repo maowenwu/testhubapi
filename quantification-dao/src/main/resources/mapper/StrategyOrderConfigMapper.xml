@@ -14,10 +14,19 @@
     <result column="bids_max_amount" jdbcType="INTEGER" property="bidsMaxAmount" />
     <result column="asks_basis_price" jdbcType="DECIMAL" property="asksBasisPrice" />
     <result column="bids_basis_price" jdbcType="DECIMAL" property="bidsBasisPrice" />
+    <result column="long_max_amount" jdbcType="DECIMAL" property="longMaxAmount" />
+    <result column="short_max_amount" jdbcType="DECIMAL" property="shortMaxAmount" />
+    <result column="max_position_amount" jdbcType="DECIMAL" property="maxPositionAmount" />
+    <result column="min_position_amount" jdbcType="DECIMAL" property="minPositionAmount" />
+    <result column="contract_margin_reserve" jdbcType="DECIMAL" property="contractMarginReserve" />
+    <result column="spot_coin_reserve" jdbcType="DECIMAL" property="spotCoinReserve" />
+    <result column="spot_balance_reserve" jdbcType="DECIMAL" property="spotBalanceReserve" />
   </resultMap>
   <sql id="Base_Column_List">
     id, symbol, contract_type, contract_fee, spot_fee, delivery_fee, expect_yields, price_step, 
-    asks_max_amount, bids_max_amount, asks_basis_price, bids_basis_price
+    asks_max_amount, bids_max_amount, asks_basis_price, bids_basis_price, long_max_amount, 
+    short_max_amount, max_position_amount, min_position_amount, contract_margin_reserve, 
+    spot_coin_reserve, spot_balance_reserve
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -33,13 +42,17 @@
     insert into strategy_order_config (id, symbol, contract_type, 
       contract_fee, spot_fee, delivery_fee, 
       expect_yields, price_step, asks_max_amount, 
-      bids_max_amount, asks_basis_price, bids_basis_price
-      )
+      bids_max_amount, asks_basis_price, bids_basis_price, 
+      long_max_amount, short_max_amount, max_position_amount, 
+      min_position_amount, contract_margin_reserve, 
+      spot_coin_reserve, spot_balance_reserve)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, 
       #{contractFee,jdbcType=DECIMAL}, #{spotFee,jdbcType=DECIMAL}, #{deliveryFee,jdbcType=DECIMAL}, 
       #{expectYields,jdbcType=DECIMAL}, #{priceStep,jdbcType=DECIMAL}, #{asksMaxAmount,jdbcType=INTEGER}, 
-      #{bidsMaxAmount,jdbcType=INTEGER}, #{asksBasisPrice,jdbcType=DECIMAL}, #{bidsBasisPrice,jdbcType=DECIMAL}
-      )
+      #{bidsMaxAmount,jdbcType=INTEGER}, #{asksBasisPrice,jdbcType=DECIMAL}, #{bidsBasisPrice,jdbcType=DECIMAL}, 
+      #{longMaxAmount,jdbcType=DECIMAL}, #{shortMaxAmount,jdbcType=DECIMAL}, #{maxPositionAmount,jdbcType=DECIMAL}, 
+      #{minPositionAmount,jdbcType=DECIMAL}, #{contractMarginReserve,jdbcType=DECIMAL}, 
+      #{spotCoinReserve,jdbcType=DECIMAL}, #{spotBalanceReserve,jdbcType=DECIMAL})
   </insert>
   <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
     insert into strategy_order_config
@@ -80,6 +93,27 @@
       <if test="bidsBasisPrice != null">
         bids_basis_price,
       </if>
+      <if test="longMaxAmount != null">
+        long_max_amount,
+      </if>
+      <if test="shortMaxAmount != null">
+        short_max_amount,
+      </if>
+      <if test="maxPositionAmount != null">
+        max_position_amount,
+      </if>
+      <if test="minPositionAmount != null">
+        min_position_amount,
+      </if>
+      <if test="contractMarginReserve != null">
+        contract_margin_reserve,
+      </if>
+      <if test="spotCoinReserve != null">
+        spot_coin_reserve,
+      </if>
+      <if test="spotBalanceReserve != null">
+        spot_balance_reserve,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -117,6 +151,27 @@
       </if>
       <if test="bidsBasisPrice != null">
         #{bidsBasisPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="longMaxAmount != null">
+        #{longMaxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="shortMaxAmount != null">
+        #{shortMaxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxPositionAmount != null">
+        #{maxPositionAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="minPositionAmount != null">
+        #{minPositionAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="contractMarginReserve != null">
+        #{contractMarginReserve,jdbcType=DECIMAL},
+      </if>
+      <if test="spotCoinReserve != null">
+        #{spotCoinReserve,jdbcType=DECIMAL},
+      </if>
+      <if test="spotBalanceReserve != null">
+        #{spotBalanceReserve,jdbcType=DECIMAL},
       </if>
     </trim>
   </insert>
@@ -156,6 +211,27 @@
       <if test="bidsBasisPrice != null">
         bids_basis_price = #{bidsBasisPrice,jdbcType=DECIMAL},
       </if>
+      <if test="longMaxAmount != null">
+        long_max_amount = #{longMaxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="shortMaxAmount != null">
+        short_max_amount = #{shortMaxAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="maxPositionAmount != null">
+        max_position_amount = #{maxPositionAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="minPositionAmount != null">
+        min_position_amount = #{minPositionAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="contractMarginReserve != null">
+        contract_margin_reserve = #{contractMarginReserve,jdbcType=DECIMAL},
+      </if>
+      <if test="spotCoinReserve != null">
+        spot_coin_reserve = #{spotCoinReserve,jdbcType=DECIMAL},
+      </if>
+      <if test="spotBalanceReserve != null">
+        spot_balance_reserve = #{spotBalanceReserve,jdbcType=DECIMAL},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -171,7 +247,14 @@
       asks_max_amount = #{asksMaxAmount,jdbcType=INTEGER},
       bids_max_amount = #{bidsMaxAmount,jdbcType=INTEGER},
       asks_basis_price = #{asksBasisPrice,jdbcType=DECIMAL},
-      bids_basis_price = #{bidsBasisPrice,jdbcType=DECIMAL}
+      bids_basis_price = #{bidsBasisPrice,jdbcType=DECIMAL},
+      long_max_amount = #{longMaxAmount,jdbcType=DECIMAL},
+      short_max_amount = #{shortMaxAmount,jdbcType=DECIMAL},
+      max_position_amount = #{maxPositionAmount,jdbcType=DECIMAL},
+      min_position_amount = #{minPositionAmount,jdbcType=DECIMAL},
+      contract_margin_reserve = #{contractMarginReserve,jdbcType=DECIMAL},
+      spot_coin_reserve = #{spotCoinReserve,jdbcType=DECIMAL},
+      spot_balance_reserve = #{spotBalanceReserve,jdbcType=DECIMAL}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

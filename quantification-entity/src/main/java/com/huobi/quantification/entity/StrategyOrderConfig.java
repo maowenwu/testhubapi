@@ -4,64 +4,106 @@ import java.math.BigDecimal;
 
 public class StrategyOrderConfig {
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private String contractType;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal contractFee;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal spotFee;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal deliveryFee;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal expectYields;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal priceStep;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private Integer asksMaxAmount;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private Integer bidsMaxAmount;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal asksBasisPrice;
 
     /**
-     * @mbg.generated 2018-07-26 13:12:25
+     * @mbg.generated 2018-07-30 19:46:41
      */
     private BigDecimal bidsBasisPrice;
+
+    /**
+     * 多仓数量最大限制（包括持仓和未成交的开仓单）
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal longMaxAmount;
+
+    /**
+     * 空仓数量最大限制（包括持仓和未成交的开仓单）
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal shortMaxAmount;
+
+    /**
+     * 最大持仓量（用于控制开平方向）
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal maxPositionAmount;
+
+    /**
+     * 最小持仓量（用于控制开平方向）
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal minPositionAmount;
+
+    /**
+     * 合约账户保留保证金
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal contractMarginReserve;
+
+    /**
+     * 币币账户保留币量
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal spotCoinReserve;
+
+    /**
+     * 币币账户保留资金
+     * @mbg.generated 2018-07-30 19:46:41
+     */
+    private BigDecimal spotBalanceReserve;
 
     public Integer getId() {
         return id;
@@ -157,5 +199,61 @@ public class StrategyOrderConfig {
 
     public void setBidsBasisPrice(BigDecimal bidsBasisPrice) {
         this.bidsBasisPrice = bidsBasisPrice;
+    }
+
+    public BigDecimal getLongMaxAmount() {
+        return longMaxAmount;
+    }
+
+    public void setLongMaxAmount(BigDecimal longMaxAmount) {
+        this.longMaxAmount = longMaxAmount;
+    }
+
+    public BigDecimal getShortMaxAmount() {
+        return shortMaxAmount;
+    }
+
+    public void setShortMaxAmount(BigDecimal shortMaxAmount) {
+        this.shortMaxAmount = shortMaxAmount;
+    }
+
+    public BigDecimal getMaxPositionAmount() {
+        return maxPositionAmount;
+    }
+
+    public void setMaxPositionAmount(BigDecimal maxPositionAmount) {
+        this.maxPositionAmount = maxPositionAmount;
+    }
+
+    public BigDecimal getMinPositionAmount() {
+        return minPositionAmount;
+    }
+
+    public void setMinPositionAmount(BigDecimal minPositionAmount) {
+        this.minPositionAmount = minPositionAmount;
+    }
+
+    public BigDecimal getContractMarginReserve() {
+        return contractMarginReserve;
+    }
+
+    public void setContractMarginReserve(BigDecimal contractMarginReserve) {
+        this.contractMarginReserve = contractMarginReserve;
+    }
+
+    public BigDecimal getSpotCoinReserve() {
+        return spotCoinReserve;
+    }
+
+    public void setSpotCoinReserve(BigDecimal spotCoinReserve) {
+        this.spotCoinReserve = spotCoinReserve;
+    }
+
+    public BigDecimal getSpotBalanceReserve() {
+        return spotBalanceReserve;
+    }
+
+    public void setSpotBalanceReserve(BigDecimal spotBalanceReserve) {
+        this.spotBalanceReserve = spotBalanceReserve;
     }
 }

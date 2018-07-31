@@ -108,12 +108,15 @@ public class FutureAccountServiceImpl implements FutureAccountService {
 
     private FutureBalanceRespDto.DataBean convertToDto(HuobiFutureUserInfoResponse.DataBean dataBean) {
         FutureBalanceRespDto.DataBean respDto = new FutureBalanceRespDto.DataBean();
+
         respDto.setMarginBalance(dataBean.getMarginBalance());
+        // 持仓保证金
+        respDto.setMarginPosition(dataBean.getMarginPosition());
+        respDto.setMarginFrozen(dataBean.getMarginFrozen());
+        respDto.setMarginAvailable(dataBean.getMarginAvailable());
         respDto.setProfitReal(dataBean.getProfitReal());
         respDto.setProfitUnreal(dataBean.getProfitUnreal());
         respDto.setRiskRate(dataBean.getRiskRate());
-        // 持仓保证金
-        respDto.setMarginPosition(dataBean.getMarginPosition());
         return respDto;
     }
 
@@ -210,16 +213,26 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         response.getData().forEach((e) -> {
             FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
             dataBean.setContractCode(e.getContractCode());
-            dataBean.setBaseCoin(null);
+            dataBean.setBaseCoin(e.getSymbol());
             dataBean.setQuoteCoin(null);
             dataBean.setContractType(e.getContractType());
-            dataBean.setLongAmount(e.getVolume());
-            dataBean.setLongAvailable(e.getAvailable());
-            // 多仓冻结张数
-            dataBean.setLongFrozen(e.getFrozen());
-            dataBean.setLongCostOpen(e.getCostOpen());
-            // 多仓持仓均价
-            dataBean.setLongCostHold(e.getCostHold());
+            if ("buy".equalsIgnoreCase(e.getDirection())) {
+                dataBean.setLongAmount(e.getVolume());
+                dataBean.setLongAvailable(e.getAvailable());
+                // 多仓冻结张数
+                dataBean.setLongFrozen(e.getFrozen());
+                dataBean.setLongCostOpen(e.getCostOpen());
+                // 多仓持仓均价
+                dataBean.setLongCostHold(e.getCostHold());
+            } else {
+                dataBean.setShortAmount(e.getVolume());
+                dataBean.setShortAvailable(e.getAvailable());
+                // 多仓冻结张数
+                dataBean.setShortFrozen((e.getFrozen()));
+                dataBean.setShortCostOpen(e.getCostOpen());
+                // 多仓持仓均价
+                dataBean.setShortCostHold(e.getCostHold());
+            }
             dataBean.setLeverRate(e.getLeverRate());
             beanList.add(dataBean);
         });
@@ -284,6 +297,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         dataBean.setLeverRate(e.getLeverRate());
         return dataBean;
     }
+
     // 获取空仓持仓
     private FuturePositionRespDto.DataBean getShortPosition(OKFuturePositionResponse.HoldingBean e) {
         FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();

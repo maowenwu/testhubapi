@@ -1,11 +1,12 @@
 package com.huobi.quantification.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class FuturePriceOrderRespDto {
+public class FuturePriceOrderRespDto implements Serializable {
 
     private Map<BigDecimal, List<DataBean>> priceOrderMap;
 
@@ -17,7 +18,7 @@ public class FuturePriceOrderRespDto {
         this.priceOrderMap = priceOrderMap;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Serializable{
         private Long innerOrderId;
         private Long exOrderId;
         private Long linkOrderId;

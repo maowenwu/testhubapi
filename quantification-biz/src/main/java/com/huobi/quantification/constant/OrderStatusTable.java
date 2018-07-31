@@ -44,4 +44,25 @@ public class OrderStatusTable {
             return map.get(orderStatus);
         }
     }
+
+    public static class HuobiFutureOrderStatus {
+
+        //(1准备提交 2撤单中 3未成交 4部分成交 5部分成交已撤单 6全部成交 7已撤单 )
+        private static Map<Integer, OrderStatusEnum> map = new HashMap<>();
+
+        static {
+            map.put(1, OrderStatusEnum.SUBMITTED);
+            map.put(3, OrderStatusEnum.SUBMITTED);
+            map.put(2, OrderStatusEnum.CANCELING);
+            map.put(4, OrderStatusEnum.PARTIAL_FILLED);
+            map.put(6, OrderStatusEnum.FILLED);
+            map.put(7, OrderStatusEnum.CANCELED);
+            map.put(5, OrderStatusEnum.PARTIAL_CANCELED);
+        }
+
+        public static OrderStatusEnum getOrderStatus(Integer orderStatus) {
+            return map.get(orderStatus);
+        }
+    }
+
 }

@@ -151,12 +151,12 @@ public class TestController {
     @RequestMapping("/testGetBalance")
     public String testGetBalance() {
         FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
-        reqDto.setExchangeId(2);
-        reqDto.setAccountId(1L);
+        reqDto.setExchangeId(0);
+        reqDto.setAccountId(101L);
 
         reqDto.setCoinType("btc");
         reqDto.setTimeout(100);
-        reqDto.setMaxDelay(3);
+        reqDto.setMaxDelay(3000);
 
         ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(reqDto);
         System.out.println(balance);
@@ -167,10 +167,10 @@ public class TestController {
     @RequestMapping("/testGetPosition")
     public String testGetPosition() {
         FuturePositionReqDto reqDto = new FuturePositionReqDto();
-        reqDto.setExchangeId(2);
-        reqDto.setAccountId(1L);
+        reqDto.setExchangeId(0);
+        reqDto.setAccountId(101L);
 
-        reqDto.setCoinType("ltc");
+        reqDto.setCoinType("btc");
         reqDto.setTimeout(100);
         reqDto.setMaxDelay(3);
 

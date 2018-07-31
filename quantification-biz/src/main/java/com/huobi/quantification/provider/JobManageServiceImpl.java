@@ -29,24 +29,19 @@ public class JobManageServiceImpl implements JobManageService {
 
     @Autowired
     private QuanJobFutureMapper quanJobFutureMapper;
-
     @Autowired
     private QuanJobMapper quanJobMapper;
 
+
     public ServiceResult addFutureJob(FutureJobReqDto jobReqDto) {
-        ServiceResult result = new ServiceResult();
         try {
             updateJobFuture(jobReqDto.getExchangeId(), jobReqDto.getJobType(),
                     jobReqDto.getJobParamDto(), jobReqDto.getJobDesc(), jobReqDto.getCron(), jobReqDto.getState());
         } catch (Exception e) {
             logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-            result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
-            result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
-            return result;
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.JOB_START_ERROR);
         }
-        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-        return result;
+        return ServiceResult.buildSuccessResult(null);
     }
 
     private void updateJobFuture(int exchangeId, int jobType, JobParamDto jobParamDto, String jobDesc, String cron, int state) {
@@ -64,7 +59,18 @@ public class JobManageServiceImpl implements JobManageService {
         quanJobFutureMapper.insertOrUpdate(jobFuture);
     }
 
-    private void updateJob(int exchangeId, int jobType,String jobDesc, JobParamDto jobParamDto, String cron, int state) {
+    public ServiceResult addSpotJob(JobReqDto jobReqDto) {
+        try {
+            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobDesc(), jobReqDto.getJobParamDto(),
+                    jobReqDto.getCron(), jobReqDto.getState());
+        } catch (Exception e) {
+            logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.JOB_START_ERROR);
+        }
+        return ServiceResult.buildSuccessResult(null);
+    }
+
+    private void updateJob(int exchangeId, int jobType, String jobDesc, JobParamDto jobParamDto, String cron, int state) {
         QuanJob quanJob = new QuanJob();
         quanJob.setExchangeId(exchangeId);
         quanJob.setJobType(jobType);
@@ -86,23 +92,6 @@ public class JobManageServiceImpl implements JobManageService {
             buffer.append(JSON.toJSON(jobParamDto));
         }
         return buffer.toString();
-    }
-
-
-    public ServiceResult addSpotJob(JobReqDto jobReqDto) {
-        ServiceResult result = new ServiceResult();
-        try {
-            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobDesc(), jobReqDto.getJobParamDto(),
-                    jobReqDto.getCron(), 1);
-        } catch (Exception e) {
-            logger.error("启动任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-            result.setCode(ServiceErrorEnum.JOB_START_ERROR.getCode());
-            result.setMessage(ServiceErrorEnum.JOB_START_ERROR.getMessage());
-            return result;
-        }
-        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-        return result;
     }
 
     @Override
@@ -244,109 +233,135 @@ public class JobManageServiceImpl implements JobManageService {
         return addFutureJob(jobReqDto);
     }
 
-//    public ServiceResult stopSpotJob(JobReqDto jobReqDto) {
-//        ServiceResult result = new ServiceResult();
-//        try {
-//            updateJob(jobReqDto.getExchangeId(), jobReqDto.getJobType(), jobReqDto.getJobParamDto(),
-//                    jobReqDto.getCron(), 0);
-//        } catch (Exception e) {
-//            logger.error("停止任务异常exchangeId={}，jobType={}", jobReqDto.getExchangeId(), jobReqDto.getJobType(), e);
-//            result.setCode(ServiceErrorEnum.JOB_STOP_ERROR.getCode());
-//            result.setMessage(ServiceErrorEnum.JOB_STOP_ERROR.getMessage());
-//            return result;
-//        }
-//        result.setCode(ServiceErrorEnum.SUCCESS.getCode());
-//        result.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
-//        return result;
-//    }
+    @Override
+    public ServiceResult addHuobiSpotAccountJob(Long accountId, String cron, boolean enable) {
+        JobReqDto jobReqDto = new JobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.Account.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.Account.toString());
+        jobReqDto.setCron(cron);
+        JobParamDto jobParamDto = new JobParamDto();
+        jobParamDto.setAccountId(accountId);
+        jobReqDto.setJobParamDto(jobParamDto);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addSpotJob(jobReqDto);
+    }
 
-	@Override
-	public ServiceResult addHuobiSpotAccountJob(Long accountId, String cron, boolean enable) {
-		JobReqDto jobReqDto = new JobReqDto();
-		jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		jobReqDto.setJobType(HuobiJobTypeEnum.Account.getJobType());
-		jobReqDto.setJobDesc(HuobiJobTypeEnum.Account.toString());
-		jobReqDto.setCron(cron);
-		JobParamDto jobParamDto = new JobParamDto();
-		jobParamDto.setAccountId(accountId);
-		jobReqDto.setJobParamDto(jobParamDto);
-		if (enable) {
-			jobReqDto.setState(1);
-		}else {
-			jobReqDto.setState(0);
-		}
-		return addSpotJob(jobReqDto);
-	}
+    @Override
+    public ServiceResult addHuobiSpotCurrentPriceJob(String symbol, String cron, boolean enable) {
+        JobReqDto jobReqDto = new JobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.CurrentPrice.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.CurrentPrice.toString());
+        jobReqDto.setCron(cron);
+        JobParamDto jobParamDto = new JobParamDto();
+        jobParamDto.setSymbol(symbol);
+        jobReqDto.setJobParamDto(jobParamDto);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addSpotJob(jobReqDto);
+    }
 
-	@Override
-	public ServiceResult addHuobiSpotCurrentPriceJob(String symbol, String cron, boolean enable) {
-		JobReqDto jobReqDto = new JobReqDto();
-		jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		jobReqDto.setJobType(HuobiJobTypeEnum.CurrentPrice.getJobType());
-		jobReqDto.setJobDesc(HuobiJobTypeEnum.CurrentPrice.toString());
-		jobReqDto.setCron(cron);
-		JobParamDto jobParamDto = new JobParamDto();
-		jobParamDto.setSymbol(symbol);
-		jobReqDto.setJobParamDto(jobParamDto);
-		if (enable) {
-			jobReqDto.setState(1);
-		}else {
-			jobReqDto.setState(0);
-		}
-		return addSpotJob(jobReqDto);
-	}
+    @Override
+    public ServiceResult addHuobiSpotDepthJob(String symbol, String depthType, String cron, boolean enable) {
+        JobReqDto jobReqDto = new JobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.Depth.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.Depth.toString());
+        jobReqDto.setCron(cron);
+        JobParamDto jobParamDto = new JobParamDto();
+        jobParamDto.setSymbol(symbol);
+        jobParamDto.setDepthType(depthType);
+        jobReqDto.setJobParamDto(jobParamDto);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addSpotJob(jobReqDto);
+    }
 
-	@Override
-	public ServiceResult addHuobiSpotDepthJob(String symbol, String depthType, String cron, boolean enable) {
-		JobReqDto jobReqDto = new JobReqDto();
-		jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		jobReqDto.setJobType(HuobiJobTypeEnum.Depth.getJobType());
-		jobReqDto.setJobDesc(HuobiJobTypeEnum.Depth.toString());
-		jobReqDto.setCron(cron);
-		JobParamDto jobParamDto = new JobParamDto();
-		jobParamDto.setSymbol(symbol);
-		jobParamDto.setDepthType(depthType);
-		jobReqDto.setJobParamDto(jobParamDto);
-		if (enable) {
-			jobReqDto.setState(1);
-		}else {
-			jobReqDto.setState(0);
-		}
-		return addSpotJob(jobReqDto);
-	}
+    @Override
+    public ServiceResult addHuobiSpotKlineJob(String symbol, String klineType, int size, String cron, boolean enable) {
+        JobReqDto jobReqDto = new JobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.Kline.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.Kline.toString());
+        jobReqDto.setCron(cron);
+        JobParamDto jobParamDto = new JobParamDto();
+        jobParamDto.setSymbol(symbol);
+        jobParamDto.setKlineType(klineType);
+        jobParamDto.setSize(size);
+        jobReqDto.setJobParamDto(jobParamDto);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addSpotJob(jobReqDto);
+    }
 
-	@Override
-	public ServiceResult addHuobiSpotKlineJob(String symbol, String klineType, int size, String cron, boolean enable) {
-		JobReqDto jobReqDto = new JobReqDto();
-		jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		jobReqDto.setJobType(HuobiJobTypeEnum.Kline.getJobType());
-		jobReqDto.setJobDesc(HuobiJobTypeEnum.Kline.toString());
-		jobReqDto.setCron(cron);
-		JobParamDto jobParamDto = new JobParamDto();
-		jobParamDto.setSymbol(symbol);
-		jobParamDto.setKlineType(klineType);
-		jobParamDto.setSize(size);
-		jobReqDto.setJobParamDto(jobParamDto);
-		if (enable) {
-			jobReqDto.setState(1);
-		}else {
-			jobReqDto.setState(0);
-		}
-		return addSpotJob(jobReqDto);
-	}
+    @Override
+    public ServiceResult addHuobiSpotOrderJob(String symbol, Long accountId, String cron, boolean enable) {
+        JobReqDto jobReqDto = new JobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.Order.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.Order.toString());
+        jobReqDto.setCron(cron);
+        JobParamDto jobParamDto = new JobParamDto();
+        jobParamDto.setAccountId(accountId);
+        jobParamDto.setSymbol(symbol);
+        jobReqDto.setJobParamDto(jobParamDto);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addSpotJob(jobReqDto);
+    }
 
-	@Override
-	public ServiceResult addHuobiSpotOrderJob(String cron, boolean enable) {
-		JobReqDto jobReqDto = new JobReqDto();
-		jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		jobReqDto.setJobType(HuobiJobTypeEnum.Order.getJobType());
-		jobReqDto.setJobDesc(HuobiJobTypeEnum.Order.toString());
-		jobReqDto.setCron(cron);
-		if (enable) {
-			jobReqDto.setState(1);
-		}else {
-			jobReqDto.setState(0);
-		}
-		return addSpotJob(jobReqDto);
-	}
+    @Override
+    public ServiceResult addHuobiFuturePositionJob(Long accountId, String cron, boolean enable) {
+        FutureJobReqDto jobReqDto = new FutureJobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.Position.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.Position.toString());
+        JobParamDto paramDto = new JobParamDto();
+        paramDto.setAccountId(accountId);
+
+        jobReqDto.setJobParamDto(paramDto);
+        jobReqDto.setCron(cron);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addFutureJob(jobReqDto);
+    }
+
+    @Override
+    public ServiceResult addHuobiFutureUserInfoJob(Long accountId, String cron, boolean enable) {
+        FutureJobReqDto jobReqDto = new FutureJobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        jobReqDto.setJobType(HuobiJobTypeEnum.Account.getJobType());
+        jobReqDto.setJobDesc(HuobiJobTypeEnum.Account.toString());
+        JobParamDto paramDto = new JobParamDto();
+        paramDto.setAccountId(accountId);
+
+        jobReqDto.setJobParamDto(paramDto);
+        jobReqDto.setCron(cron);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addFutureJob(jobReqDto);
+    }
 }

@@ -35,14 +35,17 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
     @Override
     public String queryUserInfoByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
-        String body = httpService.doPost(HttpConstant.HUOBI_FUTURE_ACCOUNTINFO, params);
+        params.put("symbol","BTC");
+        params.put("userId","156138");
+        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ACCOUNTINFO, params);
         return body;
     }
 
     @Override
     public String queryPositionByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
-        String body = httpService.doPost(HttpConstant.HUOBI_FUTURE_POSITION, params);
+        params.put("userId","156138");
+        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_POSITION, params);
         return body;
     }
 

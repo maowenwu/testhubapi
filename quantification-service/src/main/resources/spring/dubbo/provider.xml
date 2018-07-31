@@ -12,7 +12,7 @@
 
     <dubbo:protocol name="dubbo" port="20880"/>
 
-    <dubbo:provider timeout="3000" retries="1" loadbalance="roundrobin" cluster="failfast"></dubbo:provider>
+    <dubbo:provider timeout="30000" retries="0" loadbalance="roundrobin" cluster="failfast"></dubbo:provider>
 
     <dubbo:service interface="com.huobi.quantification.api.future.FutureAccountService" ref="futureAccountServiceImpl"/>
     <dubbo:service interface="com.huobi.quantification.api.future.FutureMarketService" ref="futureMarketServiceImpl"/>

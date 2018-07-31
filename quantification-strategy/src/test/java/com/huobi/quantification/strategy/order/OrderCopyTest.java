@@ -22,4 +22,10 @@ public class OrderCopyTest {
     public void copyOrder() {
         orderCopy.copyOrder();
     }
+
+
+    @Test
+    public void init() {
+    }
+
 }

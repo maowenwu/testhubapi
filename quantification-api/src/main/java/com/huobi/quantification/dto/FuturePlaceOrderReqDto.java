@@ -138,4 +138,24 @@ public class FuturePlaceOrderReqDto implements Serializable {
     public void setSync(boolean sync) {
         this.sync = sync;
     }
+
+    @Override
+    public String toString() {
+        return "FuturePlaceOrderReqDto{" +
+                "exchangeId=" + exchangeId +
+                ", accountId=" + accountId +
+                ", baseCoin='" + baseCoin + '\'' +
+                ", quoteCoin='" + quoteCoin + '\'' +
+                ", contractType='" + contractType + '\'' +
+                ", contractCode='" + contractCode + '\'' +
+                ", side=" + side +
+                ", offset=" + offset +
+                ", orderType='" + orderType + '\'' +
+                ", price=" + price +
+                ", quantity=" + quantity +
+                ", lever=" + lever +
+                ", linkOrderId=" + linkOrderId +
+                ", sync=" + sync +
+                '}';
+    }
 }

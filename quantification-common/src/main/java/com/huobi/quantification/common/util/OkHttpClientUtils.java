@@ -1,15 +1,15 @@
 package com.huobi.quantification.common.util;
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.common.exception.ApiException;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import okhttp3.*;
 import org.apache.commons.collections.MapUtils;
-import javax.xml.bind.DatatypeConverter;
+
 import java.io.IOException;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -22,11 +22,12 @@ public class OkHttpClientUtils {
     private OkHttpClient httpClient;
 
     private AtomicInteger numRequestFaild = new AtomicInteger(0);
-    
-	static final MediaType JSON = MediaType.parse("application/json");
+
+    static final MediaType JSON_TYPE = MediaType.parse("application/json");
 
     private OkHttpClientUtils(ProxyConfig proxyConfig) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectionPool(new ConnectionPool(200, 10, TimeUnit.SECONDS))
                 .connectTimeout(1, TimeUnit.SECONDS)
                 .readTimeout(1, TimeUnit.SECONDS);
         if (proxyConfig == null) {
@@ -116,14 +117,38 @@ public class OkHttpClientUtils {
             throw new HttpRequestException("响应码不为200，返回响应码：" + statusCode + "，url：" + reqBuilder.build());
         }
     }
-    
-    public String call(String accessKeyId, String accessKeySecret,String method, String uri, Object object, Map<String, String> params) {
+
+    public String doPostJson(String url, Map<String, String> params) {
+        RequestBody body = RequestBody.create(JSON_TYPE, JSON.toJSONString(params));
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = null;
+        try {
+            response = httpClient.newCall(request).execute();
+        } catch (IOException e) {
+            throw new HttpRequestException("http执行异常", e);
+        }
+        if (response.isSuccessful()) {
+            try {
+                return response.body().string();
+            } catch (IOException e) {
+                throw new HttpRequestException("http结果解析异常", e);
+            }
+        } else {
+            int statusCode = response.code();
+            throw new HttpRequestException("响应码不为200，返回响应码：" + statusCode + "，url：" + request);
+        }
+    }
+
+    public String call(String accessKeyId, String accessKeySecret, String method, String uri, Object object, Map<String, String> params) {
         ApiSignature sign = new ApiSignature();
         sign.createSignature(accessKeyId, accessKeySecret, method, uri, params);
         try {
             Request.Builder builder = null;
             if ("POST".equals(method)) {
-                RequestBody body = RequestBody.create(JSON, JsonUtil.writeValue(object));
+                RequestBody body = RequestBody.create(JSON_TYPE, JsonUtil.writeValue(object));
                 builder = new Request.Builder().url(uri + "?" + toQueryString(params)).post(body);
             } else {
                 builder = new Request.Builder().url(uri + "?" + toQueryString(params)).get();
@@ -149,5 +174,28 @@ public class OkHttpClientUtils {
 
     public int getRequestFaildTotal() {
         return numRequestFaild.get();
+    }
+
+
+    public static void main(String[] args) {
+        /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol","BTC");
+        params.put("userId","156138");
+        String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_accountinfo", params);
+        System.out.println(s);*/
+
+        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        Map<String, String> params = new HashMap<>();
+        params.put("order_id", "33850");
+        params.put("userId", "156138");
+        String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_orderinfo", params);
+        System.out.println(s);
+
+       /* OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", "156138");
+        String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_cancelall", params);
+        System.out.println(s);*/
     }
 }

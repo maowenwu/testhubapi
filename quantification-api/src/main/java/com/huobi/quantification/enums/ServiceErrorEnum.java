@@ -8,9 +8,11 @@ public enum ServiceErrorEnum {
     EXECUTION_ERROR(102, "方法执行异常"),
     TIMEOUT_ERROR(103, "方法超时异常"),
     PARAM_MISS(204, "请求参数缺失"),
-    PARAM_ERROR(205,"请求参数异常"),
-    HTTP_REQUEST_ERROR(206,"http请求异常");
-
+    PARAM_ERROR(205, "请求参数异常"),
+    HTTP_REQUEST_ERROR(206, "http请求异常"),
+    CANCEL_ORDER_ERROR(207, "取消订单失败"),
+    UPDATE_ORDERINFO_ERROR(209, "更新订单信息失败"),
+    PLACE_ORDER_ERROR(210, "订单下单失败");
     private int code;
     private String message;
 

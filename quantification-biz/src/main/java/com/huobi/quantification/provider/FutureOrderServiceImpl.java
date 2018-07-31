@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,7 +10,13 @@ import java.util.stream.Collectors;
 
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.request.future.FutureHuobiOrderRequest;
+import com.huobi.quantification.service.order.HuobiFutureOrderService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Param;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,8 +36,13 @@ import com.huobi.quantification.service.order.OkOrderService;
 @Service
 public class FutureOrderServiceImpl implements FutureOrderService {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private OkOrderService okOrderService;
+
+    @Autowired
+    private HuobiFutureOrderService huobiFutureOrderService;
 
     @Autowired
     private QuanOrderFutureMapper quanOrderFutureMapper;
@@ -42,8 +54,96 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     public ServiceResult<FuturePlaceOrderRespDto> placeOrder(FuturePlaceOrderReqDto reqDto) {
         if (reqDto.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
             return placeOkOrder(reqDto);
+        } else if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+            return placeHuobiFutureOrder(reqDto);
         }
         return null;
+    }
+
+    private ServiceResult<FuturePlaceOrderRespDto> placeHuobiFutureOrder(FuturePlaceOrderReqDto reqDto) {
+        try {
+            // 插入order表生成内部订单id
+            QuanOrderFuture orderFuture = new QuanOrderFuture();
+            orderFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+            orderFuture.setAccountId(reqDto.getAccountId());
+            orderFuture.setLinkOrderId(reqDto.getLinkOrderId());
+            orderFuture.setStatus(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
+            orderFuture.setCreateDate(new Date());
+            orderFuture.setUpdateDate(new Date());
+            quanOrderFutureMapper.insert(orderFuture);
+
+            FuturePlaceOrderRespDto respDto = new FuturePlaceOrderRespDto();
+            respDto.setInnerOrderId(orderFuture.getInnerOrderId());
+            respDto.setLinkOrderId(reqDto.getLinkOrderId());
+            if (reqDto.isSync()) {
+                Long huobiOrderId = doPlaceHuobiOrder(reqDto, orderFuture);
+                respDto.setExOrderId(huobiOrderId);
+                if (huobiOrderId == null) {
+                    return ServiceResult.buildErrorResult(ServiceErrorEnum.PLACE_ORDER_ERROR);
+                }
+            } else {
+                // 异步执行
+                AsyncUtils.runAsyncNoException(() -> {
+                    doPlaceHuobiOrder(reqDto, orderFuture);
+                });
+            }
+            return ServiceResult.buildSuccessResult(respDto);
+        } catch (Exception e) {
+            logger.error("下单异常，订单：" + reqDto);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        }
+    }
+
+    /**
+     * 下单失败订单id返回null
+     *
+     * @param reqDto
+     * @param orderFuture
+     * @return
+     */
+    private Long doPlaceHuobiOrder(FuturePlaceOrderReqDto reqDto, QuanOrderFuture orderFuture) {
+        FutureHuobiOrderRequest request = new FutureHuobiOrderRequest();
+        String symbol = null;
+        String contractType = null;
+        String contractCode = null;
+        if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
+            QuanContractCode quanContractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+            symbol = quanContractCode.getSymbol();
+            contractType = quanContractCode.getContractType();
+            contractCode = quanContractCode.getContractCode();
+        } else {
+            symbol = reqDto.getBaseCoin().toUpperCase();
+            contractType = reqDto.getContractType();
+        }
+        request.setSymbol(symbol);
+        request.setContractType(reqDto.getContractType());
+        request.setContractCode(reqDto.getContractCode());
+        request.setPrice(reqDto.getPrice().toString());
+        request.setVolume(reqDto.getQuantity().toString());
+        if (reqDto.getSide() == 1) {
+            request.setDirection("buy");
+        } else {
+            request.setDirection("sell");
+        }
+        if (reqDto.getOffset() == 1) {
+            request.setOffset("open");
+        } else {
+            request.setOffset("close");
+        }
+        request.setLeverRate(reqDto.getLever() + "");
+        request.setOrderPriceType("limit");
+        request.setClientOrderId(System.currentTimeMillis() + "");
+        Long exOrderId = huobiFutureOrderService.placeOrder(request);
+
+        // 下单完成后更新交易所id到order表
+        orderFuture.setExOrderId(exOrderId);
+        orderFuture.setContractType(contractType);
+        orderFuture.setContractCode(contractCode);
+        if (exOrderId != null) {
+            orderFuture.setStatus(OrderStatusEnum.SUBMITTED.getOrderStatus());
+        }
+        quanOrderFutureMapper.updateByPrimaryKeySelective(orderFuture);
+        return exOrderId;
     }
 
     /**
@@ -91,7 +191,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             contractType = quanContractCode.getContractType();
             contractCode = quanContractCode.getContractCode();
         } else {
-            symbol = getOkSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin());
+            symbol = concatSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin());
             contractType = reqDto.getContractType();
         }
         orderRequest.setSymbol(symbol);
@@ -135,7 +235,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         }
     }
 
-    private String getOkSymbol(String baseCoin, String quoteCoin) {
+    private String concatSymbol(String baseCoin, String quoteCoin) {
         return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
     }
 
@@ -284,7 +384,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             QuanOrderFuture order = orders.get(0);
             FutureOkCancelOrderRequest orderRequest = new FutureOkCancelOrderRequest();
             orderRequest.setAccountId(orderContext.getAccountId());
-            orderRequest.setSymbol(getOkSymbol(order.getBaseCoin(), order.getQuoteCoin()));
+            orderRequest.setSymbol(concatSymbol(order.getBaseCoin(), order.getQuoteCoin()));
             orderRequest.setContractType(order.getContractType());
             orderRequest.setOrderId(orderIds);
             okOrderService.cancelOkOrder(orderRequest);
@@ -293,7 +393,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             for (QuanOrderFuture order : orderContext.getOrders()) {
                 FutureOkCancelOrderRequest orderRequest = new FutureOkCancelOrderRequest();
                 orderRequest.setAccountId(order.getAccountId());
-                orderRequest.setSymbol(getOkSymbol(order.getBaseCoin(), order.getQuoteCoin()));
+                orderRequest.setSymbol(concatSymbol(order.getBaseCoin(), order.getQuoteCoin()));
                 orderRequest.setContractType(order.getContractType());
                 orderRequest.setOrderId(order.getExOrderId() + "");
                 okOrderService.cancelOkOrder(orderRequest);
@@ -370,7 +470,61 @@ public class FutureOrderServiceImpl implements FutureOrderService {
 
     @Override
     public ServiceResult<FuturePriceOrderRespDto> getActiveOrderMap(FuturePriceOrderReqDto reqDto) {
-        // todo
+        List<Integer> statusList = new ArrayList<>();
+        statusList.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
+        statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
+        statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
+        try {
+            List<QuanOrderFuture> list = quanOrderFutureMapper.selectOrderByStatus(reqDto.getExchangeId(), reqDto.getAccountId(), statusList);
+            Map<BigDecimal, List<QuanOrderFuture>> result = list.stream().collect(Collectors.groupingBy(e -> e.getOrderPrice()));
+            FuturePriceOrderRespDto respDto = new FuturePriceOrderRespDto();
+            Map<BigDecimal, List<FuturePriceOrderRespDto.DataBean>> priceOrderMap = new HashMap<>();
+            result.forEach((k, v) -> {
+                List<FuturePriceOrderRespDto.DataBean> beanList = new ArrayList<>();
+                v.stream().forEach(e -> {
+                    FuturePriceOrderRespDto.DataBean dataBean = new FuturePriceOrderRespDto.DataBean();
+                    BeanUtils.copyProperties(e, dataBean);
+                    beanList.add(dataBean);
+                });
+                priceOrderMap.put(k, beanList);
+            });
+            respDto.setPriceOrderMap(priceOrderMap);
+            return ServiceResult.buildSuccessResult(respDto);
+        } catch (Exception e) {
+            logger.error("获取活跃订单价格分组Map失败，exchangeId={}，accountId={}", reqDto.getExchangeId(), reqDto.getAccountId());
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        }
+    }
+
+    @Override
+    public ServiceResult<Long> cancelSingleOrder(FutureCancelSingleOrderReqDto reqDto) {
+        if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+            Long exOrderId = huobiFutureOrderService.cancelOrder(reqDto.getExOrderId(), null);
+            if (exOrderId != null) {
+                return ServiceResult.buildSuccessResult(exOrderId);
+            } else {
+                return ServiceResult.buildErrorResult(ServiceErrorEnum.CANCEL_ORDER_ERROR);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public ServiceResult cancelAllOrder(String symbol) {
+        huobiFutureOrderService.cancelAllOrder(symbol);
+        return null;
+    }
+
+    @Override
+    public ServiceResult updateOrderInfo(Integer exchangeId, Long accountId) {
+        if (ExchangeEnum.HUOBI_FUTURE.getExId() == exchangeId) {
+            boolean success = huobiFutureOrderService.updateHuobiOrderInfo(accountId);
+            if (success) {
+                return ServiceResult.buildSuccessResult(success);
+            } else {
+                return ServiceResult.buildErrorResult(ServiceErrorEnum.UPDATE_ORDERINFO_ERROR);
+            }
+        }
         return null;
     }
 }

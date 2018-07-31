@@ -34,7 +34,5 @@ mybatis:
   mapperLocations: classpath:mapper/*.xml
   config: classpath:mybatis/mybatis-config.xml
 
-
-
 zookeeper:
   address: 127.0.0.1:2181

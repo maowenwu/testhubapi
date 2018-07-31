@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,12 +41,13 @@ public class HttpServiceImpl implements HttpService {
 
     @Autowired
     private OkSecretHolder okSecretHolder;
-    
+
     @Autowired
     private HuobiSecretHolder huobiSecretHolder;
 
     private Timer timer = new Timer();
-    
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
     public HttpServiceImpl() {
         timer.schedule(new TimerTask() {
             @Override
@@ -57,6 +60,7 @@ public class HttpServiceImpl implements HttpService {
                     OkHttpClientUtils next = iterator.next();
                     if (next.getRequestFaildTotal() > 3) {
                         clients.remove(next);
+                        logger.info("okhttpclient removed");
                     }
                 }
                 if (clients.size() <= 0) {
@@ -78,7 +82,7 @@ public class HttpServiceImpl implements HttpService {
             config.setPassword(proxyIp.getPassword());
             clients.add(OkHttpClientUtils.getInstance(config));
         }
-        clients.add(OkHttpClientUtils.getInstance(null));
+        //clients.add(OkHttpClientUtils.getInstance(null));
     }
 
 
@@ -105,28 +109,37 @@ public class HttpServiceImpl implements HttpService {
     }
 
     @Override
+    public String doPostJson(String url, Map<String, String> params) throws HttpRequestException {
+        if (url.startsWith("http://www.huobiapps.com")) {
+            return OkHttpClientUtils.getInstance(null).doPostJson(url, params);
+        } else {
+            return getHttpClientUtils().doPostJson(url, params);
+        }
+    }
+
+    @Override
     public String doOkSignedPost(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
         OkSignature signature = okSecretHolder.getOkSignatureById(accountId);
         params = signature.sign(params);
         return getHttpClientUtils().doPost(url, params);
     }
-    
-    @Override
-	public String doHuobiGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException {
-		if (params == null) {
-			params = new HashMap<>();
-		}
-		HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
-		return getHttpClientUtils().call(huobiSignature.getAccessKey(),huobiSignature.getSecretKey(),
-				"GET", uri, null, params);
-	}
 
-	@Override
-	public String doHuobiPost(Long accountId, String uri, Object object) throws HttpRequestException {
-		HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
-		return getHttpClientUtils().call(huobiSignature.getAccessKey(),huobiSignature.getSecretKey(),
-				"POST", uri, object, new HashMap<String, String>());
-	}
+    @Override
+    public String doHuobiGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException {
+        if (params == null) {
+            params = new HashMap<>();
+        }
+        HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
+        return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
+                "GET", uri, null, params);
+    }
+
+    @Override
+    public String doHuobiPost(Long accountId, String uri, Object object) throws HttpRequestException {
+        HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
+        return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
+                "POST", uri, object, new HashMap<String, String>());
+    }
 
 
 }

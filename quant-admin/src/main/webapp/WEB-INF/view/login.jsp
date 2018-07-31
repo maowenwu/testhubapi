@@ -87,7 +87,7 @@
 
     </div>
     </div>
-    <div style="position:fixed; bottom:10px; left:50%; width:1200px; margin-left:-600px; ">
+    <div style="futurePosition:fixed; bottom:10px; left:50%; width:1200px; margin-left:-600px; ">
     <div class="col-md-6" style="color:#fff">
     
     </div>

@@ -56,4 +56,8 @@ public class ServiceResult<T> implements Serializable {
         serviceResult.setMessage(errorEnum.getMessage());
         return serviceResult;
     }
+
+    public boolean isSuccess() {
+        return code == ServiceErrorEnum.SUCCESS.getCode();
+    }
 }

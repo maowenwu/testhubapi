@@ -3,6 +3,8 @@ package com.huobi.quantification.strategy.order;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.strategy.order.entity.DepthBook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,22 +15,32 @@ import java.util.stream.Collectors;
 
 public class DepthBookAdjuster {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     private OrderContext context;
+
+    private BigDecimal exchangeRate;
 
     public DepthBookAdjuster(OrderContext context) {
         this.context = context;
     }
 
-    public DepthBook getAdjustedDepthBook(String symbol) {
-        DepthBook depthBook = context.getDepth(symbol);
-        StrategyOrderConfig config = context.getStrategyOrderConfig();
-        adjPriceByExchangeRate(depthBook);
-        adjPriceByFee(depthBook, config);
-        mergeDepth(depthBook, config);
-        adjMaxAmount(depthBook, config);
-        adjBasisPrice(depthBook, config);
-        sortDepthBook(depthBook);
-        return depthBook;
+    public DepthBook getAdjustedDepthBook(StrategyOrderConfig config) {
+        try {
+            DepthBook depthBook = context.getDepth();
+            adjPriceByExchangeRate(depthBook);
+            adjPriceByFee(depthBook, config);
+            mergeDepth(depthBook, config);
+            adjMaxAmount(depthBook, config);
+            adjBasisPrice(depthBook, config);
+            sortDepthBook(depthBook);
+            calcVolume(depthBook);
+            logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());
+            return depthBook;
+        } catch (Exception e) {
+            logger.error("获取深度信息失败", e);
+            return null;
+        }
     }
 
     /**
@@ -37,7 +49,6 @@ public class DepthBookAdjuster {
      * @param depthBook
      */
     private void adjPriceByExchangeRate(DepthBook depthBook) {
-        BigDecimal exchangeRate = context.getExchangeRateOfUSDT2USD();
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
             e.setPrice(e.getPrice().multiply(exchangeRate));
@@ -164,5 +175,26 @@ public class DepthBookAdjuster {
     private void sortDepthBook(DepthBook depthBook) {
         depthBook.getAsks().sort(Comparator.comparing(DepthBook.Depth::getPrice));
         depthBook.getBids().sort(Comparator.comparing(DepthBook.Depth::getPrice).reversed());
+    }
+
+    /**
+     * 将比特币转为张
+     *
+     * @param depthBook
+     */
+    private void calcVolume(DepthBook depthBook) {
+        depthBook.getAsks().forEach(e -> {
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(BigDecimal.valueOf(100), 0, BigDecimal.ROUND_FLOOR);
+            e.setAmount(volume);
+        });
+
+        depthBook.getBids().forEach(e -> {
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(BigDecimal.valueOf(100), 0, BigDecimal.ROUND_FLOOR);
+            e.setAmount(volume);
+        });
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 }

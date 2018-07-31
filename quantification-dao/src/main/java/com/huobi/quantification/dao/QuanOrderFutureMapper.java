@@ -30,4 +30,8 @@ public interface QuanOrderFutureMapper {
     List<QuanOrderFuture> selectByExOrderIds(Map params);
 
     List<QuanOrderFuture> selectByLinkOrderIds(Map params);
+
+    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("statusList") List<Integer> statusList);
+
+    List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("statusList") List<Integer> statusList);
 }

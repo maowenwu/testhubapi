@@ -58,6 +58,8 @@ public interface FutureOrderService {
      */
     ServiceResult cancelOrder(FutureCancelOrderReqDto cancelOrderReqDto);
 
+    ServiceResult<Long> cancelSingleOrder(FutureCancelSingleOrderReqDto reqDto);
+
 
     /**
      * 撤销活跃订单
@@ -69,4 +71,8 @@ public interface FutureOrderService {
 
 
     ServiceResult<FuturePriceOrderRespDto> getActiveOrderMap(FuturePriceOrderReqDto reqDto);
+
+    ServiceResult cancelAllOrder(String symbol);
+
+    ServiceResult updateOrderInfo(Integer exchangeId, Long accountId);
 }
