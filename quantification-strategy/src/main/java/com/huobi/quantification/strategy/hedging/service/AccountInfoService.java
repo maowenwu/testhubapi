@@ -25,7 +25,7 @@ import com.huobi.quantification.strategy.order.entity.FutureBalance;
  * @author maowenwu
  */
 @Component
-public class AccountService {
+public class AccountInfoService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 

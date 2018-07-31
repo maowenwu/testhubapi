@@ -15,7 +15,7 @@ import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 public class CommonService {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
-	AccountService accountService;
+	AccountInfoService accountInfoService;
 
 	@Autowired
 	QuanAccountFuturePositionService quanAccountFuturePositionService;
@@ -32,14 +32,14 @@ public class CommonService {
 	public BigDecimal calUSDTPosition(StartHedgingParam startHedgingParam) {
 
 		// 2.1 获取火币现货账户期末USDT余额
-		BigDecimal spotUSDTBalance = accountService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
+		BigDecimal spotUSDTBalance = accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
 				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin()).getAvailable();
 		// 2.2获取火币现货账户期初USDT余额
 		BigDecimal spotUSDTInitAmount = quanAccountFuturePositionService.getInitAmount(
 				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "spot", "usdt");
 
 		// 2.3 获取火币期货账户期末USD余额
-		BigDecimal futureUSDBalance = accountService.getHuobiFutureBalance(startHedgingParam.getFutureAccountID(),
+		BigDecimal futureUSDBalance = accountInfoService.getHuobiFutureBalance(startHedgingParam.getFutureAccountID(),
 				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode()).getMarginAvailable();
 		// 2.4 获取火币期货账户期初USD余额
 		BigDecimal futureUSDInitAmount = quanAccountFuturePositionService.getInitAmount(

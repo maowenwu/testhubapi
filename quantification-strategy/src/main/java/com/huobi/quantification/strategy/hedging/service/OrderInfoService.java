@@ -16,7 +16,7 @@ import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 
 @Component
-public class OrderService {
+public class OrderInfoService {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	@Autowired
 	SpotOrderService spotOrderService;

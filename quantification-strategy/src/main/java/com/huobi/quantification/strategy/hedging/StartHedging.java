@@ -15,10 +15,9 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
-import com.huobi.quantification.strategy.hedging.service.AccountService;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
-import com.huobi.quantification.strategy.hedging.service.MarketService;
-import com.huobi.quantification.strategy.hedging.service.OrderService;
+import com.huobi.quantification.strategy.hedging.service.MarketInfoService;
+import com.huobi.quantification.strategy.hedging.service.OrderInfoService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
 
 @Component
@@ -28,24 +27,21 @@ public class StartHedging {
 
 	@Autowired
 	SpotOrderService spotOrderService;
-	@Autowired
-	AccountService accountService;
-
 
 	@Autowired
 	FutureContractService futureContractService;
 
 	@Autowired
-	MarketService  marketService;
+	MarketInfoService marketInfoService;
 	@Autowired
-	OrderService orderService;
+	OrderInfoService orderInfoService;
 
 	@Autowired
 	StrategyRiskConfigMapper strategyRiskConfigMapper;
 
 	@Autowired
 	QuanAccountFuturePositionService quanAccountFuturePositionService;
-	
+
 	@Autowired
 	CommonService commonService;
 
@@ -81,13 +77,13 @@ public class StartHedging {
 			SpotDepthReqDto spotDepthReqDto = new SpotDepthReqDto();
 			spotDepthReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
 			spotDepthReqDto.setQuoteCoin(startHedgingParam.getQuoteCoin());
-			Map<String, BigDecimal> priceMap = marketService.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
+			Map<String, BigDecimal> priceMap = marketInfoService.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
 			logger.info("3. 交易对  {} 买一卖一价格为： {} ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(),
 					JSON.toJSONString(priceMap));
 
 			// 4. 下单
 			logger.info("4.开始下对冲单");
-			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderService.placeHuobiSpotOrder(priceMap,
+			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderInfoService.placeHuobiSpotOrder(priceMap,
 					startHedgingParam, positionUSDT);
 			logger.info("4.下对冲单结果为： {}  ", JSON.toJSONString(placeResult));
 
@@ -99,7 +95,5 @@ public class StartHedging {
 	public void startSpecial(StartHedgingParam startHedgingParam) {
 
 	}
-
-
 
 }
