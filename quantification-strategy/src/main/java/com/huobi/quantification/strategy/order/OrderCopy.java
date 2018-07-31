@@ -139,7 +139,7 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
             jobManageService.addHuobiFutureUserInfoJob(101L, "0/1 * * * * ?", true);
             jobManageService.addHuobiSpotDepthJob("btcusdt", "step1", "0/1 * * * * ?", true);
             jobManageService.addHuobiSpotCurrentPriceJob("btcusdt", "0/1 * * * * ?", false);
-            new Thread(() -> {
+            /*new Thread(() -> {
                 while (true) {
                     try {
                         copyOrder();
@@ -147,7 +147,7 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
                         e.printStackTrace();
                     }
                 }
-            }).start();
+            }).start();*/
         }
     }
 }
