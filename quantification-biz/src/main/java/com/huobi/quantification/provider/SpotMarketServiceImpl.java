@@ -35,10 +35,10 @@ import com.huobi.quantification.service.redis.RedisService;
 @Service
 public class SpotMarketServiceImpl implements SpotMarketService {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private RedisService redisService;
+    @Autowired
+    private RedisService redisService;
 
 	@Override
 	public ServiceResult<SpotCurrentPriceRespDto> getCurrentPrice(SpotCurrentPriceReqDto currentPriceReqDto) {
@@ -80,130 +80,130 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 		return serviceResult;
 	}
 
-	private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
-		if (exchangeId == ExchangeEnum.HUOBI.getExId()) {
-			return baseCoin.toLowerCase() + quoteCoin.toLowerCase();
-		} else {
-			throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
-		}
-	}
+    private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
+        if (exchangeId == ExchangeEnum.HUOBI.getExId() || exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+            return baseCoin.toLowerCase() + quoteCoin.toLowerCase();
+        } else {
+            throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
+        }
+    }
 
-	@Override
-	public ServiceResult<SpotDepthRespDto> getDepth(SpotDepthReqDto depthReqDto) {
-		ServiceResult<SpotDepthRespDto> serviceResult = null;
-		try {
-			SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
-				while (!Thread.interrupted()) {
-					// 从redis读取最新深度
-					List<QuanDepthDetail> huobiDepths = redisService.getHuobiDepth(depthReqDto.getExchangeId(),
-							getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(),
-									depthReqDto.getQuoteCoin()));
+    @Override
+    public ServiceResult<SpotDepthRespDto> getDepth(SpotDepthReqDto depthReqDto) {
+        ServiceResult<SpotDepthRespDto> serviceResult = null;
+        try {
+            SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
+                while (!Thread.interrupted()) {
+                    // 从redis读取最新深度
+                    List<QuanDepthDetail> huobiDepths = redisService.getHuobiDepth(depthReqDto.getExchangeId(),
+                            getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(),
+                                    depthReqDto.getQuoteCoin()));
 
-					if (CollectionUtils.isEmpty(huobiDepths)) {
-						ThreadUtils.sleep10();
-						continue;
-					}
-					Date ts = huobiDepths.get(0).getDateUpdate();
-					logger.info("QuanAccountSpotAsset时间：{}",DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-					logger.info("当前时间：{}",DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
-					if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
-						SpotDepthRespDto respDto = new SpotDepthRespDto();
-						respDto.setTs(ts);
-						respDto.setData(convertDepthToDto(huobiDepths));
-						return respDto;
-					} else {
-						ThreadUtils.sleep10();
-						continue;
-					}
-				}
-				return null;
-			}, depthReqDto.getTimeout());
-			serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
-		} catch (ExecutionException e) {
-			logger.error("执行异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-		} catch (TimeoutException e) {
-			logger.error("超时异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
-		}
-		return serviceResult;
-	}
+                    if (CollectionUtils.isEmpty(huobiDepths)) {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                    Date ts = huobiDepths.get(0).getDateUpdate();
+                    logger.info("QuanAccountSpotAsset时间：{}", DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
+                    logger.info("当前时间：{}", DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
+                        SpotDepthRespDto respDto = new SpotDepthRespDto();
+                        respDto.setTs(ts);
+                        respDto.setData(convertDepthToDto(huobiDepths));
+                        return respDto;
+                    } else {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                }
+                return null;
+            }, depthReqDto.getTimeout());
+            serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
+        } catch (ExecutionException e) {
+            logger.error("执行异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        } catch (TimeoutException e) {
+            logger.error("超时异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        }
+        return serviceResult;
+    }
 
-	private SpotDepthRespDto.DataBean convertDepthToDto(List<QuanDepthDetail> depthSpot) {
-		SpotDepthRespDto.DataBean dataBean = new SpotDepthRespDto.DataBean();
-		List<SpotDepthRespDto.Depth> asks = new ArrayList<>();
-		List<SpotDepthRespDto.Depth> bids = new ArrayList<>();
-		dataBean.setAsks(asks);
-		dataBean.setBids(bids);
-		for (QuanDepthDetail depthDetail : depthSpot) {
-			if (depthDetail.getDetailType().equals(DepthEnum.ASKS.getIntType())) {
-				SpotDepthRespDto.Depth depth = new SpotDepthRespDto.Depth();
-				depth.setAmount(depthDetail.getDetailAmount());
-				depth.setPrice(depthDetail.getDetailPrice());
-				asks.add(depth);
-			} else {
-				SpotDepthRespDto.Depth depth = new SpotDepthRespDto.Depth();
-				depth.setAmount(depthDetail.getDetailAmount());
-				depth.setPrice(depthDetail.getDetailPrice());
-				bids.add(depth);
-			}
-		}
-		return dataBean;
-	}
+    private SpotDepthRespDto.DataBean convertDepthToDto(List<QuanDepthDetail> depthSpot) {
+        SpotDepthRespDto.DataBean dataBean = new SpotDepthRespDto.DataBean();
+        List<SpotDepthRespDto.Depth> asks = new ArrayList<>();
+        List<SpotDepthRespDto.Depth> bids = new ArrayList<>();
+        dataBean.setAsks(asks);
+        dataBean.setBids(bids);
+        for (QuanDepthDetail depthDetail : depthSpot) {
+            if (depthDetail.getDetailType().equals(DepthEnum.ASKS.getIntType())) {
+                SpotDepthRespDto.Depth depth = new SpotDepthRespDto.Depth();
+                depth.setAmount(depthDetail.getDetailAmount());
+                depth.setPrice(depthDetail.getDetailPrice());
+                asks.add(depth);
+            } else {
+                SpotDepthRespDto.Depth depth = new SpotDepthRespDto.Depth();
+                depth.setAmount(depthDetail.getDetailAmount());
+                depth.setPrice(depthDetail.getDetailPrice());
+                bids.add(depth);
+            }
+        }
+        return dataBean;
+    }
 
-	@Override
-	public ServiceResult<SpotKlineRespDto> getKline(SpotKlineReqDto depthReqDto) {
-		ServiceResult<SpotKlineRespDto> serviceResult = null;
-		try {
-			SpotKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
-				while (!Thread.interrupted()) {
-					// 从redis读取最新K线
-					List<QuanKline> klineSpots = redisService
-							.getKlineSpot(
-									depthReqDto.getExchangeId(), getSymbol(depthReqDto.getExchangeId(),
-											depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()),
-									depthReqDto.getPeriod());
-					if (CollectionUtils.isEmpty(klineSpots)) {
-						ThreadUtils.sleep10();
-						continue;
-					}
-					Date ts = klineSpots.get(klineSpots.size() - 1).getTs();
-					if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
-						SpotKlineRespDto respDto = new SpotKlineRespDto();
-						respDto.setTs(ts);
-						respDto.setData(convertToDto(klineSpots));
-						return respDto;
-					} else {
-						ThreadUtils.sleep10();
-						continue;
-					}
-				}
-				return null;
-			}, depthReqDto.getTimeout());
-			serviceResult = ServiceResult.buildSuccessResult(klineRespDto);
-		} catch (ExecutionException e) {
-			logger.error("执行异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-		} catch (TimeoutException e) {
-			logger.error("超时异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
-		}
-		return serviceResult;
-	}
+    @Override
+    public ServiceResult<SpotKlineRespDto> getKline(SpotKlineReqDto depthReqDto) {
+        ServiceResult<SpotKlineRespDto> serviceResult = null;
+        try {
+            SpotKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
+                while (!Thread.interrupted()) {
+                    // 从redis读取最新K线
+                    List<QuanKline> klineSpots = redisService
+                            .getKlineSpot(
+                                    depthReqDto.getExchangeId(), getSymbol(depthReqDto.getExchangeId(),
+                                            depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()),
+                                    depthReqDto.getPeriod());
+                    if (CollectionUtils.isEmpty(klineSpots)) {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                    Date ts = klineSpots.get(klineSpots.size() - 1).getTs();
+                    if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
+                        SpotKlineRespDto respDto = new SpotKlineRespDto();
+                        respDto.setTs(ts);
+                        respDto.setData(convertToDto(klineSpots));
+                        return respDto;
+                    } else {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                }
+                return null;
+            }, depthReqDto.getTimeout());
+            serviceResult = ServiceResult.buildSuccessResult(klineRespDto);
+        } catch (ExecutionException e) {
+            logger.error("执行异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        } catch (TimeoutException e) {
+            logger.error("超时异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        }
+        return serviceResult;
+    }
 
-	private List<SpotKlineRespDto.DataBean> convertToDto(List<QuanKline> klineSpots) {
-		List<SpotKlineRespDto.DataBean> dataBeans = new ArrayList<>();
-		for (QuanKline kline : klineSpots) {
-			SpotKlineRespDto.DataBean bean = new SpotKlineRespDto.DataBean();
-			bean.setId(kline.getId());
-			bean.setAmount(kline.getAmount());
-			bean.setOpen(kline.getOpen());
-			bean.setClose(kline.getClose());
-			bean.setLow(kline.getLow());
-			bean.setHigh(kline.getHigh());
-			bean.setVol(kline.getVol());
-			dataBeans.add(bean);
-		}
-		return dataBeans;
-	}
+    private List<SpotKlineRespDto.DataBean> convertToDto(List<QuanKline> klineSpots) {
+        List<SpotKlineRespDto.DataBean> dataBeans = new ArrayList<>();
+        for (QuanKline kline : klineSpots) {
+            SpotKlineRespDto.DataBean bean = new SpotKlineRespDto.DataBean();
+            bean.setId(kline.getId());
+            bean.setAmount(kline.getAmount());
+            bean.setOpen(kline.getOpen());
+            bean.setClose(kline.getClose());
+            bean.setLow(kline.getLow());
+            bean.setHigh(kline.getHigh());
+            bean.setVol(kline.getVol());
+            dataBeans.add(bean);
+        }
+        return dataBeans;
+    }
 }

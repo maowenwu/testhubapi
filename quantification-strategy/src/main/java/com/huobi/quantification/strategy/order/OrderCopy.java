@@ -66,11 +66,11 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
             logger.error("获取汇率失败，方法退出");
             return;
         }
-       /* BigDecimal currPrice = context.getSpotCurrentPrice();
+        BigDecimal currPrice = context.getSpotCurrentPrice();
         if (currPrice == null) {
             logger.error("获取现货当前价格失败，方法退出");
             return;
-        }*/
+        }
         // 每一轮搬砖多个流程使用同一份配置
         StrategyOrderConfig config = context.getStrategyOrderConfig();
         depthBookAdjuster.setExchangeRate(exchangeRate);
@@ -91,7 +91,7 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
         context.setConfig(config);
         context.setFutureBalance(futureBalance);
         context.setSpotBalance(spotBalance);
-        //context.setCurrPrice(currPrice);
+        context.setCurrPrice(currPrice);
         context.setExchangeRate(exchangeRate);
 
         // 先处理买单
@@ -138,8 +138,8 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
             jobManageService.addHuobiFuturePositionJob(101L, "0/1 * * * * ?", true);
             jobManageService.addHuobiFutureUserInfoJob(101L, "0/1 * * * * ?", true);
             jobManageService.addHuobiSpotDepthJob("btcusdt", "step1", "0/1 * * * * ?", true);
-            jobManageService.addHuobiSpotCurrentPriceJob("btcusdt", "0/1 * * * * ?", false);
-            /*new Thread(() -> {
+            jobManageService.addHuobiSpotCurrentPriceJob("btcusdt", "0/1 * * * * ?", true);
+            new Thread(() -> {
                 while (true) {
                     try {
                         copyOrder();
@@ -147,7 +147,7 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
                         e.printStackTrace();
                     }
                 }
-            }).start();*/
+            }).start();
         }
     }
 }

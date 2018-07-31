@@ -530,9 +530,9 @@ public class OrderContext {
 
     public BigDecimal getSpotCurrentPrice() {
         SpotCurrentPriceReqDto reqDto = new SpotCurrentPriceReqDto();
-        reqDto.setExchangeId(this.exchangeId);
-        reqDto.setBaseCoin(this.baseCoin);
-        reqDto.setQuoteCoin(this.quoteCoin);
+        reqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+        reqDto.setBaseCoin("btc");
+        reqDto.setQuoteCoin("usdt");
         reqDto.setTimeout(100);
         reqDto.setMaxDelay(3000);
         try {
