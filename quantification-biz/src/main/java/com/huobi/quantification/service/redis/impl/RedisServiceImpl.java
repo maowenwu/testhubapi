@@ -196,4 +196,28 @@ public class RedisServiceImpl implements RedisService {
 		RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.accountasset." + exchangeId);
 		return map.get(accountId);
 	}
+
+	@Override
+	public void saveFirstFutureAccountInfo(Long accountId, String contractCode, String body) {
+		RMap<String, String> map = client.getMap("strategy.account.future.account." + accountId);
+		map.put(contractCode,body);
+	}
+
+	@Override
+	public String getFirstFutureAccountInfo(Long accountId, String contractCode) {
+		RMap<String, String> map = client.getMap("strategy.account.future.account." + accountId);
+		return map.get(contractCode);
+	}
+	
+	@Override
+	public void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, String contractCode) {
+		RMap<String, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + accountId);
+		map.put(contractCode, list);
+	}
+
+	@Override
+	public List<QuanAccountAsset> getFirstSpotAccounts(long accountId, String contractCode) {
+		RMap<String, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + accountId);
+		return map.get(contractCode);
+	}
 }

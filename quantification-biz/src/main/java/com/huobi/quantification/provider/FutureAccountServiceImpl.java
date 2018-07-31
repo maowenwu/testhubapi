@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
+import com.huobi.quantification.dto.FutureBalanceRespDto.DataBean;
 import com.huobi.quantification.dto.FuturePositionReqDto;
 import com.huobi.quantification.dto.FuturePositionRespDto;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
@@ -33,6 +35,7 @@ import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
 import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
 import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.response.future.OKFutureUserinfoResponse;
+import com.huobi.quantification.service.account.HuobiFutureAccountService;
 import com.huobi.quantification.service.redis.RedisService;
 
 @Service
@@ -43,6 +46,9 @@ public class FutureAccountServiceImpl implements FutureAccountService {
 
     @Autowired
     private RedisService redisService;
+    
+    @Autowired
+    private HuobiFutureAccountService huobiFutureAccountService;
 
     @Override
     public ServiceResult<FutureBalanceRespDto> getBalance(FutureBalanceReqDto reqDto) {
@@ -325,4 +331,28 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         dataBean.setLeverRate(e.getLeverRate());
         return dataBean;
     }
+    
+    @Override
+	public void saveAccountsInfo(Long accountId, String contractCode) {
+		String body = huobiFutureAccountService.queryPositionByAPI(accountId);
+		redisService.saveFirstFutureAccountInfo(accountId, contractCode, body);
+	}
+
+	@Override
+	public ServiceResult<FutureBalanceRespDto> getAccountsInfo(Long accountId, String contractCode) {
+		String body = redisService.getFirstFutureAccountInfo(accountId, contractCode);
+		ServiceResult<FutureBalanceRespDto> serviceResult = null;
+		FutureBalanceRespDto futureBalanceRespDto = new FutureBalanceRespDto();
+		DataBean bean = new FutureBalanceRespDto.DataBean();
+		BigDecimal bigDecimal = new BigDecimal(0.1);
+		bean.setMarginAvailable(bigDecimal);
+		bean.setMarginBalance(bigDecimal);
+		bean.setMarginFrozen(bigDecimal);
+		bean.setMarginPosition(bigDecimal);
+		bean.setProfitReal(bigDecimal);
+		bean.setProfitUnreal(bigDecimal);
+		bean.setRiskRate(bigDecimal);
+		serviceResult = ServiceResult.buildSuccessResult(futureBalanceRespDto);
+		return serviceResult;
+	}
 }

@@ -70,4 +70,13 @@ public interface RedisService {
 	List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period);
 
 	List<QuanAccountAsset> getSpotUserInfo(long accountId, int exchangeId);
+
+	void saveFirstFutureAccountInfo(Long accountId, String contractCode, String body);
+
+	String getFirstFutureAccountInfo(Long accountId, String contractCode);
+	
+	void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, String contractCode);
+	
+	List<QuanAccountAsset> getFirstSpotAccounts(long accountId, String contractCode);
+
 }
