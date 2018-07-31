@@ -54,4 +54,14 @@
     and   coin=#{coin}
     order by  id DESC limit 1
   </select>  
+  
+  <select id="getAomuntByRechargeType" resultType="java.math.BigDecimal">
+    select sum(recharge_amount) 
+    from quan_account_history
+    where account_id=#{accountId}
+    and   exchange_id=#{exchangeId}
+    and   coin=#{coin}
+    and	  recharge_type = #{rechargeType,jdbcType=VARCHAR}
+    order by  id DESC limit 1
+  </select>  
 </mapper>

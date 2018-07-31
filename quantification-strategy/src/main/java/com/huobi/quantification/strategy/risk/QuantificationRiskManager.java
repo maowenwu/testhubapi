@@ -15,6 +15,7 @@ import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
@@ -29,6 +30,7 @@ import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.risk.entity.FutureBalance;
 import com.huobi.quantification.strategy.risk.entity.SpotBalance;
+import com.huobi.quantification.strategy.risk.enums.RechargeTypeEnum;
 import com.huobi.quantification.strategy.risk.enums.RiskHedgingTypeEnum;
 import com.huobi.quantification.strategy.risk.enums.RiskOrderTypeEnum;
 
@@ -55,6 +57,9 @@ public class QuantificationRiskManager {
 	
 	@Autowired
 	private CommonService commonService;
+	
+	@Autowired
+	private QuanAccountHistoryMapper quanAccountHistoryMapper;
 	
 	/**
 	 * 用于监控合约账户的保证金率，当低于限制1执行A方法，当低于限制2执行B方法，低于限制3执行C方法
@@ -214,8 +219,12 @@ public class QuantificationRiskManager {
 		endSpotCoin2.setTotal(end2.getData().getData().get(coin2).getTotal());
 		startSpotCoin1.setTotal(new BigDecimal(1));
 		startSpotCoin2.setTotal(new BigDecimal(1));
-    	return simpleCountProfitAndLoss(start,endFuture,startSpotCoin1,endSpotCoin1,startSpotCoin2,endSpotCoin2);
-	}
+		BigDecimal number1 = endSpotCoin1.getTotal().subtract(startSpotCoin1.getTotal());
+		BigDecimal number2 = endSpotCoin2.getTotal().subtract(startSpotCoin2.getTotal());
+		BigDecimal number3 = endFuture.getMarginBalance().subtract(start.getMarginBalance());
+		BigDecimal profitLoss = number1.add(number2).add(number3);
+		return profitLoss;
+    }
     
     /**
      * 获得本次运行盈亏
@@ -227,14 +236,15 @@ public class QuantificationRiskManager {
 		String coin2 = "btc";
 		FutureBalanceReqDto balanceReqDto = new FutureBalanceReqDto();
 		long accountId = 1234;
+		long futureAccountId = 12345;
 		long timeout = 60 * 1000;
 		long maxDelay = 60 * 1000;
-		balanceReqDto.setAccountId(accountId);
+		balanceReqDto.setAccountId(futureAccountId);
 		balanceReqDto.setCoinType(coin2);
 		balanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
 		balanceReqDto.setMaxDelay(maxDelay);
 		balanceReqDto.setTimeout(timeout);
-		ServiceResult<FutureBalanceRespDto> start = futureAccountService.getAccountInfo(accountId, contractCode);
+		ServiceResult<FutureBalanceRespDto> start = futureAccountService.getAccountInfo(futureAccountId, contractCode);
 		ServiceResult<FutureBalanceRespDto> end = futureAccountService.getBalance(balanceReqDto);
 		if (start.getCode() != ServiceErrorEnum.SUCCESS.getCode() || end.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
 			String msg = null;
@@ -273,7 +283,44 @@ public class QuantificationRiskManager {
 		}
 		endSpotCoin1.setTotal(end2.getData().getData().get(coin1).getTotal());
 		endSpotCoin2.setTotal(end2.getData().getData().get(coin2).getTotal());
-		return simpleCountProfitAndLoss(startFuture, endFuture, startSpotCoin1, endSpotCoin1, startSpotCoin2, endSpotCoin2);
+		//获取币币账户的两个币种的期末净借贷和合约用户的期末净借贷
+		BigDecimal endDebitCoin1 = getEndDebit(coin1, ExchangeEnum.HUOBI.getExId(), accountId);
+		BigDecimal endDebitcoin2 = getEndDebit(coin2, ExchangeEnum.HUOBI.getExId(), accountId);
+		BigDecimal endDebitFuture = getEndDebit(coin2, ExchangeEnum.HUOBI_FUTURE.getExId(), futureAccountId);
+		//获取币币账户的两个币种的期初净借贷和合约用户的期初净借贷
+		Map<String, BigDecimal> startDebit = getStartDebit();
+		BigDecimal startDebitCoin1 = startDebit.get(coin1+"_"+ ExchangeEnum.HUOBI.getExId()+"_"+ accountId);
+		BigDecimal startDebitCoin2 = startDebit.get(coin2+"_"+ ExchangeEnum.HUOBI.getExId()+"_"+ accountId);
+		BigDecimal startDebitFuture = startDebit.get(coin2+"_"+ ExchangeEnum.HUOBI_FUTURE.getExId()+"_"+ futureAccountId);
+		BigDecimal number1 = endSpotCoin1.getTotal().subtract(endDebitCoin1).
+				subtract(startSpotCoin1.getTotal().subtract(startDebitCoin1));
+		BigDecimal number2 = endSpotCoin2.getTotal().subtract(endDebitcoin2).
+				subtract(startSpotCoin2.getTotal().subtract(startDebitCoin2));
+		BigDecimal number3 = endFuture.getMarginBalance().subtract(endDebitFuture).
+				subtract(startFuture.getMarginBalance().subtract(startDebitFuture));
+		BigDecimal profitLoss = number1.add(number2).add(number3);
+		return profitLoss;
+	}
+	
+	/**
+	 * 
+	 */
+	private Map<String, BigDecimal> getStartDebit() {
+		Map<String, BigDecimal> firstDebit = spotAccountService.getFirstDebit();
+		return firstDebit;
+	}
+
+	/**
+	 * 获取当前币种的净借贷
+	 * @param coin1
+	 * @param exId
+	 * @param accountId
+	 * @return
+	 */
+	private BigDecimal getEndDebit(String coin, int exchangeId, long accountId) {
+		BigDecimal borrow = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin, RechargeTypeEnum.BORROW.getRechargeType());
+		BigDecimal payment = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin, RechargeTypeEnum.REPAYMENT.getRechargeType());
+		return borrow.subtract(payment);
 	}
 
 	/**
@@ -314,61 +361,6 @@ public class QuantificationRiskManager {
 		strategyRiskMapper.updateHedgingRiskManagement(contractCode, RiskHedgingTypeEnum.STOP_HADGING_PROFIT.getHadgingType());
 		
 		logger.info("警报：总盈利盈利亏损大于阈值:{},[contractCode={}]", totalProfitLoss, contractCode);
-	}
-
-	/**
-	 * 期末盈亏（BTC）简单算法：
-	 * =（币币账户期末余额BTC  - 币币账户期初余额BTC）
-	 * +（币币账户期末余额USDT - 币币账户期初余额USDT）/币币现货最新价 
-	 * +（合约账户期末权益BTC - 合约账户期初权益BTC）
-	 * @param
-	 * @return
-	 */
-	private BigDecimal simpleCountProfitAndLoss(FutureBalance startFuture, FutureBalance endFuture, SpotBalance startSpotCoin1, SpotBalance endSpotCoin1,SpotBalance startSpotCoin2, SpotBalance endSpotCoin2 ) {
-		BigDecimal number1 = endSpotCoin1.getTotal().subtract(startSpotCoin1.getTotal());
-		BigDecimal number2 = endSpotCoin2.getTotal().subtract(startSpotCoin2.getTotal());
-		BigDecimal number3 = endFuture.getMarginBalance().subtract(startFuture.getMarginBalance());
-		BigDecimal profitLoss = number1.add(number2).add(number3);
-		return profitLoss;
-	}
-	
-	/**
-	 * 期末盈亏（BTC）：
-	 * =（币币账户期末余额BTC  - 币币账户期初余额BTC）
-	 * +（币币账户期末余额USDT - 币币账户期初余额USDT）/币币现货最新价 
-	 * +（合约账户期末静态权益BTC - 合约账户期初静态权益BTC）
-	 * +（合约账户期末调整未实现盈亏BTC-合约账户期初调整未实现盈亏BTC）
-	 * 
-	 * 其中，余额：
-	 * = 可用+冻结
-	 * 
-	 * 合约账户静态权益：
-	 * = 合约账户权益 – 合约账户未实现盈亏
-	 * = 合约账户余额 + 合约账户已实现盈亏
-	 * 
-	 * 合约账户调整未实现盈亏：
-	 * =[1/多仓持仓均价 – 1/(币币现货最新成交价*汇率)]*多仓持仓张数 *单张合约面值
-	 * +[1/(币币现货最新成交价*汇率) – 1/空仓持仓均价]*空仓持仓张数 *单张合约面值
-	 * @param
-	 * @return
-	 */
-	private BigDecimal complexCountProfitAndLoss(FutureBalance startFuture, FutureBalance endFuture, SpotBalance startSpotCoin1, SpotBalance endSpotCoin1,SpotBalance startSpotCoin2, SpotBalance endSpotCoin2) {
-		BigDecimal number1 = endSpotCoin1.getTotal().subtract(startSpotCoin1.getTotal());
-		BigDecimal number2 = endSpotCoin2.getTotal().subtract(startSpotCoin2.getTotal());
-		BigDecimal number3 = getStaticEquity(startFuture,endFuture);
-		return null;
-	}
-	
-	/**
-	 * 计算静态权益差
-	 * @param startFuture
-	 * @param endFuture
-	 * @return
-	 */
-	private BigDecimal getStaticEquity(FutureBalance startFuture, FutureBalance endFuture) {
-		BigDecimal staticEquity1 = startFuture.getMarginBalance().add(startFuture.getProfitReal());
-		BigDecimal staticEquity2 = endFuture.getMarginBalance().add(endFuture.getProfitReal());
-		return staticEquity2.subtract(staticEquity1);
 	}
 
 	/**

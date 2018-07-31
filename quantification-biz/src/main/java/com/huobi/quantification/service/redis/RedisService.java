@@ -1,5 +1,7 @@
 package com.huobi.quantification.service.redis;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,4 +85,7 @@ public interface RedisService {
 	
 	String getFirstFuturePosition(Long accountId, String contractCode);
 
+	void saveFirstDebit(Map<String, BigDecimal> hashMap);
+	
+	Map<String, BigDecimal> getFirstDebit();
 }
