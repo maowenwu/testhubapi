@@ -16,6 +16,7 @@ import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.strategy.hedging.service.AccountService;
+import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.hedging.service.MarketService;
 import com.huobi.quantification.strategy.hedging.service.OrderService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
@@ -44,6 +45,9 @@ public class StartHedging {
 
 	@Autowired
 	QuanAccountFuturePositionService quanAccountFuturePositionService;
+	
+	@Autowired
+	CommonService commonService;
 
 	/**
 	 * 启动普通的对冲
@@ -69,7 +73,7 @@ public class StartHedging {
 
 			// 2.计算当前的两个账户总的净头寸USDT
 			logger.info("2.开始计算当前的两个账户总的净头寸USDT");
-			BigDecimal positionUSDT = calUSDTPosition(startHedgingParam);
+			BigDecimal positionUSDT = commonService.calUSDTPosition(startHedgingParam);
 			logger.info("2.当前的两个账户总的净头寸USDT为  {}  ", positionUSDT);
 
 			// 3. 获取买一卖一价格
@@ -96,42 +100,6 @@ public class StartHedging {
 
 	}
 
-	/**
-	 * 计算当前的两个账户总的净头寸USDT
-	 * 
-	 * @param startHedgingParam
-	 * @return
-	 */
-	public BigDecimal calUSDTPosition(StartHedgingParam startHedgingParam) {
 
-		// 2.1 获取火币现货账户期末USDT余额
-		BigDecimal spotUSDTBalance = accountService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
-				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin()).getAvailable();
-		// 2.2获取火币现货账户期初USDT余额
-		BigDecimal spotUSDTInitAmount = quanAccountFuturePositionService.getInitAmount(
-				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "spot", "usdt");
-		
-		
-		// 2.3 获取火币期货账户期末USD余额 
-		BigDecimal futureUSDBalance = accountService.getHuobiFutureBalance(startHedgingParam.getFutureAccountID(),
-				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode()).getMarginAvailable();
-		// 2.4 获取火币期货账户期初USD余额
-		BigDecimal futureUSDInitAmount = quanAccountFuturePositionService.getInitAmount(
-				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "future", "usd");
-		
-
-		// 2.5 获取USDT USD的汇率
-		ServiceResult<BigDecimal> rateResult = futureContractService.getExchangeRateOfUSDT2USD();
-		BigDecimal rateOfUSDT2USD = rateResult.getData();
-		logger.info("2.3 USDT/USD的利率为：{}", rateResult.getData());
-
-		// 2.6 计算净头寸
-		BigDecimal spotTotal = spotUSDTBalance = spotUSDTBalance.subtract(spotUSDTInitAmount);
-		BigDecimal furureTotal = (futureUSDBalance = futureUSDBalance.subtract(futureUSDInitAmount)).divide(rateOfUSDT2USD, 8,
-				BigDecimal.ROUND_HALF_DOWN);
-		BigDecimal total=spotTotal.subtract(furureTotal);
-		// 暂时只买一半
-		return total.divide(new BigDecimal(2));
-	}
 
 }
