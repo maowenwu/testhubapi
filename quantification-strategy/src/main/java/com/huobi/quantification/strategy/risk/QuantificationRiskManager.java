@@ -25,7 +25,6 @@ import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
-import com.huobi.quantification.strategy.hedging.StartHedging;
 import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.risk.entity.FutureBalance;
