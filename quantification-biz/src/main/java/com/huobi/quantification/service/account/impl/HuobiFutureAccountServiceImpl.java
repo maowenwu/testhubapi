@@ -2,6 +2,7 @@ package com.huobi.quantification.service.account.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import com.huobi.quantification.enums.ExchangeEnum;
 import org.slf4j.Logger;
@@ -35,17 +36,14 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
     @Override
     public String queryUserInfoByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("symbol","BTC");
-        params.put("userId","156138");
-        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ACCOUNTINFO, params);
+        String body = httpService.doPost(HttpConstant.HUOBI_FUTURE_ACCOUNTINFO, params);
         return body;
     }
 
     @Override
     public String queryPositionByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("userId","156138");
-        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_POSITION, params);
+        String body = httpService.doPost(HttpConstant.HUOBI_FUTURE_POSITION, params);
         return body;
     }
 
@@ -83,4 +81,12 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         redisService.saveFuturePosition(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, position);
         logger.info("[HuobiPosition][accountId={},]任务结束，耗时：" + started, accountId);
     }
+
+	@Override
+	public void saveFutureAccountsInfo(List<Long> accountIds) {
+		for (Long accountId : accountIds) {
+			String queryUserInfoByAPI = queryUserInfoByAPI(accountId);
+			String queryPositionByAPI = queryPositionByAPI(accountId);
+		}
+	}
 }
