@@ -50,7 +50,6 @@
     select sum(current_amount) 
     from quan_account_history
     where account_id=#{accountId}
-    and   accounts_type=#{accountsType}
     and   exchange_id=#{exchangeId}
     and   coin=#{coin}
     order by  id DESC limit 1

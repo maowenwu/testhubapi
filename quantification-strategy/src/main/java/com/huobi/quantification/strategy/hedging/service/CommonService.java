@@ -36,14 +36,15 @@ public class CommonService {
 				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin()).getAvailable();
 		// 2.2获取火币现货账户期初USDT余额
 		BigDecimal spotUSDTInitAmount = quanAccountFuturePositionService.getInitAmount(
-				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "spot", "usdt");
+				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(),  "usdt");
 
 		// 2.3 获取火币期货账户期末USD余额
-		BigDecimal futureUSDBalance = accountInfoService.getHuobiFutureBalance(startHedgingParam.getFutureAccountID(),
-				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode()).getMarginAvailable();
+		BigDecimal futureUSDBalance = new BigDecimal(0);
+				/*accountInfoService.getHuobiFutureBalance(startHedgingParam.getFutureAccountID(),
+				startHedgingParam.getFutureExchangeId(), startHedgingParam.getQuoteCoin()).getMarginAvailable();*/
 		// 2.4 获取火币期货账户期初USD余额
 		BigDecimal futureUSDInitAmount = quanAccountFuturePositionService.getInitAmount(
-				startHedgingParam.getSpotAccountID(), startHedgingParam.getSpotExchangeId(), "future", "usd");
+				startHedgingParam.getFutureAccountID(), startHedgingParam.getSpotExchangeId(), "usd");
 
 		// 2.5 获取USDT USD的汇率
 		ServiceResult<BigDecimal> rateResult = futureContractService.getExchangeRateOfUSDT2USD();
