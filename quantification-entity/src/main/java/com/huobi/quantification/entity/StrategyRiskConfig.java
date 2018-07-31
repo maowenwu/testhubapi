@@ -81,12 +81,13 @@ public class StrategyRiskConfig {
     private String symbol;
 
     /**
-     * 合约代码
+     * 合约类型
      * @mbg.generated 2018-07-26 17:39:17
      */
     private String contractType;
 
     /**
+     * 合约代码
      * @mbg.generated 2018-07-26 17:39:17
      */
     private String contractCode;

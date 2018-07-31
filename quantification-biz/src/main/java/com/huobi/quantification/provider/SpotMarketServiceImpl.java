@@ -25,6 +25,7 @@ import com.huobi.quantification.dto.SpotKlineReqDto;
 import com.huobi.quantification.dto.SpotKlineRespDto;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanKline;
+import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
@@ -46,20 +47,20 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 			SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
 					// 从redis读取最新成交价格
-					TradeResponse tradeSpot = redisService.getHuobiCurrentPrice(currentPriceReqDto.getExchangeId(),
+					QuanTrade quanTrade = redisService.getHuobiCurrentPrice(currentPriceReqDto.getExchangeId(),
 							getSymbol(currentPriceReqDto.getExchangeId(), currentPriceReqDto.getBaseCoin(),
 									currentPriceReqDto.getQuoteCoin()));
-					if (tradeSpot == null) {
+					if (quanTrade == null) {
 						ThreadUtils.sleep10();
 						continue;
 					}
-					Date ts = tradeSpot.getTick().getTs();
+					Date ts = quanTrade.getTs();
 					logger.info("QuanAccountSpotAsset时间：{}",DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
 					logger.info("当前时间：{}",DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
 					if (DateUtils.withinMaxDelay(ts, currentPriceReqDto.getMaxDelay())) {
 						SpotCurrentPriceRespDto respDto = new SpotCurrentPriceRespDto();
 						respDto.setTs(ts);
-						respDto.setCurrentPrice(tradeSpot.getTick().getData().getPrice());
+						respDto.setCurrentPrice(quanTrade.getPrice());
 						return respDto;
 					} else {
 						ThreadUtils.sleep10();

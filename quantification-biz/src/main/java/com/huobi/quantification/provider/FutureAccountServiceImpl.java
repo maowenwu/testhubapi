@@ -335,11 +335,13 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     @Override
 	public void saveAccountsInfo(Long accountId, String contractCode) {
 		String body = huobiFutureAccountService.queryPositionByAPI(accountId);
+		String body2 = huobiFutureAccountService.queryPositionByAPI(accountId);
 		redisService.saveFirstFutureAccountInfo(accountId, contractCode, body);
+		redisService.saveFirstFuturePosition(accountId, contractCode, body2);
 	}
 
 	@Override
-	public ServiceResult<FutureBalanceRespDto> getAccountsInfo(Long accountId, String contractCode) {
+	public ServiceResult<FutureBalanceRespDto> getAccountInfo(Long accountId, String contractCode) {
 		String body = redisService.getFirstFutureAccountInfo(accountId, contractCode);
 		ServiceResult<FutureBalanceRespDto> serviceResult = null;
 		FutureBalanceRespDto futureBalanceRespDto = new FutureBalanceRespDto();
@@ -353,6 +355,16 @@ public class FutureAccountServiceImpl implements FutureAccountService {
 		bean.setProfitUnreal(bigDecimal);
 		bean.setRiskRate(bigDecimal);
 		serviceResult = ServiceResult.buildSuccessResult(futureBalanceRespDto);
+		return serviceResult;
+	}
+
+	@Override
+	public ServiceResult<FuturePositionRespDto> getAccountPosition(Long accountId, String contractCode) {
+		String body = redisService.getFirstFuturePosition(accountId, contractCode);
+		ServiceResult<FuturePositionRespDto> serviceResult = null;
+		FuturePositionRespDto respDto = new FuturePositionRespDto();
+		FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
+		serviceResult = ServiceResult.buildSuccessResult(respDto);
 		return serviceResult;
 	}
 }

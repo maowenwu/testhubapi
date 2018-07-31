@@ -162,8 +162,8 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public TradeResponse getHuobiCurrentPrice(int exchangeId, String symbol) {
-		RMap<String, TradeResponse> map = client.getMap("quan.market.spot.trade." + exchangeId);
+	public QuanTrade getHuobiCurrentPrice(int exchangeId, String symbol) {
+		RMap<String, QuanTrade> map = client.getMap("quan.market.spot.trade." + exchangeId);
 		return map.get(symbol);
 	}
 
@@ -218,6 +218,18 @@ public class RedisServiceImpl implements RedisService {
 	@Override
 	public List<QuanAccountAsset> getFirstSpotAccounts(long accountId, String contractCode) {
 		RMap<String, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + accountId);
+		return map.get(contractCode);
+	}
+
+	@Override
+	public void saveFirstFuturePosition(Long accountId, String contractCode, String body) {
+		RMap<String, String> map = client.getMap("strategy.account.future.position." + accountId);
+		map.put(contractCode,body);
+	}
+
+	@Override
+	public String getFirstFuturePosition(Long accountId, String contractCode) {
+		RMap<String, String> map = client.getMap("strategy.account.future.position." + accountId);
 		return map.get(contractCode);
 	}
 }

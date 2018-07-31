@@ -27,6 +27,7 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.strategy.hedging.StartHedging;
 import com.huobi.quantification.strategy.hedging.StartHedgingParam;
+import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.risk.entity.FutureBalance;
 import com.huobi.quantification.strategy.risk.entity.SpotBalance;
 import com.huobi.quantification.strategy.risk.enums.RiskHedgingTypeEnum;
@@ -52,6 +53,9 @@ public class QuantificationRiskManager {
 	
 	@Autowired
 	private SpotOrderService spotOrderService;
+	
+	@Autowired
+	private CommonService commonService;
 	
 	/**
 	 * 用于监控合约账户的保证金率，当低于限制1执行A方法，当低于限制2执行B方法，低于限制3执行C方法
@@ -231,7 +235,7 @@ public class QuantificationRiskManager {
 		balanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
 		balanceReqDto.setMaxDelay(maxDelay);
 		balanceReqDto.setTimeout(timeout);
-		ServiceResult<FutureBalanceRespDto> start = futureAccountService.getAccountsInfo(accountId, contractCode);
+		ServiceResult<FutureBalanceRespDto> start = futureAccountService.getAccountInfo(accountId, contractCode);
 		ServiceResult<FutureBalanceRespDto> end = futureAccountService.getBalance(balanceReqDto);
 		if (start.getCode() != ServiceErrorEnum.SUCCESS.getCode() || end.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
 			String msg = null;
@@ -346,13 +350,28 @@ public class QuantificationRiskManager {
 	 * 合约账户调整未实现盈亏：
 	 * =[1/多仓持仓均价 – 1/(币币现货最新成交价*汇率)]*多仓持仓张数 *单张合约面值
 	 * +[1/(币币现货最新成交价*汇率) – 1/空仓持仓均价]*空仓持仓张数 *单张合约面值
+	 * @param
 	 * @return
 	 */
-	private BigDecimal complexCountProfitAndLoss() {
-		
+	private BigDecimal complexCountProfitAndLoss(FutureBalance startFuture, FutureBalance endFuture, SpotBalance startSpotCoin1, SpotBalance endSpotCoin1,SpotBalance startSpotCoin2, SpotBalance endSpotCoin2) {
+		BigDecimal number1 = endSpotCoin1.getTotal().subtract(startSpotCoin1.getTotal());
+		BigDecimal number2 = endSpotCoin2.getTotal().subtract(startSpotCoin2.getTotal());
+		BigDecimal number3 = getStaticEquity(startFuture,endFuture);
 		return null;
 	}
 	
+	/**
+	 * 计算静态权益差
+	 * @param startFuture
+	 * @param endFuture
+	 * @return
+	 */
+	private BigDecimal getStaticEquity(FutureBalance startFuture, FutureBalance endFuture) {
+		BigDecimal staticEquity1 = startFuture.getMarginBalance().add(startFuture.getProfitReal());
+		BigDecimal staticEquity2 = endFuture.getMarginBalance().add(endFuture.getProfitReal());
+		return staticEquity2.subtract(staticEquity1);
+	}
+
 	/**
 	 * 净头寸监控(合约+币币账户组)：	1，如果净头寸的绝对值大于阈值1，会停止合约摆盘，撤销合约账户所有未成交订单，对冲程序继续执行，直至低于阈值，重新恢复合约摆盘；
 	 * 						2，如果净头寸的绝对值大于阈值2，会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报。
@@ -437,7 +456,6 @@ public class QuantificationRiskManager {
 	 * @return
 	 */
 	private BigDecimal getCurrentPosition(String contractCode) {
-		StartHedging startHedging = new StartHedging();
 	 	StartHedgingParam startHedgingParam = new StartHedgingParam();
 	 	startHedgingParam.setBaseCoin("usdt");
 	 	startHedgingParam.setQuoteCoin("btc");
@@ -446,7 +464,7 @@ public class QuantificationRiskManager {
 	 	startHedgingParam.setFutureExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
 	 	startHedgingParam.setSpotAccountID(1234l);
 	 	startHedgingParam.setSpotExchangeId(ExchangeEnum.HUOBI.getExId());
-		startHedging.calUSDTPosition(startHedgingParam);
-		return null;
+	 	BigDecimal calUSDTPosition = commonService.calUSDTPosition(startHedgingParam);
+		return calUSDTPosition;
 	}
 }

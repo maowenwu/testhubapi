@@ -63,7 +63,7 @@ public interface RedisService {
 
 	void setHuobiCurrentPrice(int exId, String symbol, QuanTrade trade);
 
-	TradeResponse getHuobiCurrentPrice(int exchangeId, String symbol);
+	QuanTrade getHuobiCurrentPrice(int exchangeId, String symbol);
 
 	void saveKline(int exchangeId, String symbol, String period, List<QuanKline> quanKline);
 
@@ -78,5 +78,9 @@ public interface RedisService {
 	void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, String contractCode);
 	
 	List<QuanAccountAsset> getFirstSpotAccounts(long accountId, String contractCode);
+
+	void saveFirstFuturePosition(Long accountId, String contractCode, String body);
+	
+	String getFirstFuturePosition(Long accountId, String contractCode);
 
 }
