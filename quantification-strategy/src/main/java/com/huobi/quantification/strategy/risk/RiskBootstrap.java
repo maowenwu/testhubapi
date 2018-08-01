@@ -57,27 +57,31 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
         Integer spotExchangeId = spot.getExchangeId();
         String baseCoin = spot.getBaseCoin();
         String quotCoin = spot.getQuotCoin();
+
         Long futureAccountId = future.getAccountId();
         Integer futureExchangeId = future.getExchangeId();
         String baseCoin2 = future.getBaseCoin();
         String contractCode = future.getContractCode();
+
 		spotAccountService.saveFirstBalance(spotAccountId, spotExchangeId);
 		futureAccountService.saveAccountsInfo(futureAccountId, contractCode);
+
 		BigDecimal spotDebitCoin1 = getEndDebit(baseCoin, spotExchangeId, spotAccountId);
 		BigDecimal spotDebitCoin2 = getEndDebit(quotCoin, spotExchangeId, spotAccountId);
 		BigDecimal futureDebit = getEndDebit(baseCoin2, futureExchangeId, futureAccountId);
+
 		HashMap<String, BigDecimal> hashMap = new HashMap<>();
 		hashMap.put(baseCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin1);
 		hashMap.put(quotCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin2);
 		hashMap.put(baseCoin2 + "_" + futureExchangeId + "_" + futureAccountId, futureDebit);
 		spotAccountService.saveFirstDebit(hashMap, future.getContractCode());
 		
-		QuantificationRiskManager riskManager = ApplicationContextHolder.getContext().getBean(QuantificationRiskManager.class);
+		RiskManager riskManager = ApplicationContextHolder.getContext().getBean(RiskManager.class);
 		riskManager.init(group);
-		Thread thread1 = new Thread(() -> {
+		Thread thread = new Thread(() -> {
 			while (true) {
 				try {
-					riskManager.marginRateManage(contractCode);
+					riskManager.monitor();
 				} catch (Throwable e) {
 					logger.error("监控保证金率期间出现异常", e);
 					try {
@@ -87,38 +91,8 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
 				}
 			}
 		});
-		Thread thread2 = new Thread(() -> {
-			while (true) {
-				try {
-					riskManager.positionRiskManage(contractCode);
-				} catch (Throwable e) {
-					logger.error("监控净头寸期间出现异常", e);
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e1) {
-					}
-				}
-			}
-		});
-		Thread thread3 = new Thread(() -> {
-			while (true) {
-				try {
-					riskManager.profitLossRiskManage(contractCode);
-				} catch (Throwable e) {
-					logger.error("监控盈亏期间出现异常", e);
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e1) {
-					}
-				}
-			}
-		});
-		thread1.setDaemon(true);
-		thread2.setDaemon(true);
-		thread3.setDaemon(true);
-		thread1.start();
-		thread2.start();
-		thread3.start();
+		thread.setDaemon(true);
+		thread.start();
 	}
 
 	private BigDecimal getEndDebit(String coin, int exchangeId, long accountId) {

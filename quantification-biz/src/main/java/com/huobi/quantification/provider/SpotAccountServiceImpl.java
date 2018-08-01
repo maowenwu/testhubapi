@@ -101,6 +101,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 
 	@Override
 	public void saveFirstBalance(long accountId, Integer exchangeId) {
+		// todo dto
 		List<QuanAccountAsset> account = huobiAccountService.getAccount(accountId);
 		redisService.saveFirstSpotAccounts(account, accountId, exchangeId);
 	}
