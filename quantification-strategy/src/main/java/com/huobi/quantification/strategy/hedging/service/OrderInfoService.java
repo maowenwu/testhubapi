@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.strategy.hedging.StartHedgingParam;
@@ -21,6 +22,9 @@ public class OrderInfoService {
 	@Autowired
 	SpotOrderService spotOrderService;
 
+	@Autowired
+	MarketInfoService marketInfoService;
+
 	/**
 	 * 下单
 	 * 
@@ -30,8 +34,17 @@ public class OrderInfoService {
 	 * @param position          寸头
 	 * @return
 	 */
-	public ServiceResult<SpotPlaceOrderRespDto> placeHuobiSpotOrder(Map<String, BigDecimal> priceMap,
-			StartHedgingParam startHedgingParam, BigDecimal position) {
+	public ServiceResult<SpotPlaceOrderRespDto> placeHuobiSpotOrder(StartHedgingParam startHedgingParam,
+			BigDecimal position) {
+
+		// 3. 获取买一卖一价格
+		logger.info("3. 获取交易对  {} 买一卖一价格", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin());
+		SpotDepthReqDto spotDepthReqDto = new SpotDepthReqDto();
+		spotDepthReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
+		spotDepthReqDto.setQuoteCoin(startHedgingParam.getQuoteCoin());
+		Map<String, BigDecimal> priceMap = marketInfoService.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
+		logger.info("3. 交易对  {} 买一卖一价格为： {} ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(),
+				JSON.toJSONString(priceMap));
 
 		// -1, 0, or 1 判断买卖方向 --根据positionUSDT净头寸判断
 		int comparePosition = position.compareTo(new BigDecimal(0));
@@ -46,20 +59,24 @@ public class OrderInfoService {
 			side = "sell";
 			orderType = "limit";
 			price = priceMap.get("sellPrice").multiply((new BigDecimal(1).add(startHedgingParam.getSlippage())));
-			quantity = position.divide(price, 4, BigDecimal.ROUND_HALF_DOWN);
+			quantity = position.divide(price, 4, BigDecimal.ROUND_DOWN).abs();
 		} else if (comparePosition == 1) {// USDT足够,需要下买单，买入对应的币种
 			side = "buy";
 			orderType = "limit";
 			price = priceMap.get("buyPrice").multiply((new BigDecimal(1).subtract(startHedgingParam.getSlippage())));
-			quantity = position.divide(price, 8, BigDecimal.ROUND_HALF_DOWN).divide(
-					(new BigDecimal(1).subtract(startHedgingParam.getFeeRate())), 4, BigDecimal.ROUND_HALF_DOWN);
+			quantity = position.divide(price, 8, BigDecimal.ROUND_DOWN).divide(
+					(new BigDecimal(1).subtract(startHedgingParam.getFeeRate())), 4, BigDecimal.ROUND_DOWN).abs();
 		}
 
+		if(quantity.compareTo(new BigDecimal(0))==0) {
+			logger.info("数量太小，不下单");
+			return null;
+		}
 		spotPlaceOrderReqDto.setAccountId(startHedgingParam.getSpotAccountID());
 		spotPlaceOrderReqDto.setExchangeId(startHedgingParam.getSpotExchangeId());
 		spotPlaceOrderReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
 		spotPlaceOrderReqDto.setQuoteCoin(startHedgingParam.getQuoteCoin());
-		spotPlaceOrderReqDto.setPrice(price.divide(new BigDecimal(1), 2, BigDecimal.ROUND_HALF_DOWN));
+		spotPlaceOrderReqDto.setPrice(price.divide(new BigDecimal(1), 2, BigDecimal.ROUND_DOWN));
 		spotPlaceOrderReqDto.setQuantity(quantity);
 		spotPlaceOrderReqDto.setSide(side);
 		spotPlaceOrderReqDto.setOrderType(orderType);

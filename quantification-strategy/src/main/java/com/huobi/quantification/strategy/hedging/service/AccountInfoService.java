@@ -1,5 +1,6 @@
 package com.huobi.quantification.strategy.hedging.service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,10 +15,13 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
+import com.huobi.quantification.dto.FuturePositionReqDto;
+import com.huobi.quantification.dto.FuturePositionRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto.DataBean;
 import com.huobi.quantification.strategy.order.entity.FutureBalance;
+import com.huobi.quantification.strategy.order.entity.FuturePosition;
 
 /**
  * 获取账户信息
@@ -37,6 +41,7 @@ public class AccountInfoService {
 
 	/**
 	 * 获取Huobi现货账户指定账户期末(即当前)余额
+	 * 
 	 * @param spotBalanceReqDto
 	 * @param coinType
 	 * @return
@@ -59,8 +64,8 @@ public class AccountInfoService {
 	 * @param futureBalanceReqDto
 	 * @return
 	 */
-	public FutureBalance getHuobiFutureBalance(Long accountId,Integer exchangeId,String coinType) {
-		FutureBalanceReqDto futureBalanceReqDto=new FutureBalanceReqDto();
+	public FutureBalance getHuobiFutureBalance(Long accountId, Integer exchangeId, String coinType) {
+		FutureBalanceReqDto futureBalanceReqDto = new FutureBalanceReqDto();
 		futureBalanceReqDto.setAccountId(accountId);
 		futureBalanceReqDto.setExchangeId(exchangeId);
 		futureBalanceReqDto.setTimeout(100);
@@ -68,16 +73,54 @@ public class AccountInfoService {
 		ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(futureBalanceReqDto);
 		Map<String, FutureBalanceRespDto.DataBean> data = balance.getData().getData();
 		FutureBalanceRespDto.DataBean dataBean = data.get(coinType);
-        if (dataBean == null) {
-            dataBean = data.get(coinType.toUpperCase());
-        }
-        if (dataBean != null) {
-            FutureBalance futureBalance = new FutureBalance();
-            BeanUtils.copyProperties(dataBean, futureBalance);
-            return futureBalance;
-        } else {
-            return null;
-        }
+		if (dataBean == null) {
+			dataBean = data.get(coinType.toUpperCase());
+		}
+		if (dataBean != null) {
+			FutureBalance futureBalance = new FutureBalance();
+			BeanUtils.copyProperties(dataBean, futureBalance);
+			return futureBalance;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 获取期货持仓信息
+	 * 
+	 * @param accountId
+	 * @param exchangeId
+	 * @param contractCode
+	 */
+	public FuturePosition getFuturePosition(Long accountId, Integer exchangeId, String contractCode) {
+		try {
+			FuturePositionReqDto reqDto = new FuturePositionReqDto();
+			reqDto.setExchangeId(exchangeId);
+			reqDto.setAccountId(accountId);
+			reqDto.setCoinType(contractCode);
+			reqDto.setTimeout(100);
+			reqDto.setMaxDelay(3000);
+			ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
+			Map<String, List<FuturePositionRespDto.DataBean>> data = position.getData().getData();
+			List<FuturePositionRespDto.DataBean> beanList = data.get(contractCode);
+			FuturePosition futurePosition = new FuturePosition();
+			beanList.forEach(e -> {
+				if (e.getLongAmount() != null) {
+					FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
+					BeanUtils.copyProperties(e, longPosi);
+					futurePosition.setLongPosi(longPosi);
+				}
+				if (e.getShortAmount() != null) {
+					FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
+					BeanUtils.copyProperties(e, shortPosi);
+					futurePosition.setShortPosi(shortPosi);
+				}
+			});
+			return futurePosition;
+		} catch (Exception e) {
+			logger.error("获取期货持仓信息失败，exchangeId={}，accountId={}，coinType={}", exchangeId, accountId, contractCode, e);
+			return null;
+		}
 	}
 
 }

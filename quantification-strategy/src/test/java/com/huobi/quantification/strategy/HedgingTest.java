@@ -20,7 +20,7 @@ public class HedgingTest {
 	StartHedging startHedging;
 
 	@Test
-	public void start() {
+	public void start() throws Exception {
 		StartHedgingParam startHedgingParam = new StartHedgingParam();
 		startHedgingParam.setBaseCoin("btc");
 		startHedgingParam.setFeeRate(new BigDecimal(0));
@@ -30,7 +30,10 @@ public class HedgingTest {
 		startHedgingParam.setSpotExchangeId(1);
 		startHedgingParam.setFutureAccountID(0L);
 		startHedgingParam.setFutureExchangeId(0);
-		startHedging.startNormal(startHedgingParam);
+		while(true) {
+			startHedging.startNormal(startHedgingParam);
+			Thread.sleep(1000*60);
+		}
 	}
 
 }
