@@ -20,5 +20,8 @@ public interface QuanAccountHistoryMapper {
 
 	// 根据
 	BigDecimal getInitAmount(@Param("accountId") Long accountId, @Param("exchangeId") int exchangeId,
-			@Param("accountsType") String accountsType,@Param("coin") String coin);
+			@Param("coin") String coin);
+
+	BigDecimal getAomuntByRechargeType(@Param("accountId") Long accountId, @Param("exchangeId") int exchangeId,
+			@Param("coin") String coin, @Param("rechargeType") int rechargeType);
 }

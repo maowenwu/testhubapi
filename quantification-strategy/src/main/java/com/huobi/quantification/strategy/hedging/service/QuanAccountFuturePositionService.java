@@ -21,8 +21,8 @@ public class QuanAccountFuturePositionService {
 	 * @param coin
 	 * @return
 	 */
-	public BigDecimal getInitAmount(Long accountId, int exchangeId, String accountsType, String coin) {
-		BigDecimal result = quanAccountHistoryMapper.getInitAmount(accountId, exchangeId, accountsType, coin);
+	public BigDecimal getInitAmount(Long accountId, int exchangeId,  String coin) {
+		BigDecimal result = quanAccountHistoryMapper.getInitAmount(accountId, exchangeId, coin);
 		return result;
 	}
 

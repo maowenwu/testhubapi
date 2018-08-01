@@ -28,6 +28,8 @@ public class HedgingTest {
 		startHedgingParam.setSlippage(new BigDecimal(0));
 		startHedgingParam.setSpotAccountID(4295363L);
 		startHedgingParam.setSpotExchangeId(1);
+		startHedgingParam.setFutureAccountID(0L);
+		startHedgingParam.setFutureExchangeId(0);
 		startHedging.startNormal(startHedgingParam);
 	}
 

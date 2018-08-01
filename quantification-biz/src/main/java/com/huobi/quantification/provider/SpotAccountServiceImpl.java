@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -107,6 +108,16 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 	@Override
 	public List<QuanAccountAsset> getFirstBalance(long accountId, String contractCode) {
 		return redisService.getFirstSpotAccounts(accountId, contractCode);
+	}
+
+	@Override
+	public void saveFirstDebit(Map<String, BigDecimal> hashMap) {
+		redisService.saveFirstDebit(hashMap);
+	}
+
+	@Override
+	public Map<String, BigDecimal> getFirstDebit() {
+		return redisService.getFirstDebit();
 	}
 
 }

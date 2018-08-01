@@ -1,7 +1,10 @@
 package com.huobi.quantification.service.redis.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
+import org.redisson.api.RList;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,6 @@ import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.entity.QuanTickerFuture;
 import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.entity.QuanTradeFuture;
-import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.redis.RedisService;
 
 @Service
@@ -231,5 +233,17 @@ public class RedisServiceImpl implements RedisService {
 	public String getFirstFuturePosition(Long accountId, String contractCode) {
 		RMap<String, String> map = client.getMap("strategy.account.future.position." + accountId);
 		return map.get(contractCode);
+	}
+
+	@Override
+	public void saveFirstDebit(Map<String, BigDecimal> hashMap) {
+		RMap<Integer, Map<String, BigDecimal>> map = client.getMap("strategy.risk.debit");
+		map.put(123, hashMap);
+	}
+
+	@Override
+	public Map<String, BigDecimal> getFirstDebit() {
+		RMap<Integer, Map<String, BigDecimal>> map = client.getMap("strategy.risk.debit");
+		return map.get(123);
 	}
 }

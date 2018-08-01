@@ -59,21 +59,25 @@ public class AccountInfoService {
 	 * @param futureBalanceReqDto
 	 * @return
 	 */
-	public FutureBalance getHuobiFutureBalance(Long accountId,int exchangeId,String contractCode) {
+	public FutureBalance getHuobiFutureBalance(Long accountId,Integer exchangeId,String coinType) {
 		FutureBalanceReqDto futureBalanceReqDto=new FutureBalanceReqDto();
 		futureBalanceReqDto.setAccountId(accountId);
 		futureBalanceReqDto.setExchangeId(exchangeId);
-		
+		futureBalanceReqDto.setTimeout(100);
+		futureBalanceReqDto.setMaxDelay(3000);
 		ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(futureBalanceReqDto);
 		Map<String, FutureBalanceRespDto.DataBean> data = balance.getData().getData();
-		FutureBalanceRespDto.DataBean dataBean = data.get(contractCode);
-		if (dataBean != null) {
-			FutureBalance futureBalance = new FutureBalance();
-			BeanUtils.copyProperties(dataBean, futureBalance);
-			return futureBalance;
-		} else {
-			return null;
-		}
+		FutureBalanceRespDto.DataBean dataBean = data.get(coinType);
+        if (dataBean == null) {
+            dataBean = data.get(coinType.toUpperCase());
+        }
+        if (dataBean != null) {
+            FutureBalance futureBalance = new FutureBalance();
+            BeanUtils.copyProperties(dataBean, futureBalance);
+            return futureBalance;
+        } else {
+            return null;
+        }
 	}
 
 }
