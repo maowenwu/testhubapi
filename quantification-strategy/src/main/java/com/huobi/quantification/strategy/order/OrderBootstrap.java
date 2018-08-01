@@ -1,6 +1,7 @@
 package com.huobi.quantification.strategy.order;
 
 
+import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.strategy.config.StrategyProperties;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 public class OrderBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private StrategyProperties strategyProperties;
     @Autowired
@@ -46,24 +48,35 @@ public class OrderBootstrap implements ApplicationListener<ContextRefreshedEvent
         jobManageService.addHuobiSpotCurrentPriceJob(spot.getBaseCoin() + spot.getQuotCoin(), "0/1 * * * * ?", true);
         jobManageService.addHuobiFuturePositionJob(future.getAccountId(), "0/1 * * * * ?", true);
         jobManageService.addHuobiFutureUserInfoJob(future.getAccountId(), "0/1 * * * * ?", true);
-
+        jobManageService.addHuobiFutureContractCodeJob("0/10 * * * * ?", true);
+        // 等待3秒，保证job已经完全运行
+        sleep(3000);
         OrderCopy orderCopy = ApplicationContextHolder.getContext().getBean(OrderCopy.class);
         orderCopy.init(group);
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
-                    orderCopy.copyOrder();
+                    boolean success = orderCopy.copyOrder();
+                    if (!success) {
+                        sleep(5000);
+                    }
                 } catch (Throwable e) {
                     logger.error("拷贝订单期间出现异常", e);
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e1) {
-
-                    }
+                    sleep(5000);
                 }
             }
         });
         thread.setDaemon(true);
+        thread.setName(future.getBaseCoin() + "_" + future.getQuotCoin());
         thread.start();
     }
+
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e1) {
+
+        }
+    }
+
 }

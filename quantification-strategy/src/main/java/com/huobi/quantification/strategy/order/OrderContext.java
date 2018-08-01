@@ -73,6 +73,7 @@ public class OrderContext {
     private Long futureAccountId;
     private Integer futureLever;
     private String futureContractType;
+    private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
     private String futureCoinType;
@@ -87,7 +88,8 @@ public class OrderContext {
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
-        this.futureContractType = future.getContractType();
+        this.futureContractCode = future.getContractCode();
+        this.futureContractType = getContractTypeFromCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
         this.futureCoinType = future.getBaseCoin();
@@ -102,8 +104,6 @@ public class OrderContext {
         reqDto.setExchangeId(spotExchangeId);
         reqDto.setBaseCoin(spotBaseCoin);
         reqDto.setQuoteCoin(spotQuoteCoin);
-        reqDto.setTimeout(100);
-        reqDto.setMaxDelay(3000);
         ServiceResult<SpotDepthRespDto> result = spotMarketService.getDepth(reqDto);
         if (result.isSuccess()) {
             SpotDepthRespDto.DataBean data = result.getData().getData();
@@ -129,7 +129,8 @@ public class OrderContext {
                 continue;
             }
         }
-        throw new RuntimeException("获取usdt兑usd汇率异常");
+        logger.error("获取USDT2USD汇率异常");
+        return null;
     }
 
     public SpotBalance getSpotBalance() {
@@ -174,19 +175,22 @@ public class OrderContext {
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
             reqDto.setCoinType(this.futureCoinType);
-            reqDto.setTimeout(100);
-            reqDto.setMaxDelay(3000);
-            ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(reqDto);
-            Map<String, FutureBalanceRespDto.DataBean> data = balance.getData().getData();
-            FutureBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
-            if (dataBean == null) {
-                dataBean = data.get(futureCoinType.toUpperCase());
-            }
-            if (dataBean != null) {
-                FutureBalance futureBalance = new FutureBalance();
-                BeanUtils.copyProperties(dataBean, futureBalance);
-                return futureBalance;
+            ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
+            if (result.isSuccess()) {
+                Map<String, FutureBalanceRespDto.DataBean> data = result.getData().getData();
+                FutureBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
+                if (dataBean == null) {
+                    dataBean = data.get(futureCoinType.toUpperCase());
+                }
+                if (dataBean != null) {
+                    FutureBalance futureBalance = new FutureBalance();
+                    BeanUtils.copyProperties(dataBean, futureBalance);
+                    return futureBalance;
+                } else {
+                    return null;
+                }
             } else {
+                logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}，失败原因={}", this.futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
                 return null;
             }
         } catch (BeansException e) {
@@ -201,25 +205,31 @@ public class OrderContext {
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
             reqDto.setCoinType(this.futureCoinType);
-            reqDto.setTimeout(100);
-            reqDto.setMaxDelay(3000);
-            ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
-            Map<String, List<FuturePositionRespDto.DataBean>> data = position.getData().getData();
-            List<FuturePositionRespDto.DataBean> beanList = data.get(this.futureCoinType);
-            FuturePosition futurePosition = new FuturePosition();
-            beanList.forEach(e -> {
-                if (e.getLongAmount() != null) {
-                    FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
-                    BeanUtils.copyProperties(e, longPosi);
-                    futurePosition.setLongPosi(longPosi);
+            ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
+            if (result.isSuccess()) {
+                Map<String, List<FuturePositionRespDto.DataBean>> data = result.getData().getData();
+                List<FuturePositionRespDto.DataBean> beanList = data.get(this.futureCoinType);
+                FuturePosition futurePosition = new FuturePosition();
+                // 如果beanList为null，代表当前账户没有持仓
+                if (CollectionUtils.isNotEmpty(beanList)) {
+                    beanList.forEach(e -> {
+                        if (e.getLongAmount() != null) {
+                            FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
+                            BeanUtils.copyProperties(e, longPosi);
+                            futurePosition.setLongPosi(longPosi);
+                        }
+                        if (e.getShortAmount() != null) {
+                            FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
+                            BeanUtils.copyProperties(e, shortPosi);
+                            futurePosition.setShortPosi(shortPosi);
+                        }
+                    });
                 }
-                if (e.getShortAmount() != null) {
-                    FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
-                    BeanUtils.copyProperties(e, shortPosi);
-                    futurePosition.setShortPosi(shortPosi);
-                }
-            });
-            return futurePosition;
+                return futurePosition;
+            } else {
+                logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={},失败原因={}", futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
+                return null;
+            }
         } catch (Exception e) {
             logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType, e);
             return null;
@@ -448,7 +458,7 @@ public class OrderContext {
         if (sideEnum == SideEnum.BUY) {
             // 看下现货账户是否有足够的币卖出
             BigDecimal usdtBalance = minAmount.multiply(price).divide(exchangeRate, 18, BigDecimal.ROUND_FLOOR);
-            BigDecimal coinAmount = usdtBalance.divide(currPrice);
+            BigDecimal coinAmount = usdtBalance.divide(currPrice, 0, BigDecimal.ROUND_FLOOR);
             // 查看现货账户可用btc币量
             BigDecimal minCoin = min(coinAmount, spotBalance.getCoin().getAvailable());
             BigDecimal contractAmount = minCoin.multiply(currPrice).multiply(exchangeRate).divide(price, 0, BigDecimal.ROUND_FLOOR);
@@ -532,9 +542,8 @@ public class OrderContext {
             } else {
                 logger.error("placeOrder失败，订单：" + reqDto);
             }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            logger.error("dubbo服务调用异常，placeOrder失败，订单：" + reqDto);
+        } catch (Throwable e) {
+            logger.error("dubbo服务调用异常，placeOrder失败，订单：" + reqDto, e);
         }
         return null;
     }
@@ -565,8 +574,6 @@ public class OrderContext {
         reqDto.setExchangeId(spotExchangeId);
         reqDto.setBaseCoin(spotBaseCoin);
         reqDto.setQuoteCoin(spotQuoteCoin);
-        reqDto.setTimeout(100);
-        reqDto.setMaxDelay(3000);
         try {
             ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
             if (currentPrice.isSuccess()) {
@@ -584,5 +591,19 @@ public class OrderContext {
 
     public void setCurrPrice(BigDecimal currPrice) {
         this.currPrice = currPrice;
+    }
+
+
+    private String getContractTypeFromCode() {
+        try {
+            ServiceResult<ContractCodeDto> result = futureContractService.getContractCode(futureExchangeId, futureContractCode);
+            if (result.isSuccess()) {
+                return result.getData().getContractType();
+            } else {
+                throw new RuntimeException("获取ContractType失败，请检查是否未启动定时任务");
+            }
+        } catch (Throwable e) {
+            throw new RuntimeException("获取ContractType失败，请检查是否未启动定时任务", e);
+        }
     }
 }

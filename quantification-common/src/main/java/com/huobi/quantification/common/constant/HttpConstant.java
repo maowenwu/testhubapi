@@ -44,8 +44,8 @@ public class HttpConstant {
     public static final String HUOBI_ORDERDETAIL = HUOBI_HOST + "/v1/order/orders/{order-id}";
     public static final String HUOBI_OPENORDERS = HUOBI_HOST + "/v1/order/openOrders";
     public static final String HUOBI_MATCHRESULTS = HUOBI_HOST + "/v1/order/orders/{order-id}/matchresults";
-    public static final String HUOBI_BATCHCANCELOPENORDERS = HUOBI_HOST + "/v1/order/orders/batchCancelOpenOrders"; 
-    
+    public static final String HUOBI_BATCHCANCELOPENORDERS = HUOBI_HOST + "/v1/order/orders/batchCancelOpenOrders";
+
     /********HUOBI 期货********/
     // market 相关
     public static final String HUOBI_FUTURE_TICKER = "http://127.0.0.1:8882/market/detail/merged";
@@ -60,5 +60,6 @@ public class HttpConstant {
     public static final String HUOBI_FUTURE_ORDER_CANCEL = "http://www.huobiapps.com/contract-order/v1/contract_cancel";
     public static final String HUOBI_FUTURE_ORDER_INFO = "http://www.huobiapps.com/contract-query/v1/contract_orderinfo";
     public static final String HUOBI_FUTURE_ORDER_CANCEL_ALL = "http://www.huobiapps.com/contract-order/v1/contract_cancelall";
+    public static final String HUOBI_CONTRACE_CODE = "http://www.huobiapps.com/contract-query/v1/contract_hold_amount";
 
 }

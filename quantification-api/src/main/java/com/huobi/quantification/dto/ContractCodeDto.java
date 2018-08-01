@@ -1,6 +1,8 @@
 package com.huobi.quantification.dto;
 
-public class ContractCodeDto {
+import java.io.Serializable;
+
+public class ContractCodeDto implements Serializable {
 
     private String symbol;
     private String contractType;

@@ -35,7 +35,7 @@
         select
         <include refid="Base_Column_List"/>
         from quan_contract_code
-        where contract_code=#{contractCode}
+        where exchange_id=#{exchangeId} and contract_code=#{contractCode}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from quan_contract_code

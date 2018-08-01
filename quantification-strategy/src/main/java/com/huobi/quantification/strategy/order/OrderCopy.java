@@ -38,39 +38,39 @@ public class OrderCopy {
     }
 
 
-    public void copyOrder() {
+    public boolean copyOrder() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("==>copyOrder start");
         // 更新订单信息
         boolean success = context.updateOrderInfo();
         if (!success) {
             logger.error("更新订单信息失败，方法退出");
-            return;
+            return false;
         }
         FuturePosition position = context.getFuturePosition();
         if (position == null) {
             logger.error("获取期货持仓信息失败，方法退出");
-            return;
+            return false;
         }
         FutureBalance futureBalance = context.getFutureBalance();
         if (futureBalance == null) {
             logger.error("获取期货资产信息失败，方法退出");
-            return;
+            return false;
         }
         SpotBalance spotBalance = context.getSpotBalance();
         if (spotBalance == null) {
             logger.error("获取现货资产信息失败，方法退出");
-            return;
+            return false;
         }
         BigDecimal exchangeRate = context.getExchangeRateOfUSDT2USD();
         if (exchangeRate == null) {
             logger.error("获取汇率失败，方法退出");
-            return;
+            return false;
         }
         BigDecimal currPrice = context.getSpotCurrentPrice();
         if (currPrice == null) {
             logger.error("获取现货当前价格失败，方法退出");
-            return;
+            return false;
         }
         // 每一轮搬砖多个流程使用同一份配置
         StrategyOrderConfig config = context.getStrategyOrderConfig();
@@ -78,7 +78,7 @@ public class OrderCopy {
         DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook(config);
         if (depthBook == null) {
             logger.error("获取深度信息失败，方法退出");
-            return;
+            return false;
         }
         List<DepthBook.Depth> asks = depthBook.getAsks();
         List<DepthBook.Depth> bids = depthBook.getBids();
@@ -129,6 +129,7 @@ public class OrderCopy {
             }
         }
         logger.info("==>copyOrder end,耗时：" + started);
+        return true;
     }
 
 }

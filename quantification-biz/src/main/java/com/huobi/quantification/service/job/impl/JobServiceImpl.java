@@ -48,6 +48,7 @@ public class JobServiceImpl implements JobService {
         okFutureTypeClass.put(JobTypeEnum.Order.getJobType(), OkFutureOrderJob.class);
         okFutureTypeClass.put(JobTypeEnum.Index.getJobType(), OkFutureIndexJob.class);
         okFutureTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(), OkFutureCurrentPriceJob.class);
+        okFutureTypeClass.put(JobTypeEnum.ContractCode.getJobType(), OkFutureContractCodeJob.class);
         jobMap.put(ExchangeEnum.OKEX.getExId(), okFutureTypeClass);
 
         Map<Integer, Class> huobiFutureTypeClass = new HashMap<>();
@@ -58,6 +59,7 @@ public class JobServiceImpl implements JobService {
         huobiFutureTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(),HuobiFutureCurrentPriceJob .class);
         huobiFutureTypeClass.put(JobTypeEnum.Position.getJobType(),HuobiFuturePositionJob .class);
         huobiFutureTypeClass.put(JobTypeEnum.Index.getJobType(),HuobiFutureIndexJob .class);
+        huobiFutureTypeClass.put(JobTypeEnum.ContractCode.getJobType(),HuobiFutureContractCodeJob .class);
         jobMap.put(ExchangeEnum.HUOBI_FUTURE.getExId(), huobiFutureTypeClass);
 
 

@@ -233,6 +233,23 @@ public class JobManageServiceImpl implements JobManageService {
     }
 
     @Override
+    public ServiceResult addOkFutureContractCodeJob(String cron, boolean enable) {
+        FutureJobReqDto jobReqDto = new FutureJobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
+        jobReqDto.setJobType(JobTypeEnum.ContractCode.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.ContractCode.toString());
+        JobParamDto paramDto = new JobParamDto();
+        jobReqDto.setJobParamDto(paramDto);
+        jobReqDto.setCron(cron);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addFutureJob(jobReqDto);
+    }
+
+    @Override
     public ServiceResult addHuobiSpotAccountJob(Long accountId, String cron, boolean enable) {
         JobReqDto jobReqDto = new JobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
@@ -349,6 +366,24 @@ public class JobManageServiceImpl implements JobManageService {
         jobReqDto.setJobDesc(JobTypeEnum.Account.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
+
+        jobReqDto.setJobParamDto(paramDto);
+        jobReqDto.setCron(cron);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addFutureJob(jobReqDto);
+    }
+
+    @Override
+    public ServiceResult addHuobiFutureContractCodeJob(String cron, boolean enable) {
+        FutureJobReqDto jobReqDto = new FutureJobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        jobReqDto.setJobType(JobTypeEnum.ContractCode.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.ContractCode.toString());
+        JobParamDto paramDto = new JobParamDto();
 
         jobReqDto.setJobParamDto(paramDto);
         jobReqDto.setCron(cron);

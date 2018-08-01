@@ -71,7 +71,6 @@ public class StrategyProperties {
         private Long accountId;
         private String baseCoin;
         private String quotCoin;
-        private String contractType;
         private String contractCode;
         private Integer lever;
 
@@ -107,13 +106,6 @@ public class StrategyProperties {
             this.quotCoin = quotCoin;
         }
 
-        public String getContractType() {
-            return contractType;
-        }
-
-        public void setContractType(String contractType) {
-            this.contractType = contractType;
-        }
 
         public String getContractCode() {
             return contractCode;

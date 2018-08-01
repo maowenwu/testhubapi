@@ -7,8 +7,8 @@ public class FuturePositionReqDto implements Serializable {
     private int exchangeId;
     private long accountId;
     private String coinType;
-    private long timeout;
-    private long maxDelay;
+    private long timeout = 100;
+    private long maxDelay = 1000;
 
     public int getExchangeId() {
         return exchangeId;
