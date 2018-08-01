@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
+import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanAccountHistoryMapper;
@@ -22,6 +23,8 @@ import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto.DataBean;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
+import com.huobi.quantification.dto.SpotCurrentPriceReqDto;
+import com.huobi.quantification.dto.SpotCurrentPriceRespDto;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
@@ -54,6 +57,9 @@ public class QuantificationRiskManager {
 	
 	@Autowired
 	private SpotOrderService spotOrderService;
+	
+	@Autowired
+	private SpotMarketService spotMarketService;
 	
 	@Autowired
 	private CommonService commonService;
@@ -103,7 +109,7 @@ public class QuantificationRiskManager {
 		long maxDelay = 60 * 60 * 1000;
 		balanceReqDto.setAccountId(accountId);
 		balanceReqDto.setCoinType(coinType);
-		balanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
+		balanceReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
 		balanceReqDto.setMaxDelay(maxDelay);
 		balanceReqDto.setTimeout(timeout);
 		ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(balanceReqDto);
@@ -188,11 +194,12 @@ public class QuantificationRiskManager {
 		String coin2 = "btc";
 		FutureBalanceReqDto balanceReqDto = new FutureBalanceReqDto();
 		long accountId = 1234;
+		long futureAccountId = 456;
 		long timeout = 60 * 1000;
 		long maxDelay = 60 * 1000;
-		balanceReqDto.setAccountId(accountId);
+		balanceReqDto.setAccountId(futureAccountId);
 		balanceReqDto.setCoinType(coin2);
-		balanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
+		balanceReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
 		balanceReqDto.setMaxDelay(maxDelay);
 		balanceReqDto.setTimeout(timeout);
     	ServiceResult<FutureBalanceRespDto> end = futureAccountService.getBalance(balanceReqDto);
@@ -217,11 +224,22 @@ public class QuantificationRiskManager {
 		SpotBalance endSpotCoin2 = new SpotBalance();
 		endSpotCoin1.setTotal(end2.getData().getData().get(coin1).getTotal());
 		endSpotCoin2.setTotal(end2.getData().getData().get(coin2).getTotal());
-		startSpotCoin1.setTotal(new BigDecimal(1));
-		startSpotCoin2.setTotal(new BigDecimal(1));
-		BigDecimal number1 = endSpotCoin1.getTotal().subtract(startSpotCoin1.getTotal());
-		BigDecimal number2 = endSpotCoin2.getTotal().subtract(startSpotCoin2.getTotal());
-		BigDecimal number3 = endFuture.getMarginBalance().subtract(start.getMarginBalance());
+		startSpotCoin1.setTotal(new BigDecimal(1000));
+		startSpotCoin2.setTotal(new BigDecimal(1000));
+		BigDecimal endDebitCoin1 = getEndDebit(coin1, ExchangeEnum.HUOBI.getExId(), accountId);
+		BigDecimal endDebitcoin2 = getEndDebit(coin2, ExchangeEnum.HUOBI.getExId(), accountId);
+		BigDecimal endDebitFuture = getEndDebit(coin2, ExchangeEnum.HUOBI_FUTURE.getExId(), futureAccountId);
+		SpotCurrentPriceReqDto currentPriceReqDto = new SpotCurrentPriceReqDto();
+		currentPriceReqDto.setBaseCoin(coin2);
+		currentPriceReqDto.setQuoteCoin(coin1);
+		currentPriceReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+		currentPriceReqDto.setMaxDelay(maxDelay);
+		currentPriceReqDto.setTimeout(timeout);
+		ServiceResult<SpotCurrentPriceRespDto> currentPriceResp = spotMarketService.getCurrentPrice(currentPriceReqDto);
+		BigDecimal currentPrice = currentPriceResp.getData().getCurrentPrice();
+		BigDecimal number1 = endSpotCoin1.getTotal().subtract(endDebitCoin1).subtract(startSpotCoin1.getTotal());
+		BigDecimal number2 = endSpotCoin2.getTotal().subtract(endDebitcoin2).subtract(startSpotCoin2.getTotal().divide(currentPrice));
+		BigDecimal number3 = endFuture.getMarginBalance().subtract(endDebitFuture).subtract(start.getMarginBalance());
 		BigDecimal profitLoss = number1.add(number2).add(number3);
 		return profitLoss;
     }
@@ -241,7 +259,7 @@ public class QuantificationRiskManager {
 		long maxDelay = 60 * 1000;
 		balanceReqDto.setAccountId(futureAccountId);
 		balanceReqDto.setCoinType(coin2);
-		balanceReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
+		balanceReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
 		balanceReqDto.setMaxDelay(maxDelay);
 		balanceReqDto.setTimeout(timeout);
 		ServiceResult<FutureBalanceRespDto> start = futureAccountService.getAccountInfo(futureAccountId, contractCode);
@@ -292,10 +310,19 @@ public class QuantificationRiskManager {
 		BigDecimal startDebitCoin1 = startDebit.get(coin1+"_"+ ExchangeEnum.HUOBI.getExId()+"_"+ accountId);
 		BigDecimal startDebitCoin2 = startDebit.get(coin2+"_"+ ExchangeEnum.HUOBI.getExId()+"_"+ accountId);
 		BigDecimal startDebitFuture = startDebit.get(coin2+"_"+ ExchangeEnum.HUOBI_FUTURE.getExId()+"_"+ futureAccountId);
+		//获取币币交易最新成交价
+		SpotCurrentPriceReqDto currentPriceReqDto = new SpotCurrentPriceReqDto();
+		currentPriceReqDto.setBaseCoin(coin2);
+		currentPriceReqDto.setQuoteCoin(coin1);
+		currentPriceReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
+		currentPriceReqDto.setMaxDelay(maxDelay);
+		currentPriceReqDto.setTimeout(timeout);
+		ServiceResult<SpotCurrentPriceRespDto> currentPriceResp = spotMarketService.getCurrentPrice(currentPriceReqDto);
+		BigDecimal currentPrice = currentPriceResp.getData().getCurrentPrice();
 		BigDecimal number1 = endSpotCoin1.getTotal().subtract(endDebitCoin1).
 				subtract(startSpotCoin1.getTotal().subtract(startDebitCoin1));
 		BigDecimal number2 = endSpotCoin2.getTotal().subtract(endDebitcoin2).
-				subtract(startSpotCoin2.getTotal().subtract(startDebitCoin2));
+				subtract(startSpotCoin2.getTotal().subtract(startDebitCoin2).divide(currentPrice));
 		BigDecimal number3 = endFuture.getMarginBalance().subtract(endDebitFuture).
 				subtract(startFuture.getMarginBalance().subtract(startDebitFuture));
 		BigDecimal profitLoss = number1.add(number2).add(number3);
@@ -447,13 +474,17 @@ public class QuantificationRiskManager {
 	 * @return
 	 */
 	private BigDecimal getCurrentPosition(String contractCode) {
+		String coin1 = "usdt";
+		String coin2 = "btc";
+		long spotAccountId = 123;
+		long futureAccountId = 456;
 	 	StartHedgingParam startHedgingParam = new StartHedgingParam();
-	 	startHedgingParam.setBaseCoin("usdt");
-	 	startHedgingParam.setQuoteCoin("btc");
-	 	startHedgingParam.setFutureAccountID(123l);
+	 	startHedgingParam.setBaseCoin(coin1);
+	 	startHedgingParam.setQuoteCoin(coin2);
+	 	startHedgingParam.setFutureAccountID(futureAccountId);
 	 	startHedgingParam.setContractCode(contractCode);
 	 	startHedgingParam.setFutureExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-	 	startHedgingParam.setSpotAccountID(1234l);
+	 	startHedgingParam.setSpotAccountID(spotAccountId);
 	 	startHedgingParam.setSpotExchangeId(ExchangeEnum.HUOBI.getExId());
 	 	BigDecimal calUSDTPosition = commonService.calUSDTPosition(startHedgingParam);
 		return calUSDTPosition;
