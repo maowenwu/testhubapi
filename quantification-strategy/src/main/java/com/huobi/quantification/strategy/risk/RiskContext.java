@@ -93,7 +93,7 @@ public class RiskContext {
 		balanceReqDto.setExchangeId(futureExchangeId);
 		ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(balanceReqDto);
 		if (balance.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
-			throw new RuntimeException("取不到期货账户余额，错误信息："+ balance.getMessage());
+			logger.error("取不到期货账户余额，错误信息：{}", balance.getMessage());
 		}
 		FutureBalanceRespDto data = balance.getData();
 		Map<String, DataBean> data2 = data.getData();
@@ -115,8 +115,7 @@ public class RiskContext {
 		balanceReqDto.setExchangeId(futureExchangeId);
     	ServiceResult<FutureBalanceRespDto> end = futureAccountService.getBalance(balanceReqDto);
     	if (end.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
-			throw new RuntimeException("取不到期货用户当前余额，错误信息:" + end.getMessage());
-			
+    		logger.error("取不到期货用户当前余额，错误信息{}:", end.getMessage());
 		}
     	FutureBalance endFuture = new FutureBalance();
 		endFuture.setMarginBalance(end.getData().getData().get(futureCoinType).getMarginBalance());
@@ -126,7 +125,7 @@ public class RiskContext {
 		balanceReqDto2.setExchangeId(futureExchangeId);
 		ServiceResult<SpotBalanceRespDto> end2 = spotAccountService.getBalance(balanceReqDto2);
 		if (end2.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
-			throw new RuntimeException("取不到现货用户当前余额，错误信息：" + end2.getMessage());
+			logger.error("取不到现货用户当前余额，错误信息：{}", end2.getMessage());
 		}
 		SpotBalance startSpotCoin1 = new SpotBalance();
 		SpotBalance startSpotCoin2 = new SpotBalance();
@@ -173,7 +172,7 @@ public class RiskContext {
 			}else {
 				msg = end.getMessage();
 			}
-			throw new RuntimeException("取不到期货用户余额，错误信息：" + msg);
+			logger.error("取不到期货用户余额，错误信息：{}", msg);
 		}
 		FutureBalance startFuture = new FutureBalance();
 		FutureBalance endFuture = new FutureBalance();
@@ -184,7 +183,7 @@ public class RiskContext {
 		balanceReqDto2.setExchangeId(spotExchangeId);
 		ServiceResult<SpotBalanceRespDto> end2 = spotAccountService.getBalance(balanceReqDto2);
 		if (end2.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
-			throw new RuntimeException("取不到现货用户当前余额，错误信息：" + end2.getMessage());
+			logger.error("取不到现货用户当前余额，错误信息：{}", end2.getMessage());
 		}
 		List<QuanAccountAsset> firstBalance = spotAccountService.getFirstBalance(spotAccountId, spotExchangeId);
 		SpotBalance startSpotCoin1 = new SpotBalance();
@@ -258,7 +257,7 @@ public class RiskContext {
 			//撤销订单，当返回数量等于100时继续执行，小于100时停止撤销订单
 			ServiceResult<Object> cancelOrder = spotOrderService.cancelOrder(spotAccountId, spotBaseCoin + spotQuoteCoin , "" , 100);
 			if (cancelOrder.getCode() != ServiceErrorEnum.SUCCESS.getCode()) {
-				throw new RuntimeException("批量撤销订单失败，错误信息：" + cancelOrder.getCode());
+				logger.error("批量撤销订单失败，错误信息：{}",cancelOrder.getCode());
 			}
 			String body = (String)cancelOrder.getData();
 			JSONObject parseObject = JSON.parseObject(body);

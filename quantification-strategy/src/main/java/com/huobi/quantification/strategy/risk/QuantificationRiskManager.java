@@ -163,7 +163,6 @@ public class QuantificationRiskManager {
 	public void positionRiskManage(String contractCode) {
 		//通过接口获取当前账户组净头寸
 		BigDecimal position = riskContext.getCurrentPosition();
-		//获取数据库的净头寸阈值A,B
 		StrategyRiskConfig riskMange = strategyRiskMapper.selectByContractCode(contractCode);
 		BigDecimal positionA = riskMange.getPositionA();
 		BigDecimal positionB = riskMange.getPositionB();
