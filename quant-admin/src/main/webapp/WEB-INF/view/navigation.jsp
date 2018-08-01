@@ -15,13 +15,6 @@
                                 <!-- <span class="text-muted text-xs block">Art Director</span> -->
                             </span>
                     </a>
-                    <%--<ul uib-dropdown-menu class="animated fadeInRight m-t-xs">--%>
-                        <%--<li><a ui-sref="app.profile">Profile</a></li>--%>
-                        <%--<li><a ui-sref="app.contacts">Contacts</a></li>--%>
-                        <%--<li><a ui-sref="mailbox.inbox">Mailbox</a></li>--%>
-                        <%--<li class="divider"></li>--%>
-                        <%--<li><a ng-click="logout()">Logout</a></li>--%>
-                    <%--</ul>--%>
                 </div>
                 <div class="logo-element">
                     YFB

@@ -23,62 +23,50 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * 用户详细信息类
- *
+ * <p>
  * 负责以{@link UserDetails}方式提供用户信息
- * 
+ * <p>
  * by zouruijin
  * email rjzou@qq.com zrj@eeepay.cn
  * 2016年4月12日13:45:54
  */
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-	@Resource
-	public UserService userService;
-	@Resource
-	public UserGrantService userGrantService;
-	@Resource
-	private HttpServletRequest request;
-	@Resource
-	private MenuService menuService;
-	
-	@Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-//    	String ip = request.getRemoteAddr();
-//    	 String key = "blocked:"+ip;
-//        if (userService.isBlocked(key)) {
-//            throw new RuntimeException("blocked");
-//        }
-        
-    	UserLoginInfo userInfo = null;
-//    	UserInfo user = new UserInfo();
-//    	user.setUserName(userName);
-//		Page<UserInfo> page = new Page<>(1, 1);
-//		UserInfo shiroUser = page.getResult().get(0);
-		UserInfo shiroUser = userService.selectUserByUserName(userName);
+    @Resource
+    public UserService userService;
+    @Resource
+    public UserGrantService userGrantService;
+    @Resource
+    private HttpServletRequest request;
+    @Resource
+    private MenuService menuService;
 
-    	try{
-	    	if (shiroUser != null) {
-	    		Integer uId = shiroUser.getId();
-	    		Set<GrantedAuthority> authorities= new HashSet<GrantedAuthority>();
-    			List<MenuInfo> userRigths = userGrantService.getUserAllMenu(uId);//用户拥有的所有菜单ID
-        		for (MenuInfo sr : userRigths) {
-        			if(sr != null)
-//        				authorities.add(new SimpleGrantedAuthority(sr.getId().toString()));
-        				authorities.add(new SimpleGrantedAuthority(sr.getMenuCode()));
-				}
-        		
-	        	userInfo = new UserLoginInfo(shiroUser.getUserName(), shiroUser.getPassword(), authorities);
-	        	userInfo.setId(shiroUser.getId());
-	        	userInfo.setRealName(shiroUser.getRealName());
-	        	userInfo.setTelNo(shiroUser.getTelNo());
-	        	userInfo.setEmail(shiroUser.getEmail());
-	        	userInfo.setStatus(shiroUser.getStatus());
-	        	userInfo.setTheme(shiroUser.getTheme());
-			}
-	    } catch (Exception e) {
-			e.printStackTrace();
-		}
-    	
+    @Override
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        UserLoginInfo userInfo = null;
+        UserInfo shiroUser = userService.selectUserByUserName(userName);
+        try {
+            if (shiroUser != null) {
+                Integer uId = shiroUser.getId();
+                Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+                List<MenuInfo> userRigths = userGrantService.getUserAllMenu(uId);//用户拥有的所有菜单ID
+                for (MenuInfo sr : userRigths) {
+                    if (sr != null)
+                        authorities.add(new SimpleGrantedAuthority(sr.getMenuCode()));
+                }
+
+                userInfo = new UserLoginInfo(shiroUser.getUserName(), shiroUser.getPassword(), authorities);
+                userInfo.setId(shiroUser.getId());
+                userInfo.setRealName(shiroUser.getRealName());
+                userInfo.setTelNo(shiroUser.getTelNo());
+                userInfo.setEmail(shiroUser.getEmail());
+                userInfo.setStatus(shiroUser.getStatus());
+                userInfo.setTheme(shiroUser.getTheme());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return userInfo;
     }
 }

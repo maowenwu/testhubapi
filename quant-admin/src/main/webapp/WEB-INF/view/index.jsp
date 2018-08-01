@@ -14,7 +14,6 @@
 	<meta HTTP-EQUIV="expires" CONTENT="0"> 
     <!-- Page title set in pageTitle directive -->
     <title page-title></title>
-
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 

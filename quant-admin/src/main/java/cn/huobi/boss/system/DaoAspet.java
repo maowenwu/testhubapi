@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
-@Component
+//@Component
 @Aspect
 public class DaoAspet {
 

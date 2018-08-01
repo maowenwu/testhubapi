@@ -97,9 +97,7 @@ public class IndexAction {
 	    		for(GrantedAuthority item : principal.getAuthorities()){
 	    			permits.add(item.getAuthority());
 	    		}
-//	    		System.out.println(permits);
 				List<SysMenu> list = menuService.getSysMenuAndChildren();
-//				List<Integer> menuIds = menuService.getMenuIdsByPermits(permits);
 				
 				filterMenu(list, permits);
 				model.addAttribute("menus", list);
@@ -116,7 +114,6 @@ public class IndexAction {
 		Iterator<SysMenu> it = list.iterator();
 		while(it.hasNext()){
 			SysMenu menu = it.next();
-//			if(!menuIds.contains(menu.getId().toString())){
 			if(!menuIds.contains(menu.getMenuCode().toString())){
 				it.remove();
 				continue;

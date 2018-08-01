@@ -20,19 +20,19 @@ import com.huobi.quantification.strategy.risk.enums.RechargeTypeEnum;
 @Component
 public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
-	@Autowired
-	private StrategyProperties strategyProperties;
-	@Autowired
-	private FutureAccountService futureAccountService;
-	@Autowired
-	private SpotAccountService spotAccountService;
-	@Autowired
-	private QuanAccountHistoryMapper quanAccountHistoryMapper;
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    @Autowired
+    private StrategyProperties strategyProperties;
+    @Autowired
+    private FutureAccountService futureAccountService;
+    @Autowired
+    private SpotAccountService spotAccountService;
+    @Autowired
+    private QuanAccountHistoryMapper quanAccountHistoryMapper;
 
-	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		if (event.getApplicationContext().getParent() == null) {
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() == null) {
             logger.info("==>spring 容器启动");
             StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
             if (group1.getEnable()) {
@@ -47,12 +47,12 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
                 startWithConfig(group3);
             }
         }
-	}
-	
-	private void startWithConfig(StrategyProperties.ConfigGroup group) {
-		StrategyProperties.Config future = group.getFuture();
+    }
+
+    private void startWithConfig(StrategyProperties.ConfigGroup group) {
+        StrategyProperties.Config future = group.getFuture();
         StrategyProperties.Config spot = group.getSpot();
-		// 项目启动时，获取用户的余额，持仓和净借贷
+        // 项目启动时，获取用户的余额，持仓和净借贷
         Long spotAccountId = spot.getAccountId();
         Integer spotExchangeId = spot.getExchangeId();
         String baseCoin = spot.getBaseCoin();
@@ -63,44 +63,44 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
         String baseCoin2 = future.getBaseCoin();
         String contractCode = future.getContractCode();
 
-		spotAccountService.saveFirstBalance(spotAccountId, spotExchangeId);
-		futureAccountService.saveAccountsInfo(futureAccountId, contractCode);
+        spotAccountService.saveFirstBalance(spotAccountId, spotExchangeId);
+        futureAccountService.saveAccountsInfo(futureAccountId, contractCode);
 
-		BigDecimal spotDebitCoin1 = getEndDebit(baseCoin, spotExchangeId, spotAccountId);
-		BigDecimal spotDebitCoin2 = getEndDebit(quotCoin, spotExchangeId, spotAccountId);
-		BigDecimal futureDebit = getEndDebit(baseCoin2, futureExchangeId, futureAccountId);
+        BigDecimal spotDebitCoin1 = getEndDebit(baseCoin, spotExchangeId, spotAccountId);
+        BigDecimal spotDebitCoin2 = getEndDebit(quotCoin, spotExchangeId, spotAccountId);
+        BigDecimal futureDebit = getEndDebit(baseCoin2, futureExchangeId, futureAccountId);
 
-		HashMap<String, BigDecimal> hashMap = new HashMap<>();
-		hashMap.put(baseCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin1);
-		hashMap.put(quotCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin2);
-		hashMap.put(baseCoin2 + "_" + futureExchangeId + "_" + futureAccountId, futureDebit);
-		spotAccountService.saveFirstDebit(hashMap, future.getContractCode());
-		
-		RiskManager riskManager = ApplicationContextHolder.getContext().getBean(RiskManager.class);
-		riskManager.init(group);
-		Thread thread = new Thread(() -> {
-			while (true) {
-				try {
-					riskManager.monitor();
-				} catch (Throwable e) {
-					logger.error("监控保证金率期间出现异常", e);
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e1) {
-					}
-				}
-			}
-		});
-		thread.setDaemon(true);
-		thread.start();
-	}
+        HashMap<String, BigDecimal> hashMap = new HashMap<>();
+        hashMap.put(baseCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin1);
+        hashMap.put(quotCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin2);
+        hashMap.put(baseCoin2 + "_" + futureExchangeId + "_" + futureAccountId, futureDebit);
+        spotAccountService.saveFirstDebit(hashMap, future.getContractCode());
 
-	private BigDecimal getEndDebit(String coin, int exchangeId, long accountId) {
-		BigDecimal borrow = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin,
-				RechargeTypeEnum.BORROW.getRechargeType());
-		BigDecimal payment = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin,
-				RechargeTypeEnum.REPAYMENT.getRechargeType());
-		return borrow.subtract(payment);
-	}
+        RiskManager riskManager = ApplicationContextHolder.getContext().getBean(RiskManager.class);
+        riskManager.init(group);
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    riskManager.monitor();
+                } catch (Throwable e) {
+                    logger.error("监控保证金率期间出现异常", e);
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e1) {
+                    }
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private BigDecimal getEndDebit(String coin, int exchangeId, long accountId) {
+        BigDecimal borrow = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin,
+                RechargeTypeEnum.BORROW.getRechargeType());
+        BigDecimal payment = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin,
+                RechargeTypeEnum.REPAYMENT.getRechargeType());
+        return borrow.subtract(payment);
+    }
 
 }

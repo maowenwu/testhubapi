@@ -26,65 +26,59 @@ import org.springframework.security.web.access.intercept.FilterInvocationSecurit
 
 /**
  * 资源元数据类
- *
+ * <p>
  * 负责提供资源数据信息
- * 
+ * <p>
  * by zouruijin
  * email rjzou@qq.com zrj@eeepay.cn
  * 2016年4月12日13:45:54
- *
  */
 public class SecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
 
-	private final Logger logger = LoggerFactory.getLogger(SecurityMetadataSource.class);
+    private final Logger logger = LoggerFactory.getLogger(SecurityMetadataSource.class);
 
     private UrlMatcher urlMatcher = new AntUrlPathMatcher();
     @Resource
-	public MenuService sysMenuService;
-    //private ResourceDao resourceDao = new ResourceDao();
+    public MenuService sysMenuService;
+
     private static Map<String, Collection<ConfigAttribute>> resourceMap = new HashMap<String, Collection<ConfigAttribute>>();
 
     public SecurityMetadataSource() {
-        //resourceMap = resourceDao.getResourceMap();
-       
+
     }
 
 
     @Override
-    public Collection<ConfigAttribute> getAttributes(Object object) throws  IllegalArgumentException {
-		try {
-			List<SysMenu> sysMenus = sysMenuService.selectMenuByCondition(new Page<SysMenu>(1,Integer.MAX_VALUE), null);
-	     	for (final SysMenu sysMenu : sysMenus) {
-	     		String url = sysMenu.getMenuUrl();
-	     		if (StringUtils.isNotBlank(url) && !url.startsWith("#")) {
-					url = "/"+ url + "**";
-				}else{
-					continue;
-				}
-	     		final ArrayList<ConfigAttribute> value = new ArrayList<ConfigAttribute>();
-//	     		for(RightInfo item : sysMenuService.getRightsByMenu(sysMenu.getId())){
-//	     			value.add(new SecurityConfig(item.getRightCode()));
-//	     		}
-//	     		value.add(new SecurityConfig(sysMenu.getId().toString()));
-	     		value.add(new SecurityConfig(sysMenu.getMenuCode()));
-				resourceMap.put(url, value);
-	 		}
-		
-	    	String url = ((FilterInvocation)object).getRequestUrl();
-			if(url.contains("export")){
-				UserLoginInfo loginUser = CommonUtil.getLoginUser();
-				logger.info("当前用户导出报表{}",url);
-				logger.info("当前用户{},{}",loginUser.getId(),loginUser.getRealName());
-			}
-	        for(String resURL : resourceMap.keySet()) {
-	            if (resURL != null && urlMatcher.pathMatchesUrl(resURL, url)) {
-	                return resourceMap.get(resURL);
-	            }
-	        }
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	        return null;
+    public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
+        try {
+            List<SysMenu> sysMenus = sysMenuService.selectMenuByCondition(new Page<SysMenu>(1, Integer.MAX_VALUE), null);
+            for (final SysMenu sysMenu : sysMenus) {
+                String url = sysMenu.getMenuUrl();
+                if (StringUtils.isNotBlank(url) && !url.startsWith("#")) {
+                    url = "/" + url + "**";
+                } else {
+                    continue;
+                }
+                final ArrayList<ConfigAttribute> value = new ArrayList<ConfigAttribute>();
+                value.add(new SecurityConfig(sysMenu.getMenuCode()));
+                resourceMap.put(url, value);
+            }
+
+            String url = ((FilterInvocation) object).getRequestUrl();
+            if (url.contains("export")) {
+                UserLoginInfo loginUser = CommonUtil.getLoginUser();
+                logger.info("当前用户导出报表{}", url);
+                logger.info("当前用户{},{}", loginUser.getId(), loginUser.getRealName());
+            }
+            for (String resURL : resourceMap.keySet()) {
+                if (resURL != null && urlMatcher.pathMatchesUrl(resURL, url)) {
+                    return resourceMap.get(resURL);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
