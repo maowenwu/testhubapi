@@ -1,7 +1,6 @@
 package com.huobi.quantification.strategy.order;
 
 
-import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.strategy.config.StrategyProperties;

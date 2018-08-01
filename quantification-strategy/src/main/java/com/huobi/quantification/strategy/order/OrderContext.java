@@ -494,6 +494,7 @@ public class OrderContext {
             ServiceResult<Long> result = futureOrderService.cancelSingleOrder(reqDto);
             if (!result.isSuccess()) {
                 logger.error("取消订单失败，exchangeId={},futureAccountId={},exOrderId={}", this.futureExchangeId, this.futureAccountId, e);
+                //throw new RuntimeException("取消订单失败,orderId=" + e);
             }
         });
         logger.info("取消订单总数：{}，订单id：{}", orderIds.size(), orderIds);

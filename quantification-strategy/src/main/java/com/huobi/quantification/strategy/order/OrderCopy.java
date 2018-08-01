@@ -83,7 +83,13 @@ public class OrderCopy {
         List<DepthBook.Depth> asks = depthBook.getAsks();
         List<DepthBook.Depth> bids = depthBook.getBids();
         // 1. 取消那些未在深度列表中的订单，如果任何一单取消失败，开始下一个轮回
-        List<FutureOrder> orders = context.cancelOrderNotInDepthBook(depthBook);
+        List<FutureOrder> orders = null;
+        try {
+            orders = context.cancelOrderNotInDepthBook(depthBook);
+        } catch (Exception e) {
+            logger.error("取消订单失败，方法退出");
+            return false;
+        }
         // 创建一个订单读取器
         OrderReader orderReader = new OrderReader(orders);
 
