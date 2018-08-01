@@ -41,7 +41,7 @@ public class OkSecretHolder {
 
     public synchronized OkSignature getOkSignatureById(Long accountId) {
         List<QuanAccountFutureSecret> secrets = map.get(accountId);
-        Long counter = accountUsageCounter.get(accountId);
+        Long counter = accountUsageCounter.getOrDefault(accountId,0L);
         int index = (int) (counter % secrets.size());
         QuanAccountFutureSecret secret = secrets.get(index);
         accountUsageCounter.put(accountId, counter + 1);

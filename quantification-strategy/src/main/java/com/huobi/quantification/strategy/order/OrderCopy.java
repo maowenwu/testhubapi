@@ -5,11 +5,13 @@ import com.google.common.base.Stopwatch;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
+import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.order.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +19,10 @@ import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
 
+
+@Scope("prototype")
 @Component
-public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
+public class OrderCopy {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -27,13 +31,10 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
 
     private DepthBookAdjuster depthBookAdjuster;
 
-    @Autowired
-    private JobManageService jobManageService;
 
-    @PostConstruct
-    public void init() {
+    public void init(StrategyProperties.ConfigGroup group) {
         depthBookAdjuster = new DepthBookAdjuster(context);
-        context.init("btc_usdt");
+        context.init(group);
     }
 
 
@@ -130,24 +131,4 @@ public class OrderCopy implements ApplicationListener<ContextRefreshedEvent> {
         logger.info("==>copyOrder end,耗时：" + started);
     }
 
-
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-            logger.info("==>spring 容器启动");
-            jobManageService.addHuobiFuturePositionJob(101L, "0/1 * * * * ?", true);
-            jobManageService.addHuobiFutureUserInfoJob(101L, "0/1 * * * * ?", true);
-            jobManageService.addHuobiSpotDepthJob("btcusdt", "step1", "0/1 * * * * ?", true);
-            jobManageService.addHuobiSpotCurrentPriceJob("btcusdt", "0/1 * * * * ?", true);
-           /* new Thread(() -> {
-                while (true) {
-                    try {
-                        copyOrder();
-                    } catch (Throwable e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();*/
-        }
-    }
 }

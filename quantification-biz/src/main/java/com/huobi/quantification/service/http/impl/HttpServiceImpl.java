@@ -138,7 +138,7 @@ public class HttpServiceImpl implements HttpService {
     public String doHuobiPost(Long accountId, String uri, Object object) throws HttpRequestException {
         HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
         return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
-                "POST", uri, object, new HashMap<String, String>());
+                "POST", uri, object, new HashMap<>());
     }
 
 

@@ -10,9 +10,9 @@ import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.dao.StrategyOrderConfigMapper;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.StrategyOrderConfig;
-import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
+import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.order.entity.FutureBalance;
 import com.huobi.quantification.strategy.order.entity.FuturePosition;
 import com.huobi.quantification.strategy.order.entity.SpotBalance;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+@Scope("prototype")
 @Component
 public class OrderContext {
 
@@ -58,15 +60,6 @@ public class OrderContext {
 
     private AtomicBoolean isSellOpen = new AtomicBoolean(true);
 
-    private Integer exchangeId = ExchangeEnum.HUOBI_FUTURE.getExId();
-    private Long accountId = 101L;
-    private String symbol = "BTC";
-    private String contractType = "next_week";
-    private int lever = 10;
-    private String baseCoin = "btc";
-    private String quoteCoin = "usd";
-    private String coinType = "btc";
-
     private OrderReader orderReader;
     private FuturePosition futurePosition;
     private StrategyOrderConfig config;
@@ -75,16 +68,40 @@ public class OrderContext {
     private BigDecimal exchangeRate = BigDecimal.ONE;
     private BigDecimal currPrice;
 
-    public void init(String symbol) {
-        this.symbol = symbol;
+
+    private Integer futureExchangeId;
+    private Long futureAccountId;
+    private Integer futureLever;
+    private String futureContractType;
+    private String futureBaseCoin;
+    private String futureQuoteCoin;
+    private String futureCoinType;
+
+    private Integer spotExchangeId;
+    private String spotBaseCoin;
+    private String spotQuoteCoin;
+
+    public void init(StrategyProperties.ConfigGroup group) {
+        StrategyProperties.Config future = group.getFuture();
+        StrategyProperties.Config spot = group.getSpot();
+        this.futureExchangeId = future.getExchangeId();
+        this.futureAccountId = future.getAccountId();
+        this.futureLever = future.getLever();
+        this.futureContractType = future.getContractType();
+        this.futureBaseCoin = future.getBaseCoin();
+        this.futureQuoteCoin = future.getQuotCoin();
+        this.futureCoinType = future.getBaseCoin();
+
+        this.spotExchangeId = spot.getExchangeId();
+        this.spotBaseCoin = spot.getBaseCoin();
+        this.spotQuoteCoin = spot.getQuotCoin();
     }
 
     public DepthBook getDepth() {
-        String[] split = symbol.split("_");
         SpotDepthReqDto reqDto = new SpotDepthReqDto();
-        reqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        reqDto.setBaseCoin(split[0]);
-        reqDto.setQuoteCoin(split[1]);
+        reqDto.setExchangeId(spotExchangeId);
+        reqDto.setBaseCoin(spotBaseCoin);
+        reqDto.setQuoteCoin(spotQuoteCoin);
         reqDto.setTimeout(100);
         reqDto.setMaxDelay(3000);
         ServiceResult<SpotDepthRespDto> result = spotMarketService.getDepth(reqDto);
@@ -116,12 +133,22 @@ public class OrderContext {
     }
 
     public SpotBalance getSpotBalance() {
-        return new SpotBalance();
+        SpotBalance spotBalance = new SpotBalance();
+
+        SpotBalance.Coin coin = new SpotBalance.Coin();
+        coin.setAvailable(BigDecimal.valueOf(9999999999999999L));
+        spotBalance.setCoin(coin);
+
+        SpotBalance.Usdt usdt = new SpotBalance.Usdt();
+        usdt.setAvailable(BigDecimal.valueOf(9999999999999999L));
+        spotBalance.setUsdt(usdt);
+        return spotBalance;
+
         /*SpotBalance spotBalance = new SpotBalance();
         try {
             ServiceResult<SpotBalanceRespDto> balance = spotAccountService.getBalance(null);
             Map<String, SpotBalanceRespDto.DataBean> data = balance.getData().getData();
-            SpotBalanceRespDto.DataBean dataBean = data.get(coinType);
+            SpotBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
             if (dataBean != null) {
                 SpotBalance.Coin coin = new SpotBalance.Coin();
                 BeanUtils.copyProperties(dataBean, coin);
@@ -135,7 +162,7 @@ public class OrderContext {
             }
             return spotBalance;
         } catch (BeansException e) {
-            logger.error("获取现货资产信息失败，exchangeId={}，accountId={}，coinType={}", exchangeId, accountId, coinType, e);
+            logger.error("获取现货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", exchangeId, futureAccountId, futureCoinType, e);
             return null;
         }*/
     }
@@ -144,16 +171,16 @@ public class OrderContext {
     public FutureBalance getFutureBalance() {
         try {
             FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
-            reqDto.setExchangeId(this.exchangeId);
-            reqDto.setAccountId(this.accountId);
-            reqDto.setCoinType(this.coinType);
+            reqDto.setExchangeId(this.futureExchangeId);
+            reqDto.setAccountId(this.futureAccountId);
+            reqDto.setCoinType(this.futureCoinType);
             reqDto.setTimeout(100);
             reqDto.setMaxDelay(3000);
             ServiceResult<FutureBalanceRespDto> balance = futureAccountService.getBalance(reqDto);
             Map<String, FutureBalanceRespDto.DataBean> data = balance.getData().getData();
-            FutureBalanceRespDto.DataBean dataBean = data.get(coinType);
+            FutureBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
             if (dataBean == null) {
-                dataBean = data.get(coinType.toUpperCase());
+                dataBean = data.get(futureCoinType.toUpperCase());
             }
             if (dataBean != null) {
                 FutureBalance futureBalance = new FutureBalance();
@@ -163,7 +190,7 @@ public class OrderContext {
                 return null;
             }
         } catch (BeansException e) {
-            logger.error("获取期货资产信息失败，exchangeId={}，accountId={}，coinType={}", exchangeId, accountId, coinType, e);
+            logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType, e);
             return null;
         }
     }
@@ -171,14 +198,14 @@ public class OrderContext {
     public FuturePosition getFuturePosition() {
         try {
             FuturePositionReqDto reqDto = new FuturePositionReqDto();
-            reqDto.setExchangeId(this.exchangeId);
-            reqDto.setAccountId(this.accountId);
-            reqDto.setCoinType(this.coinType);
+            reqDto.setExchangeId(this.futureExchangeId);
+            reqDto.setAccountId(this.futureAccountId);
+            reqDto.setCoinType(this.futureCoinType);
             reqDto.setTimeout(100);
             reqDto.setMaxDelay(3000);
             ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
             Map<String, List<FuturePositionRespDto.DataBean>> data = position.getData().getData();
-            List<FuturePositionRespDto.DataBean> beanList = data.get(this.coinType);
+            List<FuturePositionRespDto.DataBean> beanList = data.get(this.futureCoinType);
             FuturePosition futurePosition = new FuturePosition();
             beanList.forEach(e -> {
                 if (e.getLongAmount() != null) {
@@ -194,7 +221,7 @@ public class OrderContext {
             });
             return futurePosition;
         } catch (Exception e) {
-            logger.error("获取期货持仓信息失败，exchangeId={}，accountId={}，coinType={}", exchangeId, accountId, coinType, e);
+            logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType, e);
             return null;
         }
     }
@@ -208,8 +235,8 @@ public class OrderContext {
 
     public Map<BigDecimal, List<FutureOrder>> getActiveOrderMap() {
         FuturePriceOrderReqDto reqDto = new FuturePriceOrderReqDto();
-        reqDto.setExchangeId(this.exchangeId);
-        reqDto.setAccountId(this.accountId);
+        reqDto.setExchangeId(this.futureExchangeId);
+        reqDto.setAccountId(this.futureAccountId);
         ServiceResult<FuturePriceOrderRespDto> activeOrderMap = futureOrderService.getActiveOrderMap(reqDto);
         if (activeOrderMap.isSuccess()) {
             Map<BigDecimal, List<FuturePriceOrderRespDto.DataBean>> priceOrderMap = activeOrderMap.getData().getPriceOrderMap();
@@ -225,7 +252,7 @@ public class OrderContext {
             });
             return result;
         } else {
-            throw new RuntimeException("获取活跃订单map失败，exchangeId=" + this.exchangeId + " accountId=" + this.accountId);
+            throw new RuntimeException("获取活跃订单map失败，exchangeId=" + this.futureExchangeId + " futureAccountId=" + this.futureAccountId);
         }
     }
 
@@ -268,7 +295,7 @@ public class OrderContext {
 
     // 下买单
     public void placeBuyOrder(BigDecimal price, BigDecimal orderAmount) {
-       /* FuturePosition.LongPosi longPosi = this.futurePosition.getLongPosi();
+        FuturePosition.LongPosi longPosi = this.futurePosition.getLongPosi();
         if (longPosi == null) {
             isBuyOpen.set(true);
         } else {
@@ -277,7 +304,7 @@ public class OrderContext {
             } else if (BigDecimalUtils.lessThan(longPosi.getLongAmount(), config.getMinPositionAmount())) {
                 isBuyOpen.set(true);
             }
-        }*/
+        }
 
         if (isBuyOpen.get()) {
             placeBuyOpenOrder(price, orderAmount);
@@ -313,7 +340,7 @@ public class OrderContext {
     }
 
     public void placeSellOrder(BigDecimal price, BigDecimal orderAmount) {
-        /*FuturePosition.ShortPosi shortPosi = this.futurePosition.getShortPosi();
+        FuturePosition.ShortPosi shortPosi = this.futurePosition.getShortPosi();
         if (shortPosi == null) {
             isSellOpen.set(true);
         } else {
@@ -322,7 +349,7 @@ public class OrderContext {
             } else if (BigDecimalUtils.lessThan(shortPosi.getShortAmount(), config.getMinPositionAmount())) {
                 isSellOpen.set(true);
             }
-        }*/
+        }
 
         if (isSellOpen.get()) {
             placeSellOpenOrder(price, orderAmount);
@@ -365,7 +392,10 @@ public class OrderContext {
             logger.warn("买入开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getLongMaxAmount());
             return;
         }
-        placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, price, orderAmount);
+        if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
+            placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+        }
     }
 
 
@@ -377,7 +407,10 @@ public class OrderContext {
             logger.warn("卖出开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getShortMaxAmount());
             return;
         }
-        placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, price, orderAmount);
+        if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
+            placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+        }
     }
 
     // 下平仓买单
@@ -390,6 +423,15 @@ public class OrderContext {
         }
     }
 
+    // 下平仓卖单
+    public boolean placeSellCloseOrder(BigDecimal price, BigDecimal orderAmount) {
+        Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, orderAmount);
+        if (orderId != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * @param sideEnum    开仓 or 平仓
@@ -433,30 +475,20 @@ public class OrderContext {
     public void cancelOrder(List<Long> orderIds) {
         orderIds.forEach(e -> {
             FutureCancelSingleOrderReqDto reqDto = new FutureCancelSingleOrderReqDto();
-            reqDto.setExchangeId(this.exchangeId);
-            reqDto.setAccountId(this.accountId);
-            reqDto.setBaseCoin(this.baseCoin);
-            reqDto.setQuoteCoin(this.quoteCoin);
-            reqDto.setContractType(this.contractType);
+            reqDto.setExchangeId(this.futureExchangeId);
+            reqDto.setAccountId(this.futureAccountId);
+            reqDto.setBaseCoin(this.futureBaseCoin);
+            reqDto.setQuoteCoin(this.futureQuoteCoin);
+            reqDto.setContractType(this.futureContractType);
             reqDto.setExOrderId(e);
             ServiceResult<Long> result = futureOrderService.cancelSingleOrder(reqDto);
             if (!result.isSuccess()) {
-                logger.error("取消订单失败，exchangeId={},accountId={},exOrderId={}", this.exchangeId, this.accountId, e);
+                logger.error("取消订单失败，exchangeId={},futureAccountId={},exOrderId={}", this.futureExchangeId, this.futureAccountId, e);
             }
         });
         logger.info("取消订单总数：{}，订单id：{}", orderIds.size(), orderIds);
     }
 
-
-    // 下平仓卖单
-    public boolean placeSellCloseOrder(BigDecimal price, BigDecimal orderAmount) {
-        Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, orderAmount);
-        if (orderId != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public void setOrderReader(OrderReader orderReader) {
         this.orderReader = orderReader;
@@ -481,17 +513,17 @@ public class OrderContext {
 
     public Long placeOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
         FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
-        reqDto.setExchangeId(this.exchangeId);
-        reqDto.setAccountId(this.accountId);
-        reqDto.setBaseCoin(this.baseCoin);
-        reqDto.setQuoteCoin(this.quoteCoin);
-        reqDto.setContractType(this.contractType);
+        reqDto.setExchangeId(this.futureExchangeId);
+        reqDto.setAccountId(this.futureAccountId);
+        reqDto.setBaseCoin(this.futureBaseCoin);
+        reqDto.setQuoteCoin(this.futureQuoteCoin);
+        reqDto.setContractType(this.futureContractType);
         reqDto.setSide(side);
         reqDto.setOffset(offset);
         reqDto.setOrderType("limit");
         reqDto.setPrice(price);
         reqDto.setQuantity(orderAmount);
-        reqDto.setLever(this.lever);
+        reqDto.setLever(this.futureLever);
         reqDto.setSync(true);
         try {
             ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
@@ -508,31 +540,31 @@ public class OrderContext {
     }
 
     public void cancelAllOrder() {
-        ServiceResult result = futureOrderService.cancelAllOrder(this.symbol);
+        ServiceResult result = futureOrderService.cancelAllOrder(null);
     }
 
     public boolean updateOrderInfo() {
         ServiceResult result = null;
         try {
-            result = futureOrderService.updateOrderInfo(this.exchangeId, this.accountId);
+            result = futureOrderService.updateOrderInfo(this.futureExchangeId, this.futureAccountId);
         } catch (Exception e) {
-            logger.error("更新订单信息，dubbo调用失败，exchangeId={}，accountId={}", this.exchangeId, this.accountId);
+            logger.error("更新订单信息，dubbo调用失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return false;
         }
         if (result.isSuccess()) {
-            logger.info("更新订单信息成功，exchangeId={}，accountId={}", this.exchangeId, this.accountId);
+            logger.info("更新订单信息成功，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return true;
         } else {
-            logger.error("更新订单信息失败，exchangeId={}，accountId={}", this.exchangeId, this.accountId);
+            logger.error("更新订单信息失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return false;
         }
     }
 
     public BigDecimal getSpotCurrentPrice() {
         SpotCurrentPriceReqDto reqDto = new SpotCurrentPriceReqDto();
-        reqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        reqDto.setBaseCoin("btc");
-        reqDto.setQuoteCoin("usdt");
+        reqDto.setExchangeId(spotExchangeId);
+        reqDto.setBaseCoin(spotBaseCoin);
+        reqDto.setQuoteCoin(spotQuoteCoin);
         reqDto.setTimeout(100);
         reqDto.setMaxDelay(3000);
         try {
@@ -541,7 +573,7 @@ public class OrderContext {
                 return currentPrice.getData().getCurrentPrice();
             }
         } catch (Exception e) {
-            logger.error("获取当前价格失败，exchangeId={}，baseCoin={}，quoteCoin={}", exchangeId, baseCoin, quoteCoin);
+            logger.error("获取当前价格失败，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);
         }
         return null;
     }

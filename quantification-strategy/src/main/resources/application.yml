@@ -36,3 +36,48 @@ mybatis:
 
 zookeeper:
   address: 127.0.0.1:2181
+
+
+strategy:
+  group1:
+    enable: false
+    future:
+      exchangeId: 0
+      accountId: 101
+      baseCoin: btc
+      quotCoin: usd
+      contractCode: next_week
+      lever: 10
+    spot:
+      exchangeId: 1
+      accountId: 101
+      baseCoin: btc
+      quotCoin: usdt
+  group2:
+    enable: false
+    future:
+      exchangeId: 0
+      accountId: 101
+      baseCoin: btc
+      quotCoin: usd
+      contractCode: next_week
+      lever: 10
+    spot:
+      exchangeId: 1
+      accountId: 101
+      baseCoin: btc
+      quotCoin: usdt
+  group3:
+    enable: false
+    future:
+      exchangeId: 0
+      accountId: 101
+      baseCoin: btc
+      quotCoin: usd
+      contractCode: next_week
+      lever: 10
+    spot:
+      exchangeId: 1
+      accountId: 101
+      baseCoin: btc
+      quotCoin: usdt

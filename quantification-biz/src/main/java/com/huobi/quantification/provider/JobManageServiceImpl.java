@@ -3,8 +3,7 @@ package com.huobi.quantification.provider;
 import java.util.Date;
 
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.HuobiJobTypeEnum;
-import com.huobi.quantification.enums.OkJobTypeEnum;
+import com.huobi.quantification.enums.JobTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,8 +97,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureCurrentPriceJob(String symbol, String contractType, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.CurrentPrice.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.CurrentPrice.toString());
+        jobReqDto.setJobType(JobTypeEnum.CurrentPrice.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.CurrentPrice.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setContractType(contractType);
@@ -118,8 +117,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureDepthJob(String symbol, String contractType, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.Depth.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.Depth.toString());
+        jobReqDto.setJobType(JobTypeEnum.Depth.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Depth.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setContractType(contractType);
@@ -138,8 +137,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureIndexJob(String symbol, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.Index.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.Index.toString());
+        jobReqDto.setJobType(JobTypeEnum.Index.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Index.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
 
@@ -157,8 +156,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureKlineJob(String symbol, String period, String contractType, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.Kline.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.Kline.toString());
+        jobReqDto.setJobType(JobTypeEnum.Kline.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Kline.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setKlineType(period);
@@ -178,8 +177,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureOrderJob(Long accountId, String symbol, String contractType, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.Order.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.Order.toString());
+        jobReqDto.setJobType(JobTypeEnum.Order.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Order.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
         paramDto.setSymbol(symbol);
@@ -199,8 +198,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFuturePositionJob(Long accountId, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.Position.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.Position.toString());
+        jobReqDto.setJobType(JobTypeEnum.Position.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Position.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
 
@@ -218,8 +217,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addOkFutureUserInfoJob(Long accountId, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.OKEX.getExId());
-        jobReqDto.setJobType(OkJobTypeEnum.UserInfo.getJobType());
-        jobReqDto.setJobDesc(OkJobTypeEnum.UserInfo.toString());
+        jobReqDto.setJobType(JobTypeEnum.Account.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Account.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
 
@@ -237,8 +236,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiSpotAccountJob(Long accountId, String cron, boolean enable) {
         JobReqDto jobReqDto = new JobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.Account.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.Account.toString());
+        jobReqDto.setJobType(JobTypeEnum.Account.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Account.toString());
         jobReqDto.setCron(cron);
         JobParamDto jobParamDto = new JobParamDto();
         jobParamDto.setAccountId(accountId);
@@ -255,8 +254,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiSpotCurrentPriceJob(String symbol, String cron, boolean enable) {
         JobReqDto jobReqDto = new JobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.CurrentPrice.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.CurrentPrice.toString());
+        jobReqDto.setJobType(JobTypeEnum.CurrentPrice.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.CurrentPrice.toString());
         jobReqDto.setCron(cron);
         JobParamDto jobParamDto = new JobParamDto();
         jobParamDto.setSymbol(symbol);
@@ -273,8 +272,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiSpotDepthJob(String symbol, String depthType, String cron, boolean enable) {
         JobReqDto jobReqDto = new JobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.Depth.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.Depth.toString());
+        jobReqDto.setJobType(JobTypeEnum.Depth.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Depth.toString());
         jobReqDto.setCron(cron);
         JobParamDto jobParamDto = new JobParamDto();
         jobParamDto.setSymbol(symbol);
@@ -292,8 +291,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiSpotKlineJob(String symbol, String klineType, int size, String cron, boolean enable) {
         JobReqDto jobReqDto = new JobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.Kline.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.Kline.toString());
+        jobReqDto.setJobType(JobTypeEnum.Kline.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Kline.toString());
         jobReqDto.setCron(cron);
         JobParamDto jobParamDto = new JobParamDto();
         jobParamDto.setSymbol(symbol);
@@ -312,8 +311,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiSpotOrderJob(String cron, boolean enable) {
         JobReqDto jobReqDto = new JobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.Order.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.Order.toString());
+        jobReqDto.setJobType(JobTypeEnum.Order.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Order.toString());
         jobReqDto.setCron(cron);
         if (enable) {
             jobReqDto.setState(1);
@@ -327,8 +326,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiFuturePositionJob(Long accountId, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.Position.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.Position.toString());
+        jobReqDto.setJobType(JobTypeEnum.Position.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Position.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
 
@@ -346,8 +345,8 @@ public class JobManageServiceImpl implements JobManageService {
     public ServiceResult addHuobiFutureUserInfoJob(Long accountId, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-        jobReqDto.setJobType(HuobiJobTypeEnum.Account.getJobType());
-        jobReqDto.setJobDesc(HuobiJobTypeEnum.Account.toString());
+        jobReqDto.setJobType(JobTypeEnum.Account.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Account.toString());
         JobParamDto paramDto = new JobParamDto();
         paramDto.setAccountId(accountId);
 
