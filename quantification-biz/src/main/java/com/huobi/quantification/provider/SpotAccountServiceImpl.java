@@ -100,24 +100,24 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 	}
 
 	@Override
-	public void saveFirstBalance(long accountId, String contractCode) {
+	public void saveFirstBalance(long accountId, Integer exchangeId) {
 		List<QuanAccountAsset> account = huobiAccountService.getAccount(accountId);
-		redisService.saveFirstSpotAccounts(account, accountId, contractCode);
+		redisService.saveFirstSpotAccounts(account, accountId, exchangeId);
 	}
 
 	@Override
-	public List<QuanAccountAsset> getFirstBalance(long accountId, String contractCode) {
-		return redisService.getFirstSpotAccounts(accountId, contractCode);
+	public List<QuanAccountAsset> getFirstBalance(long accountId, Integer exchangeId) {
+		return redisService.getFirstSpotAccounts(accountId, exchangeId);
 	}
 
 	@Override
-	public void saveFirstDebit(Map<String, BigDecimal> hashMap) {
-		redisService.saveFirstDebit(hashMap);
+	public void saveFirstDebit(Map<String, BigDecimal> hashMap, String contractCode) {
+		redisService.saveFirstDebit(hashMap,contractCode);
 	}
 
 	@Override
-	public Map<String, BigDecimal> getFirstDebit() {
-		return redisService.getFirstDebit();
+	public Map<String, BigDecimal> getFirstDebit(String contractCode) {
+		return redisService.getFirstDebit(contractCode);
 	}
 
 }

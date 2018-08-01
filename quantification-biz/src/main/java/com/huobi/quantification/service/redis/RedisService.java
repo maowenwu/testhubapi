@@ -1,7 +1,6 @@
 package com.huobi.quantification.service.redis;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.entity.QuanTickerFuture;
 import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.entity.QuanTradeFuture;
-import com.huobi.quantification.huobi.response.TradeResponse;
 
 public interface RedisService {
     void saveFutureUserInfo(int exchangeId, Long accountId, QuanAccountFutureAsset futureAsset);
@@ -77,15 +75,15 @@ public interface RedisService {
 
 	String getFirstFutureAccountInfo(Long accountId, String contractCode);
 	
-	void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, String contractCode);
+	void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, Integer exchangeId);
 	
-	List<QuanAccountAsset> getFirstSpotAccounts(long accountId, String contractCode);
+	List<QuanAccountAsset> getFirstSpotAccounts(long accountId, Integer exchangeId);
 
 	void saveFirstFuturePosition(Long accountId, String contractCode, String body);
 	
 	String getFirstFuturePosition(Long accountId, String contractCode);
 
-	void saveFirstDebit(Map<String, BigDecimal> hashMap);
+	void saveFirstDebit(Map<String, BigDecimal> hashMap, String contractCode);
 	
-	Map<String, BigDecimal> getFirstDebit();
+	Map<String, BigDecimal> getFirstDebit(String contractCode);
 }

@@ -24,4 +24,7 @@ public interface QuanAccountHistoryMapper {
 
 	BigDecimal getAomuntByRechargeType(@Param("accountId") Long accountId, @Param("exchangeId") int exchangeId,
 			@Param("coin") String coin, @Param("rechargeType") int rechargeType);
+
+	QuanAccountHistory getFirstBalance(@Param("accountId")Long futureAccountId, @Param("exchangeId")Integer futureExchangeId, 
+			@Param("coin") String coin);
 }
