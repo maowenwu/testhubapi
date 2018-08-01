@@ -212,15 +212,15 @@ public class RedisServiceImpl implements RedisService {
 	}
 	
 	@Override
-	public void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, String contractCode) {
-		RMap<String, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + accountId);
-		map.put(contractCode, list);
+	public void saveFirstSpotAccounts(List<QuanAccountAsset> list, long accountId, Integer exchangeId) {
+		RMap<Long, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + exchangeId);
+		map.put(accountId, list);
 	}
 
 	@Override
-	public List<QuanAccountAsset> getFirstSpotAccounts(long accountId, String contractCode) {
-		RMap<String, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + accountId);
-		return map.get(contractCode);
+	public List<QuanAccountAsset> getFirstSpotAccounts(long accountId, Integer exchangeId) {
+		RMap<Long, List<QuanAccountAsset>> map = client.getMap("strategy.account.spot.account." + exchangeId);
+		return map.get(accountId);
 	}
 
 	@Override
@@ -236,14 +236,14 @@ public class RedisServiceImpl implements RedisService {
 	}
 
 	@Override
-	public void saveFirstDebit(Map<String, BigDecimal> hashMap) {
-		RMap<Integer, Map<String, BigDecimal>> map = client.getMap("strategy.risk.debit");
-		map.put(123, hashMap);
+	public void saveFirstDebit(Map<String, BigDecimal> hashMap, String contractCode) {
+		RMap<String, Map<String, BigDecimal>> map = client.getMap("strategy.risk.debit");
+		map.put(contractCode, hashMap);
 	}
 
 	@Override
-	public Map<String, BigDecimal> getFirstDebit() {
-		RMap<Integer, Map<String, BigDecimal>> map = client.getMap("strategy.risk.debit");
-		return map.get(123);
+	public Map<String, BigDecimal> getFirstDebit(String contractCode) {
+		RMap<String, Map<String, BigDecimal>> map = client.getMap("strategy.risk.debit");
+		return map.get(contractCode);
 	}
 }

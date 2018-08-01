@@ -64,4 +64,13 @@
     and	  recharge_type = #{rechargeType,jdbcType=VARCHAR}
     order by  id DESC limit 1
   </select>  
+  <select id="getFirstBalance" resultMap="BaseResultMap">
+    select  id, account_id, coin, current_amount, last_amount, recharge_amount, recharge_type, 
+    create_time
+    from quan_account_history
+    where account_id=#{accountId}
+    and   exchange_id=#{exchangeId}
+    and   coin=#{coin}
+    order by create_time limit 1
+  </select>  
 </mapper>

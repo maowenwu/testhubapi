@@ -19,11 +19,11 @@ public interface SpotAccountService {
      */
     ServiceResult<SpotBalanceRespDto> getBalance(SpotBalanceReqDto balanceReqDto);
 
-	void saveFirstBalance(long accountId, String contractCode);
+	void saveFirstBalance(long accountId, Integer exchangeId);
 	
-	List<QuanAccountAsset> getFirstBalance(long accountId, String contractCode);
+	List<QuanAccountAsset> getFirstBalance(long accountId, Integer exchangeId);
 
-	void saveFirstDebit(Map<String, BigDecimal> hashMap);
+	void saveFirstDebit(Map<String, BigDecimal> hashMap, String contractCode);
 	
-	Map<String, BigDecimal> getFirstDebit();
+	Map<String, BigDecimal> getFirstDebit(String contractCode);
 }
