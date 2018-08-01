@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @Scope("prototype")
@@ -25,6 +26,8 @@ import java.util.List;
 public class OrderCopy {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private AtomicLong counter = new AtomicLong(0);
 
     @Autowired
     private OrderContext context;
@@ -40,7 +43,7 @@ public class OrderCopy {
 
     public boolean copyOrder() {
         Stopwatch started = Stopwatch.createStarted();
-        logger.info("==>copyOrder start");
+        logger.info("========>合约借深度第{}轮 开始", counter.incrementAndGet());
         // 更新订单信息
         boolean success = context.updateOrderInfo();
         if (!success) {
@@ -134,7 +137,7 @@ public class OrderCopy {
                 context.placeSellOrder(ask.getPrice(), ask.getAmount());
             }
         }
-        logger.info("==>copyOrder end,耗时：" + started);
+        logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
         return true;
     }
 

@@ -124,6 +124,7 @@ public class OrderContext {
         for (int i = 0; i < 3; i++) {
             ServiceResult<BigDecimal> result = futureContractService.getExchangeRateOfUSDT2USD();
             if (result.isSuccess()) {
+                logger.error("获取USDT2USD汇率成功");
                 return result.getData();
             } else {
                 continue;
@@ -185,8 +186,10 @@ public class OrderContext {
                 if (dataBean != null) {
                     FutureBalance futureBalance = new FutureBalance();
                     BeanUtils.copyProperties(dataBean, futureBalance);
+                    logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
                     return futureBalance;
                 } else {
+                    logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
                     return null;
                 }
             } else {
@@ -224,8 +227,12 @@ public class OrderContext {
                             futurePosition.setShortPosi(shortPosi);
                         }
                     });
+                    logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
+                    return futurePosition;
+                } else {
+                    logger.info("获取期货持仓信息成功，但当前账户没有持仓，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
+                    return futurePosition;
                 }
-                return futurePosition;
             } else {
                 logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={},失败原因={}", futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
                 return null;
@@ -482,22 +489,26 @@ public class OrderContext {
         }
     }
 
-    public void cancelOrder(List<Long> orderIds) {
-        orderIds.forEach(e -> {
+    public boolean cancelOrder(List<Long> orderIds) {
+        List<Long> successOrderId = new ArrayList<>();
+        List<Long> failedOrderId = new ArrayList<>();
+        for (Long orderId : orderIds) {
             FutureCancelSingleOrderReqDto reqDto = new FutureCancelSingleOrderReqDto();
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
             reqDto.setBaseCoin(this.futureBaseCoin);
             reqDto.setQuoteCoin(this.futureQuoteCoin);
             reqDto.setContractType(this.futureContractType);
-            reqDto.setExOrderId(e);
+            reqDto.setExOrderId(orderId);
             ServiceResult<Long> result = futureOrderService.cancelSingleOrder(reqDto);
-            if (!result.isSuccess()) {
-                logger.error("取消订单失败，exchangeId={},futureAccountId={},exOrderId={}", this.futureExchangeId, this.futureAccountId, e);
-                //throw new RuntimeException("取消订单失败,orderId=" + e);
+            if (result.isSuccess()) {
+                successOrderId.add(orderId);
+            } else {
+                failedOrderId.add(orderId);
             }
-        });
-        logger.info("取消订单总数：{}，订单id：{}", orderIds.size(), orderIds);
+        }
+        logger.info("取消订单总数：{}，取消成功id：{}，取消失败id：{}", orderIds.size(), successOrderId, failedOrderId);
+        return failedOrderId.size() == 0;
     }
 
 
@@ -578,6 +589,7 @@ public class OrderContext {
         try {
             ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
             if (currentPrice.isSuccess()) {
+                logger.error("获取当前价格成功，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);
                 return currentPrice.getData().getCurrentPrice();
             }
         } catch (Exception e) {
@@ -601,10 +613,10 @@ public class OrderContext {
             if (result.isSuccess()) {
                 return result.getData().getContractType();
             } else {
-                throw new RuntimeException("获取ContractType失败，请检查是否未启动定时任务");
+                throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务");
             }
         } catch (Throwable e) {
-            throw new RuntimeException("获取ContractType失败，请检查是否未启动定时任务", e);
+            throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务", e);
         }
     }
 }
