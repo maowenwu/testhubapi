@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.huobi.quantification.dao.StrategyHedgingConfigMapper">
+	<resultMap id="BaseResultMap"
+		type="com.huobi.quantification.entity.StrategyHedgingConfig">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="symbol" jdbcType="VARCHAR" property="symbol" />
+		<result column="contract_code" jdbcType="VARCHAR"
+			property="contractCode" />
+		<result column="contract_type" jdbcType="VARCHAR"
+			property="contractType" />
+		<result column="formality_rate" jdbcType="DECIMAL"
+			property="formalityRate" />
+		<result column="slippage" jdbcType="DECIMAL"
+			property="slippage" />
+	</resultMap>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from strategy_hedging_config
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.huobi.quantification.entity.StrategyHedgingConfig">
+		insert into strategy_hedging_config (id, symbol, contract_code,
+		contract_type, formality_rate, slippage
+		)
+		values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR},
+		#{contractCode,jdbcType=VARCHAR},
+		#{contractType,jdbcType=VARCHAR}, #{formalityRate,jdbcType=DECIMAL}, #{slippage,jdbcType=DECIMAL}
+		)
+	</insert>
+	<update id="updateByPrimaryKey"
+		parameterType="com.huobi.quantification.entity.StrategyHedgingConfig">
+		update strategy_hedging_config
+		set symbol = #{symbol,jdbcType=VARCHAR},
+		contract_code = #{contractCode,jdbcType=VARCHAR},
+		contract_type = #{contractType,jdbcType=VARCHAR},
+		formality_rate = #{formalityRate,jdbcType=DECIMAL},
+		slippage = #{slippage,jdbcType=DECIMAL}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select id, symbol, contract_code, contract_type, formality_rate, slippage
+		from strategy_hedging_config
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectAll" resultMap="BaseResultMap">
+		select id, symbol, contract_code, contract_type, formality_rate, slippage
+		from strategy_hedging_config
+	</select>
+
+	<select id="selectStrategyHedging" resultMap="BaseResultMap">
+		select id, symbol, contract_code, contract_type, formality_rate, slippage
+		from strategy_hedging_config
+		where contract_code=#{contractCode} and contract_type=#{contractType}
+	</select>
+</mapper>

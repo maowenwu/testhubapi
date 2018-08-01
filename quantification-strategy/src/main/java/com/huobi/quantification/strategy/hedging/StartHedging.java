@@ -1,7 +1,6 @@
 package com.huobi.quantification.strategy.hedging;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +12,13 @@ import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
-import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
+import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.hedging.service.MarketInfoService;
 import com.huobi.quantification.strategy.hedging.service.OrderInfoService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
+import com.huobi.quantification.strategy.order.entity.FuturePosition;
 
 @Component
 public class StartHedging {
@@ -35,6 +35,9 @@ public class StartHedging {
 	MarketInfoService marketInfoService;
 	@Autowired
 	OrderInfoService orderInfoService;
+
+	@Autowired
+	AccountInfoService accountInfoService;
 
 	@Autowired
 	StrategyRiskConfigMapper strategyRiskConfigMapper;
@@ -72,27 +75,55 @@ public class StartHedging {
 			BigDecimal positionUSDT = commonService.calUSDTPosition(startHedgingParam);
 			logger.info("2.当前的两个账户总的净头寸USDT为  {}  ", positionUSDT);
 
-			// 3. 获取买一卖一价格
-			logger.info("3. 获取交易对  {} 买一卖一价格", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin());
-			SpotDepthReqDto spotDepthReqDto = new SpotDepthReqDto();
-			spotDepthReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
-			spotDepthReqDto.setQuoteCoin(startHedgingParam.getQuoteCoin());
-			Map<String, BigDecimal> priceMap = marketInfoService.getHuoBiSpotBuyOneSellOnePrice(spotDepthReqDto);
-			logger.info("3. 交易对  {} 买一卖一价格为： {} ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(),
-					JSON.toJSONString(priceMap));
-
-			// 4. 下单
-			logger.info("4.开始下对冲单");
-			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderInfoService.placeHuobiSpotOrder(priceMap,
-					startHedgingParam, positionUSDT);
-			logger.info("4.下对冲单结果为： {}  ", JSON.toJSONString(placeResult));
+			// 3. 下单
+			logger.info("3.开始下对冲单");
+			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderInfoService.placeHuobiSpotOrder(startHedgingParam,
+					positionUSDT);
+			logger.info("3.下对冲单结果为： {}  ", JSON.toJSONString(placeResult));
 
 		} catch (Exception e) {
 			logger.error("对冲  {} 发生了异常： {}  ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(), e);
 		}
 	}
 
+	/**
+	 * 交割处理
+	 * 
+	 * @param startHedgingParam
+	 */
 	public void startSpecial(StartHedgingParam startHedgingParam) {
+		// 2.计算当前的两个账户总的净头寸USDT
+		logger.info("2.开始计算当前的两个账户总的净头寸USDT");
+		BigDecimal positionUSDT = commonService.calUSDTPosition(startHedgingParam);
+		logger.info("2.当前的两个账户总的净头寸USDT为  {}  ", positionUSDT);
+
+		// 计算此时合约账户净空仓金额并折算为USDT
+		FuturePosition futurePosition = accountInfoService.getFuturePosition(startHedgingParam.getFutureAccountID(),
+				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode());
+		BigDecimal shortAmountUSD = futurePosition.getShortPosi().getShortAmount();
+		BigDecimal longAmountUSD = futurePosition.getLongPosi().getLongAmount();
+		BigDecimal totalAmountUSD = shortAmountUSD.subtract(longAmountUSD);
+		// 2.5 获取USDT USD的汇率
+		ServiceResult<BigDecimal> rateResult = futureContractService.getExchangeRateOfUSDT2USD();
+		BigDecimal rateOfUSDT2USD = rateResult.getData();
+		logger.info("2.3 USDT/USD的利率为：{}", rateResult.getData());
+		BigDecimal totalAmountUSDT = totalAmountUSD.divide(rateOfUSDT2USD, 8, BigDecimal.ROUND_HALF_DOWN);
+
+		// 需要对冲的USDT
+		BigDecimal needHedgingUSDT = totalAmountUSDT.subtract(positionUSDT);
+
+		// 需要对冲的次数为
+		Integer count = (new BigDecimal(3300)).divide(new BigDecimal(60), 1, BigDecimal.ROUND_HALF_DOWN).intValue();
+		// 每次需要对冲的金额
+		needHedgingUSDT = needHedgingUSDT.divide(new BigDecimal(count));
+
+		// 4. 下单
+		for (int i = 1; i <= count; i++) {
+			logger.info("交割期间开始下对冲单,当前交割次数为 {} ", i);
+			ServiceResult<SpotPlaceOrderRespDto> placeResult = orderInfoService.placeHuobiSpotOrder(startHedgingParam,
+					positionUSDT);
+			logger.info("交割期间第 {} 次下对冲单结果为： {}  ", i, JSON.toJSONString(placeResult));
+		}
 
 	}
 
