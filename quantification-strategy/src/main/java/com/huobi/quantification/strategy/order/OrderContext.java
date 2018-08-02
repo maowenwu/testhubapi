@@ -322,10 +322,11 @@ public class OrderContext {
                 isBuyOpen.set(true);
             }
         }
-
+        // 下买入开仓单
         if (isBuyOpen.get()) {
             placeBuyOpenOrder(price, orderAmount);
         } else {
+            // 下买入平仓单
             FuturePosition.ShortPosi shortPosi = futurePosition.getShortPosi();
             if (shortPosi != null) {
                 // 空仓的可平量

@@ -1,8 +1,9 @@
 package com.huobi.quantification.strategy.risk;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-
+import com.huobi.quantification.api.future.FutureAccountService;
+import com.huobi.quantification.api.spot.SpotAccountService;
+import com.huobi.quantification.common.context.ApplicationContextHolder;
+import com.huobi.quantification.strategy.config.StrategyProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
-import com.huobi.quantification.api.future.FutureAccountService;
-import com.huobi.quantification.api.spot.SpotAccountService;
-import com.huobi.quantification.common.context.ApplicationContextHolder;
-import com.huobi.quantification.dao.QuanAccountHistoryMapper;
-import com.huobi.quantification.strategy.config.StrategyProperties;
-import com.huobi.quantification.strategy.risk.enums.RechargeTypeEnum;
+import java.math.BigDecimal;
+import java.util.HashMap;
 
 @Component
 public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent> {
@@ -27,8 +24,6 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
     private FutureAccountService futureAccountService;
     @Autowired
     private SpotAccountService spotAccountService;
-    @Autowired
-    private QuanAccountHistoryMapper quanAccountHistoryMapper;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -66,22 +61,22 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
         spotAccountService.saveFirstBalance(spotAccountId, spotExchangeId);
         futureAccountService.saveAccountsInfo(futureAccountId, contractCode);
 
-        BigDecimal spotDebitCoin1 = getEndDebit(baseCoin, spotExchangeId, spotAccountId);
+       /* BigDecimal spotDebitCoin1 = getEndDebit(baseCoin, spotExchangeId, spotAccountId);
         BigDecimal spotDebitCoin2 = getEndDebit(quotCoin, spotExchangeId, spotAccountId);
         BigDecimal futureDebit = getEndDebit(baseCoin2, futureExchangeId, futureAccountId);
-
+*/
         HashMap<String, BigDecimal> hashMap = new HashMap<>();
-        hashMap.put(baseCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin1);
+       /* hashMap.put(baseCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin1);
         hashMap.put(quotCoin + "_" + spotExchangeId + "_" + spotAccountId, spotDebitCoin2);
-        hashMap.put(baseCoin2 + "_" + futureExchangeId + "_" + futureAccountId, futureDebit);
+        hashMap.put(baseCoin2 + "_" + futureExchangeId + "_" + futureAccountId, futureDebit);*/
         spotAccountService.saveFirstDebit(hashMap, future.getContractCode());
 
-        RiskManager riskManager = ApplicationContextHolder.getContext().getBean(RiskManager.class);
-        riskManager.init(group);
+        RiskMonitor riskMonitor = ApplicationContextHolder.getContext().getBean(RiskMonitor.class);
+        riskMonitor.init(group);
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
-                    riskManager.monitor();
+                    riskMonitor.check();
                 } catch (Throwable e) {
                     logger.error("监控保证金率期间出现异常", e);
                     try {
@@ -95,12 +90,5 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
         thread.start();
     }
 
-    private BigDecimal getEndDebit(String coin, int exchangeId, long accountId) {
-        BigDecimal borrow = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin,
-                RechargeTypeEnum.BORROW.getRechargeType());
-        BigDecimal payment = quanAccountHistoryMapper.getAomuntByRechargeType(accountId, exchangeId, coin,
-                RechargeTypeEnum.REPAYMENT.getRechargeType());
-        return borrow.subtract(payment);
-    }
 
 }

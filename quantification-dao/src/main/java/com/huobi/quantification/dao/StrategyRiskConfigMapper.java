@@ -1,9 +1,5 @@
 package com.huobi.quantification.dao;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.huobi.quantification.entity.StrategyRiskConfig;
 
 public interface StrategyRiskConfigMapper {
@@ -11,15 +7,11 @@ public interface StrategyRiskConfigMapper {
 
     int insert(StrategyRiskConfig record);
 
+    int insertSelective(StrategyRiskConfig record);
+
     StrategyRiskConfig selectByPrimaryKey(Integer id);
 
-    List<StrategyRiskConfig> selectAll();
+    int updateByPrimaryKeySelective(StrategyRiskConfig record);
 
     int updateByPrimaryKey(StrategyRiskConfig record);
-
-	StrategyRiskConfig selectByContractCode(@Param("contractCode")String contractCode);
-	
-	int updateOrderRiskManagement(@Param("contractCode")String contractCode, @Param("orderType")int orderType);
-	
-	int updateHedgingRiskManagement(@Param("contractCode")String contractCode, @Param("hedgingType")int hedgingType);
 }

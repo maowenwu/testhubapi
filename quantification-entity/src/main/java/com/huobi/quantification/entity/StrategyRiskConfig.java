@@ -4,105 +4,75 @@ import java.math.BigDecimal;
 
 public class StrategyRiskConfig {
     /**
-     * @mbg.generated 2018-07-26 17:39:17
+     * @mbg.generated 2018-08-02 13:25:55
      */
     private Integer id;
 
     /**
-     * 保存比例
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal saveRate;
-
-    /**
-     * 总持仓量
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private Integer totalInventoryAmount;
-
-    /**
-     * 保证金率限制1
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal marginRateA;
-
-    /**
-     * 保证金率限制2
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal marginRateB;
-
-    /**
-     * 保证金率限制3
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal marginRateC;
-
-    /**
-     * 净头寸阈值1
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal positionA;
-
-    /**
-     * 净头寸阈值2
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal positionB;
-
-    /**
-     * 单次盈亏阈值
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal onceProfitLossA;
-
-    /**
-     * 单次盈亏阈值2
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal onceProfitLossB;
-
-    /**
-     * 总盈亏阈值1
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal totalProfitLossA;
-
-    /**
-     * 总盈亏阈值2
-     * @mbg.generated 2018-07-26 17:39:17
-     */
-    private BigDecimal totalProfitLossB;
-
-    /**
      * 币对
-     * @mbg.generated 2018-07-26 17:39:17
+     * @mbg.generated 2018-08-02 13:25:55
      */
     private String symbol;
 
     /**
      * 合约类型
-     * @mbg.generated 2018-07-26 17:39:17
+     * @mbg.generated 2018-08-02 13:25:55
      */
     private String contractType;
 
     /**
-     * 合约代码
-     * @mbg.generated 2018-07-26 17:39:17
+     * 保证金率限制1
+     * @mbg.generated 2018-08-02 13:25:55
      */
-    private String contractCode;
+    private BigDecimal riskRateLevel1;
 
     /**
-     * 对摆单模块的设置
-     * @mbg.generated 2018-07-26 17:39:17
+     * 保证金率限制2
+     * @mbg.generated 2018-08-02 13:25:55
      */
-    private Integer orderRiskManagement;
+    private BigDecimal riskRateLevel2;
 
     /**
-     * 对冲模块风控处理，0正常运行，1停止
-     * @mbg.generated 2018-07-26 17:39:17
+     * 保证金率限制3
+     * @mbg.generated 2018-08-02 13:25:55
      */
-    private Integer hedgingRiskManagement;
+    private BigDecimal riskRateLevel3;
+
+    /**
+     * 净头寸阈值1
+     * @mbg.generated 2018-08-02 13:25:55
+     */
+    private BigDecimal netPositionLevel1;
+
+    /**
+     * 净头寸阈值2
+     * @mbg.generated 2018-08-02 13:25:55
+     */
+    private BigDecimal netPositionLevel2;
+
+    /**
+     * 单次盈亏阈值
+     * @mbg.generated 2018-08-02 13:25:55
+     */
+    private BigDecimal currProfitLevel1;
+
+    /**
+     * 单次盈亏阈值2
+     * @mbg.generated 2018-08-02 13:25:55
+     */
+    private BigDecimal currProfitLevel2;
+
+    /**
+     * 总盈亏阈值1
+     * @mbg.generated 2018-08-02 13:25:55
+     */
+    private BigDecimal totalProfitLevel1;
+
+    /**
+     * 总盈亏阈值2
+     * @mbg.generated 2018-08-02 13:25:55
+     */
+    private BigDecimal totalProfitLevel2;
 
     public Integer getId() {
         return id;
@@ -110,94 +80,6 @@ public class StrategyRiskConfig {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public BigDecimal getSaveRate() {
-        return saveRate;
-    }
-
-    public void setSaveRate(BigDecimal saveRate) {
-        this.saveRate = saveRate;
-    }
-
-    public Integer getTotalInventoryAmount() {
-        return totalInventoryAmount;
-    }
-
-    public void setTotalInventoryAmount(Integer totalInventoryAmount) {
-        this.totalInventoryAmount = totalInventoryAmount;
-    }
-
-    public BigDecimal getMarginRateA() {
-        return marginRateA;
-    }
-
-    public void setMarginRateA(BigDecimal marginRateA) {
-        this.marginRateA = marginRateA;
-    }
-
-    public BigDecimal getMarginRateB() {
-        return marginRateB;
-    }
-
-    public void setMarginRateB(BigDecimal marginRateB) {
-        this.marginRateB = marginRateB;
-    }
-
-    public BigDecimal getMarginRateC() {
-        return marginRateC;
-    }
-
-    public void setMarginRateC(BigDecimal marginRateC) {
-        this.marginRateC = marginRateC;
-    }
-
-    public BigDecimal getPositionA() {
-        return positionA;
-    }
-
-    public void setPositionA(BigDecimal positionA) {
-        this.positionA = positionA;
-    }
-
-    public BigDecimal getPositionB() {
-        return positionB;
-    }
-
-    public void setPositionB(BigDecimal positionB) {
-        this.positionB = positionB;
-    }
-
-    public BigDecimal getOnceProfitLossA() {
-        return onceProfitLossA;
-    }
-
-    public void setOnceProfitLossA(BigDecimal onceProfitLossA) {
-        this.onceProfitLossA = onceProfitLossA;
-    }
-
-    public BigDecimal getOnceProfitLossB() {
-        return onceProfitLossB;
-    }
-
-    public void setOnceProfitLossB(BigDecimal onceProfitLossB) {
-        this.onceProfitLossB = onceProfitLossB;
-    }
-
-    public BigDecimal getTotalProfitLossA() {
-        return totalProfitLossA;
-    }
-
-    public void setTotalProfitLossA(BigDecimal totalProfitLossA) {
-        this.totalProfitLossA = totalProfitLossA;
-    }
-
-    public BigDecimal getTotalProfitLossB() {
-        return totalProfitLossB;
-    }
-
-    public void setTotalProfitLossB(BigDecimal totalProfitLossB) {
-        this.totalProfitLossB = totalProfitLossB;
     }
 
     public String getSymbol() {
@@ -216,27 +98,75 @@ public class StrategyRiskConfig {
         this.contractType = contractType;
     }
 
-    public String getContractCode() {
-        return contractCode;
+    public BigDecimal getRiskRateLevel1() {
+        return riskRateLevel1;
     }
 
-    public void setContractCode(String contractCode) {
-        this.contractCode = contractCode;
+    public void setRiskRateLevel1(BigDecimal riskRateLevel1) {
+        this.riskRateLevel1 = riskRateLevel1;
     }
 
-    public Integer getOrderRiskManagement() {
-        return orderRiskManagement;
+    public BigDecimal getRiskRateLevel2() {
+        return riskRateLevel2;
     }
 
-    public void setOrderRiskManagement(Integer orderRiskManagement) {
-        this.orderRiskManagement = orderRiskManagement;
+    public void setRiskRateLevel2(BigDecimal riskRateLevel2) {
+        this.riskRateLevel2 = riskRateLevel2;
     }
 
-    public Integer getHedgingRiskManagement() {
-        return hedgingRiskManagement;
+    public BigDecimal getRiskRateLevel3() {
+        return riskRateLevel3;
     }
 
-    public void setHedgingRiskManagement(Integer hedgingRiskManagement) {
-        this.hedgingRiskManagement = hedgingRiskManagement;
+    public void setRiskRateLevel3(BigDecimal riskRateLevel3) {
+        this.riskRateLevel3 = riskRateLevel3;
+    }
+
+    public BigDecimal getNetPositionLevel1() {
+        return netPositionLevel1;
+    }
+
+    public void setNetPositionLevel1(BigDecimal netPositionLevel1) {
+        this.netPositionLevel1 = netPositionLevel1;
+    }
+
+    public BigDecimal getNetPositionLevel2() {
+        return netPositionLevel2;
+    }
+
+    public void setNetPositionLevel2(BigDecimal netPositionLevel2) {
+        this.netPositionLevel2 = netPositionLevel2;
+    }
+
+    public BigDecimal getCurrProfitLevel1() {
+        return currProfitLevel1;
+    }
+
+    public void setCurrProfitLevel1(BigDecimal currProfitLevel1) {
+        this.currProfitLevel1 = currProfitLevel1;
+    }
+
+    public BigDecimal getCurrProfitLevel2() {
+        return currProfitLevel2;
+    }
+
+    public void setCurrProfitLevel2(BigDecimal currProfitLevel2) {
+        this.currProfitLevel2 = currProfitLevel2;
+    }
+
+    public BigDecimal getTotalProfitLevel1() {
+        return totalProfitLevel1;
+    }
+
+    public void setTotalProfitLevel1(BigDecimal totalProfitLevel1) {
+        this.totalProfitLevel1 = totalProfitLevel1;
+    }
+
+    public BigDecimal getTotalProfitLevel2() {
+        return totalProfitLevel2;
+    }
+
+    public void setTotalProfitLevel2(BigDecimal totalProfitLevel2) {
+        this.totalProfitLevel2 = totalProfitLevel2;
     }
 }
