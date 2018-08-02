@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.huobi.quantification.StrategyApplication;
+import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.strategy.hedging.StartHedging;
 import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 
@@ -18,6 +19,9 @@ public class HedgingTest {
 
 	@Autowired
 	StartHedging startHedging;
+	
+	@Autowired
+	QuanAccountHistoryMapper quanAccountHistoryMapper;
 
 	@Test
 	public void start() throws Exception {
@@ -30,10 +34,16 @@ public class HedgingTest {
 		startHedgingParam.setSpotExchangeId(1);
 		startHedgingParam.setFutureAccountID(0L);
 		startHedgingParam.setFutureExchangeId(0);
-		while(true) {
+		while (true) {
 			startHedging.startNormal(startHedgingParam);
-			Thread.sleep(1000*60);
+			Thread.sleep(1000 * 60);
 		}
+	}
+
+	@Test
+	public void getAccountHistory() {
+		BigDecimal result = quanAccountHistoryMapper.getInitAmount(111L, 1,  "btcusdt");
+		System.out.println("1=========" + result);
 	}
 
 }

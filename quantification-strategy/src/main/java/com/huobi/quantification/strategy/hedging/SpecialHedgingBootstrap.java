@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging;
+/*package com.huobi.quantification.strategy.hedging;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class SpecialHedgingBootstrap implements ApplicationListener<ContextRefre
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-			logger.info("==>spring 容器启动");
+			logger.info("==>spring交割期间对冲程序开始启动");
 			StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
 			if (group1.getEnable()) {
 				startWithConfig(group1);
@@ -60,19 +60,26 @@ public class SpecialHedgingBootstrap implements ApplicationListener<ContextRefre
 			startHedgingParam.setFutureExchangeId(future.getExchangeId());
 		} catch (Exception e2) {
 			logger.error("对冲启动出现异常", e2);
+			return;
 		}
 
 		// 等待3秒，保证job已经完全运行
+		// 等待3秒，保证job已经完全运行
 		sleep(3000);
-		while (true) {
-			try {
-				startHedging.startSpecial(startHedgingParam);
-				sleep(1000 * 60);
-			} catch (Throwable e) {
-				logger.error("对冲期间出现异常", e);
-				sleep(5000);
+		Thread thread = new Thread(() -> {
+			while (true) {
+				try {
+					startHedging.startSpecial(startHedgingParam);
+					sleep(1000 * 60);
+				} catch (Throwable e) {
+					logger.error("对冲期间出现异常", e);
+					sleep(5000);
+				}
 			}
-		}
+		});
+		thread.setDaemon(true);
+		thread.start();
+		logger.info("对冲线程启动...");
 
 	}
 
@@ -85,3 +92,4 @@ public class SpecialHedgingBootstrap implements ApplicationListener<ContextRefre
 	}
 
 }
+*/

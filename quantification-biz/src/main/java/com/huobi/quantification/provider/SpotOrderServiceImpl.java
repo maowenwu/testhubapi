@@ -28,6 +28,7 @@ import com.huobi.quantification.dto.SpotActiveOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotBatchOrder;
 import com.huobi.quantification.dto.SpotBatchOrderReqDto;
 import com.huobi.quantification.dto.SpotBatchOrderRespDto;
+import com.huobi.quantification.dto.SpotCancleAllOrderReqDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto.Orders;
 import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
@@ -524,11 +525,11 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 	
 
 	@Override
-	public ServiceResult<Object> cancelOrder(Long accountId, String symbol, String side, Integer size) {
+	public ServiceResult<Object> cancelAllOrder(SpotCancleAllOrderReqDto reqDto) {
 		Map<String, Object> param = new HashMap<>();
-		param.put("account-id", accountId);
-		param.put("symbol",symbol);
-		String body = httpService.doHuobiPost(accountId, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
+		param.put("account-id", reqDto.getAccountId());
+		param.put("symbol",reqDto.getSymbol());
+		String body = httpService.doHuobiPost(reqDto.getAccountId(), HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
 		ServiceResult<Object> serviceResult = new ServiceResult<>();
 		serviceResult.setMessage(ServiceErrorEnum.SUCCESS.getMessage());
 		serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
