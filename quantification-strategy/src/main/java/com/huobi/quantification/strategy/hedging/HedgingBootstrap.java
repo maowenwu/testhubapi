@@ -18,6 +18,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 
 	@Autowired
 	private StrategyProperties strategyProperties;
+
 	@Autowired
 	private StartHedging startHedging;
 
