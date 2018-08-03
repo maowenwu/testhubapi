@@ -4,85 +4,105 @@ import java.math.BigDecimal;
 
 public class StrategyRiskConfig {
     /**
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private Integer id;
 
     /**
      * 币对
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private String symbol;
 
     /**
      * 合约类型
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private String contractType;
 
     /**
      * 保证金率限制1
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal riskRateLevel1;
 
     /**
      * 保证金率限制2
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal riskRateLevel2;
 
     /**
      * 保证金率限制3
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal riskRateLevel3;
 
     /**
      * 净头寸阈值1
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal netPositionLevel1;
 
     /**
      * 净头寸阈值2
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal netPositionLevel2;
 
     /**
      * 单次盈亏阈值
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal currProfitLevel1;
 
     /**
      * 单次盈亏阈值2
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal currProfitLevel2;
 
     /**
      * 总盈亏阈值1
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal totalProfitLevel1;
 
     /**
      * 总盈亏阈值2
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
     private BigDecimal totalProfitLevel2;
 
     /**
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
-    private Integer tradeCtrl;
+    private Integer riskOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-02 15:18:56
+     * @mbg.generated 2018-08-03 13:42:43
      */
-    private Integer hedgeCtrl;
+    private Integer riskHedgeCtrl;
+
+    /**
+     * @mbg.generated 2018-08-03 13:42:43
+     */
+    private Integer netOrderCtrl;
+
+    /**
+     * @mbg.generated 2018-08-03 13:42:43
+     */
+    private Integer netHedgeCtrl;
+
+    /**
+     * @mbg.generated 2018-08-03 13:42:43
+     */
+    private Integer profitOrderCtrl;
+
+    /**
+     * @mbg.generated 2018-08-03 13:42:43
+     */
+    private Integer profitHedgeCtrl;
 
     public Integer getId() {
         return id;
@@ -180,19 +200,51 @@ public class StrategyRiskConfig {
         this.totalProfitLevel2 = totalProfitLevel2;
     }
 
-    public Integer getTradeCtrl() {
-        return tradeCtrl;
+    public Integer getRiskOrderCtrl() {
+        return riskOrderCtrl;
     }
 
-    public void setTradeCtrl(Integer tradeCtrl) {
-        this.tradeCtrl = tradeCtrl;
+    public void setRiskOrderCtrl(Integer riskOrderCtrl) {
+        this.riskOrderCtrl = riskOrderCtrl;
     }
 
-    public Integer getHedgeCtrl() {
-        return hedgeCtrl;
+    public Integer getRiskHedgeCtrl() {
+        return riskHedgeCtrl;
     }
 
-    public void setHedgeCtrl(Integer hedgeCtrl) {
-        this.hedgeCtrl = hedgeCtrl;
+    public void setRiskHedgeCtrl(Integer riskHedgeCtrl) {
+        this.riskHedgeCtrl = riskHedgeCtrl;
+    }
+
+    public Integer getNetOrderCtrl() {
+        return netOrderCtrl;
+    }
+
+    public void setNetOrderCtrl(Integer netOrderCtrl) {
+        this.netOrderCtrl = netOrderCtrl;
+    }
+
+    public Integer getNetHedgeCtrl() {
+        return netHedgeCtrl;
+    }
+
+    public void setNetHedgeCtrl(Integer netHedgeCtrl) {
+        this.netHedgeCtrl = netHedgeCtrl;
+    }
+
+    public Integer getProfitOrderCtrl() {
+        return profitOrderCtrl;
+    }
+
+    public void setProfitOrderCtrl(Integer profitOrderCtrl) {
+        this.profitOrderCtrl = profitOrderCtrl;
+    }
+
+    public Integer getProfitHedgeCtrl() {
+        return profitHedgeCtrl;
+    }
+
+    public void setProfitHedgeCtrl(Integer profitHedgeCtrl) {
+        this.profitHedgeCtrl = profitHedgeCtrl;
     }
 }

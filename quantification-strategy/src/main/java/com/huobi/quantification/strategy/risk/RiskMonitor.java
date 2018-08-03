@@ -31,7 +31,7 @@ public class RiskMonitor {
     public void check() {
         this.riskConfig = riskContext.getStrategyRiskConfig();
         checkRiskRate();
-        checkNetPosition();
+        //checkNetPosition();
         checkProfit();
     }
 
@@ -48,16 +48,18 @@ public class RiskMonitor {
 
         if (BigDecimalUtils.lessThanOrEquals(riskRate, level3)) {
             // 停止摆盘，发出警报，撤销所有订单，强平，直至保证金率恢复正常
-            riskContext.updateRiskCtrl(1, null);
+            riskContext.updateRiskCtrl(2);
+            warn();
         } else if (BigDecimalUtils.lessThanOrEquals(riskRate, level2)) {
             // 停止下开仓单，只下平仓单，撤销当前开仓单，发出警报
-            riskContext.updateRiskCtrl(1, null);
+            riskContext.updateRiskCtrl(1);
+            warn();
         } else if (BigDecimalUtils.lessThanOrEquals(riskRate, level1)) {
             // 停止下开仓单，只下平仓单
-            riskContext.updateRiskCtrl(1, null);
+            riskContext.updateRiskCtrl(1);
         } else {
             // 修改为正常状态
-            riskContext.updateRiskCtrl(0, null);
+            riskContext.updateRiskCtrl(0);
         }
 
     }
@@ -72,16 +74,16 @@ public class RiskMonitor {
         BigDecimal level2 = riskConfig.getNetPositionLevel2();
 
         BigDecimal netPosition = riskContext.getNetPosition().abs();
-
         if (BigDecimalUtils.moreThanOrEquals(netPosition, level2)) {
             // 会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
-            riskContext.updateRiskCtrl(2, 1);
+            riskContext.updateNetCtrl(2, 2);
+            warn();
         } else if (BigDecimalUtils.moreThanOrEquals(netPosition, level1)) {
             // 会停止合约摆盘，撤销合约账户所有未成交订单，对冲程序继续执行，直至低于阈值，重新恢复合约摆盘
-            riskContext.updateRiskCtrl(2, 0);
+            riskContext.updateNetCtrl(2, 0);
         } else {
             // 正常
-
+            riskContext.updateNetCtrl(0, 0);
         }
     }
 
@@ -101,14 +103,15 @@ public class RiskMonitor {
 
         BigDecimal currProfit = riskContext.getCurrProfit();
         if (BigDecimalUtils.lessThanOrEquals(currProfit, level2)) {
-
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
-            riskContext.updateRiskCtrl(2, 1);
+            riskContext.updateProfitCtrl(2, 2);
+            warn();
         } else if (BigDecimalUtils.lessThanOrEquals(currProfit, level1)) {
             // 发出警报
+            warn();
         } else {
             // 正常，忽略
-
+            riskContext.updateProfitCtrl(0, 0);
         }
     }
 
@@ -120,16 +123,19 @@ public class RiskMonitor {
         BigDecimal totalProfit = riskContext.getTotalProfit();
         if (BigDecimalUtils.lessThanOrEquals(totalProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
-            riskContext.updateRiskCtrl(2, 1);
-
+            riskContext.updateProfitCtrl(2, 2);
+            warn();
         } else if (BigDecimalUtils.lessThanOrEquals(totalProfit, level1)) {
             // 发出警报
-
+            warn();
         } else {
             // 正常，忽略
-
+            riskContext.updateProfitCtrl(0, 0);
         }
     }
 
 
+    private void warn() {
+
+    }
 }
