@@ -6,6 +6,7 @@ import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.future.JobManageService;
+import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.strategy.config.StrategyProperties;
@@ -36,6 +37,17 @@ public class TestController {
     @Autowired
     private StrategyProperties strategyProperties;
 
+    @Autowired
+    private SpotAccountService spotAccountService;
+
+    @RequestMapping("/getBalance")
+    public String getBalance() {
+        SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
+        reqDto.setExchangeId(1);
+        reqDto.setAccountId(4232061);
+        ServiceResult<SpotBalanceRespDto> balance = spotAccountService.getBalance(reqDto);
+        return JSON.toJSONString(balance);
+    }
 
     @RequestMapping("/addHuobiSpotAccountJob")
     public String addHuobiSpotAccountJob() {

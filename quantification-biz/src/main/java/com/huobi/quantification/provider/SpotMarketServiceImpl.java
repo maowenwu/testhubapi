@@ -54,8 +54,6 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 						continue;
 					}
 					Date ts = quanTrade.getTs();
-					logger.info("QuanAccountSpotAsset时间：{}",DateUtils.format(ts, "yyyy-MM-dd HH:mm:ss"));
-					logger.info("当前时间：{}",DateUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
 					if (DateUtils.withinMaxDelay(ts, currentPriceReqDto.getMaxDelay())) {
 						SpotCurrentPriceRespDto respDto = new SpotCurrentPriceRespDto();
 						respDto.setTs(ts);
