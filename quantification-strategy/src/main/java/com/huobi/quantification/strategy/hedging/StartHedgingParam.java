@@ -19,6 +19,8 @@ public class StartHedgingParam {
 	private BigDecimal slippage;// 滑点
 	private BigDecimal feeRate;// 手续费率
 	private String contractCode;// 合约code
+	private BigDecimal spotInitUSDT;//币币账户期初余额USDT
+	private BigDecimal futureInitUSD;//合约账户期初净空仓金额USD
 
 	public String getBaseCoin() {
 		return baseCoin;
@@ -90,6 +92,26 @@ public class StartHedgingParam {
 
 	public void setContractCode(String contractCode) {
 		this.contractCode = contractCode;
+	}
+
+	public BigDecimal getSpotInitUSDT() {
+		return spotInitUSDT;
+	}
+
+	public void setSpotInitUSDT(BigDecimal spotInitUSDT) {
+		this.spotInitUSDT = spotInitUSDT;
+	}
+
+	public BigDecimal getFutureInitUSD() {
+		return futureInitUSD;
+	}
+
+	public void setFutureInitUSD(BigDecimal futureInitUSD) {
+		this.futureInitUSD = futureInitUSD;
+	}
+
+	public void setSpotExchangeId(Integer spotExchangeId) {
+		this.spotExchangeId = spotExchangeId;
 	}
 
 }

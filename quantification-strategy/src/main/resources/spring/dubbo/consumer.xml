@@ -17,4 +17,6 @@
     <dubbo:reference id="spotAccountService" interface="com.huobi.quantification.api.spot.SpotAccountService"/>
     <dubbo:reference id="spotMarketService" interface="com.huobi.quantification.api.spot.SpotMarketService"/>
     <dubbo:reference id="spotOrderService" interface="com.huobi.quantification.api.spot.SpotOrderService"/>
+    
+    <dubbo:reference id="exchangeConfigService" interface="com.huobi.quantification.api.common.ExchangeConfigService"/>
 </beans>

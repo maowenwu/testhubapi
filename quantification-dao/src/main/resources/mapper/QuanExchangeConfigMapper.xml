@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.QuanExchangeConfigMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanExchangeConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
+    <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
+    <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin" />
+    <result column="price_precision" jdbcType="INTEGER" property="pricePrecision" />
+    <result column="amount_precision" jdbcType="INTEGER" property="amountPrecision" />
+    <result column="face_value" jdbcType="DECIMAL" property="faceValue" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from quan_exchange_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanExchangeConfig">
+    insert into quan_exchange_config (id, exchange_id, base_coin, 
+      quote_coin, price_precision, amount_precision, 
+      face_value, create_time, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{exchangeId,jdbcType=INTEGER}, #{baseCoin,jdbcType=VARCHAR}, 
+      #{quoteCoin,jdbcType=VARCHAR}, #{pricePrecision,jdbcType=INTEGER}, #{amountPrecision,jdbcType=INTEGER}, 
+      #{faceValue,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanExchangeConfig">
+    update quan_exchange_config
+    set exchange_id = #{exchangeId,jdbcType=INTEGER},
+      base_coin = #{baseCoin,jdbcType=VARCHAR},
+      quote_coin = #{quoteCoin,jdbcType=VARCHAR},
+      price_precision = #{pricePrecision,jdbcType=INTEGER},
+      amount_precision = #{amountPrecision,jdbcType=INTEGER},
+      face_value = #{faceValue,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, exchange_id, base_coin, quote_coin, price_precision, amount_precision, 
+    face_value, create_time, update_time
+    from quan_exchange_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, exchange_id, base_coin, quote_coin, price_precision, amount_precision, 
+    face_value, create_time, update_time
+    from quan_exchange_config
+  </select>
+</mapper>

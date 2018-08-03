@@ -7,6 +7,7 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.SpotActiveOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotBatchOrderReqDto;
 import com.huobi.quantification.dto.SpotBatchOrderRespDto;
+import com.huobi.quantification.dto.SpotCancleAllOrderReqDto;
 import com.huobi.quantification.dto.SpotOrderCancelReqDto;
 import com.huobi.quantification.dto.SpotOrderExchangeReqDto;
 import com.huobi.quantification.dto.SpotOrderInnerReqDto;
@@ -81,6 +82,6 @@ public interface SpotOrderService {
 	 * @param size
 	 * @return
 	 */
-	public ServiceResult<Object> cancelOrder(Long accountId, String symbol, String side, Integer size);
+	public ServiceResult<Object> cancelAllOrder(SpotCancleAllOrderReqDto reqDto);
 
 }

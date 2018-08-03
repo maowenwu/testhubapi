@@ -14,14 +14,14 @@ public class QuanAccountFuturePositionService {
 	QuanAccountHistoryMapper quanAccountHistoryMapper;
 
 	/**
-	 * 获取指定账户指定币种的期初值
+	 * 
+	 * 获取指定账户指定币种的净充值数
 	 * @param accountId
 	 * @param exchangeId
-	 * @param accountsType
 	 * @param coin
 	 * @return
 	 */
-	public BigDecimal getInitAmount(Long accountId, int exchangeId,  String coin) {
+	public BigDecimal getInitAmount(Long accountId, int exchangeId, String coin) {
 		BigDecimal result = quanAccountHistoryMapper.getInitAmount(accountId, exchangeId, coin);
 		return result;
 	}
