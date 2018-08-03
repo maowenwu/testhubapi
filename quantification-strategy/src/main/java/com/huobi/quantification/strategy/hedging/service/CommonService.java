@@ -41,7 +41,7 @@ public class CommonService {
 
 		// 2.1 获取火币现货账户期末USDT余额
 		BigDecimal spotCurrentUSDT = accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
-				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin()).getAvailable();
+				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin());
 		// 2.2获取火币现货账户期初USDT余额 策略启动时计算
 		BigDecimal spotInitUSDT = startHedgingParam.getSpotInitUSDT();
 
@@ -105,6 +105,7 @@ public class CommonService {
 	 * @return
 	 */
 	public StrategyHedgingConfig getStrategyHedgingConfig(int exchangeId, String contractCode, String coin) {
+		logger.info("查询对冲配置信息的条件为exchangeId:{} |contractCode:{} |  coin:{} ", exchangeId, contractCode, coin);
 		QuanContractCode quanContractCode = quanContractCodeMapper.selectContractCodeByCode(exchangeId, contractCode);
 		StrategyHedgingConfig result = strategyHedgingConfigMapper.selectStrategyHedging(coin,
 				quanContractCode.getContractType());

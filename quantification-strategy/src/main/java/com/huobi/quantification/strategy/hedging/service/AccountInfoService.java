@@ -14,6 +14,7 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.FuturePositionReqDto;
@@ -39,15 +40,28 @@ public class AccountInfoService {
 
 	@Autowired
 	FutureAccountService futureAccountService;
+	@Autowired
+	QuanAccountHistoryMapper quanAccountHistoryMapper;
+
+	// 获取Huobi现货账户指定账户余额信息 -- 减去了充值记录
+	public BigDecimal getHuobiSpotCurrentBalance(Long accountId, int exchangeId, String coin) {
+		DataBean dataBean = getBalance(accountId, exchangeId, coin);
+		BigDecimal available = dataBean.getAvailable();
+		BigDecimal initAmount = quanAccountHistoryMapper.getInitAmount(accountId, exchangeId, coin);
+		if (null == initAmount) {
+			initAmount = BigDecimal.ZERO;
+		}
+		return available.subtract(initAmount);
+	}
 
 	/**
-	 * 获取Huobi现货账户指定账户期末(即当前)余额
+	 * 获取Huobi现货账户指定账户信息
 	 *
 	 * @param spotBalanceReqDto
 	 * @param coinType
 	 * @return
 	 */
-	public DataBean getHuobiSpotCurrentBalance(Long accountId, int exchangeID, String coinType) {
+	private DataBean getBalance(Long accountId, int exchangeID, String coinType) {
 		SpotBalanceReqDto spotBalanceReqDto = new SpotBalanceReqDto();
 		spotBalanceReqDto.setAccountId(accountId);
 		spotBalanceReqDto.setExchangeId(exchangeID);
@@ -138,24 +152,27 @@ public class AccountInfoService {
 	 * @return
 	 */
 	public BigDecimal getFutureUSDPosition(Long accountId, Integer exchangeId, String contractCode) {
-		//FuturePosition futurePosition = getFuturePosition(accountId, exchangeId, contractCode);
+		// FuturePosition futurePosition = getFuturePosition(accountId, exchangeId,
+		// contractCode);
 		BigDecimal shortAmountUSD = BigDecimal.ZERO;
 		BigDecimal longAmountUSD = BigDecimal.ZERO;
-		/*if (null == futurePosition.getShortPosi() || null == futurePosition.getShortPosi().getShortAmount()) {
-			shortAmountUSD = futurePosition.getShortPosi().getShortAmount();
-		}
-		if (null == futurePosition.getLongPosi() || null == futurePosition.getLongPosi().getLongAmount()) {
-			longAmountUSD = futurePosition.getLongPosi().getLongAmount();
-		}*/
-		shortAmountUSD=test1();
-		longAmountUSD=test1();
-		
-		// 单张合约面值 暂时写死 
+		/*
+		 * if (null == futurePosition.getShortPosi() || null ==
+		 * futurePosition.getShortPosi().getShortAmount()) { shortAmountUSD =
+		 * futurePosition.getShortPosi().getShortAmount(); } if (null ==
+		 * futurePosition.getLongPosi() || null ==
+		 * futurePosition.getLongPosi().getLongAmount()) { longAmountUSD =
+		 * futurePosition.getLongPosi().getLongAmount(); }
+		 */
+		shortAmountUSD = test1();
+		longAmountUSD = test1();
+
+		// 单张合约面值 暂时写死
 		BigDecimal totalAmountUSD = shortAmountUSD.subtract(longAmountUSD).multiply(new BigDecimal(10));
 		return totalAmountUSD;
 	}
-	
-	//1~10之间随机数
+
+	// 1~10之间随机数
 	public BigDecimal test1() {
 		int max = 10;
 		int min = 1;
