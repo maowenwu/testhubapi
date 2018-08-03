@@ -27,10 +27,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -89,7 +86,7 @@ public class OrderContext {
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
-        this.futureContractCode = future.getContractCode();
+        this.futureContractCode = Objects.requireNonNull(future.getContractCode());
         this.futureContractType = getContractTypeFromCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
@@ -555,6 +552,7 @@ public class OrderContext {
         reqDto.setBaseCoin(this.futureBaseCoin);
         reqDto.setQuoteCoin(this.futureQuoteCoin);
         reqDto.setContractType(this.futureContractType);
+        reqDto.setContractCode(this.futureContractCode);
         reqDto.setSide(side);
         reqDto.setOffset(offset);
         reqDto.setOrderType("limit");
