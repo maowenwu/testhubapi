@@ -51,6 +51,8 @@ public class RiskContext {
     private Integer futureExchangeId;
     private Long futureAccountId;
     private String futureCoinType;
+    private String futureSymbol;
+    private String futureContractType;
     private String futureContractCode;
 
     private Long spotAccountId;
@@ -248,5 +250,18 @@ public class RiskContext {
 
     public StrategyRiskConfig getStrategyRiskConfig() {
         return strategyRiskMapper.selectByPrimaryKey(1);
+    }
+
+    /**
+     * @param tradeCtrl 0-正常，1-停止下开仓单，只下平仓单，2-停止合约摆盘，撤销两账户所有未成交订单
+     * @param hedgeCtrl 0-正常，1- 停止对冲程序，撤销两账户所有未成交订单
+     */
+    public void updateRiskCtrl(Integer tradeCtrl, Integer hedgeCtrl) {
+        StrategyRiskConfig riskConfig = new StrategyRiskConfig();
+        riskConfig.setSymbol(this.futureSymbol);
+        riskConfig.setContractType(this.futureContractType);
+        riskConfig.setTradeCtrl(tradeCtrl);
+        riskConfig.setHedgeCtrl(hedgeCtrl);
+        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 }

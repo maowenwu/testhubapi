@@ -53,6 +53,7 @@ public class OrderContext {
     @Autowired
     private FutureOrderService futureOrderService;
 
+    private BigDecimal faceValue = BigDecimal.valueOf(100);
     /**
      * 用于表示开仓平仓方向,true 代表开仓
      */
@@ -216,15 +217,17 @@ public class OrderContext {
                 // 如果beanList为null，代表当前账户没有持仓
                 if (CollectionUtils.isNotEmpty(beanList)) {
                     beanList.forEach(e -> {
-                        if (e.getLongAmount() != null) {
-                            FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
-                            BeanUtils.copyProperties(e, longPosi);
-                            futurePosition.setLongPosi(longPosi);
-                        }
-                        if (e.getShortAmount() != null) {
-                            FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
-                            BeanUtils.copyProperties(e, shortPosi);
-                            futurePosition.setShortPosi(shortPosi);
+                        if (e.getContractType().equalsIgnoreCase(this.futureContractType)) {
+                            if (e.getLongAmount() != null) {
+                                FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
+                                BeanUtils.copyProperties(e, longPosi);
+                                futurePosition.setLongPosi(longPosi);
+                            }
+                            if (e.getShortAmount() != null) {
+                                FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
+                                BeanUtils.copyProperties(e, shortPosi);
+                                futurePosition.setShortPosi(shortPosi);
+                            }
                         }
                     });
                     logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
@@ -312,6 +315,7 @@ public class OrderContext {
 
     // 下买单
     public void placeBuyOrder(BigDecimal price, BigDecimal orderAmount) {
+        // 因为持仓是每轮更新一次，那么意味着这一轮都会下开仓单or平仓单
         FuturePosition.LongPosi longPosi = this.futurePosition.getLongPosi();
         if (longPosi == null) {
             isBuyOpen.set(true);
@@ -410,7 +414,7 @@ public class OrderContext {
             logger.warn("买入开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getLongMaxAmount());
             return;
         }
-        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.LONG, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
             placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
         }
@@ -425,7 +429,7 @@ public class OrderContext {
             logger.warn("卖出开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getShortMaxAmount());
             return;
         }
-        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.LONG, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
             placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
         }
@@ -433,22 +437,26 @@ public class OrderContext {
 
     // 下平仓买单
     private boolean placeBuyCloseOrder(BigDecimal price, BigDecimal orderAmount) {
-        Long orderId = placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), price, orderAmount);
-        if (orderId != null) {
-            return true;
-        } else {
-            return false;
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.SHORT, price, orderAmount);
+        if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
+            Long orderId = placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
+            if (orderId != null) {
+                return true;
+            }
         }
+        return false;
     }
 
     // 下平仓卖单
     public boolean placeSellCloseOrder(BigDecimal price, BigDecimal orderAmount) {
-        Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, orderAmount);
-        if (orderId != null) {
-            return true;
-        } else {
-            return false;
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.SHORT, price, orderAmount);
+        if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
+            Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
+            if (orderId != null) {
+                return true;
+            }
         }
+        return false;
     }
 
     /**
@@ -457,26 +465,32 @@ public class OrderContext {
      * @param orderAmount 开仓量 张
      * @return
      */
-    private BigDecimal calcAvailableAmount(SideEnum sideEnum, BigDecimal price, BigDecimal orderAmount) {
+    private BigDecimal calcAvailableAmount(SideEnum sideEnum, OffsetEnum offsetEnum, BigDecimal price, BigDecimal orderAmount) {
         // 根据期货账户计算出最多可开仓的数量
-        BigDecimal marginBalance = futureBalance.getMarginAvailable().subtract(config.getContractMarginReserve());
-        BigDecimal amount = marginBalance.divide(price, 0, BigDecimal.ROUND_FLOOR);
-        BigDecimal minAmount = min(amount, orderAmount);
+        BigDecimal minAmount;
+        if (offsetEnum == OffsetEnum.LONG) {
+            // 如果是开仓，那么需要判断账户余额是否能开这么多张
+            // 可用余额单位为btc币
+            BigDecimal marginBalance = futureBalance.getMarginAvailable().subtract(config.getContractMarginReserve());
+            // 期货可开张数=余额*杠杆*价格*汇率/面值
+            BigDecimal amount = marginBalance.multiply(BigDecimal.valueOf(this.futureLever)).multiply(price).divide(faceValue, 18, BigDecimal.ROUND_DOWN);
+            minAmount = min(amount, orderAmount);
+        } else {
+            // 如果是平仓，那么不需要关心账户余额
+            minAmount = orderAmount;
+        }
 
         if (sideEnum == SideEnum.BUY) {
             // 看下现货账户是否有足够的币卖出
-            BigDecimal usdtBalance = minAmount.multiply(price).divide(exchangeRate, 18, BigDecimal.ROUND_FLOOR);
-            BigDecimal coinAmount = usdtBalance.divide(currPrice, 0, BigDecimal.ROUND_FLOOR);
-            // 查看现货账户可用btc币量
-            BigDecimal minCoin = min(coinAmount, spotBalance.getCoin().getAvailable());
-            BigDecimal contractAmount = minCoin.multiply(currPrice).multiply(exchangeRate).divide(price, 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal minBalance = min(minAmount.multiply(price), spotBalance.getCoin().getAvailable().subtract(config.getSpotCoinReserve()).multiply(price));
+            BigDecimal contractAmount = minBalance.divide(price, 0, BigDecimal.ROUND_FLOOR);
             return contractAmount;
         } else {
             // 看下现货账户是否有足够的usdt买币
-            BigDecimal usdtBalance = minAmount.multiply(price).divide(exchangeRate, 18, BigDecimal.ROUND_FLOOR);
+            BigDecimal usdBalance = minAmount.multiply(price);
             // 查看现货账户可用usdt
-            BigDecimal minBalance = min(usdtBalance, spotBalance.getUsdt().getAvailable());
-            BigDecimal contractAmount = minBalance.multiply(exchangeRate).divide(price, 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal minBalance = min(usdBalance, spotBalance.getUsdt().getAvailable().subtract(config.getSpotBalanceReserve()).multiply(exchangeRate));
+            BigDecimal contractAmount = minBalance.divide(price, 0, BigDecimal.ROUND_FLOOR);
             return contractAmount;
         }
     }
@@ -551,7 +565,9 @@ public class OrderContext {
         try {
             ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
             if (result.isSuccess()) {
-                return result.getData().getExOrderId();
+                Long exOrderId = result.getData().getExOrderId();
+                postPlaceOrder(exOrderId, side, offset, price, orderAmount);
+                return exOrderId;
             } else {
                 logger.error("placeOrder失败，订单：" + reqDto);
             }
@@ -559,6 +575,17 @@ public class OrderContext {
             logger.error("dubbo服务调用异常，placeOrder失败，订单：" + reqDto, e);
         }
         return null;
+    }
+
+    private void postPlaceOrder(Long exOrderId, int side, int offset, BigDecimal price, BigDecimal orderAmount) {
+        FutureOrder futureOrder = new FutureOrder();
+        futureOrder.setExOrderId(exOrderId);
+        futureOrder.setSide(side);
+        futureOrder.setOffset(offset);
+        futureOrder.setOrderPrice(price);
+        futureOrder.setOrderQty(orderAmount);
+        futureOrder.setDealQty(BigDecimal.ZERO);
+        orderReader.addOrder(futureOrder);
     }
 
     public void cancelAllOrder() {

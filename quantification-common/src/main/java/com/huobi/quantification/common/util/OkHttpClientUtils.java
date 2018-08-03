@@ -185,12 +185,12 @@ public class OkHttpClientUtils {
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_accountinfo", params);
         System.out.println(s);*/
 
-        /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
-        params.put("order_id", "33850");
+        params.put("order_id", "15143");
         params.put("userId", "156138");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_orderinfo", params);
-        System.out.println(s);*/
+        System.out.println(s);
 
        /* OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
@@ -198,12 +198,12 @@ public class OkHttpClientUtils {
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_cancelall", params);
         System.out.println(s);*/
 
-        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
         params.put("symbol","BTC");
         params.put("contract_type","this_week");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_hold_amount", params);
-        System.out.println(s);
+        System.out.println(s);*/
 
     }
 }

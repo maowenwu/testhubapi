@@ -75,6 +75,7 @@ public class OrderCopy {
             logger.error("获取现货当前价格失败，方法退出");
             return false;
         }
+        // todo 撤单 失败次数超过
         // 每一轮搬砖多个流程使用同一份配置
         StrategyOrderConfig config = context.getStrategyOrderConfig();
         depthBookAdjuster.setExchangeRate(exchangeRate);
@@ -94,7 +95,7 @@ public class OrderCopy {
             return false;
         }
         // 创建一个订单读取器
-        OrderReader orderReader = new OrderReader(orders);
+        OrderReader orderReader = new OrderReader(orders, position);
 
         context.setOrderReader(orderReader);
         context.setFuturePosition(position);

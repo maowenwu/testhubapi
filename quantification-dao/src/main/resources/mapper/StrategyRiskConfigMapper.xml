@@ -1,166 +1,186 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.StrategyRiskConfigMapper">
-  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskConfig">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="symbol" jdbcType="VARCHAR" property="symbol" />
-    <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
-    <result column="risk_rate_level1" jdbcType="DECIMAL" property="riskRateLevel1" />
-    <result column="risk_rate_level2" jdbcType="DECIMAL" property="riskRateLevel2" />
-    <result column="risk_rate_level3" jdbcType="DECIMAL" property="riskRateLevel3" />
-    <result column="net_position_level1" jdbcType="DECIMAL" property="netPositionLevel1" />
-    <result column="net_position_level2" jdbcType="DECIMAL" property="netPositionLevel2" />
-    <result column="curr_profit_level1" jdbcType="DECIMAL" property="currProfitLevel1" />
-    <result column="curr_profit_level2" jdbcType="DECIMAL" property="currProfitLevel2" />
-    <result column="total_profit_level1" jdbcType="DECIMAL" property="totalProfitLevel1" />
-    <result column="total_profit_level2" jdbcType="DECIMAL" property="totalProfitLevel2" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskConfig">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
+        <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
+        <result column="risk_rate_level1" jdbcType="DECIMAL" property="riskRateLevel1"/>
+        <result column="risk_rate_level2" jdbcType="DECIMAL" property="riskRateLevel2"/>
+        <result column="risk_rate_level3" jdbcType="DECIMAL" property="riskRateLevel3"/>
+        <result column="net_position_level1" jdbcType="DECIMAL" property="netPositionLevel1"/>
+        <result column="net_position_level2" jdbcType="DECIMAL" property="netPositionLevel2"/>
+        <result column="curr_profit_level1" jdbcType="DECIMAL" property="currProfitLevel1"/>
+        <result column="curr_profit_level2" jdbcType="DECIMAL" property="currProfitLevel2"/>
+        <result column="total_profit_level1" jdbcType="DECIMAL" property="totalProfitLevel1"/>
+        <result column="total_profit_level2" jdbcType="DECIMAL" property="totalProfitLevel2"/>
+        <result column="trade_ctrl" jdbcType="INTEGER" property="tradeCtrl"/>
+        <result column="hedge_ctrl" jdbcType="INTEGER" property="hedgeCtrl"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, symbol, contract_type, risk_rate_level1, risk_rate_level2, risk_rate_level3, 
     net_position_level1, net_position_level2, curr_profit_level1, curr_profit_level2, 
-    total_profit_level1, total_profit_level2
+    total_profit_level1, total_profit_level2, trade_ctrl, hedge_ctrl
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from strategy_risk_config
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from strategy_risk_config
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from strategy_risk_config
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+    <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
     insert into strategy_risk_config (id, symbol, contract_type, 
       risk_rate_level1, risk_rate_level2, risk_rate_level3, 
       net_position_level1, net_position_level2, curr_profit_level1, 
-      curr_profit_level2, total_profit_level1, total_profit_level2
-      )
+      curr_profit_level2, total_profit_level1, total_profit_level2, 
+      trade_ctrl, hedge_ctrl)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, 
       #{riskRateLevel1,jdbcType=DECIMAL}, #{riskRateLevel2,jdbcType=DECIMAL}, #{riskRateLevel3,jdbcType=DECIMAL}, 
       #{netPositionLevel1,jdbcType=DECIMAL}, #{netPositionLevel2,jdbcType=DECIMAL}, #{currProfitLevel1,jdbcType=DECIMAL}, 
-      #{currProfitLevel2,jdbcType=DECIMAL}, #{totalProfitLevel1,jdbcType=DECIMAL}, #{totalProfitLevel2,jdbcType=DECIMAL}
-      )
+      #{currProfitLevel2,jdbcType=DECIMAL}, #{totalProfitLevel1,jdbcType=DECIMAL}, #{totalProfitLevel2,jdbcType=DECIMAL}, 
+      #{tradeCtrl,jdbcType=INTEGER}, #{hedgeCtrl,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-    insert into strategy_risk_config
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="symbol != null">
-        symbol,
-      </if>
-      <if test="contractType != null">
-        contract_type,
-      </if>
-      <if test="riskRateLevel1 != null">
-        risk_rate_level1,
-      </if>
-      <if test="riskRateLevel2 != null">
-        risk_rate_level2,
-      </if>
-      <if test="riskRateLevel3 != null">
-        risk_rate_level3,
-      </if>
-      <if test="netPositionLevel1 != null">
-        net_position_level1,
-      </if>
-      <if test="netPositionLevel2 != null">
-        net_position_level2,
-      </if>
-      <if test="currProfitLevel1 != null">
-        curr_profit_level1,
-      </if>
-      <if test="currProfitLevel2 != null">
-        curr_profit_level2,
-      </if>
-      <if test="totalProfitLevel1 != null">
-        total_profit_level1,
-      </if>
-      <if test="totalProfitLevel2 != null">
-        total_profit_level2,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=INTEGER},
-      </if>
-      <if test="symbol != null">
-        #{symbol,jdbcType=VARCHAR},
-      </if>
-      <if test="contractType != null">
-        #{contractType,jdbcType=VARCHAR},
-      </if>
-      <if test="riskRateLevel1 != null">
-        #{riskRateLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="riskRateLevel2 != null">
-        #{riskRateLevel2,jdbcType=DECIMAL},
-      </if>
-      <if test="riskRateLevel3 != null">
-        #{riskRateLevel3,jdbcType=DECIMAL},
-      </if>
-      <if test="netPositionLevel1 != null">
-        #{netPositionLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="netPositionLevel2 != null">
-        #{netPositionLevel2,jdbcType=DECIMAL},
-      </if>
-      <if test="currProfitLevel1 != null">
-        #{currProfitLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="currProfitLevel2 != null">
-        #{currProfitLevel2,jdbcType=DECIMAL},
-      </if>
-      <if test="totalProfitLevel1 != null">
-        #{totalProfitLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="totalProfitLevel2 != null">
-        #{totalProfitLevel2,jdbcType=DECIMAL},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-    update strategy_risk_config
-    <set>
-      <if test="symbol != null">
-        symbol = #{symbol,jdbcType=VARCHAR},
-      </if>
-      <if test="contractType != null">
-        contract_type = #{contractType,jdbcType=VARCHAR},
-      </if>
-      <if test="riskRateLevel1 != null">
-        risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="riskRateLevel2 != null">
-        risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
-      </if>
-      <if test="riskRateLevel3 != null">
-        risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
-      </if>
-      <if test="netPositionLevel1 != null">
-        net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="netPositionLevel2 != null">
-        net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
-      </if>
-      <if test="currProfitLevel1 != null">
-        curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="currProfitLevel2 != null">
-        curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
-      </if>
-      <if test="totalProfitLevel1 != null">
-        total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
-      </if>
-      <if test="totalProfitLevel2 != null">
-        total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
-      </if>
-    </set>
-    where id = #{id,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+    <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+        insert into strategy_risk_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="symbol != null">
+                symbol,
+            </if>
+            <if test="contractType != null">
+                contract_type,
+            </if>
+            <if test="riskRateLevel1 != null">
+                risk_rate_level1,
+            </if>
+            <if test="riskRateLevel2 != null">
+                risk_rate_level2,
+            </if>
+            <if test="riskRateLevel3 != null">
+                risk_rate_level3,
+            </if>
+            <if test="netPositionLevel1 != null">
+                net_position_level1,
+            </if>
+            <if test="netPositionLevel2 != null">
+                net_position_level2,
+            </if>
+            <if test="currProfitLevel1 != null">
+                curr_profit_level1,
+            </if>
+            <if test="currProfitLevel2 != null">
+                curr_profit_level2,
+            </if>
+            <if test="totalProfitLevel1 != null">
+                total_profit_level1,
+            </if>
+            <if test="totalProfitLevel2 != null">
+                total_profit_level2,
+            </if>
+            <if test="tradeCtrl != null">
+                trade_ctrl,
+            </if>
+            <if test="hedgeCtrl != null">
+                hedge_ctrl,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="symbol != null">
+                #{symbol,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null">
+                #{contractType,jdbcType=VARCHAR},
+            </if>
+            <if test="riskRateLevel1 != null">
+                #{riskRateLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel2 != null">
+                #{riskRateLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel3 != null">
+                #{riskRateLevel3,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel1 != null">
+                #{netPositionLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel2 != null">
+                #{netPositionLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel1 != null">
+                #{currProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel2 != null">
+                #{currProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel1 != null">
+                #{totalProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel2 != null">
+                #{totalProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="tradeCtrl != null">
+                #{tradeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="hedgeCtrl != null">
+                #{hedgeCtrl,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+        update strategy_risk_config
+        <set>
+            <if test="symbol != null">
+                symbol = #{symbol,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null">
+                contract_type = #{contractType,jdbcType=VARCHAR},
+            </if>
+            <if test="riskRateLevel1 != null">
+                risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel2 != null">
+                risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel3 != null">
+                risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel1 != null">
+                net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel2 != null">
+                net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel1 != null">
+                curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel2 != null">
+                curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel1 != null">
+                total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel2 != null">
+                total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="tradeCtrl != null">
+                trade_ctrl = #{tradeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="hedgeCtrl != null">
+                hedge_ctrl = #{hedgeCtrl,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
     update strategy_risk_config
     set symbol = #{symbol,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
@@ -172,7 +192,55 @@
       curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
       curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
       total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
-      total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL}
+      total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
+      trade_ctrl = #{tradeCtrl,jdbcType=INTEGER},
+      hedge_ctrl = #{hedgeCtrl,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+    <update id="updateBySymbolTypeSelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
+        update strategy_risk_config
+        <set>
+            <if test="symbol != null">
+                symbol = #{symbol,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null">
+                contract_type = #{contractType,jdbcType=VARCHAR},
+            </if>
+            <if test="riskRateLevel1 != null">
+                risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel2 != null">
+                risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel3 != null">
+                risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel1 != null">
+                net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel2 != null">
+                net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel1 != null">
+                curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel2 != null">
+                curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel1 != null">
+                total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel2 != null">
+                total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="tradeCtrl != null">
+                trade_ctrl = #{tradeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="hedgeCtrl != null">
+                hedge_ctrl = #{hedgeCtrl,jdbcType=INTEGER},
+            </if>
+        </set>
+        where symbol = #{symbol} and contract_type = #{contractType}
+    </update>
 </mapper>

@@ -17,6 +17,8 @@ public class DepthBookAdjuster {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    private BigDecimal faceValue = BigDecimal.valueOf(100);
+
     private OrderContext context;
 
     private BigDecimal exchangeRate;
@@ -184,12 +186,12 @@ public class DepthBookAdjuster {
      */
     private void calcVolume(DepthBook depthBook) {
         depthBook.getAsks().forEach(e -> {
-            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(BigDecimal.valueOf(100), 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(faceValue, 0, BigDecimal.ROUND_FLOOR);
             e.setAmount(volume);
         });
 
         depthBook.getBids().forEach(e -> {
-            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(BigDecimal.valueOf(100), 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(faceValue, 0, BigDecimal.ROUND_FLOOR);
             e.setAmount(volume);
         });
     }

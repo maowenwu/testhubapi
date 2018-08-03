@@ -14,4 +14,6 @@ public interface StrategyRiskConfigMapper {
     int updateByPrimaryKeySelective(StrategyRiskConfig record);
 
     int updateByPrimaryKey(StrategyRiskConfig record);
+
+    int updateBySymbolTypeSelective(StrategyRiskConfig record);
 }

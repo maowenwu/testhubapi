@@ -27,7 +27,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
+		/*if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
 			logger.info("==>spring 容器启动");
 			StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
 			if (group1.getEnable()) {
@@ -41,7 +41,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 			if (group3.getEnable()) {
 				startWithConfig(group3);
 			}
-		}
+		}*/
 	}
 
 	private void startWithConfig(StrategyProperties.ConfigGroup group) {

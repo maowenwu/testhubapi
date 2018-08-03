@@ -3,6 +3,7 @@ package com.huobi.quantification.strategy.order;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.order.entity.FutureOrder;
+import com.huobi.quantification.strategy.order.entity.FuturePosition;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.math.BigDecimal;
@@ -24,7 +25,10 @@ public class OrderReader {
 
     private Map<BigDecimal, Map<OffsetEnum, List<FutureOrder>>> priceOffsetSellOrderMap;
 
-    public OrderReader(List<FutureOrder> orders) {
+    private FuturePosition position;
+
+    public OrderReader(List<FutureOrder> orders, FuturePosition position) {
+        this.position = position;
         this.orders.addAll(orders);
         init();
     }
@@ -119,10 +123,13 @@ public class OrderReader {
                 }
             });
         });
-
         BigDecimal sum = BigDecimal.ZERO;
+        FuturePosition.LongPosi longPosi = position.getLongPosi();
+        if (longPosi != null) {
+            sum = sum.add(longPosi.getLongAvailable());
+        }
         for (FutureOrder order : orders) {
-            sum = sum.add(order.getOrderQty());
+            sum = sum.add(order.getOrderQty().subtract(order.getDealQty()));
         }
         return sum;
     }
@@ -144,12 +151,15 @@ public class OrderReader {
         });
 
         BigDecimal sum = BigDecimal.ZERO;
+        FuturePosition.ShortPosi shortPosi = position.getShortPosi();
+        if (shortPosi != null) {
+            sum = sum.add(shortPosi.getShortAvailable());
+        }
         for (FutureOrder order : orders) {
-            sum = sum.add(order.getOrderQty());
+            sum = sum.add(order.getOrderQty().subtract(order.getDealQty()));
         }
         return sum;
     }
-
 
 
 }
