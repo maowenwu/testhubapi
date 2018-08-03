@@ -96,7 +96,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         tradeFuture.setAmount(dataBean.getAmount());
         tradeFuture.setCreateDate(new Date());
         tradeFuture.setUpdateTime(latestPrice.getTs());
-        redisService.saveCurrentPrice(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, tradeFuture);
+        redisService.saveCurrentPriceFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, tradeFuture);
         logger.info("[HuobiCurrentPrice][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 

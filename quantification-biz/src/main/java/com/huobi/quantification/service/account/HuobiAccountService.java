@@ -11,13 +11,10 @@ import com.huobi.quantification.entity.QuanAccountSecret;
  */
 public interface HuobiAccountService {
 
-	public Object accounts(String accountId);
-	
-	public List<QuanAccountAsset> getAccount(Long accountId);
 
-	void updateAccount();
+    void updateAccount(Long accountId);
 
-	public List<Long> findAccountByExchangeId(int exId);
+    List<Long> findAccountByExchangeId(int exId);
 
-	public List<QuanAccountSecret> findAccountSecretById(Long accountId);
+    List<QuanAccountSecret> findAccountSecretById(Long accountId);
 }

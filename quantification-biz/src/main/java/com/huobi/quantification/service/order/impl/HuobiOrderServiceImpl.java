@@ -1,35 +1,32 @@
 package com.huobi.quantification.service.order.impl;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.huobi.quantification.enums.ExchangeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.constant.OrderStatusTable.HuobiOrderStatus;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dto.HuobiTradeOrderDto;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.entity.QuanOrderMatchResult;
-import com.huobi.quantification.enums.OrderStatusEnum;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.huobi.request.CreateOrderRequest;
 import com.huobi.quantification.huobi.request.HuobiOpenOrderRequest;
 import com.huobi.quantification.response.spot.HuobiSpotOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiOrderService;
 import com.huobi.quantification.service.redis.RedisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author shaoxiaofeng
@@ -185,10 +182,9 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(state).getOrderStatus());
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.insert(quanOrder);
-		redisService.saveHuobiOrder(quanOrder);
 	}
 
-	@Override
+	/*@Override
 	public void updateHuobiOrder() {
 		Stopwatch started = Stopwatch.createStarted();
 		logger.info("[HuobiOrderUpdate]任务开始");
@@ -205,7 +201,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 			updateHuobiOrderInfo(body, orderSourceId);
 		}
 		logger.info("[HuobiOrderUpdate]任务结束，耗时：" + started);
-	}
+	}*/
 
 	private void updateHuobiOrderInfo(String body, Long orderId) {
 		JSONObject jsonObject = JSON.parseObject(body);
@@ -228,7 +224,7 @@ public class HuobiOrderServiceImpl implements HuobiOrderService {
 		quanOrder.setOrderState(HuobiOrderStatus.getOrderStatus(jsonObjectdata.getString("state")).getOrderStatus());
 		quanOrder.setOrderCanceledAt(jsonObjectdata.getDate("canceled-at"));
 		quanOrderMapper.updateOrderByOrderId(quanOrder);
-		redisService.saveHuobiOrder(quanOrder);
+
 	}
 
 	/**

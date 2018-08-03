@@ -50,62 +50,15 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
 
     @Autowired
     private HttpService httpService;
-
-    @Autowired
-    private QuanTickerFutureMapper quanTickerFutureMapper;
-
     @Autowired
     private QuanDepthFutureMapper quanDepthFutureMapper;
-
     @Autowired
     private QuanDepthFutureDetailMapper quanDepthFutureDetailMapper;
-
     @Autowired
     private QuanKlineFutureMapper quanKlineFutureMapper;
-
     @Autowired
     private RedisService redisService;
 
-    @Override
-    public ServiceResult getOkTicker(String symbol, String contractType) {
-
-        return null;
-    }
-
-    public void updateOkTicker(String symbol, String contractType) {
-        Stopwatch started = Stopwatch.createStarted();
-        logger.info("[Ticker][symbol={},contractType={}]任务开始", symbol, contractType);
-        QuanTickerFuture ticker = queryOkTickerByAPI(symbol, contractType);
-        quanTickerFutureMapper.insert(ticker);
-        redisService.saveOkTicker(symbol, contractType, ticker);
-        logger.info("[Ticker][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
-    }
-
-    private QuanTickerFuture queryOkTickerByAPI(String symbol, String contractType) {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
-        params.put("contract_type", contractType);
-        String body = httpService.doGet(HttpConstant.OK_TICKER, params);
-        return parseAndSaveQuanTicker(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
-    }
-
-    private QuanTickerFuture parseAndSaveQuanTicker(String body, OkSymbolEnum symbolEnum, String contractType) {
-        JSONObject jsonObject = JSON.parseObject(body);
-        QuanTickerFuture quanTickerFuture = new QuanTickerFuture();
-        quanTickerFuture.setExchangeId(ExchangeEnum.OKEX.getExId());
-        quanTickerFuture.setTs(new Date(jsonObject.getLong("date") * 1000L));
-        JSONObject ticker = jsonObject.getJSONObject("ticker");
-        quanTickerFuture.setLastPrice(ticker.getBigDecimal("last"));
-        quanTickerFuture.setBidPrice(ticker.getBigDecimal("buy"));
-        quanTickerFuture.setAskPrice(ticker.getBigDecimal("sell"));
-        quanTickerFuture.setContractCode(ticker.getString("contract_id"));
-        quanTickerFuture.setContractName(contractType);
-        quanTickerFuture.setBaseCoin(symbolEnum.getBaseCoin());
-        quanTickerFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
-        quanTickerFuture.setHighPrice(ticker.getBigDecimal("high"));
-        quanTickerFuture.setLowPrice(ticker.getBigDecimal("low"));
-        return quanTickerFuture;
-    }
 
 
     @Override
@@ -267,7 +220,7 @@ public class OkFutureMarketServiceImpl implements OkFutureMarketService {
         tradeFuture.setAmount(latestPrice.getAmount());
         tradeFuture.setCreateDate(new Date());
         tradeFuture.setUpdateTime(latestPrice.getTs());
-        redisService.saveCurrentPrice(ExchangeEnum.OKEX.getExId(), symbol, contractType,tradeFuture);
+        redisService.saveCurrentPriceFuture(ExchangeEnum.OKEX.getExId(), symbol, contractType,tradeFuture);
         logger.info("[OkCurrentPrice][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 

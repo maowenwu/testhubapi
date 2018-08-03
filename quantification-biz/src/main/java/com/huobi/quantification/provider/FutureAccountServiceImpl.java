@@ -1,6 +1,5 @@
 package com.huobi.quantification.provider;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +23,6 @@ import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
-import com.huobi.quantification.dto.FutureBalanceRespDto.DataBean;
 import com.huobi.quantification.dto.FuturePositionReqDto;
 import com.huobi.quantification.dto.FuturePositionRespDto;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
@@ -57,7 +55,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
             FutureBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新资产
-                    QuanAccountFutureAsset futureAsset = redisService.getFutureUserInfo(reqDto.getExchangeId(), reqDto.getAccountId());
+                    QuanAccountFutureAsset futureAsset = redisService.getUserInfoFuture(reqDto.getExchangeId(), reqDto.getAccountId());
                     if (futureAsset == null) {
                         ThreadUtils.sleep10();
                         continue;
@@ -176,7 +174,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
             FuturePositionRespDto positionRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新资产
-                    QuanAccountFuturePosition futurePosition = redisService.getFuturePosition(reqDto.getExchangeId(), reqDto.getAccountId());
+                    QuanAccountFuturePosition futurePosition = redisService.getPositionFuture(reqDto.getExchangeId(), reqDto.getAccountId());
                     if (futurePosition == null) {
                         ThreadUtils.sleep10();
                         continue;
@@ -332,39 +330,5 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         return dataBean;
     }
 
-    @Override
-    public void saveAccountsInfo(Long accountId, String contractCode) {
-        String body = huobiFutureAccountService.queryPositionByAPI(accountId);
-        String body2 = huobiFutureAccountService.queryPositionByAPI(accountId);
-        redisService.saveFirstFutureAccountInfo(accountId, contractCode, body);
-        redisService.saveFirstFuturePosition(accountId, contractCode, body2);
-    }
 
-    @Override
-    public ServiceResult<FutureBalanceRespDto> getAccountInfo(Long accountId, String contractCode) {
-        String body = redisService.getFirstFutureAccountInfo(accountId, contractCode);
-        ServiceResult<FutureBalanceRespDto> serviceResult = null;
-        FutureBalanceRespDto futureBalanceRespDto = new FutureBalanceRespDto();
-        DataBean bean = new FutureBalanceRespDto.DataBean();
-        BigDecimal bigDecimal = new BigDecimal(0.1);
-        bean.setMarginAvailable(bigDecimal);
-        bean.setMarginBalance(bigDecimal);
-        bean.setMarginFrozen(bigDecimal);
-        bean.setMarginPosition(bigDecimal);
-        bean.setProfitReal(bigDecimal);
-        bean.setProfitUnreal(bigDecimal);
-        bean.setRiskRate(bigDecimal);
-        serviceResult = ServiceResult.buildSuccessResult(futureBalanceRespDto);
-        return serviceResult;
-    }
-
-    @Override
-    public ServiceResult<FuturePositionRespDto> getAccountPosition(Long accountId, String contractCode) {
-        String body = redisService.getFirstFuturePosition(accountId, contractCode);
-        ServiceResult<FuturePositionRespDto> serviceResult = null;
-        FuturePositionRespDto respDto = new FuturePositionRespDto();
-        FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
-        serviceResult = ServiceResult.buildSuccessResult(respDto);
-        return serviceResult;
-    }
 }

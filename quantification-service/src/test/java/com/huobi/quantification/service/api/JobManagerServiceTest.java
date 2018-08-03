@@ -24,7 +24,7 @@ public class JobManagerServiceTest {
 	
 	@Test
 	public void getAccountHistory() {
-		QuanAccountFuturePosition futurePosition = redisService.getFuturePosition(0, 101L);
+		QuanAccountFuturePosition futurePosition = redisService.getPositionFuture(0, 101L);
 	   System.out.println("==============="+futurePosition);
 	}
 }

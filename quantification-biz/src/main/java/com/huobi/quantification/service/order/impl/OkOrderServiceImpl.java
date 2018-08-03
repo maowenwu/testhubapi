@@ -19,7 +19,6 @@ import com.huobi.quantification.response.future.OKFuturePlaceOrderResponse;
 import com.huobi.quantification.response.future.OKFutureQueryOrderResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.OkOrderService;
-import com.huobi.quantification.service.redis.RedisService;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +45,6 @@ public class OkOrderServiceImpl implements OkOrderService {
     @Autowired
     private QuanOrderFutureMapper quanOrderFutureMapper;
 
-    @Autowired
-    private RedisService redisService;
-
-
     public void updateOkOrderInfo(Long accountId, String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[OkOrder][symbol={},contractType={}]任务开始", symbol, contractType);
@@ -69,23 +64,7 @@ public class OkOrderServiceImpl implements OkOrderService {
         logger.info("[OkOrder][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
-    private List<QuanOrderFuture> updateRedisOkOrderInfo(Long accountId, String symbol, String contractType) {
-        Map<String, QuanOrderFuture> ordersMap = redisService.getOkOrder(accountId, symbol, contractType);
-        List<Long> orderIds = new ArrayList<>();
-        for (QuanOrderFuture orderFuture : ordersMap.values()) {
-           /* if (orderFuture.getOrderStatus() == null || !orderFuture.getOrderStatus().equals(2)) {
-                orderIds.add(orderFuture.getOrderSourceId());
-            }*/
-        }
-        if (CollectionUtils.isEmpty(orderIds)) {
-            return new ArrayList<>();
-        }
-        List<QuanOrderFuture> orderFutures = queryOkOrdersInfoByAPI(accountId, symbol, contractType, orderIds);
-        for (QuanOrderFuture orderFuture : orderFutures) {
-            /*ordersMap.put(orderFuture.getOrderSourceId() + "", orderFuture);*/
-        }
-        return orderFutures;
-    }
+
 
 
     public List<QuanOrderFuture> queryOkOrdersInfoByAPI(Long accountId, String symbol, String contractType, List<Long> orderIds) {

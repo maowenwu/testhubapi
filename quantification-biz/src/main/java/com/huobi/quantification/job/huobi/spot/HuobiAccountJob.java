@@ -8,12 +8,12 @@ import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.account.HuobiAccountService;
 
 @DisallowConcurrentExecution
-public class HuobiAccountJob extends AbstractQuartzJob{
+public class HuobiAccountJob extends AbstractQuartzJob {
 
-	@Override
-	public void execute(JobParamDto data) {
-		HuobiAccountService bean = ApplicationContextHolder.getContext().getBean(HuobiAccountService.class);
-		bean.updateAccount();
-	}
+    @Override
+    public void execute(JobParamDto data) {
+        HuobiAccountService accountService = ApplicationContextHolder.getContext().getBean(HuobiAccountService.class);
+        accountService.updateAccount(data.getAccountId());
+    }
 
 }

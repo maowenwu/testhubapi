@@ -54,7 +54,7 @@ strategy:
       baseCoin: btc
       quotCoin: usdt
   group2:
-    enable: true
+    enable: false
     future:
       exchangeId: 0
       accountId: 101

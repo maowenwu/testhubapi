@@ -7,14 +7,8 @@ import com.huobi.quantification.dto.HuobiTradeOrderDto;
  * @since 2018/6/26
  */
 public interface HuobiOrderService {
-	/**
-	 * 定时更新订单详情
-	 * 
-	 * @param accountId
-	 * @param orderId
-	 */
-	void updateHuobiOrder();
-	  /**
+
+    /**
      * 获取订单信息
      *
      * @return
@@ -34,13 +28,14 @@ public interface HuobiOrderService {
      * @return
      */
     Object getHuobiOrdersHistory(Long accountId, Long orderId);
-    
+
     /**
      * 获取所有当前帐号下未成交订单
-     * 
+     *
      * @return
      */
     Object getHuobiOpenOrders(Long accountId);
+
     /**
      * 下单
      *

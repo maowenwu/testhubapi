@@ -83,7 +83,7 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }*/
-        redisService.saveFutureUserInfo(ExchangeEnum.OKEX.getExId(), accountId, futureAsset);
+        redisService.saveUserInfoFuture(ExchangeEnum.OKEX.getExId(), accountId, futureAsset);
         logger.info("[OkUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
     }
 
@@ -106,7 +106,7 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
         position.setRespBody(JSON.toJSONString(positionResponse));
         position.setCreateTime(now);
         position.setUpdateTime(now);
-        redisService.saveFuturePosition(ExchangeEnum.OKEX.getExId(), accountId, position);
+        redisService.savePositionFuture(ExchangeEnum.OKEX.getExId(), accountId, position);
         logger.info("[OkPosition][accountId={},]任务结束，耗时：" + started, accountId);
     }
 

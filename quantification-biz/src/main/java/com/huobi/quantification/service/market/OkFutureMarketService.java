@@ -9,8 +9,6 @@ import com.huobi.quantification.common.ServiceResult;
 public interface OkFutureMarketService {
 
 
-    void updateOkTicker(String symbol, String contractType);
-
     void updateOkDepth(String symbol, String contractType);
 
     /**
@@ -18,14 +16,7 @@ public interface OkFutureMarketService {
      */
     void updateOkFutureKline(String symbol, String type, String contractType);
 
-    /**
-     * 获取OKEx合约行情数据
-     *
-     * @param symbol
-     * @param contractType
-     * @return
-     */
-    ServiceResult getOkTicker(String symbol, String contractType);
+
 
 
     /**

@@ -1,1 +1,0 @@
-nohup java -jar  quantification-strategy.jar --spring.profiles.active=test >/dev/null &

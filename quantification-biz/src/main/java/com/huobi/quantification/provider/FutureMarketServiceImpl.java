@@ -46,9 +46,9 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                     QuanTradeFuture tradeFuture = null;
                     if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
                         QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
-                        tradeFuture = redisService.getCurrentPrice(reqDto.getExchangeId(), contractCode.getSymbol(), contractCode.getContractType());
+                        tradeFuture = redisService.getCurrentPriceFuture(reqDto.getExchangeId(), contractCode.getSymbol(), contractCode.getContractType());
                     } else {
-                        tradeFuture = redisService.getCurrentPrice(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
+                        tradeFuture = redisService.getCurrentPriceFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
                                 , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
                     }
                     if (tradeFuture == null) {

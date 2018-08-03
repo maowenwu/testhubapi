@@ -10,7 +10,6 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.JobTypeEnum;
 import com.huobi.quantification.job.huobi.future.*;
 import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
-import com.huobi.quantification.job.huobi.spot.HuobiOrderJob;
 import com.huobi.quantification.job.huobi.spot.HuobiKlineJob;
 import com.huobi.quantification.job.huobi.spot.HuobiAccountJob;
 import com.huobi.quantification.job.huobi.spot.HuobiCurrentPriceJob;
@@ -42,7 +41,6 @@ public class JobServiceImpl implements JobService {
         Map<Integer, Class> okFutureTypeClass = new HashMap<>();
         okFutureTypeClass.put(JobTypeEnum.Depth.getJobType(), OkFutureDepthJob.class);
         okFutureTypeClass.put(JobTypeEnum.Kline.getJobType(), OkFutureKlineJob.class);
-        okFutureTypeClass.put(JobTypeEnum.Ticker.getJobType(), OkFutureTickerJob.class);
         okFutureTypeClass.put(JobTypeEnum.Account.getJobType(), OkFutureUserInfoJob.class);
         okFutureTypeClass.put(JobTypeEnum.Position.getJobType(), OkFuturePositionJob.class);
         okFutureTypeClass.put(JobTypeEnum.Order.getJobType(), OkFutureOrderJob.class);
@@ -67,7 +65,6 @@ public class JobServiceImpl implements JobService {
         huobiSpotTypeClass.put(JobTypeEnum.Depth.getJobType(), HuobiDepthJob.class);
         huobiSpotTypeClass.put(JobTypeEnum.Kline.getJobType(), HuobiKlineJob.class);
         huobiSpotTypeClass.put(JobTypeEnum.Account.getJobType(), HuobiAccountJob.class);
-        huobiSpotTypeClass.put(JobTypeEnum.Order.getJobType(), HuobiOrderJob.class);
         huobiSpotTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(), HuobiCurrentPriceJob.class);
         jobMap.put(ExchangeEnum.HUOBI.getExId(), huobiSpotTypeClass);
     }

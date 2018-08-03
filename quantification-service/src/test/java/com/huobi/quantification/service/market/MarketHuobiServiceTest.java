@@ -109,7 +109,7 @@ public class MarketHuobiServiceTest {
         for (QuanDepthDetail detail : list) {
             quanDepthDetailMapper.insert(detail);
         }
-		redisService.saveHuobiDepth(ExchangeEnum.HUOBI.getExId(),"ethusdt", list);
+		redisService.saveDepthSpot(ExchangeEnum.HUOBI.getExId(),"ethusdt", list);
 	}
 	
 	@Test
@@ -226,7 +226,7 @@ public class MarketHuobiServiceTest {
 				quanKlineMapper.insert(quanKline);
 				arrayList.add(quanKline);
 			}
-			redisService.saveKline(ExchangeEnum.HUOBI.getExId(), "btcusdt", "5min", arrayList);
+			redisService.saveKlineSpot(ExchangeEnum.HUOBI.getExId(), "btcusdt", "5min", arrayList);
 		}
 	}
 }

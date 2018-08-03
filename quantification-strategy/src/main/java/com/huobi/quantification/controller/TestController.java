@@ -36,6 +36,14 @@ public class TestController {
     @Autowired
     private StrategyProperties strategyProperties;
 
+
+    @RequestMapping("/addHuobiSpotAccountJob")
+    public String addHuobiSpotAccountJob() {
+        jobManageService.addHuobiSpotAccountJob(4232061L, "0/1 * * * * ?", true);
+        System.out.println(strategyProperties);
+        return JSON.toJSONString("ok");
+    }
+
     @RequestMapping("/testProperties")
     public String testProperties() {
 

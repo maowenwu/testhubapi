@@ -1,20 +1,5 @@
 package com.huobi.quantification.service.market.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.huobi.quantification.enums.ExchangeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -23,21 +8,26 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
 import com.huobi.quantification.dao.QuanKlineMapper;
-import com.huobi.quantification.dao.QuanTickerMapper;
 import com.huobi.quantification.dao.QuanTradeMapper;
 import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanKline;
-import com.huobi.quantification.entity.QuanTicker;
 import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
-import com.huobi.quantification.huobi.response.Merged;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.huobi.response.Trade;
 import com.huobi.quantification.huobi.response.TradeDetail;
 import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.market.HuobiMarketService;
 import com.huobi.quantification.service.redis.RedisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 /**
  * @author shaoxiaofeng
@@ -56,67 +46,13 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 	@Autowired
 	private QuanDepthMapper quanDepthMapper;
 	@Autowired
-	private QuanTickerMapper quanTickerMapper;
-	@Autowired
 	private QuanKlineMapper quanKlineMapper;
 	@Autowired
 	private QuanTradeMapper quanTradeMapper;
 	@Autowired
 	private RedisService redisService;
 
-	public Object getTicker(String symbol) {
-		Map<String, String> params = new HashMap<>();
-		params.put("symbol", symbol);
-		String body = httpService.doGet(HttpConstant.HUOBI_TICKER, params);
-		parseAndSaveTicker(symbol , body);
-		return null;
-	}
 
-	private void parseAndSaveTicker(String symbol, String body) {
-		QuanTicker quanTicker = new QuanTicker();
-		JSONObject jsonObject = JSON.parseObject(body);
-		String data = jsonObject.getString("tick");
-		JSONObject temp = JSON.parseObject(data);
-		JSONArray jsonArray = temp.getJSONArray("ask");
-		quanTicker.setAskPrice(jsonArray.getBigDecimal(0));
-		JSONArray jsonArray2 = temp.getJSONArray("bid");
-		quanTicker.setBidPrice(jsonArray2.getBigDecimal(0));
-		Merged merged = JSON.parseObject(body, Merged.class);
-		quanTicker.setExchangeId(ExchangeEnum.HUOBI.getExId());
-		String ch = jsonObject.getString("ch");
-		quanTicker.setLowPrice(temp.getBigDecimal("low"));
-		quanTicker.setHighPrice(temp.getBigDecimal("high"));
-		quanTicker.setLastPrice(temp.getBigDecimal("close"));
-		ArrayList<String> dbch = new ArrayList<String>();
-		dbch.add("eth-usdt");
-		String[] chSplit = ch.split("\\.");
-		String baseCoinAndQuoteCoin = chSplit[1];
-		String baseCoin = "";
-		String quoteCoin = "";
-		for (String string : dbch) {
-			String[] split = string.split("-");
-			String ch2 = split[0].concat(split[1]);
-			if (ch2.equals(baseCoinAndQuoteCoin)) {
-				baseCoin = split[0];
-				quoteCoin = split[1];
-			}
-		}
-		quanTicker.setBaseCoin(baseCoin);
-		quanTicker.setQuoteCoin(quoteCoin);
-		long ts = merged.getTs();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date = new Date(ts);
-		String format = formatter.format(date);
-		Date parse = null;
-		try {
-			parse = formatter.parse(format);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		quanTicker.setTs(parse);
-		quanTickerMapper.insert(quanTicker);
-		redisService.saveHuobiTicker(ExchangeEnum.HUOBI.getExId(),symbol, quanTicker);
-	}
 
 	public Object getDepth(String symbol, String type) {
 		Map<String, String> params = new HashMap<>();
@@ -178,7 +114,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         for (QuanDepthDetail detail : list) {
             quanDepthDetailMapper.insert(detail);
         }
-		redisService.saveHuobiDepth(ExchangeEnum.HUOBI.getExId(),symbol, list);
+		redisService.saveDepthSpot(ExchangeEnum.HUOBI.getExId(),symbol, list);
 	}
 	
 	public Object getKline(String symbol, String period, String size) {
@@ -215,17 +151,9 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 				quanKlineMapper.insert(quanKline);
 				klineList.add(quanKline);
 			}
-			redisService.saveKline(exchangeId, symbol, period, klineList);
+			redisService.saveKlineSpot(exchangeId, symbol, period, klineList);
 		}
 		
-	}
-
-	@Override
-	public void updateHuobiTicker(String symbol) {
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		logger.info("[HuobiSpotTicker][symbol={}]任务开始" ,symbol);
-		getTicker(symbol);
-		logger.info("[HuobiSpotTicker][symbol={}]任务结束，耗时：" + stopwatch , symbol);
 	}
 
 	@Override
@@ -257,7 +185,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 		quanTrade.setSymbol(symbol);
 		quanTrade.setTradeId(data.getId());
 		quanTrade.setTs(data.getTs());
-		redisService.setHuobiCurrentPrice(ExchangeEnum.HUOBI.getExId(),symbol, quanTrade);
+		redisService.saveCurrentPriceSpot(ExchangeEnum.HUOBI.getExId(),symbol, quanTrade);
 		quanTradeMapper.insert(quanTrade);
 	}
 

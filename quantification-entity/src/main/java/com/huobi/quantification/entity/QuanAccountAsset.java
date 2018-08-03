@@ -5,51 +5,56 @@ import java.util.Date;
 
 public class QuanAccountAsset {
     /**
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
     private Long accountId;
 
     /**
      * 币种
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
-    private String coin;
+    private String coinType;
 
     /**
      * 总量
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
     private BigDecimal total;
 
     /**
      * 可用
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
     private BigDecimal available;
 
     /**
      * 冻结
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
     private BigDecimal frozen;
 
     /**
-     * 交易所服务器时间
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
-    private Date ts;
+    private Integer init;
+
+    /**
+     * 交易所服务器时间
+     * @mbg.generated 2018-08-03 16:47:13
+     */
+    private Date createTime;
 
     /**
      * api请求时间
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-03 16:47:13
      */
-    private Date dataUpdate;
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -67,12 +72,12 @@ public class QuanAccountAsset {
         this.accountId = accountId;
     }
 
-    public String getCoin() {
-        return coin;
+    public String getCoinType() {
+        return coinType;
     }
 
-    public void setCoin(String coin) {
-        this.coin = coin;
+    public void setCoinType(String coinType) {
+        this.coinType = coinType;
     }
 
     public BigDecimal getTotal() {
@@ -99,19 +104,27 @@ public class QuanAccountAsset {
         this.frozen = frozen;
     }
 
-    public Date getTs() {
-        return ts;
+    public Integer getInit() {
+        return init;
     }
 
-    public void setTs(Date ts) {
-        this.ts = ts;
+    public void setInit(Integer init) {
+        this.init = init;
     }
 
-    public Date getDataUpdate() {
-        return dataUpdate;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setDataUpdate(Date dataUpdate) {
-        this.dataUpdate = dataUpdate;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

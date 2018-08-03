@@ -64,7 +64,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         futureAsset.setCreateTime(now);
         futureAsset.setUpdateTime(now);
 
-        redisService.saveFutureUserInfo(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, futureAsset);
+        redisService.saveUserInfoFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, futureAsset);
         logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
     }
 
@@ -81,7 +81,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         position.setRespBody(body);
         position.setCreateTime(now);
         position.setUpdateTime(now);
-        redisService.saveFuturePosition(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, position);
+        redisService.savePositionFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, position);
         logger.info("[HuobiPosition][accountId={},]任务结束，耗时：" + started, accountId);
     }
 

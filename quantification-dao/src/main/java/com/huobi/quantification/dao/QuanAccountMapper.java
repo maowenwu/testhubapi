@@ -1,6 +1,8 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanAccount;
+import org.apache.ibatis.annotations.Param;
+
 import java.util.List;
 
 public interface QuanAccountMapper {
@@ -8,11 +10,13 @@ public interface QuanAccountMapper {
 
     int insert(QuanAccount record);
 
+    int insertSelective(QuanAccount record);
+
     QuanAccount selectByPrimaryKey(Long id);
 
-    List<QuanAccount> selectAll();
+    int updateByPrimaryKeySelective(QuanAccount record);
 
     int updateByPrimaryKey(QuanAccount record);
 
-	List<Long> selectByExchangeId(int exchangeId);
+    List<Long> selectAccountByExchangeId(@Param("exId") int exId);
 }

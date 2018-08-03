@@ -29,7 +29,6 @@ import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
-import com.huobi.quantification.huobi.response.TradeResponse;
 import com.huobi.quantification.service.redis.RedisService;
 
 @Service
@@ -47,7 +46,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 			SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
 				while (!Thread.interrupted()) {
 					// 从redis读取最新成交价格
-					QuanTrade quanTrade = redisService.getHuobiCurrentPrice(currentPriceReqDto.getExchangeId(),
+					QuanTrade quanTrade = redisService.getCurrentPriceSpot(currentPriceReqDto.getExchangeId(),
 							getSymbol(currentPriceReqDto.getExchangeId(), currentPriceReqDto.getBaseCoin(),
 									currentPriceReqDto.getQuoteCoin()));
 					if (quanTrade == null) {
@@ -95,7 +94,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
             SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新深度
-                    List<QuanDepthDetail> huobiDepths = redisService.getHuobiDepth(depthReqDto.getExchangeId(),
+                    List<QuanDepthDetail> huobiDepths = redisService.getDepthSpot(depthReqDto.getExchangeId(),
                             getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()));
 
                     if (CollectionUtils.isEmpty(huobiDepths)) {
