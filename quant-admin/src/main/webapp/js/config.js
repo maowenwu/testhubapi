@@ -353,7 +353,42 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             }
         })
-
+         .state('user.job', {
+            url: "/user/job",
+            templateUrl: "views/user/job.html",
+            data: {pageTitle: '现货任务管理'},
+            controller: "jobCtrl",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    $ocLazyLoad.load('ui-switch');
+                    $ocLazyLoad.load('oitozero.ngSweetAlert');
+                },
+                deps: ["$ocLazyLoad",function($ocLazyLoad){
+                    return $ocLazyLoad.load({
+                        name: "inspinia",
+                        files: ["js/controllers/user/jobCtrl.js?ver="+verNo]
+                    });
+                }]
+            }
+        })
+        .state('user.futureJob', {
+        	url: "/user/futureJob",
+        	templateUrl: "views/user/futureJob.html",
+        	data: {pageTitle: '期货任务管理'},
+        	controller: "futureJobCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/futureJobCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
 }
 
 
