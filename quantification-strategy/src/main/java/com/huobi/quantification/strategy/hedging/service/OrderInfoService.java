@@ -24,6 +24,8 @@ public class OrderInfoService {
 
 	@Autowired
 	MarketInfoService marketInfoService;
+	@Autowired
+	CommonService commonService;
 
 	/**
 	 * 下单
@@ -56,21 +58,17 @@ public class OrderInfoService {
 			orderType = "limit";
 			price = priceMap.get("buyPrice").multiply((new BigDecimal(1).subtract(startHedgingParam.getSlippage())));
 			quantity = position.divide(price, 18, BigDecimal.ROUND_DOWN)
-					.divide((new BigDecimal(1).subtract(startHedgingParam.getFeeRate())), 4, BigDecimal.ROUND_DOWN)
+					.divide((new BigDecimal(1).subtract(startHedgingParam.getFeeRate())), 18, BigDecimal.ROUND_DOWN)
 					.abs();
 		} else if (BigDecimalUtils.lessThan(position, BigDecimal.ZERO)) {// USDT不够,需要下卖单，卖出对应的币种
 			side = "sell";
 			orderType = "limit";
 			price = priceMap.get("sellPrice").multiply((new BigDecimal(1).add(startHedgingParam.getSlippage())));
-			quantity = position.divide(price, 4, BigDecimal.ROUND_DOWN).abs();
+			quantity = position.divide(price, 18, BigDecimal.ROUND_DOWN).abs();
 		} else {
 			return false;
 		}
 
-		if (quantity.compareTo(new BigDecimal(0)) == 0) {
-			logger.info("数量太小，不下单");
-			return false;
-		}
 		spotPlaceOrderReqDto.setAccountId(startHedgingParam.getSpotAccountID());
 		spotPlaceOrderReqDto.setExchangeId(startHedgingParam.getSpotExchangeId());
 		spotPlaceOrderReqDto.setBaseCoin(startHedgingParam.getBaseCoin());
@@ -79,6 +77,11 @@ public class OrderInfoService {
 		spotPlaceOrderReqDto.setQuantity(quantity);
 		spotPlaceOrderReqDto.setSide(side);
 		spotPlaceOrderReqDto.setOrderType(orderType);
+
+		Boolean checkResult = commonService.checkPlaceOrderInfo(spotPlaceOrderReqDto);
+		if (!checkResult) {
+			return false;
+		}
 		logger.info("对冲下单请求参数为：  {} ", JSON.toJSONString(spotPlaceOrderReqDto));
 		spotOrderService.placeOrder(spotPlaceOrderReqDto);
 		return true;

@@ -1,6 +1,7 @@
 package com.huobi.quantification.strategy.hedging.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,11 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.huobi.quantification.api.future.FutureContractService;
+import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.dao.QuanContractCodeMapper;
 import com.huobi.quantification.dao.StrategyHedgingConfigMapper;
+import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.entity.QuanContractCode;
+import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 import com.huobi.quantification.strategy.hedging.StartHedgingParam;
+import com.huobi.quantification.strategy.hedging.config.ExchangeConfigHolder;
 
 @Service
 public class CommonService {
@@ -30,6 +35,8 @@ public class CommonService {
 
 	@Autowired
 	StrategyHedgingConfigMapper strategyHedgingConfigMapper;
+	@Autowired
+	ExchangeConfigHolder exchangeConfigHolder;
 
 	/**
 	 * 计算当前的两个账户总的净头寸USDT
@@ -110,6 +117,22 @@ public class CommonService {
 		StrategyHedgingConfig result = strategyHedgingConfigMapper.selectStrategyHedging(coin,
 				quanContractCode.getContractType());
 		return result;
+	}
+	
+	public boolean checkPlaceOrderInfo(SpotPlaceOrderReqDto reqDto){
+		QuanExchangeConfig quanExchangeConfig=exchangeConfigHolder.getExchangeConfigBySymbol(reqDto.getBaseCoin()+reqDto.getQuoteCoin());
+		BigDecimal quantity = new BigDecimal(0.00);// 数量
+		BigDecimal price = new BigDecimal(0.00); // 下单价格
+		quantity=reqDto.getQuantity().setScale(quanExchangeConfig.getAmountPrecision(), RoundingMode.DOWN);
+		price=reqDto.getPrice().setScale(quanExchangeConfig.getPricePrecision(),  RoundingMode.DOWN);
+		if(BigDecimalUtils.equals(quantity, BigDecimal.ZERO)||BigDecimalUtils.equals(price, BigDecimal.ZERO)) {
+			logger.info("数量太小/金额太小，不下单");
+			return false;
+		}
+		reqDto.setPrice(price);
+		reqDto.setQuantity(quantity);
+		return true;
+		
 	}
 
 }

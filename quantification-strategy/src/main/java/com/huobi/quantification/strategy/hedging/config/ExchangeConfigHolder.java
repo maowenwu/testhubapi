@@ -32,7 +32,7 @@ public class ExchangeConfigHolder {
 		}
 	}
 
-	public synchronized QuanExchangeConfig getAllExchangeConfig(String symbol) {
+	public synchronized QuanExchangeConfig getExchangeConfigBySymbol(String symbol) {
 		QuanExchangeConfig quanExchangeConfig = map.get(symbol);
 		return quanExchangeConfig;
 	}
