@@ -46,7 +46,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
 
     @Autowired
     private RedisService redisService;
-    
+
     @Autowired
     private HuobiFutureAccountService huobiFutureAccountService;
 
@@ -99,7 +99,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         Map<String, FutureBalanceRespDto.DataBean> data = new ConcurrentHashMap<>();
         List<HuobiFutureUserInfoResponse.DataBean> dataBeans = userinfoResponse.getData();
         for (HuobiFutureUserInfoResponse.DataBean dataBean : dataBeans) {
-            data.put(dataBean.getSymbol(), convertToDto(dataBean));
+            data.put(dataBean.getSymbol().toLowerCase(), convertToDto(dataBean));
         }
         if (StringUtils.isNotEmpty(coinType)) {
             data.forEach((k, v) -> {
@@ -331,40 +331,40 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         dataBean.setLeverRate(e.getLeverRate());
         return dataBean;
     }
-    
+
     @Override
-	public void saveAccountsInfo(Long accountId, String contractCode) {
-		String body = huobiFutureAccountService.queryPositionByAPI(accountId);
-		String body2 = huobiFutureAccountService.queryPositionByAPI(accountId);
-		redisService.saveFirstFutureAccountInfo(accountId, contractCode, body);
-		redisService.saveFirstFuturePosition(accountId, contractCode, body2);
-	}
+    public void saveAccountsInfo(Long accountId, String contractCode) {
+        String body = huobiFutureAccountService.queryPositionByAPI(accountId);
+        String body2 = huobiFutureAccountService.queryPositionByAPI(accountId);
+        redisService.saveFirstFutureAccountInfo(accountId, contractCode, body);
+        redisService.saveFirstFuturePosition(accountId, contractCode, body2);
+    }
 
-	@Override
-	public ServiceResult<FutureBalanceRespDto> getAccountInfo(Long accountId, String contractCode) {
-		String body = redisService.getFirstFutureAccountInfo(accountId, contractCode);
-		ServiceResult<FutureBalanceRespDto> serviceResult = null;
-		FutureBalanceRespDto futureBalanceRespDto = new FutureBalanceRespDto();
-		DataBean bean = new FutureBalanceRespDto.DataBean();
-		BigDecimal bigDecimal = new BigDecimal(0.1);
-		bean.setMarginAvailable(bigDecimal);
-		bean.setMarginBalance(bigDecimal);
-		bean.setMarginFrozen(bigDecimal);
-		bean.setMarginPosition(bigDecimal);
-		bean.setProfitReal(bigDecimal);
-		bean.setProfitUnreal(bigDecimal);
-		bean.setRiskRate(bigDecimal);
-		serviceResult = ServiceResult.buildSuccessResult(futureBalanceRespDto);
-		return serviceResult;
-	}
+    @Override
+    public ServiceResult<FutureBalanceRespDto> getAccountInfo(Long accountId, String contractCode) {
+        String body = redisService.getFirstFutureAccountInfo(accountId, contractCode);
+        ServiceResult<FutureBalanceRespDto> serviceResult = null;
+        FutureBalanceRespDto futureBalanceRespDto = new FutureBalanceRespDto();
+        DataBean bean = new FutureBalanceRespDto.DataBean();
+        BigDecimal bigDecimal = new BigDecimal(0.1);
+        bean.setMarginAvailable(bigDecimal);
+        bean.setMarginBalance(bigDecimal);
+        bean.setMarginFrozen(bigDecimal);
+        bean.setMarginPosition(bigDecimal);
+        bean.setProfitReal(bigDecimal);
+        bean.setProfitUnreal(bigDecimal);
+        bean.setRiskRate(bigDecimal);
+        serviceResult = ServiceResult.buildSuccessResult(futureBalanceRespDto);
+        return serviceResult;
+    }
 
-	@Override
-	public ServiceResult<FuturePositionRespDto> getAccountPosition(Long accountId, String contractCode) {
-		String body = redisService.getFirstFuturePosition(accountId, contractCode);
-		ServiceResult<FuturePositionRespDto> serviceResult = null;
-		FuturePositionRespDto respDto = new FuturePositionRespDto();
-		FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
-		serviceResult = ServiceResult.buildSuccessResult(respDto);
-		return serviceResult;
-	}
+    @Override
+    public ServiceResult<FuturePositionRespDto> getAccountPosition(Long accountId, String contractCode) {
+        String body = redisService.getFirstFuturePosition(accountId, contractCode);
+        ServiceResult<FuturePositionRespDto> serviceResult = null;
+        FuturePositionRespDto respDto = new FuturePositionRespDto();
+        FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
+        serviceResult = ServiceResult.buildSuccessResult(respDto);
+        return serviceResult;
+    }
 }
