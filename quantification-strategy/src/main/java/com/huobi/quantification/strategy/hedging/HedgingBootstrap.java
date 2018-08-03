@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
@@ -63,6 +64,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 			return;
 		}
 
+		logger.info("对冲启动初始化参数为",JSON.toJSON(startHedgingParam));
 		// 等待3秒，保证job已经完全运行
 		sleep(1000 * 3);
 
@@ -88,7 +90,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 		StrategyProperties.Config future = group.getFuture();
 		StrategyProperties.Config spot = group.getSpot();
 		StrategyHedgingConfig strategyHedgingConfig = commonService.getStrategyHedgingConfig(future.getExchangeId(),
-				future.getContractCode(), future.getQuotCoin());
+				future.getContractCode(), future.getBaseCoin());
 		startHedgingParam.setBaseCoin(spot.getBaseCoin());
 		startHedgingParam.setFeeRate(strategyHedgingConfig.getFormalityRate());
 		startHedgingParam.setQuoteCoin(spot.getQuotCoin());
@@ -97,6 +99,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 		startHedgingParam.setSpotExchangeId(spot.getExchangeId());
 		startHedgingParam.setFutureAccountID(future.getAccountId());
 		startHedgingParam.setFutureExchangeId(future.getExchangeId());
+		startHedgingParam.setContractCode(future.getContractCode());
 
 		// 策略启动时调用 可以理解为期初的值
 		// 2.1 获取火币现货账户期初USDT余额
@@ -105,7 +108,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 		// 2.2 获取火币期货账户期初净空仓金额USD
 		BigDecimal futureInitUSD = new BigDecimal(0);
 		futureInitUSD = accountInfoService.getFutureUSDPosition(startHedgingParam.getFutureAccountID(),
-				startHedgingParam.getFutureExchangeId(), startHedgingParam.getQuoteCoin());
+				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode());
 		startHedgingParam.setSpotInitUSDT(spotInitUSDT);
 		startHedgingParam.setFutureInitUSD(futureInitUSD);
 

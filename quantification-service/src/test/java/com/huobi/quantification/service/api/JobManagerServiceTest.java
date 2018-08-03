@@ -7,7 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.huobi.quantification.ServiceApplication;
-import com.huobi.quantification.api.future.JobManageService;
+import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.service.redis.RedisService;
 
 /**
  * 用于JobManagerService接口的测试
@@ -19,14 +20,11 @@ import com.huobi.quantification.api.future.JobManageService;
 public class JobManagerServiceTest {
 	
 	@Autowired
-	private JobManageService jobManageService;
+	private RedisService redisService;
 	
 	@Test
-	public void testAddJob() {
-//		jobManageService.addHuobiSpotDepthJob("ethusdt", "step1", "0/1 * * * * ?", true);
-//		jobManageService.addHuobiSpotCurrentPriceJob("ethusdt", "0/1 * * * * ?", true);
-//		jobManageService.addHuobiSpotKlineJob("ethusdt", "1day", 200, "0/1 * * * * ?", true);
-		//jobManageService.addHuobiSpotOrderJob("0/1 * * * * ?", true);
-//		jobManageService.addHuobiSpotAccountJob(4232061L, "0/1 * * * * ?", true);
+	public void getAccountHistory() {
+		QuanAccountFuturePosition futurePosition = redisService.getFuturePosition(0, 101L);
+	   System.out.println("==============="+futurePosition);
 	}
 }

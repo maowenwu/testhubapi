@@ -130,20 +130,37 @@ public class AccountInfoService {
 	}
 
 	/**
-	 * 合约账户期末净空仓金额USD
-	 * 算法：（合约账户空仓持仓数量-合约账户多仓持仓数量）* 单张合约面值
+	 * 合约账户期末净空仓金额USD 算法：（合约账户空仓持仓数量-合约账户多仓持仓数量）* 单张合约面值
+	 * 
 	 * @param accountId
 	 * @param exchangeId
 	 * @param contractCode
 	 * @return
 	 */
 	public BigDecimal getFutureUSDPosition(Long accountId, Integer exchangeId, String contractCode) {
-		FuturePosition futurePosition = getFuturePosition(accountId, exchangeId, contractCode);
-		BigDecimal shortAmountUSD = futurePosition.getShortPosi().getShortAmount();
-		BigDecimal longAmountUSD = futurePosition.getLongPosi().getLongAmount();
-		// 单张合约面值 暂时写死
-		BigDecimal totalAmountUSD = shortAmountUSD.subtract(longAmountUSD).multiply(new BigDecimal(100));
+		//FuturePosition futurePosition = getFuturePosition(accountId, exchangeId, contractCode);
+		BigDecimal shortAmountUSD = BigDecimal.ZERO;
+		BigDecimal longAmountUSD = BigDecimal.ZERO;
+		/*if (null == futurePosition.getShortPosi() || null == futurePosition.getShortPosi().getShortAmount()) {
+			shortAmountUSD = futurePosition.getShortPosi().getShortAmount();
+		}
+		if (null == futurePosition.getLongPosi() || null == futurePosition.getLongPosi().getLongAmount()) {
+			longAmountUSD = futurePosition.getLongPosi().getLongAmount();
+		}*/
+		shortAmountUSD=test1();
+		longAmountUSD=test1();
+		
+		// 单张合约面值 暂时写死 
+		BigDecimal totalAmountUSD = shortAmountUSD.subtract(longAmountUSD).multiply(new BigDecimal(10));
 		return totalAmountUSD;
+	}
+	
+	//1~10之间随机数
+	public BigDecimal test1() {
+		int max = 10;
+		int min = 1;
+		int randomNumber = (int) Math.round(Math.random() * (max - min) + min);
+		return new BigDecimal(randomNumber);
 	}
 
 }
