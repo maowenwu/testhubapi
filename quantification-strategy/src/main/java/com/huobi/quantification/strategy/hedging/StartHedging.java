@@ -52,7 +52,6 @@ public class StartHedging {
 	 * @param startHedgingParam
 	 */
 	public void startNormal(StartHedgingParam startHedgingParam) {
-		try {
 			// 0. 判断是否能够对冲
 			/*
 			 * StrategyRiskConfig
@@ -79,9 +78,6 @@ public class StartHedging {
 					positionUSDT);
 			logger.info("3.下对冲单结果为： {}  ", placeResult);
 
-		} catch (Exception e) {
-			logger.error("对冲  {} 发生了异常： {}  ", startHedgingParam.getBaseCoin() + startHedgingParam.getQuoteCoin(), e);
-		}
 	}
 
 	/**
