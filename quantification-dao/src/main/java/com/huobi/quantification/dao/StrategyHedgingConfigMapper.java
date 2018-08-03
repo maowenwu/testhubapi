@@ -17,7 +17,7 @@ public interface StrategyHedgingConfigMapper {
 
 	int updateByPrimaryKey(StrategyHedgingConfig record);
 
-	StrategyHedgingConfig selectStrategyHedging(@Param("contractCode") String contractCode,
+	StrategyHedgingConfig selectStrategyHedging(@Param("coin") String coin,
 			@Param("contractType") String contractType);
 
 }

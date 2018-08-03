@@ -54,6 +54,7 @@
 
     <typeAliases>
         <package name="cn.huobi.framework.model"/>
+        <package name="com.huobi.quantification.entity"/>
     </typeAliases>
 
     <plugins>

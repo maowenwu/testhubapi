@@ -10,6 +10,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
+import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
@@ -35,11 +36,15 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 
 	@Autowired
 	QuanAccountFuturePositionService quanAccountFuturePositionService;
+	
+	@Autowired
+	JobManageService jobManageService;
+	
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-		/*if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-			logger.info("==>spring 容器启动");
+		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
+			logger.info("==>对冲程序初始化......");
 			StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
 			if (group1.getEnable()) {
 				startWithConfig(group1);
@@ -52,19 +57,27 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 			if (group3.getEnable()) {
 				startWithConfig(group3);
 			}
-		}*/
+		}
 	}
 
 	private void startWithConfig(StrategyProperties.ConfigGroup group) {
 		StartHedgingParam startHedgingParam = new StartHedgingParam();
+		logger.info("对冲注册job开始");
+		
+		
+		
+		jobManageService.addHuobiSpotAccountJob(startHedgingParam.getSpotAccountID(),"0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotDepthJob(group.getSpot().getBaseCoin() + group.getSpot().getQuotCoin(), "step1", "0/1 * * * * ?", true);
+		logger.info("注册job完成");
 		try {
 			initHedgingParam(group, startHedgingParam);
 		} catch (Exception e) {
 			logger.error("对冲启动初始化参数异常", e);
 			return;
 		}
-
-		logger.info("对冲启动初始化参数为",JSON.toJSON(startHedgingParam));
+		logger.info("对冲启动初始化参数为 {} ",JSON.toJSON(startHedgingParam));
+		
+		
 		// 等待3秒，保证job已经完全运行
 		sleep(1000 * 3);
 
@@ -102,13 +115,14 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 		startHedgingParam.setContractCode(future.getContractCode());
 
 		// 策略启动时调用 可以理解为期初的值
-		// 2.1 获取火币现货账户期初USDT余额
+		// 2.1 获取火币现货账户期初USDT余额 
 		BigDecimal spotInitUSDT = accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
-				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin()).getAvailable();
+				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin());
 		// 2.2 获取火币期货账户期初净空仓金额USD
 		BigDecimal futureInitUSD = new BigDecimal(0);
 		futureInitUSD = accountInfoService.getFutureUSDPosition(startHedgingParam.getFutureAccountID(),
 				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode());
+		
 		startHedgingParam.setSpotInitUSDT(spotInitUSDT);
 		startHedgingParam.setFutureInitUSD(futureInitUSD);
 
