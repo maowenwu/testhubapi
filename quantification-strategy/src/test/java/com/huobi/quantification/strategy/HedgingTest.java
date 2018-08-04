@@ -15,15 +15,15 @@ import com.huobi.quantification.api.common.ExchangeConfigService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dto.ExchangeConfigResqDto;
-import com.huobi.quantification.strategy.hedging.StartHedging;
 import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
+import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
 
 @SpringBootTest(classes = StrategyApplication.class)
 @RunWith(SpringRunner.class)
 public class HedgingTest {
 
 	@Autowired
-	StartHedging startHedging;
+	StartHedgingService startHedgingService;
 
 	@Autowired
 	QuanAccountHistoryMapper quanAccountHistoryMapper;
@@ -42,7 +42,7 @@ public class HedgingTest {
 		startHedgingParam.setFutureAccountID(0L);
 		startHedgingParam.setFutureExchangeId(0);
 		while (true) {
-			startHedging.startNormal(startHedgingParam);
+			startHedgingService.startNormal(startHedgingParam);
 			Thread.sleep(1000 * 60);
 		}
 	}
