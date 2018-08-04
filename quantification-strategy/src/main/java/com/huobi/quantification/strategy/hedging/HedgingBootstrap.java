@@ -65,10 +65,11 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 		StartHedgingParam startHedgingParam = new StartHedgingParam();
 		logger.info("对冲注册job开始");
 
-		jobManageService.addHuobiSpotAccountJob(startHedgingParam.getSpotAccountID(), "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotAccountJob(group.getSpot().getAccountId(), "0/1 * * * * ?", true);
 		jobManageService.addHuobiSpotDepthJob(group.getSpot().getBaseCoin() + group.getSpot().getQuotCoin(), "step1",
 				"0/1 * * * * ?", true);
-		logger.info("注册job完成");
+		jobManageService.addHuobiFuturePositionJob(group.getFuture().getAccountId(), "0/1 * * * * ?", true);
+		logger.info("对冲注册job完成");
 		try {
 			initHedgingParam(group, startHedgingParam);
 		} catch (Exception e) {

@@ -22,7 +22,7 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext().getParent() == null) {
             logger.info("==>spring 容器启动");
-            StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
+/*            StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
             if (group1.getEnable()) {
                 startWithConfig(group1);
             }
@@ -33,7 +33,7 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
             StrategyProperties.ConfigGroup group3 = strategyProperties.getGroup3();
             if (group3.getEnable()) {
                 startWithConfig(group3);
-            }
+            }*/
         }
     }
 
