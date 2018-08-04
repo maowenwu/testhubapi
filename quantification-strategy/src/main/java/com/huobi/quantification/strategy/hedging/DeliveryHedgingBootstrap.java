@@ -56,7 +56,7 @@ public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefr
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
 			logger.info("==交割期间对冲程序初始化......");
-			StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
+			/*StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
 			if (group1.getEnable()) {
 				startWithConfig(group1);
 			}
@@ -67,7 +67,7 @@ public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefr
 			StrategyProperties.ConfigGroup group3 = strategyProperties.getGroup3();
 			if (group3.getEnable()) {
 				startWithConfig(group3);
-			}
+			}*/
 		}
 	}
 
@@ -75,9 +75,10 @@ public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefr
 	private void startWithConfig(StrategyProperties.ConfigGroup group) {
 		StartHedgingParam startHedgingParam = new StartHedgingParam();
 		logger.info("交割期间对冲注册job开始");
-		jobManageService.addHuobiSpotAccountJob(startHedgingParam.getSpotAccountID(), "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotAccountJob(group.getSpot().getAccountId(), "0/1 * * * * ?", true);
 		jobManageService.addHuobiSpotDepthJob(group.getSpot().getBaseCoin() + group.getSpot().getQuotCoin(), "step1",
 				"0/1 * * * * ?", true);
+		jobManageService.addHuobiFuturePositionJob(group.getFuture().getAccountId(), "0/1 * * * * ?", true);
 		logger.info("交割期间注册job完成");
 		try {
 			initHedgingParam(group, startHedgingParam);

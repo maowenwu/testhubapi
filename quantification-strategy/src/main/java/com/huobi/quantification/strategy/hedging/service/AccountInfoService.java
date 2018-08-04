@@ -68,14 +68,9 @@ public class AccountInfoService {
 		spotBalanceReqDto.setMaxDelay(1000 * 60);
 		spotBalanceReqDto.setTimeout(1000 * 10);
 		ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(spotBalanceReqDto);
-		if (result.isSuccess()) {
-			logger.info("获取火币现货币币账户余额,币种： {}  的期末余额为：{} ", coinType, JSON.toJSONString(result));
-			DataBean dataBean = result.getData().getData().get(coinType);
-			return dataBean;
-		} else {
-			//
-			throw new RuntimeException();
-		}
+		logger.info("获取火币现货币币账户余额,币种： {}  的期末余额为：{} ", coinType, JSON.toJSONString(result));
+		DataBean dataBean = result.getData().getData().get(coinType);
+		return dataBean;
 	}
 
 	/**
