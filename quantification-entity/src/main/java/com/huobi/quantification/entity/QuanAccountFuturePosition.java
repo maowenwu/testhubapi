@@ -1,37 +1,108 @@
 package com.huobi.quantification.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class QuanAccountFuturePosition {
     /**
-     * @mbg.generated 2018-07-13 17:56:26
+     * @mbg.generated 2018-08-04 15:37:47
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-07-13 17:56:26
+     * @mbg.generated 2018-08-04 15:37:47
      */
-    private Long accountSourceId;
+    private Long accountFutureId;
 
     /**
-     * @mbg.generated 2018-07-13 17:56:26
+     * @mbg.generated 2018-08-04 15:37:47
      */
     private Long queryId;
 
     /**
      * 币种
-     * @mbg.generated 2018-07-13 17:56:26
+     * @mbg.generated 2018-08-04 15:37:47
      */
-    private String respBody;
+    private String coinType;
 
     /**
-     * @mbg.generated 2018-07-13 17:56:26
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private String baseCoin;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private String quoteCoin;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private String symbol;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private String contractType;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private String contractCode;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private Integer offset;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal amount;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal available;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal frozen;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal costOpen;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal costHold;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal profitUnreal;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal profitRate;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
+     */
+    private BigDecimal leverRate;
+
+    /**
+     * @mbg.generated 2018-08-04 15:37:47
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-07-13 17:56:26
+     * @mbg.generated 2018-08-04 15:37:47
      */
     private Date updateTime;
 
@@ -43,12 +114,12 @@ public class QuanAccountFuturePosition {
         this.id = id;
     }
 
-    public Long getAccountSourceId() {
-        return accountSourceId;
+    public Long getAccountFutureId() {
+        return accountFutureId;
     }
 
-    public void setAccountSourceId(Long accountSourceId) {
-        this.accountSourceId = accountSourceId;
+    public void setAccountFutureId(Long accountFutureId) {
+        this.accountFutureId = accountFutureId;
     }
 
     public Long getQueryId() {
@@ -59,12 +130,124 @@ public class QuanAccountFuturePosition {
         this.queryId = queryId;
     }
 
-    public String getRespBody() {
-        return respBody;
+    public String getCoinType() {
+        return coinType;
     }
 
-    public void setRespBody(String respBody) {
-        this.respBody = respBody;
+    public void setCoinType(String coinType) {
+        this.coinType = coinType;
+    }
+
+    public String getBaseCoin() {
+        return baseCoin;
+    }
+
+    public void setBaseCoin(String baseCoin) {
+        this.baseCoin = baseCoin;
+    }
+
+    public String getQuoteCoin() {
+        return quoteCoin;
+    }
+
+    public void setQuoteCoin(String quoteCoin) {
+        this.quoteCoin = quoteCoin;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public String getContractType() {
+        return contractType;
+    }
+
+    public void setContractType(String contractType) {
+        this.contractType = contractType;
+    }
+
+    public String getContractCode() {
+        return contractCode;
+    }
+
+    public void setContractCode(String contractCode) {
+        this.contractCode = contractCode;
+    }
+
+    public Integer getOffset() {
+        return offset;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(BigDecimal available) {
+        this.available = available;
+    }
+
+    public BigDecimal getFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(BigDecimal frozen) {
+        this.frozen = frozen;
+    }
+
+    public BigDecimal getCostOpen() {
+        return costOpen;
+    }
+
+    public void setCostOpen(BigDecimal costOpen) {
+        this.costOpen = costOpen;
+    }
+
+    public BigDecimal getCostHold() {
+        return costHold;
+    }
+
+    public void setCostHold(BigDecimal costHold) {
+        this.costHold = costHold;
+    }
+
+    public BigDecimal getProfitUnreal() {
+        return profitUnreal;
+    }
+
+    public void setProfitUnreal(BigDecimal profitUnreal) {
+        this.profitUnreal = profitUnreal;
+    }
+
+    public BigDecimal getProfitRate() {
+        return profitRate;
+    }
+
+    public void setProfitRate(BigDecimal profitRate) {
+        this.profitRate = profitRate;
+    }
+
+    public BigDecimal getLeverRate() {
+        return leverRate;
+    }
+
+    public void setLeverRate(BigDecimal leverRate) {
+        this.leverRate = leverRate;
     }
 
     public Date getCreateTime() {

@@ -11,8 +11,8 @@ public interface RedisService {
     void saveUserInfoFuture(int exchangeId, Long accountId, Map<String, QuanAccountFutureAsset> assetMap);
     Map<String, QuanAccountFutureAsset> getUserInfoFuture(int exchangeId, Long accountId);
 
-    void savePositionFuture(int exchangeId, Long accountId, QuanAccountFuturePosition position);
-    QuanAccountFuturePosition getPositionFuture(int exchangeId, Long accountId);
+    void savePositionFuture(int exchangeId, Long accountId, List<QuanAccountFuturePosition> futurePositions);
+    List<QuanAccountFuturePosition> getPositionFuture(int exchangeId, Long accountId);
 
     void saveDepthFuture(int exchangeId, String symbol, String contractType, List<QuanDepthFutureDetail> list);
     List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType);

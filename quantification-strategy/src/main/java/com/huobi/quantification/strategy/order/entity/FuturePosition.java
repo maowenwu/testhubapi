@@ -5,44 +5,37 @@ import java.math.BigDecimal;
 public class FuturePosition {
 
 
-    private LongPosi longPosi;
-    private ShortPosi shortPosi;
+    private Position longPosi;
+    private Position shortPosi;
 
-    public LongPosi getLongPosi() {
+    public Position getLongPosi() {
         return longPosi;
     }
 
-    public void setLongPosi(LongPosi longPosi) {
+    public void setLongPosi(Position longPosi) {
         this.longPosi = longPosi;
     }
 
-    public ShortPosi getShortPosi() {
+    public Position getShortPosi() {
         return shortPosi;
     }
 
-    public void setShortPosi(ShortPosi shortPosi) {
+    public void setShortPosi(Position shortPosi) {
         this.shortPosi = shortPosi;
     }
 
-    public static class LongPosi {
-        private String contractCode;
+    public static class Position {
+
         private String baseCoin;
         private String quoteCoin;
         private String contractType;
-        private BigDecimal longAmount;
-        private BigDecimal longAvailable;
-        private BigDecimal longFrozen;
-        private BigDecimal longCostOpen;
-        private BigDecimal longCostHold;
+        private String contractCode;
+        private BigDecimal amount;
+        private BigDecimal available;
+        private BigDecimal frozen;
+        private BigDecimal costOpen;
+        private BigDecimal costHold;
         private BigDecimal leverRate;
-
-        public String getContractCode() {
-            return contractCode;
-        }
-
-        public void setContractCode(String contractCode) {
-            this.contractCode = contractCode;
-        }
 
         public String getBaseCoin() {
             return baseCoin;
@@ -68,67 +61,6 @@ public class FuturePosition {
             this.contractType = contractType;
         }
 
-        public BigDecimal getLongAmount() {
-            return longAmount;
-        }
-
-        public void setLongAmount(BigDecimal longAmount) {
-            this.longAmount = longAmount;
-        }
-
-        public BigDecimal getLongAvailable() {
-            return longAvailable;
-        }
-
-        public void setLongAvailable(BigDecimal longAvailable) {
-            this.longAvailable = longAvailable;
-        }
-
-        public BigDecimal getLongFrozen() {
-            return longFrozen;
-        }
-
-        public void setLongFrozen(BigDecimal longFrozen) {
-            this.longFrozen = longFrozen;
-        }
-
-        public BigDecimal getLongCostOpen() {
-            return longCostOpen;
-        }
-
-        public void setLongCostOpen(BigDecimal longCostOpen) {
-            this.longCostOpen = longCostOpen;
-        }
-
-        public BigDecimal getLongCostHold() {
-            return longCostHold;
-        }
-
-        public void setLongCostHold(BigDecimal longCostHold) {
-            this.longCostHold = longCostHold;
-        }
-
-        public BigDecimal getLeverRate() {
-            return leverRate;
-        }
-
-        public void setLeverRate(BigDecimal leverRate) {
-            this.leverRate = leverRate;
-        }
-    }
-
-    public static class ShortPosi {
-        private String contractCode;
-        private String baseCoin;
-        private String quoteCoin;
-        private String contractType;
-        private BigDecimal shortAmount;
-        private BigDecimal shortAvailable;
-        private BigDecimal shortFrozen;
-        private BigDecimal shortCostOpen;
-        private BigDecimal shortCostHold;
-        private BigDecimal leverRate;
-
         public String getContractCode() {
             return contractCode;
         }
@@ -137,68 +69,44 @@ public class FuturePosition {
             this.contractCode = contractCode;
         }
 
-        public String getBaseCoin() {
-            return baseCoin;
+        public BigDecimal getAmount() {
+            return amount;
         }
 
-        public void setBaseCoin(String baseCoin) {
-            this.baseCoin = baseCoin;
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
         }
 
-        public String getQuoteCoin() {
-            return quoteCoin;
+        public BigDecimal getAvailable() {
+            return available;
         }
 
-        public void setQuoteCoin(String quoteCoin) {
-            this.quoteCoin = quoteCoin;
+        public void setAvailable(BigDecimal available) {
+            this.available = available;
         }
 
-        public String getContractType() {
-            return contractType;
+        public BigDecimal getFrozen() {
+            return frozen;
         }
 
-        public void setContractType(String contractType) {
-            this.contractType = contractType;
+        public void setFrozen(BigDecimal frozen) {
+            this.frozen = frozen;
         }
 
-        public BigDecimal getShortAmount() {
-            return shortAmount;
+        public BigDecimal getCostOpen() {
+            return costOpen;
         }
 
-        public void setShortAmount(BigDecimal shortAmount) {
-            this.shortAmount = shortAmount;
+        public void setCostOpen(BigDecimal costOpen) {
+            this.costOpen = costOpen;
         }
 
-        public BigDecimal getShortAvailable() {
-            return shortAvailable;
+        public BigDecimal getCostHold() {
+            return costHold;
         }
 
-        public void setShortAvailable(BigDecimal shortAvailable) {
-            this.shortAvailable = shortAvailable;
-        }
-
-        public BigDecimal getShortFrozen() {
-            return shortFrozen;
-        }
-
-        public void setShortFrozen(BigDecimal shortFrozen) {
-            this.shortFrozen = shortFrozen;
-        }
-
-        public BigDecimal getShortCostOpen() {
-            return shortCostOpen;
-        }
-
-        public void setShortCostOpen(BigDecimal shortCostOpen) {
-            this.shortCostOpen = shortCostOpen;
-        }
-
-        public BigDecimal getShortCostHold() {
-            return shortCostHold;
-        }
-
-        public void setShortCostHold(BigDecimal shortCostHold) {
-            this.shortCostHold = shortCostHold;
+        public void setCostHold(BigDecimal costHold) {
+            this.costHold = costHold;
         }
 
         public BigDecimal getLeverRate() {
@@ -209,5 +117,6 @@ public class FuturePosition {
             this.leverRate = leverRate;
         }
     }
+
 
 }

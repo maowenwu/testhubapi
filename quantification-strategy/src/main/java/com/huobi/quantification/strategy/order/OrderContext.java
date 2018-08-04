@@ -208,25 +208,19 @@ public class OrderContext {
             reqDto.setCoinType(this.futureCoinType);
             ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
             if (result.isSuccess()) {
-                Map<String, List<FuturePositionRespDto.DataBean>> data = result.getData().getData();
-                List<FuturePositionRespDto.DataBean> beanList = data.get(this.futureCoinType);
+                Map<String, FuturePositionRespDto.Position> dataMap = result.getData().getDataMap();
+                FuturePositionRespDto.Position position = dataMap.get(this.futureCoinType);
                 FuturePosition futurePosition = new FuturePosition();
-                // 如果beanList为null，代表当前账户没有持仓
-                if (CollectionUtils.isNotEmpty(beanList)) {
-                    beanList.forEach(e -> {
-                        if (e.getContractType().equalsIgnoreCase(this.futureContractType)) {
-                            if (e.getLongAmount() != null) {
-                                FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
-                                BeanUtils.copyProperties(e, longPosi);
-                                futurePosition.setLongPosi(longPosi);
-                            }
-                            if (e.getShortAmount() != null) {
-                                FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
-                                BeanUtils.copyProperties(e, shortPosi);
-                                futurePosition.setShortPosi(shortPosi);
-                            }
-                        }
-                    });
+                // 如果为null，代表当前账户没有持仓
+                if (position == null) {
+                    FuturePosition.Position longPosi = new FuturePosition.Position();
+                    BeanUtils.copyProperties(position.getLongPosi(), longPosi);
+
+                    FuturePosition.Position shortPosi = new FuturePosition.Position();
+                    BeanUtils.copyProperties(position.getShortPosi(), shortPosi);
+
+                    futurePosition.setLongPosi(longPosi);
+                    futurePosition.setShortPosi(shortPosi);
                     logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
                     return futurePosition;
                 } else {
@@ -313,13 +307,13 @@ public class OrderContext {
     // 下买单
     public void placeBuyOrder(BigDecimal price, BigDecimal orderAmount) {
         // 因为持仓是每轮更新一次，那么意味着这一轮都会下开仓单or平仓单
-        FuturePosition.LongPosi longPosi = this.futurePosition.getLongPosi();
-        if (longPosi == null) {
+        FuturePosition.Position position = this.futurePosition.getLongPosi();
+        if (position == null) {
             isBuyOpen.set(true);
         } else {
-            if (BigDecimalUtils.moreThan(longPosi.getLongAmount(), config.getMaxPositionAmount())) {
+            if (BigDecimalUtils.moreThan(position.getAmount(), config.getMaxPositionAmount())) {
                 isBuyOpen.set(false);
-            } else if (BigDecimalUtils.lessThan(longPosi.getLongAmount(), config.getMinPositionAmount())) {
+            } else if (BigDecimalUtils.lessThan(position.getAmount(), config.getMinPositionAmount())) {
                 isBuyOpen.set(true);
             }
         }
@@ -328,10 +322,10 @@ public class OrderContext {
             placeBuyOpenOrder(price, orderAmount);
         } else {
             // 下买入平仓单
-            FuturePosition.ShortPosi shortPosi = futurePosition.getShortPosi();
+            FuturePosition.Position shortPosi = futurePosition.getShortPosi();
             if (shortPosi != null) {
                 // 空仓的可平量
-                BigDecimal shortAvailable = shortPosi.getShortAvailable();
+                BigDecimal shortAvailable = shortPosi.getAvailable();
                 if (BigDecimalUtils.moreThan(shortAvailable, BigDecimal.ZERO)) {
                     // 如果有持仓，那么下平仓单
                     // 如果预期量大于可平量，那么就按可平量下单，剩余部分忽略
@@ -339,14 +333,14 @@ public class OrderContext {
                         boolean success = placeBuyCloseOrder(price, shortAvailable);
                         if (success) {
                             // 下平仓单后减去可平量
-                            shortPosi.setShortAvailable(shortPosi.getShortAvailable().subtract(shortAvailable));
+                            shortPosi.setAvailable(shortPosi.getAvailable().subtract(shortAvailable));
                         }
                     } else {
                         // 如果预期量小于等于可平量，那么按预期量下单
                         boolean success = placeBuyCloseOrder(price, orderAmount);
                         if (success) {
                             // 下平仓单后减去可平量
-                            shortPosi.setShortAvailable(shortPosi.getShortAvailable().subtract(orderAmount));
+                            shortPosi.setAvailable(shortPosi.getAvailable().subtract(orderAmount));
                         }
                     }
                 } else {
@@ -359,13 +353,13 @@ public class OrderContext {
     }
 
     public void placeSellOrder(BigDecimal price, BigDecimal orderAmount) {
-        FuturePosition.ShortPosi shortPosi = this.futurePosition.getShortPosi();
+        FuturePosition.Position shortPosi = this.futurePosition.getShortPosi();
         if (shortPosi == null) {
             isSellOpen.set(true);
         } else {
-            if (BigDecimalUtils.moreThan(shortPosi.getShortAmount(), config.getMaxPositionAmount())) {
+            if (BigDecimalUtils.moreThan(shortPosi.getAmount(), config.getMaxPositionAmount())) {
                 isSellOpen.set(false);
-            } else if (BigDecimalUtils.lessThan(shortPosi.getShortAmount(), config.getMinPositionAmount())) {
+            } else if (BigDecimalUtils.lessThan(shortPosi.getAmount(), config.getMinPositionAmount())) {
                 isSellOpen.set(true);
             }
         }
@@ -373,10 +367,10 @@ public class OrderContext {
         if (isSellOpen.get()) {
             placeSellOpenOrder(price, orderAmount);
         } else {
-            FuturePosition.LongPosi longPosi = futurePosition.getLongPosi();
+            FuturePosition.Position longPosi = futurePosition.getLongPosi();
             if (longPosi != null) {
                 // 空仓的可平量
-                BigDecimal longAvailable = longPosi.getLongAvailable();
+                BigDecimal longAvailable = longPosi.getAvailable();
                 if (BigDecimalUtils.moreThan(longAvailable, BigDecimal.ZERO)) {
                     // 如果有持仓，那么下平仓单
                     // 如果预期量大于可平量，那么就按可平量下单，剩余部分忽略
@@ -384,14 +378,14 @@ public class OrderContext {
                         boolean success = placeSellCloseOrder(price, longAvailable);
                         if (success) {
                             // 下平仓单后减去可平量
-                            longPosi.setLongAvailable(longPosi.getLongAvailable().subtract(longAvailable));
+                            longPosi.setAvailable(longPosi.getAvailable().subtract(longAvailable));
                         }
                     } else {
                         // 如果预期量小于等于可平量，那么按预期量下单
                         boolean success = placeSellCloseOrder(price, orderAmount);
                         if (success) {
                             // 下平仓单后减去可平量
-                            longPosi.setLongAvailable(longPosi.getLongAmount().subtract(orderAmount));
+                            longPosi.setAvailable(longPosi.getAvailable().subtract(orderAmount));
                         }
                     }
                 } else {

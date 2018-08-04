@@ -1,17 +1,21 @@
 package com.huobi.quantification.service.account.impl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
+import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
+import com.huobi.quantification.dto.FuturePositionRespDto;
+import com.huobi.quantification.entity.QuanAccountFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.enums.OffsetEnum;
+import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
 import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,21 +118,63 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         return futureAsset;
     }
 
+    @Autowired
+    private QuanAccountFuturePositionMapper quanAccountFuturePositionMapper;
+
     @Override
-    public void updateHuobiPosition(Long accountId) {
+    public void updateHuobiPosition(Long accountSourceId) {
         Stopwatch started = Stopwatch.createStarted();
-        Date now = new Date();
-        logger.info("[HuobiPosition][accountId={}]任务开始", accountId);
+        logger.info("[HuobiPosition][accountId={}]任务开始", accountSourceId);
         long queryId = System.currentTimeMillis();
-        String body = queryPositionByAPI(accountId);
-        QuanAccountFuturePosition position = new QuanAccountFuturePosition();
-        position.setAccountSourceId(accountId);
-        position.setQueryId(queryId);
-        position.setRespBody(body);
-        position.setCreateTime(now);
-        position.setUpdateTime(now);
-        redisService.savePositionFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, position);
-        logger.info("[HuobiPosition][accountId={},]任务结束，耗时：" + started, accountId);
+        Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI.getExId(), accountSourceId);
+        String body = queryPositionByAPI(accountSourceId);
+        List<QuanAccountFuturePosition> futurePositions = parseHuobiFuturePosition(body);
+        boolean isSave = StorageSupport.checkSavepoint("updateHuobiPosition");
+        futurePositions.forEach(e -> {
+            e.setAccountFutureId(accountFutureId);
+            e.setQueryId(queryId);
+            if (isSave) {
+                quanAccountFuturePositionMapper.insert(e);
+            }
+        });
+        redisService.savePositionFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, futurePositions);
+        logger.info("[HuobiPosition][accountId={},]任务结束，耗时：" + started, accountSourceId);
+    }
+
+    private List<QuanAccountFuturePosition> parseHuobiFuturePosition(String body) {
+        HuobiFuturePositionResponse response = JSON.parseObject(body, HuobiFuturePositionResponse.class);
+        List<QuanAccountFuturePosition> beanList = new ArrayList<>();
+        response.getData().forEach((e) -> {
+            QuanAccountFuturePosition futurePosition = new QuanAccountFuturePosition();
+            futurePosition.setContractCode(e.getContractCode());
+            futurePosition.setBaseCoin(e.getSymbol());
+            futurePosition.setQuoteCoin("usdt");
+            futurePosition.setContractType(e.getContractType());
+            if ("buy".equalsIgnoreCase(e.getDirection())) {
+                futurePosition.setOffset(OffsetEnum.LONG.getOffset());
+                futurePosition.setAmount(e.getVolume());
+                futurePosition.setAvailable(e.getAvailable());
+                // 多仓冻结张数
+                futurePosition.setFrozen(e.getFrozen());
+                futurePosition.setCostOpen(e.getCostOpen());
+                // 多仓持仓均价
+                futurePosition.setCostHold(e.getCostHold());
+            } else {
+                futurePosition.setOffset(OffsetEnum.SHORT.getOffset());
+                futurePosition.setAmount(e.getVolume());
+                futurePosition.setAvailable(e.getAvailable());
+                // 多仓冻结张数
+                futurePosition.setFrozen(e.getFrozen());
+                futurePosition.setCostOpen(e.getCostOpen());
+                // 多仓持仓均价
+                futurePosition.setCostHold(e.getCostHold());
+            }
+            futurePosition.setLeverRate(e.getLeverRate());
+            futurePosition.setCreateTime(new Date());
+            futurePosition.setUpdateTime(new Date());
+            beanList.add(futurePosition);
+        });
+        return beanList;
     }
 
 }

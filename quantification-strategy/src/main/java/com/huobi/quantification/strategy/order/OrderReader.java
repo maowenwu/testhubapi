@@ -124,9 +124,9 @@ public class OrderReader {
             });
         });
         BigDecimal sum = BigDecimal.ZERO;
-        FuturePosition.LongPosi longPosi = position.getLongPosi();
-        if (longPosi != null) {
-            sum = sum.add(longPosi.getLongAvailable());
+        FuturePosition.Position position = this.position.getLongPosi();
+        if (position != null) {
+            sum = sum.add(position.getAvailable());
         }
         for (FutureOrder order : orders) {
             sum = sum.add(order.getOrderQty().subtract(order.getDealQty()));
@@ -151,9 +151,9 @@ public class OrderReader {
         });
 
         BigDecimal sum = BigDecimal.ZERO;
-        FuturePosition.ShortPosi shortPosi = position.getShortPosi();
+        FuturePosition.Position shortPosi = position.getShortPosi();
         if (shortPosi != null) {
-            sum = sum.add(shortPosi.getShortAvailable());
+            sum = sum.add(shortPosi.getAvailable());
         }
         for (FutureOrder order : orders) {
             sum = sum.add(order.getOrderQty().subtract(order.getDealQty()));

@@ -104,7 +104,7 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
         Stopwatch started = Stopwatch.createStarted();
         Date now = new Date();
         logger.info("[OkPosition][accountId={}]任务开始", accountId);
-        long queryId = System.currentTimeMillis();
+       /* long queryId = System.currentTimeMillis();
         OKFuturePositionResponse positionResponse = queryAllOkPositionByAPI(accountId);
         QuanAccountFuturePosition position = new QuanAccountFuturePosition();
         position.setAccountSourceId(accountId);
@@ -112,7 +112,7 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
         position.setRespBody(JSON.toJSONString(positionResponse));
         position.setCreateTime(now);
         position.setUpdateTime(now);
-        redisService.savePositionFuture(ExchangeEnum.OKEX.getExId(), accountId, position);
+        redisService.savePositionFuture(ExchangeEnum.OKEX.getExId(), accountId, position);*/
         logger.info("[OkPosition][accountId={},]任务结束，耗时：" + started, accountId);
     }
 

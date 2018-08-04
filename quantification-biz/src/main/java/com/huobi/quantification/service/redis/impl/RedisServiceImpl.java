@@ -29,14 +29,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void savePositionFuture(int exchangeId, Long accountId, QuanAccountFuturePosition position) {
-        RMap<Long, QuanAccountFuturePosition> map = client.getMap("quan.account.future.position." + exchangeId);
-        map.put(accountId, position);
+    public void savePositionFuture(int exchangeId, Long accountId, List<QuanAccountFuturePosition> futurePositions) {
+        RMap<Long,  List<QuanAccountFuturePosition>> map = client.getMap("quan.account.future.position." + exchangeId);
+        map.put(accountId, futurePositions);
     }
 
     @Override
-    public QuanAccountFuturePosition getPositionFuture(int exchangeId, Long accountId) {
-        RMap<Long, QuanAccountFuturePosition> map = client.getMap("quan.account.future.position." + exchangeId);
+    public List<QuanAccountFuturePosition> getPositionFuture(int exchangeId, Long accountId) {
+        RMap<Long, List<QuanAccountFuturePosition>> map = client.getMap("quan.account.future.position." + exchangeId);
         return map.get(accountId);
     }
 

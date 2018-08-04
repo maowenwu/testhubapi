@@ -110,9 +110,9 @@ public class AccountInfoService {
 			FuturePosition futurePosition = new FuturePosition();
 			beanList.forEach(e -> {
 				if (e.getLongAmount() != null) {
-					FuturePosition.LongPosi longPosi = new FuturePosition.LongPosi();
+					FuturePosition.Position longPosi = new FuturePosition.Position();
 					BeanUtils.copyProperties(e, longPosi);
-					futurePosition.setLongPosi(longPosi);
+					futurePosition.setPosition(longPosi);
 				}
 				if (e.getShortAmount() != null) {
 					FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
@@ -144,9 +144,9 @@ public class AccountInfoService {
 		 * if (null == futurePosition.getShortPosi() || null ==
 		 * futurePosition.getShortPosi().getShortAmount()) { shortAmountUSD =
 		 * futurePosition.getShortPosi().getShortAmount(); } if (null ==
-		 * futurePosition.getLongPosi() || null ==
-		 * futurePosition.getLongPosi().getLongAmount()) { longAmountUSD =
-		 * futurePosition.getLongPosi().getLongAmount(); }
+		 * futurePosition.getPosition() || null ==
+		 * futurePosition.getPosition().getLongAmount()) { longAmountUSD =
+		 * futurePosition.getPosition().getLongAmount(); }
 		 */
 		shortAmountUSD = test1();
 		longAmountUSD = test1();

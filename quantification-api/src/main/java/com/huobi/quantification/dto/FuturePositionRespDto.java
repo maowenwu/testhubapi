@@ -1,76 +1,61 @@
 package com.huobi.quantification.dto;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class FuturePositionRespDto implements Serializable {
 
+    private Map<String, Position> dataMap;
 
-    private Date ts;
-
-    private Map<String, List<DataBean>> data;
-
-    public Date getTs() {
-        return ts;
+    public FuturePositionRespDto(Map<String, Position> dataMap) {
+        this.dataMap = dataMap;
     }
 
-    public void setTs(Date ts) {
-        this.ts = ts;
+    public Map<String, Position> getDataMap() {
+        return dataMap;
     }
 
-    public Map<String, List<DataBean>> getData() {
-        return data;
+    public void setDataMap(Map<String, Position> dataMap) {
+        this.dataMap = dataMap;
     }
 
-    public void setData(Map<String, List<DataBean>> data) {
-        this.data = data;
+    public static class Position implements Serializable {
+        private DataBean longPosi;
+        private DataBean shortPosi;
+
+        public DataBean getLongPosi() {
+            return longPosi;
+        }
+
+        public void setLongPosi(DataBean longPosi) {
+            this.longPosi = longPosi;
+        }
+
+        public DataBean getShortPosi() {
+            return shortPosi;
+        }
+
+        public void setShortPosi(DataBean shortPosi) {
+            this.shortPosi = shortPosi;
+        }
     }
 
-    public static class DataBean implements Serializable{
-        @JSONField(name = "contract_code")
-        private String contractCode;
-        @JSONField(name = "base_coin")
+
+    public static class DataBean implements Serializable {
+
         private String baseCoin;
         private String quoteCoin;
-        @JSONField(name = "contract_type")
         private String contractType;
-        @JSONField(name = "long_amount")
-        private BigDecimal longAmount;
-        @JSONField(name = "long_available")
-        private BigDecimal longAvailable;
-        @JSONField(name = "long_frozen")
-        private BigDecimal longFrozen;
-        @JSONField(name = "long_cost_open")
-        private BigDecimal longCostOpen;
-        @JSONField(name = "long_cost_hold")
-        private BigDecimal longCostHold;
-        @JSONField(name = "lever_rate")
+        private String contractCode;
+
+        private int offset;
+        private BigDecimal amount;
+        private BigDecimal available;
+        private BigDecimal frozen;
+        private BigDecimal costOpen;
+        private BigDecimal costHold;
         private BigDecimal leverRate;
-
-
-        @JSONField(name = "short_amount")
-        private BigDecimal shortAmount;
-        @JSONField(name = "short_available")
-        private BigDecimal shortAvailable;
-        @JSONField(name = "short_frozen")
-        private BigDecimal shortFrozen;
-        @JSONField(name = "short_cost_open")
-        private BigDecimal shortCostOpen;
-        @JSONField(name = "short_cost_hold")
-        private BigDecimal shortCostHold;
-
-        public String getContractCode() {
-            return contractCode;
-        }
-
-        public void setContractCode(String contractCode) {
-            this.contractCode = contractCode;
-        }
 
         public String getBaseCoin() {
             return baseCoin;
@@ -96,44 +81,60 @@ public class FuturePositionRespDto implements Serializable {
             this.contractType = contractType;
         }
 
-        public BigDecimal getLongAmount() {
-            return longAmount;
+        public String getContractCode() {
+            return contractCode;
         }
 
-        public void setLongAmount(BigDecimal longAmount) {
-            this.longAmount = longAmount;
+        public void setContractCode(String contractCode) {
+            this.contractCode = contractCode;
         }
 
-        public BigDecimal getLongAvailable() {
-            return longAvailable;
+        public int getOffset() {
+            return offset;
         }
 
-        public void setLongAvailable(BigDecimal longAvailable) {
-            this.longAvailable = longAvailable;
+        public void setOffset(int offset) {
+            this.offset = offset;
         }
 
-        public BigDecimal getLongFrozen() {
-            return longFrozen;
+        public BigDecimal getAmount() {
+            return amount;
         }
 
-        public void setLongFrozen(BigDecimal longFrozen) {
-            this.longFrozen = longFrozen;
+        public void setAmount(BigDecimal amount) {
+            this.amount = amount;
         }
 
-        public BigDecimal getLongCostOpen() {
-            return longCostOpen;
+        public BigDecimal getAvailable() {
+            return available;
         }
 
-        public void setLongCostOpen(BigDecimal longCostOpen) {
-            this.longCostOpen = longCostOpen;
+        public void setAvailable(BigDecimal available) {
+            this.available = available;
         }
 
-        public BigDecimal getLongCostHold() {
-            return longCostHold;
+        public BigDecimal getFrozen() {
+            return frozen;
         }
 
-        public void setLongCostHold(BigDecimal longCostHold) {
-            this.longCostHold = longCostHold;
+        public void setFrozen(BigDecimal frozen) {
+            this.frozen = frozen;
+        }
+
+        public BigDecimal getCostOpen() {
+            return costOpen;
+        }
+
+        public void setCostOpen(BigDecimal costOpen) {
+            this.costOpen = costOpen;
+        }
+
+        public BigDecimal getCostHold() {
+            return costHold;
+        }
+
+        public void setCostHold(BigDecimal costHold) {
+            this.costHold = costHold;
         }
 
         public BigDecimal getLeverRate() {
@@ -142,46 +143,6 @@ public class FuturePositionRespDto implements Serializable {
 
         public void setLeverRate(BigDecimal leverRate) {
             this.leverRate = leverRate;
-        }
-
-        public BigDecimal getShortAmount() {
-            return shortAmount;
-        }
-
-        public void setShortAmount(BigDecimal shortAmount) {
-            this.shortAmount = shortAmount;
-        }
-
-        public BigDecimal getShortAvailable() {
-            return shortAvailable;
-        }
-
-        public void setShortAvailable(BigDecimal shortAvailable) {
-            this.shortAvailable = shortAvailable;
-        }
-
-        public BigDecimal getShortFrozen() {
-            return shortFrozen;
-        }
-
-        public void setShortFrozen(BigDecimal shortFrozen) {
-            this.shortFrozen = shortFrozen;
-        }
-
-        public BigDecimal getShortCostOpen() {
-            return shortCostOpen;
-        }
-
-        public void setShortCostOpen(BigDecimal shortCostOpen) {
-            this.shortCostOpen = shortCostOpen;
-        }
-
-        public BigDecimal getShortCostHold() {
-            return shortCostHold;
-        }
-
-        public void setShortCostHold(BigDecimal shortCostHold) {
-            this.shortCostHold = shortCostHold;
         }
     }
 }
