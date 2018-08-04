@@ -1,6 +1,14 @@
 package com.huobi.quantification.strategy.hedging;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +26,10 @@ import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
 import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
+import com.huobi.quantification.strategy.hedging.utils.CommonUtil;
 
 @Component
-public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {
+public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -41,11 +50,12 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 
 	@Autowired
 	JobManageService jobManageService;
+	private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
 		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-			logger.info("==>对冲程序初始化......");
+			logger.info("==交割期间对冲程序初始化......");
 			StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
 			if (group1.getEnable()) {
 				startWithConfig(group1);
@@ -61,49 +71,64 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void startWithConfig(StrategyProperties.ConfigGroup group) {
 		StartHedgingParam startHedgingParam = new StartHedgingParam();
-		logger.info("对冲注册job开始");
-
+		logger.info("交割期间对冲注册job开始");
 		jobManageService.addHuobiSpotAccountJob(startHedgingParam.getSpotAccountID(), "0/1 * * * * ?", true);
 		jobManageService.addHuobiSpotDepthJob(group.getSpot().getBaseCoin() + group.getSpot().getQuotCoin(), "step1",
 				"0/1 * * * * ?", true);
-		logger.info("注册job完成");
+		logger.info("交割期间注册job完成");
 		try {
 			initHedgingParam(group, startHedgingParam);
 		} catch (Exception e) {
-			logger.error("对冲启动初始化参数异常", e);
+			logger.error("交割期间对冲启动初始化参数异常", e);
 			return;
 		}
 		logger.info("对冲启动初始化参数为 {} ", JSON.toJSON(startHedgingParam));
-
 		// 等待3秒，保证job已经完全运行
 		sleep(1000 * 3);
-
-		logger.info("初始化对冲参数完成");
-		Thread thread = new Thread(() -> {
-			Long count = 1l;
-			while (true) {
-				count++;
-				Long begin;
+		logger.info("交割期间初始化对冲参数完成");
+		Long period = 60L;// t秒对冲一次
+		final String jobID = "my_job_1";
+		final AtomicInteger count = new AtomicInteger(0);
+		final Map<String, Future> futures = new HashMap<>();
+		final CountDownLatch countDownLatch = new CountDownLatch(1);
+		// 需要对冲的次数
+		Integer totalCount = (new BigDecimal(3300)).divide(new BigDecimal(period), 1, BigDecimal.ROUND_HALF_DOWN)
+				.intValue();
+		Future future = scheduler.scheduleWithFixedDelay(new Runnable() {
+			@Override
+			public void run() {
 				Long end;
-				begin = System.currentTimeMillis();
+				Long begin = System.currentTimeMillis();
+				Integer currentCount = count.get();
+				if (count.get() > totalCount && CommonUtil.isNormalHedgingDate()) {
+					Future future = futures.get(jobID);
+					if (future != null)
+						future.cancel(true);
+					countDownLatch.countDown();
+				}
 				try {
-					startHedgingService.startNormal(startHedgingParam);
+					startHedgingService.startSpecial(startHedgingParam, totalCount - currentCount);
 					end = System.currentTimeMillis();
-					logger.info("第{}次正常对冲期间耗时:{}s", count, (end - begin) / 1000);
-					sleep(1000 * 20);
+					logger.info("第{}次交割期间正常对冲期间耗时:{}s", currentCount, (end - begin) / 1000);
 				} catch (Throwable e) {
 					end = System.currentTimeMillis();
-					logger.info("第{}次对冲异常,耗时:{}s", count, (end - begin) / 1000);
-					logger.error("对冲期间出现异常,", e);
-					sleep(1000 * 5);
+					logger.info("第{}次交割期间对冲异常,耗时:{}s", count.get(), (end - begin) / 1000);
+					logger.error("交割期间对冲期间出现异常,", e);
+					sleep(1000 * 1);
 				}
-			}
-		});
-		thread.setDaemon(true);
-		thread.start();
 
+			}
+		}, 0, period, TimeUnit.SECONDS);
+
+		futures.put(jobID, future);
+		try {
+			countDownLatch.await();
+		} catch (InterruptedException e) {
+		}
+		scheduler.shutdown();
 	}
 
 	private StartHedgingParam initHedgingParam(StrategyProperties.ConfigGroup group,
