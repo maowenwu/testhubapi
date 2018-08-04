@@ -66,10 +66,10 @@ public class QuanJobServiceImpl implements QuanJobService {
 		QuanJob quanJob = new QuanJob();
 		quanJob.setUpdateDate(new Date());
 		quanJob.setId(id);
-		if (status) {
-			quanJob.setState(1);
-		}else {
+		if (status == null || !status) {
 			quanJob.setState(0);
+		}else {
+			quanJob.setState(1);
 		}
 		return quanJobDao.update(quanJob);
 	}

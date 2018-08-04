@@ -32,7 +32,7 @@ import cn.huobi.framework.util.Constants;
 @Controller
 @RequestMapping(value="/spotJob")
 public class SpotJobAction {
-private static final Logger log = LoggerFactory.getLogger(SpotJobAction.class);
+	private static final Logger log = LoggerFactory.getLogger(SpotJobAction.class);
 	
 	@Resource
 	private QuanJobService quanJobService;

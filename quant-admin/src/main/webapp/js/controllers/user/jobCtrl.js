@@ -16,7 +16,6 @@ angular.module('inspinia',['uiSwitch']).controller('jobCtrl',function($scope,$ht
 		columnDefs: [
             {field: 'exchangeId', displayName: '交易所id'},
             {field: 'jobType', displayName: '任务类型'},
-            {field: 'jobName', displayName: '任务名'},
             {field: 'jobParam', displayName: '任务所需参数'},
             {field: 'jobDesc', displayName: '任务描述'},
             {field: 'cron', displayName: 'cron表达式'},
@@ -24,7 +23,7 @@ angular.module('inspinia',['uiSwitch']).controller('jobCtrl',function($scope,$ht
             {field: 'updateDate', displayName: '更新时间'},
             {field: 'createDate', displayName: '创建时间'},
             {field: 'id', displayName: '操作', cellTemplate: 
-            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a>'
+            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a></div>'
             }
         ],
         onRegisterApi: function(gridApi){
