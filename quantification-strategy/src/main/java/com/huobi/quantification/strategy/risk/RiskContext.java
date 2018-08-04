@@ -39,10 +39,6 @@ public class RiskContext {
     @Autowired
     private SpotMarketService spotMarketService;
     @Autowired
-    private SpotOrderService spotOrderService;
-    @Autowired
-    private CommonService commonService;
-    @Autowired
     private StrategyRiskConfigMapper strategyRiskMapper;
     @Autowired
     private FutureContractService futureContractService;
