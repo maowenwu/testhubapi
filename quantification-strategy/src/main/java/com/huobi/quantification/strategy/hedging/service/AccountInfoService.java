@@ -14,7 +14,6 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.FuturePositionReqDto;
@@ -40,19 +39,9 @@ public class AccountInfoService {
 
 	@Autowired
 	FutureAccountService futureAccountService;
-	@Autowired
-	QuanAccountHistoryMapper quanAccountHistoryMapper;
 
-	// 获取Huobi现货账户指定账户余额信息 -- 减去了充值记录
-	public BigDecimal getHuobiSpotCurrentBalance(Long accountId, int exchangeId, String coin) {
-		DataBean dataBean = getBalance(accountId, exchangeId, coin);
-		BigDecimal available = dataBean.getAvailable();
-		BigDecimal initAmount = quanAccountHistoryMapper.getInitAmount(accountId, exchangeId, coin);
-		if (null == initAmount) {
-			initAmount = BigDecimal.ZERO;
-		}
-		return available.subtract(initAmount);
-	}
+
+
 
 	/**
 	 * 获取Huobi现货账户指定账户信息

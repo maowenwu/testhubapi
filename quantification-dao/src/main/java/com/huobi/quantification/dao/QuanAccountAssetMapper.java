@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanAccountAsset;
+import org.apache.ibatis.annotations.Param;
 
 public interface QuanAccountAssetMapper {
     int deleteByPrimaryKey(Long id);
@@ -14,4 +15,6 @@ public interface QuanAccountAssetMapper {
     int updateByPrimaryKeySelective(QuanAccountAsset record);
 
     int updateByPrimaryKey(QuanAccountAsset record);
+
+    QuanAccountAsset selectByAccountSourceIdCoinType(@Param("accountSourceId") Long accountSourceId, @Param("coinType") String coinType);
 }

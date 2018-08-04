@@ -21,6 +21,7 @@
         from quan_account_asset
         where id = #{id,jdbcType=BIGINT}
     </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_account_asset
     where id = #{id,jdbcType=BIGINT}
@@ -138,4 +139,11 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+    <select id="selectByAccountSourceIdCoinType" resultMap="BaseResultMap">
+        SELECT
+        a.id, a.account_id, a.coin_type, a.total, a.available, a.frozen, a.init, a.create_time, a.update_time
+        FROM quan_account_asset as a,quan_account as b where b.id=a.account_id and
+        b.account_source_id=#{accountSourceId} and
+        a.coin_type=#{coinType} and init='1'
+    </select>
 </mapper>

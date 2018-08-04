@@ -13,7 +13,6 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.StrategyApplication;
 import com.huobi.quantification.api.common.ExchangeConfigService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dto.ExchangeConfigResqDto;
 import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
 import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
@@ -25,8 +24,7 @@ public class HedgingTest {
 	@Autowired
 	StartHedgingService startHedgingService;
 
-	@Autowired
-	QuanAccountHistoryMapper quanAccountHistoryMapper;
+
 	@Autowired
 	ExchangeConfigService exchangeConfigService;
 
@@ -47,11 +45,7 @@ public class HedgingTest {
 		}
 	}
 
-	@Test
-	public void getAccountHistory() {
-		BigDecimal result = quanAccountHistoryMapper.getInitAmount(111L, 1, "btcusdt");
-		System.out.println("1=========" + result);
-	}
+
 
 	@Test
 	public void getAllExchangeConfig() {

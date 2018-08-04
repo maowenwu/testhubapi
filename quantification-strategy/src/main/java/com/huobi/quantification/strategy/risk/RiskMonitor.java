@@ -30,8 +30,14 @@ public class RiskMonitor {
 
     public void check() {
         this.riskConfig = riskContext.getStrategyRiskConfig();
+        BigDecimal currentPrice = riskContext.getSpotCurrentPrice();
+        if (currentPrice == null) {
+            logger.error("未获取到现货当前价格，方法退出");
+            return;
+        }
+        riskContext.setCurrPrice(currentPrice);
         checkRiskRate();
-        //checkNetPosition();
+        checkNetPosition();
         checkProfit();
     }
 

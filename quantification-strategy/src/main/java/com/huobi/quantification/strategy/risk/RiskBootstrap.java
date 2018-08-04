@@ -1,8 +1,6 @@
 package com.huobi.quantification.strategy.risk;
 
-import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.context.ApplicationContextHolder;
-import com.huobi.quantification.dto.ContractCodeDto;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,7 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext().getParent() == null) {
             logger.info("==>spring 容器启动");
-/*            StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
+            StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
             if (group1.getEnable()) {
                 startWithConfig(group1);
             }
@@ -33,7 +31,7 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
             StrategyProperties.ConfigGroup group3 = strategyProperties.getGroup3();
             if (group3.getEnable()) {
                 startWithConfig(group3);
-            }*/
+            }
         }
     }
 
@@ -48,6 +46,7 @@ public class RiskBootstrap implements ApplicationListener<ContextRefreshedEvent>
                     logger.error("监控保证金率期间出现异常", e);
                     sleep(5000);
                 }
+                sleep(5000);
             }
         });
         thread.setDaemon(true);

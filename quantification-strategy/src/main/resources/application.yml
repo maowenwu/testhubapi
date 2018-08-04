@@ -54,7 +54,7 @@ strategy:
       baseCoin: btc
       quotCoin: usdt
   group2:
-    enable: false
+    enable: true
     future:
       exchangeId: 0
       accountId: 101
@@ -64,7 +64,7 @@ strategy:
       lever: 10
     spot:
       exchangeId: 1
-      accountId: 101
+      accountId: 4232061
       baseCoin: btc
       quotCoin: usdt
   group3:

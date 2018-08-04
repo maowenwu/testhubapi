@@ -6,12 +6,13 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dao.QuanAccountHistoryMapper;
+import com.huobi.quantification.dao.QuanAccountAssetMapper;
+import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.StrategyFinanceHistoryMapper;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
-import com.huobi.quantification.dto.ContractCodeDto;
-import com.huobi.quantification.dto.FutureBalanceReqDto;
-import com.huobi.quantification.dto.FutureBalanceRespDto;
+import com.huobi.quantification.dto.*;
+import com.huobi.quantification.entity.QuanAccountAsset;
+import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
@@ -20,12 +21,10 @@ import com.huobi.quantification.strategy.order.entity.SpotBalance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 @Component
 public class RiskContext {
@@ -33,6 +32,8 @@ public class RiskContext {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private FutureAccountService futureAccountService;
+    @Autowired
+    private StrategyFinanceHistoryMapper financeHistoryMapper;
     @Autowired
     private SpotAccountService spotAccountService;
     @Autowired
@@ -44,9 +45,11 @@ public class RiskContext {
     @Autowired
     private StrategyRiskConfigMapper strategyRiskMapper;
     @Autowired
-    private QuanAccountHistoryMapper quanAccountHistoryMapper;
-    @Autowired
     private FutureContractService futureContractService;
+    @Autowired
+    private QuanAccountAssetMapper quanAccountAssetMapper;
+    @Autowired
+    private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -62,9 +65,15 @@ public class RiskContext {
 
 
     private BigDecimal currPrice;
-    private FutureRights futureRights;
-    private SpotCoin spotCoin;
-    private SpotUsdt spotUsdt;
+
+    private SpotCoin currSpotCoin;
+    private SpotUsdt currSpotUsdt;
+    private FutureRight currFutureRight;
+
+    private SpotCoin initialSpotCoin;
+    private SpotUsdt initialSpotUsdt;
+    private FutureRight initialFutureRight;
+
 
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config future = group.getFuture();
@@ -82,10 +91,90 @@ public class RiskContext {
         this.spotBaseCoin = spot.getBaseCoin();
         this.spotQuoteCoin = spot.getQuotCoin();
 
-        /*spotAccountService.saveFirstBalance(spotAccountId, spotExchangeId);
-        futureAccountService.saveAccountsInfo(futureAccountId, contractCode);
-        spotAccountService.saveFirstDebit(hashMap, future.getContractCode());*/
+        loadInitialProfit();
+        loadCurrProfit();
     }
+
+
+    /**
+     * 加载账户最初数据
+     * 币币账户期初余额BTC-币币账户期初净借贷BTC
+     * 币币账户期初余额USDT-币币账户期初净借贷USDT
+     * 合约账户期初权益BTC-合约账户期初净借贷BTC
+     */
+    private void loadInitialProfit() {
+        // 加载币币账户期初余额
+        QuanAccountAsset coinAccountAsset = quanAccountAssetMapper.selectByAccountSourceIdCoinType(spotAccountId, spotBaseCoin);
+        SpotBalance.Coin coin = new SpotBalance.Coin();
+        BeanUtils.copyProperties(coinAccountAsset, coin);
+        BigDecimal coinNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, true);
+        initialSpotCoin = new SpotCoin(coin, coinNetBorrow);
+        // 加载币币账户usdt期初余额
+        QuanAccountAsset usdtAccountAsset = quanAccountAssetMapper.selectByAccountSourceIdCoinType(spotAccountId, spotQuoteCoin);
+        SpotBalance.Usdt usdt = new SpotBalance.Usdt();
+        BeanUtils.copyProperties(usdtAccountAsset, usdt);
+        BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, true);
+        initialSpotUsdt = new SpotUsdt(usdt, usdtNetBorrow);
+        // 加载合约账户权益
+        QuanAccountFutureAsset futureAsset = quanAccountFutureAssetMapper.selectByAccountSourceIdCoinType(futureAccountId, futureCoinType);
+        FutureBalance futureBalance = new FutureBalance();
+        BeanUtils.copyProperties(futureAsset, futureBalance);
+        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureCoinType, true);
+        initialFutureRight = new FutureRight(futureBalance, futureNetBorrow);
+    }
+
+
+    private void loadCurrProfit() {
+        currSpotCoin = getCurrSpotCoin();
+        currSpotUsdt = getCurrSpotUsdt();
+        currFutureRight = getCurrFutureRight();
+    }
+
+    private SpotCoin getCurrSpotCoin() {
+        SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
+        reqDto.setExchangeId(spotExchangeId);
+        reqDto.setAccountId(spotAccountId);
+        reqDto.setCoinType(spotBaseCoin);
+        ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(reqDto);
+        SpotBalance.Coin coin = new SpotBalance.Coin();
+        if (result.isSuccess()) {
+            SpotBalanceRespDto.DataBean dataBean = result.getData().getData().get(spotBaseCoin);
+            BeanUtils.copyProperties(dataBean, coin);
+        }
+        BigDecimal coinNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, false);
+        return new SpotCoin(coin, coinNetBorrow);
+    }
+
+    private SpotUsdt getCurrSpotUsdt() {
+        SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
+        reqDto.setExchangeId(spotExchangeId);
+        reqDto.setAccountId(spotAccountId);
+        reqDto.setCoinType(spotQuoteCoin);
+        ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(reqDto);
+        SpotBalance.Usdt usdt = new SpotBalance.Usdt();
+        if (result.isSuccess()) {
+            SpotBalanceRespDto.DataBean dataBean = result.getData().getData().get(spotQuoteCoin);
+            BeanUtils.copyProperties(dataBean, usdt);
+        }
+        BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
+        return new SpotUsdt(usdt, usdtNetBorrow);
+    }
+
+    private FutureRight getCurrFutureRight() {
+        FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
+        reqDto.setExchangeId(futureExchangeId);
+        reqDto.setAccountId(futureAccountId);
+        reqDto.setCoinType(futureCoinType);
+        ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
+        FutureBalance futureBalance = new FutureBalance();
+        if (result.isSuccess()) {
+            FutureBalanceRespDto.DataBean dataBean = result.getData().getData().get(futureCoinType);
+            BeanUtils.copyProperties(dataBean, futureBalance);
+        }
+        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureCoinType, false);
+        return new FutureRight(futureBalance, futureNetBorrow);
+    }
+
 
     /**
      * 根据contractCode获取对应coin的保证金率
@@ -115,19 +204,14 @@ public class RiskContext {
      * @return
      */
     public BigDecimal getCurrProfit() {
-        SpotBalance spotBalance = getSpotBalance();
-        BigDecimal coinAvailable = spotBalance.getCoin().getAvailable();
-        BigDecimal usdtAvailable = spotBalance.getUsdt().getAvailable();
-        FutureBalance futureBalance = getFutureBalance();
-        BigDecimal futureRight = futureBalance.getMarginBalance();
 
-        BigDecimal spotBaseCoinNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, false);
-        BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
-        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureCoinType, false);
+        SpotCoin spotCoin = getCurrSpotCoin();
+        SpotUsdt spotUsdt = getCurrSpotUsdt();
+        FutureRight futureRight = getCurrFutureRight();
 
-        BigDecimal coinProfit = coinAvailable.subtract(spotBaseCoinNetBorrow).subtract(spotCoin.getNetBalance());
-        BigDecimal usdtProfit = usdtAvailable.subtract(usdtNetBorrow).subtract(spotUsdt.getNetBalance()).divide(currPrice, 18, BigDecimal.ROUND_DOWN);
-        BigDecimal futureProfit = futureRight.subtract(futureNetBorrow).subtract(futureRights.getNetBalance());
+        BigDecimal coinProfit = spotCoin.getNetBalance().subtract(this.currSpotCoin.getNetBalance());
+        BigDecimal usdtProfit = spotUsdt.getNetBalance().subtract(this.currSpotUsdt.getNetBalance()).divide(currPrice, 18, BigDecimal.ROUND_DOWN);
+        BigDecimal futureProfit = futureRight.getNetBalance().subtract(this.currFutureRight.getNetBalance());
 
         return coinProfit.add(usdtProfit).add(futureProfit);
     }
@@ -140,15 +224,22 @@ public class RiskContext {
      */
     public BigDecimal getTotalProfit() {
 
+        SpotCoin spotCoin = getCurrSpotCoin();
+        SpotUsdt spotUsdt = getCurrSpotUsdt();
+        FutureRight futureRight = getCurrFutureRight();
 
-        return null;
+        BigDecimal coinProfit = spotCoin.getNetBalance().subtract(initialSpotCoin.getNetBalance());
+        BigDecimal usdtProfit = spotUsdt.getNetBalance().subtract(initialSpotUsdt.getNetBalance()).divide(currPrice, 18, BigDecimal.ROUND_DOWN);
+        BigDecimal futureProfit = futureRight.getNetBalance().subtract(initialFutureRight.getNetBalance());
+
+        return coinProfit.add(usdtProfit).add(futureProfit);
     }
 
-    public static class FutureRights {
+    public static class FutureRight {
         private FutureBalance futureBalance;
         private BigDecimal futureNetBorrow;
 
-        public FutureRights(FutureBalance futureBalance, BigDecimal futureNetBorrow) {
+        public FutureRight(FutureBalance futureBalance, BigDecimal futureNetBorrow) {
             this.futureBalance = futureBalance;
             this.futureNetBorrow = futureNetBorrow;
         }
@@ -186,10 +277,6 @@ public class RiskContext {
         }
     }
 
-
-
-    @Autowired
-    private StrategyFinanceHistoryMapper financeHistoryMapper;
 
     private BigDecimal getNetBorrow(int exchangeId, Long accountId, String coinType, boolean initialOnly) {
         BigDecimal netBorrow = financeHistoryMapper.getNetBorrow(exchangeId, accountId, coinType, initialOnly);
@@ -261,70 +348,25 @@ public class RiskContext {
         }
     }
 
-    public FutureBalance getFutureBalance() {
+
+    public BigDecimal getSpotCurrentPrice() {
+        SpotCurrentPriceReqDto reqDto = new SpotCurrentPriceReqDto();
+        reqDto.setExchangeId(spotExchangeId);
+        reqDto.setBaseCoin(spotBaseCoin);
+        reqDto.setQuoteCoin(spotQuoteCoin);
         try {
-            FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
-            reqDto.setExchangeId(this.futureExchangeId);
-            reqDto.setAccountId(this.futureAccountId);
-            reqDto.setCoinType(this.futureCoinType);
-            ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
-            if (result.isSuccess()) {
-                Map<String, FutureBalanceRespDto.DataBean> data = result.getData().getData();
-                FutureBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
-                if (dataBean == null) {
-                    dataBean = data.get(futureCoinType.toUpperCase());
-                }
-                if (dataBean != null) {
-                    FutureBalance futureBalance = new FutureBalance();
-                    BeanUtils.copyProperties(dataBean, futureBalance);
-                    logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
-                    return futureBalance;
-                } else {
-                    logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
-                    return null;
-                }
-            } else {
-                logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}，失败原因={}", this.futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
-                return null;
+            ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
+            if (currentPrice.isSuccess()) {
+                logger.info("获取当前价格成功，spotExchangeId={}，spotBaseCoin={}，futureQuoteCoin={}", spotExchangeId, spotBaseCoin, spotQuoteCoin);
+                return currentPrice.getData().getCurrentPrice();
             }
-        } catch (BeansException e) {
-            logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType, e);
-            return null;
+        } catch (Exception e) {
+            logger.error("获取当前价格失败，spotExchangeId={}，spotBaseCoin={}，futureQuoteCoin={}", spotExchangeId, spotBaseCoin, spotQuoteCoin, e);
         }
+        return null;
     }
 
-    public SpotBalance getSpotBalance() {
-        SpotBalance spotBalance = new SpotBalance();
-
-        SpotBalance.Coin coin = new SpotBalance.Coin();
-        coin.setAvailable(BigDecimal.valueOf(9999999999999999L));
-        spotBalance.setCoin(coin);
-
-        SpotBalance.Usdt usdt = new SpotBalance.Usdt();
-        usdt.setAvailable(BigDecimal.valueOf(9999999999999999L));
-        spotBalance.setUsdt(usdt);
-        return spotBalance;
-
-        /*SpotBalance spotBalance = new SpotBalance();
-        try {
-            ServiceResult<SpotBalanceRespDto> balance = spotAccountService.getBalance(null);
-            Map<String, SpotBalanceRespDto.DataBean> data = balance.getData().getData();
-            SpotBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
-            if (dataBean != null) {
-                SpotBalance.Coin coin = new SpotBalance.Coin();
-                BeanUtils.copyProperties(dataBean, coin);
-                spotBalance.setCoin(coin);
-            }
-            SpotBalanceRespDto.DataBean usdtBean = data.get("usdt");
-            if (usdtBean != null) {
-                SpotBalance.Usdt usdt = new SpotBalance.Usdt();
-                BeanUtils.copyProperties(dataBean, usdt);
-                spotBalance.setUsdt(usdt);
-            }
-            return spotBalance;
-        } catch (BeansException e) {
-            logger.error("获取现货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", exchangeId, futureAccountId, futureCoinType, e);
-            return null;
-        }*/
+    public void setCurrPrice(BigDecimal currPrice) {
+        this.currPrice = currPrice;
     }
 }

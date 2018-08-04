@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -42,7 +43,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
                     // 从redis读取最新用户资产
                     List<QuanAccountAsset> assets = redisService.getAccountSpot(reqDto.getAccountId(),
                             reqDto.getExchangeId());
-                    if (CollectionUtils.isNotEmpty(assets)) {
+                    if (CollectionUtils.isEmpty(assets)) {
                         ThreadUtils.sleep10();
                         continue;
                     }
@@ -69,7 +70,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 
     private SpotBalanceRespDto parseBalance(String coinType, List<QuanAccountAsset> assets) {
         SpotBalanceRespDto respDto = new SpotBalanceRespDto();
-        Map<String, SpotBalanceRespDto.DataBean> dataMap = new HashMap<>();
+        Map<String, SpotBalanceRespDto.DataBean> dataMap = new ConcurrentHashMap<>();
         for (QuanAccountAsset quanAccountAsset : assets) {
             SpotBalanceRespDto.DataBean dataBean = new SpotBalanceRespDto.DataBean();
             dataBean.setAvailable(quanAccountAsset.getAvailable());

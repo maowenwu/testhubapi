@@ -47,8 +47,9 @@ public class CommonService {
 	public BigDecimal calUSDTPosition(StartHedgingParam startHedgingParam) {
 
 		// 2.1 获取火币现货账户期末USDT余额
-		BigDecimal spotCurrentUSDT = accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
-				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin());
+	/*	BigDecimal spotCurrentUSDT = accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
+				startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin());*/
+		BigDecimal spotCurrentUSDT=null;
 		// 2.2获取火币现货账户期初USDT余额 策略启动时计算
 		BigDecimal spotInitUSDT = startHedgingParam.getSpotInitUSDT();
 

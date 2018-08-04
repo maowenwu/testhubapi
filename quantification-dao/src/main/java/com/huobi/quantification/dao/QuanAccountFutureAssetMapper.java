@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
+import org.apache.ibatis.annotations.Param;
 
 public interface QuanAccountFutureAssetMapper {
     int deleteByPrimaryKey(Long id);
@@ -14,4 +15,6 @@ public interface QuanAccountFutureAssetMapper {
     int updateByPrimaryKeySelective(QuanAccountFutureAsset record);
 
     int updateByPrimaryKey(QuanAccountFutureAsset record);
+
+    QuanAccountFutureAsset selectByAccountSourceIdCoinType(@Param("accountSourceId") Long accountSourceId, @Param("coinType") String coinType);
 }
