@@ -31,143 +31,142 @@ import com.huobi.quantification.strategy.hedging.utils.CommonUtil;
 @Component
 public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    private StrategyProperties strategyProperties;
+	@Autowired
+	private StrategyProperties strategyProperties;
 
-    @Autowired
-    private StartHedgingService startHedgingService;
+	@Autowired
+	private StartHedgingService startHedgingService;
 
-    @Autowired
-    CommonService commonService;
+	@Autowired
+	CommonService commonService;
 
-    @Autowired
-    AccountInfoService accountInfoService;
+	@Autowired
+	AccountInfoService accountInfoService;
 
-    @Autowired
-    QuanAccountFuturePositionService quanAccountFuturePositionService;
+	@Autowired
+	QuanAccountFuturePositionService quanAccountFuturePositionService;
 
-    @Autowired
-    JobManageService jobManageService;
-    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	@Autowired
+	JobManageService jobManageService;
+	private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-    @Override
-    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-            logger.info("==交割期间对冲程序初始化......");
-			/*StrategyProperties.ConfigGroup group1 = strategyProperties.getGroup1();
-			if (group1.getEnable()) {
-				startWithConfig(group1);
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
+		if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
+			logger.info("==交割期间对冲程序初始化......");
+			/*
+			 * StrategyProperties.ConfigGroup group1 =
+			 * strategyProperties.getGroup1(); if (group1.getEnable()) {
+			 * startWithConfig(group1); } StrategyProperties.ConfigGroup group2
+			 * = strategyProperties.getGroup2(); if (group2.getEnable()) {
+			 * startWithConfig(group2); } StrategyProperties.ConfigGroup group3
+			 * = strategyProperties.getGroup3(); if (group3.getEnable()) {
+			 * startWithConfig(group3); }
+			 */
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void startWithConfig(StrategyProperties.ConfigGroup group) {
+		StartHedgingParam startHedgingParam = new StartHedgingParam();
+		logger.info("交割期间对冲注册job开始");
+		jobManageService.addHuobiSpotAccountJob(group.getSpot().getAccountId(), "0/1 * * * * ?", true);
+		jobManageService.addHuobiSpotDepthJob(group.getSpot().getBaseCoin() + group.getSpot().getQuotCoin(), "step1",
+				"0/1 * * * * ?", true);
+		jobManageService.addHuobiFuturePositionJob(group.getFuture().getAccountId(), "0/1 * * * * ?", true);
+		logger.info("交割期间注册job完成");
+		try {
+			initHedgingParam(group, startHedgingParam);
+		} catch (Exception e) {
+			logger.error("交割期间对冲启动初始化参数异常", e);
+			return;
+		}
+		logger.info("对冲启动初始化参数为 {} ", JSON.toJSON(startHedgingParam));
+		// 等待3秒，保证job已经完全运行
+		sleep(1000 * 3);
+		logger.info("交割期间初始化对冲参数完成");
+		Long period = 60L;// t秒对冲一次
+		final String jobID = "my_job_1";
+		final AtomicInteger count = new AtomicInteger(0);
+		final Map<String, Future> futures = new HashMap<>();
+		final CountDownLatch countDownLatch = new CountDownLatch(1);
+		// 需要对冲的次数
+		Integer totalCount = (BigDecimal.valueOf(3300)).divide(new BigDecimal(period), 1, BigDecimal.ROUND_HALF_DOWN)
+				.intValue();
+		Future future = scheduler.scheduleWithFixedDelay(new Runnable() {
+			@Override
+			public void run() {
+				Long end;
+				Long begin = System.currentTimeMillis();
+				if (CommonUtil.isNormalHedgingDate()) {
+					count.set(0);
+				}
+				try {
+					if (totalCount>count.get()||!CommonUtil.isNormalHedgingDate()) {
+						startHedgingService.startSpecial(startHedgingParam, totalCount - count.get());
+					}
+					end = System.currentTimeMillis();
+					logger.info("第{}次交割期间正常对冲期间耗时:{}s", count.get(), (end - begin) / 1000);
+				} catch (Throwable e) {
+					end = System.currentTimeMillis();
+					logger.info("第{}次交割期间对冲异常,耗时:{}s", count.get(), (end - begin) / 1000);
+					logger.error("交割期间对冲期间出现异常,", e);
+				}
+				count.getAndIncrement();
+
 			}
-			StrategyProperties.ConfigGroup group2 = strategyProperties.getGroup2();
-			if (group2.getEnable()) {
-				startWithConfig(group2);
-			}
-			StrategyProperties.ConfigGroup group3 = strategyProperties.getGroup3();
-			if (group3.getEnable()) {
-				startWithConfig(group3);
-			}*/
-        }
-    }
+		}, 0, period, TimeUnit.SECONDS);
+		futures.put(jobID, future);
+		try {
+			countDownLatch.await();
+		} catch (InterruptedException e) {
+		}
+		scheduler.shutdown();
+	}
 
-    @SuppressWarnings("rawtypes")
-    private void startWithConfig(StrategyProperties.ConfigGroup group) {
-        StartHedgingParam startHedgingParam = new StartHedgingParam();
-        logger.info("交割期间对冲注册job开始");
-        jobManageService.addHuobiSpotAccountJob(group.getSpot().getAccountId(), "0/1 * * * * ?", true);
-        jobManageService.addHuobiSpotDepthJob(group.getSpot().getBaseCoin() + group.getSpot().getQuotCoin(), "step1",
-                "0/1 * * * * ?", true);
-        jobManageService.addHuobiFuturePositionJob(group.getFuture().getAccountId(), "0/1 * * * * ?", true);
-        logger.info("交割期间注册job完成");
-        try {
-            initHedgingParam(group, startHedgingParam);
-        } catch (Exception e) {
-            logger.error("交割期间对冲启动初始化参数异常", e);
-            return;
-        }
-        logger.info("对冲启动初始化参数为 {} ", JSON.toJSON(startHedgingParam));
-        // 等待3秒，保证job已经完全运行
-        sleep(1000 * 3);
-        logger.info("交割期间初始化对冲参数完成");
-        Long period = 60L;// t秒对冲一次
-        final String jobID = "my_job_1";
-        final AtomicInteger count = new AtomicInteger(0);
-        final Map<String, Future> futures = new HashMap<>();
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        // 需要对冲的次数
-        Integer totalCount = (BigDecimal.valueOf(3300)).divide(new BigDecimal(period), 1, BigDecimal.ROUND_HALF_DOWN)
-                .intValue();
-        Future future = scheduler.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                Long end;
-                Long begin = System.currentTimeMillis();
-                Integer currentCount = count.get();
-                if (count.get() > totalCount && CommonUtil.isNormalHedgingDate()) {
-                    Future future = futures.get(jobID);
-                    if (future != null)
-                        future.cancel(true);
-                    countDownLatch.countDown();
-                }
-                try {
-                    startHedgingService.startSpecial(startHedgingParam, totalCount - currentCount);
-                    end = System.currentTimeMillis();
-                    logger.info("第{}次交割期间正常对冲期间耗时:{}s", currentCount, (end - begin) / 1000);
-                } catch (Throwable e) {
-                    end = System.currentTimeMillis();
-                    logger.info("第{}次交割期间对冲异常,耗时:{}s", count.get(), (end - begin) / 1000);
-                    logger.error("交割期间对冲期间出现异常,", e);
-                    sleep(1000 * 1);
-                }
+	private StartHedgingParam initHedgingParam(StrategyProperties.ConfigGroup group,
+			StartHedgingParam startHedgingParam) {
+		StrategyProperties.Config future = group.getFuture();
+		StrategyProperties.Config spot = group.getSpot();
+		StrategyHedgingConfig strategyHedgingConfig = commonService.getStrategyHedgingConfig(future.getExchangeId(),
+				future.getContractCode(), future.getBaseCoin());
+		startHedgingParam.setBaseCoin(spot.getBaseCoin());
+		startHedgingParam.setFeeRate(strategyHedgingConfig.getFormalityRate());
+		startHedgingParam.setQuoteCoin(spot.getQuotCoin());
+		startHedgingParam.setSlippage(strategyHedgingConfig.getSlippage());
+		startHedgingParam.setSpotAccountID(spot.getAccountId());
+		startHedgingParam.setSpotExchangeId(spot.getExchangeId());
+		startHedgingParam.setFutureAccountID(future.getAccountId());
+		startHedgingParam.setFutureExchangeId(future.getExchangeId());
+		startHedgingParam.setContractCode(future.getContractCode());
 
-            }
-        }, 0, period, TimeUnit.SECONDS);
-        futures.put(jobID, future);
-        try {
-            countDownLatch.await();
-        } catch (InterruptedException e) {
-        }
-        scheduler.shutdown();
-    }
+		// 策略启动时调用 可以理解为期初的值
+		// 2.1 获取火币现货账户期初USDT余额
+		/*
+		 * BigDecimal spotInitUSDT =
+		 * accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.
+		 * getSpotAccountID(), startHedgingParam.getSpotExchangeId(),
+		 * startHedgingParam.getQuoteCoin());
+		 */
+		// 2.2 获取火币期货账户期初净空仓金额USD
+		BigDecimal futureInitUSD = new BigDecimal(0);
+		futureInitUSD = accountInfoService.getFutureUSDPosition(startHedgingParam.getFutureAccountID(),
+				startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode());
 
-    private StartHedgingParam initHedgingParam(StrategyProperties.ConfigGroup group,
-                                               StartHedgingParam startHedgingParam) {
-        StrategyProperties.Config future = group.getFuture();
-        StrategyProperties.Config spot = group.getSpot();
-        StrategyHedgingConfig strategyHedgingConfig = commonService.getStrategyHedgingConfig(future.getExchangeId(),
-                future.getContractCode(), future.getBaseCoin());
-        startHedgingParam.setBaseCoin(spot.getBaseCoin());
-        startHedgingParam.setFeeRate(strategyHedgingConfig.getFormalityRate());
-        startHedgingParam.setQuoteCoin(spot.getQuotCoin());
-        startHedgingParam.setSlippage(strategyHedgingConfig.getSlippage());
-        startHedgingParam.setSpotAccountID(spot.getAccountId());
-        startHedgingParam.setSpotExchangeId(spot.getExchangeId());
-        startHedgingParam.setFutureAccountID(future.getAccountId());
-        startHedgingParam.setFutureExchangeId(future.getExchangeId());
-        startHedgingParam.setContractCode(future.getContractCode());
+		// startHedgingParam.setSpotInitUSDT(spotInitUSDT);
+		startHedgingParam.setFutureInitUSD(futureInitUSD);
 
-        // 策略启动时调用 可以理解为期初的值
-        // 2.1 获取火币现货账户期初USDT余额
-       /* BigDecimal spotInitUSDT = accountInfoService.getHuobiSpotCurrentBalance(startHedgingParam.getSpotAccountID(),
-                startHedgingParam.getSpotExchangeId(), startHedgingParam.getQuoteCoin());*/
-        // 2.2 获取火币期货账户期初净空仓金额USD
-        BigDecimal futureInitUSD = new BigDecimal(0);
-        futureInitUSD = accountInfoService.getFutureUSDPosition(startHedgingParam.getFutureAccountID(),
-                startHedgingParam.getFutureExchangeId(), startHedgingParam.getContractCode());
+		return startHedgingParam;
+	}
 
-        //startHedgingParam.setSpotInitUSDT(spotInitUSDT);
-        startHedgingParam.setFutureInitUSD(futureInitUSD);
+	private void sleep(long millis) {
+		try {
+			Thread.sleep(millis);
+		} catch (InterruptedException e1) {
 
-        return startHedgingParam;
-    }
-
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e1) {
-
-        }
-    }
+		}
+	}
 
 }

@@ -1,7 +1,7 @@
 /**
- * 用户中心-现货任务管理 
+ * 用户中心-摆单配置管理 
 */
-angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
+angular.module('inspinia',['uiSwitch']).controller('orderCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
 	$scope.baseInfo = {status:2};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
@@ -23,7 +23,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
             {field: 'updateDate', displayName: '更新时间'},
             {field: 'createDate', displayName: '创建时间'},
             {field: 'id', displayName: '操作', cellTemplate: 
-            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a></div>'
+            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a>'
             }
         ],
         onRegisterApi: function(gridApi){
@@ -38,7 +38,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
 	
 	//查询
 	$scope.query = function(){
-		$http.post('futureJob/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('spotJob/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
@@ -64,7 +64,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
 	//提交新的任务
 	$scope.submitNewInfo = function(){
 		$scope.submitting = true;
-		$http.post('futureJob/updateFutureJob.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('spotJob/updateSpotJob.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(msg){
 				$scope.notice(msg.msg);
 				$scope.submitting = false;

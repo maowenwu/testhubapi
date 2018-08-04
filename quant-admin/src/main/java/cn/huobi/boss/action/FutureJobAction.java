@@ -29,7 +29,7 @@ import cn.huobi.framework.util.Constants;
 @Controller
 @RequestMapping(value="/futureJob")
 public class FutureJobAction {
-private static final Logger log = LoggerFactory.getLogger(FutureJobAction.class);
+	private static final Logger log = LoggerFactory.getLogger(FutureJobAction.class);
 	
 	@Resource
 	private QuanFutureJobService quanFutureJobService;

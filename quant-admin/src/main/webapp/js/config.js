@@ -389,6 +389,60 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })
+        .state('user.risk', {
+        	url: "/user/risk",
+        	templateUrl: "views/user/risk.html",
+        	data: {pageTitle: '风控配置管理'},
+        	controller: "riskCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/riskCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
+        .state('user.hedging', {
+        	url: "/user/hedging",
+        	templateUrl: "views/user/hedging.html",
+        	data: {pageTitle: '对冲配置管理'},
+        	controller: "hedgingCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/hedgingCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
+        .state('user.order', {
+        	url: "/user/order",
+        	templateUrl: "views/user/order.html",
+        	data: {pageTitle: '摆单配置管理'},
+        	controller: "orderCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/orderCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
 }
 
 

@@ -1,12 +1,12 @@
 /**
- * 用户中心-现货任务管理 
+ * 用户中心-对冲配置管理 
 */
-angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
+angular.module('inspinia',['uiSwitch']).controller('hedgingCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
 	$scope.baseInfo = {status:2};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
-	$scope.jobGrid = {
-		data: 'jobData',
+	$scope.hedgingGrid = {
+		data: 'hedgingData',
 		enableSorting: true,
 		paginationPageSize: 10,
 		paginationPageSizes: [10, 20, 50, 100],
@@ -14,16 +14,13 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'exchangeId', displayName: '交易所id'},
-            {field: 'jobType', displayName: '任务类型'},
-            {field: 'jobParam', displayName: '任务所需参数'},
-            {field: 'jobDesc', displayName: '任务描述'},
-            {field: 'cron', displayName: 'cron表达式'},
-            {field: 'state', displayName: '任务状态'},
-            {field: 'updateDate', displayName: '更新时间'},
-            {field: 'createDate', displayName: '创建时间'},
+            {field: 'coin', displayName: '币种'},
+            {field: 'contractCode', displayName: '合约code'},
+            {field: 'contractType', displayName: '合约类型'},
+            {field: 'formalityRate', displayName: '手续费率'},
+            {field: 'slippage', displayName: '滑点'},
             {field: 'id', displayName: '操作', cellTemplate: 
-            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a></div>'
+            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a>'
             }
         ],
         onRegisterApi: function(gridApi){
@@ -38,14 +35,14 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
 	
 	//查询
 	$scope.query = function(){
-		$http.post('futureJob/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('hedging/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.jobData = page.result;
-					$scope.jobGrid.totalItems = page.totalCount;
+					$scope.hedgingData = page.result;
+					$scope.hedgingGrid.totalItems = page.totalCount;
 				}).error(function(){
 				});
 	}
@@ -64,7 +61,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
 	//提交新的任务
 	$scope.submitNewInfo = function(){
 		$scope.submitting = true;
-		$http.post('futureJob/updateFutureJob.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('hedging/updateHedging.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(msg){
 				$scope.notice(msg.msg);
 				$scope.submitting = false;
