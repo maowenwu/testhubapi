@@ -10,11 +10,15 @@ public interface QuanAccountFutureMapper {
 
     int insert(QuanAccountFuture record);
 
+    int insertSelective(QuanAccountFuture record);
+
     QuanAccountFuture selectByPrimaryKey(Long id);
 
-    List<QuanAccountFuture> selectAll();
+    int updateByPrimaryKeySelective(QuanAccountFuture record);
 
     int updateByPrimaryKey(QuanAccountFuture record);
 
-    List<Long> selectByExchangeId(@Param("exchangeId") int exchangeId);
+    Long selectAccountFutureId(@Param("exchangeId") int exchangeId, @Param("accountSourceId") long accountSourceId);
+
+    List<Long> selectByExchangeId(@Param("exchangeId")int exchangeId);
 }

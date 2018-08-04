@@ -2,34 +2,19 @@ package com.huobi.quantification.entity;
 
 public class QuanAccountFuture {
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-08-04 10:24:20
      */
     private Long id;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-08-04 10:24:20
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-02 14:32:37
+     * @mbg.generated 2018-08-04 10:24:20
      */
     private Long accountSourceId;
-
-    /**
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private String accountsType;
-
-    /**
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private String accountsName;
-
-    /**
-     * @mbg.generated 2018-07-02 14:32:37
-     */
-    private String state;
 
     public Long getId() {
         return id;
@@ -53,29 +38,5 @@ public class QuanAccountFuture {
 
     public void setAccountSourceId(Long accountSourceId) {
         this.accountSourceId = accountSourceId;
-    }
-
-    public String getAccountsType() {
-        return accountsType;
-    }
-
-    public void setAccountsType(String accountsType) {
-        this.accountsType = accountsType;
-    }
-
-    public String getAccountsName() {
-        return accountsName;
-    }
-
-    public void setAccountsName(String accountsName) {
-        this.accountsName = accountsName;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 }

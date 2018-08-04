@@ -5,10 +5,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
+import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,20 +76,22 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
         logger.info("[OkUserInfo][accountId={}]任务开始", accountId);
         long queryId = System.currentTimeMillis();
         String body = queryOkUserInfoByAPI(accountId);
-        QuanAccountFutureAsset futureAsset = new QuanAccountFutureAsset();
+      /*  QuanAccountFutureAsset futureAsset = new QuanAccountFutureAsset();
         futureAsset.setAccountSourceId(accountId);
         futureAsset.setQueryId(queryId);
         futureAsset.setRespBody(body);
         futureAsset.setCreateTime(now);
-        futureAsset.setUpdateTime(now);
+        futureAsset.setUpdateTime(now);*/
          /* for (QuanAccountFutureAsset asset : list) {
             asset.setQueryId(queryId);
             asset.setAccountSourceId(accountId);
             quanAccountFutureAssetMapper.insert(asset);
         }*/
-        redisService.saveUserInfoFuture(ExchangeEnum.OKEX.getExId(), accountId, futureAsset);
+        //redisService.saveUserInfoFuture(ExchangeEnum.OKEX.getExId(), accountId, futureAsset);
         logger.info("[OkUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
     }
+
+
 
     private String queryOkUserInfoByAPI(Long accountId) {
         Map<String, String> params = new HashMap<>();

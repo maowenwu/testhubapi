@@ -30,10 +30,8 @@ import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
-import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
 import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.response.future.OKFutureUserinfoResponse;
-import com.huobi.quantification.service.account.HuobiFutureAccountService;
 import com.huobi.quantification.service.redis.RedisService;
 
 @Service
@@ -45,9 +43,6 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private HuobiFutureAccountService huobiFutureAccountService;
-
     @Override
     public ServiceResult<FutureBalanceRespDto> getBalance(FutureBalanceReqDto reqDto) {
         ServiceResult<FutureBalanceRespDto> serviceResult = null;
@@ -55,14 +50,14 @@ public class FutureAccountServiceImpl implements FutureAccountService {
             FutureBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新资产
-                    QuanAccountFutureAsset futureAsset = redisService.getUserInfoFuture(reqDto.getExchangeId(), reqDto.getAccountId());
-                    if (futureAsset == null) {
+                    Map<String, QuanAccountFutureAsset> assetMap = redisService.getUserInfoFuture(reqDto.getExchangeId(), reqDto.getAccountId());
+                    if (assetMap == null) {
                         ThreadUtils.sleep10();
                         continue;
                     }
-                    Date ts = futureAsset.getUpdateTime();
+                    Date ts = new ArrayList<>(assetMap.values()).get(0).getUpdateTime();
                     if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
-                        return parseBalanceResp(reqDto.getExchangeId(), reqDto.getCoinType(), futureAsset);
+                        return parseBalance(reqDto.getCoinType(), assetMap);
                     } else {
                         ThreadUtils.sleep10();
                         continue;
@@ -81,24 +76,12 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         return serviceResult;
     }
 
-    private FutureBalanceRespDto parseBalanceResp(int exchangeId, String coinType, QuanAccountFutureAsset futureAsset) {
-        if (exchangeId == ExchangeEnum.OKEX.getExId()) {
-            return parseOkFutureBalanceResp(coinType, futureAsset);
-        } else if (exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
-            return parseHuobiFutureBalanceResp(coinType, futureAsset);
-        }
-        throw new UnsupportedOperationException("不支持该交易所" + exchangeId);
-    }
-
-    private FutureBalanceRespDto parseHuobiFutureBalanceResp(String coinType, QuanAccountFutureAsset futureAsset) {
+    private FutureBalanceRespDto parseBalance(String coinType, Map<String, QuanAccountFutureAsset> assetMap) {
         FutureBalanceRespDto respDto = new FutureBalanceRespDto();
-        respDto.setTs(futureAsset.getUpdateTime());
-        HuobiFutureUserInfoResponse userinfoResponse = JSON.parseObject(futureAsset.getRespBody(), HuobiFutureUserInfoResponse.class);
         Map<String, FutureBalanceRespDto.DataBean> data = new ConcurrentHashMap<>();
-        List<HuobiFutureUserInfoResponse.DataBean> dataBeans = userinfoResponse.getData();
-        for (HuobiFutureUserInfoResponse.DataBean dataBean : dataBeans) {
-            data.put(dataBean.getSymbol().toLowerCase(), convertToDto(dataBean));
-        }
+        assetMap.forEach((k, v) -> {
+            data.put(k, convertToDto(v));
+        });
         if (StringUtils.isNotEmpty(coinType)) {
             data.forEach((k, v) -> {
                 if (!k.equalsIgnoreCase(coinType)) {
@@ -110,22 +93,21 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         return respDto;
     }
 
-    private FutureBalanceRespDto.DataBean convertToDto(HuobiFutureUserInfoResponse.DataBean dataBean) {
+    private FutureBalanceRespDto.DataBean convertToDto(QuanAccountFutureAsset futureAsset) {
         FutureBalanceRespDto.DataBean respDto = new FutureBalanceRespDto.DataBean();
-
-        respDto.setMarginBalance(dataBean.getMarginBalance());
+        respDto.setMarginBalance(futureAsset.getMarginBalance());
         // 持仓保证金
-        respDto.setMarginPosition(dataBean.getMarginPosition());
-        respDto.setMarginFrozen(dataBean.getMarginFrozen());
-        respDto.setMarginAvailable(dataBean.getMarginAvailable());
-        respDto.setProfitReal(dataBean.getProfitReal());
-        respDto.setProfitUnreal(dataBean.getProfitUnreal());
-        respDto.setRiskRate(dataBean.getRiskRate());
+        respDto.setMarginPosition(futureAsset.getMarginPosition());
+        respDto.setMarginFrozen(futureAsset.getMarginFrozen());
+        respDto.setMarginAvailable(futureAsset.getMarginAvailable());
+        respDto.setProfitReal(futureAsset.getProfitReal());
+        respDto.setProfitUnreal(futureAsset.getProfitUnreal());
+        respDto.setRiskRate(futureAsset.getRiskRate());
         return respDto;
     }
 
     private FutureBalanceRespDto parseOkFutureBalanceResp(String coinType, QuanAccountFutureAsset futureAsset) {
-        FutureBalanceRespDto respDto = new FutureBalanceRespDto();
+        /*FutureBalanceRespDto respDto = new FutureBalanceRespDto();
         respDto.setTs(futureAsset.getUpdateTime());
         OKFutureUserinfoResponse userinfoResponse = JSON.parseObject(futureAsset.getRespBody(), OKFutureUserinfoResponse.class);
 
@@ -146,8 +128,8 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 }
             });
         }
-        respDto.setData(data);
-        return respDto;
+        respDto.setData(data);*/
+        return null;
     }
 
 

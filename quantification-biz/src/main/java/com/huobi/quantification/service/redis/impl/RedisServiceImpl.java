@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RedisServiceImpl implements RedisService {
@@ -16,14 +17,14 @@ public class RedisServiceImpl implements RedisService {
     private RedissonClient client;
 
     @Override
-    public void saveUserInfoFuture(int exchangeId, Long accountId, QuanAccountFutureAsset futureAsset) {
-        RMap<Long, QuanAccountFutureAsset> map = client.getMap("quan.account.future.userinfo." + exchangeId);
-        map.put(accountId, futureAsset);
+    public void saveUserInfoFuture(int exchangeId, Long accountId, Map<String, QuanAccountFutureAsset> assetMap) {
+        RMap<Long, Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.userinfo." + exchangeId);
+        map.put(accountId, assetMap);
     }
 
     @Override
-    public QuanAccountFutureAsset getUserInfoFuture(int exchangeId, Long accountId) {
-        RMap<Long, QuanAccountFutureAsset> map = client.getMap("quan.account.future.userinfo." + exchangeId);
+    public  Map<String, QuanAccountFutureAsset> getUserInfoFuture(int exchangeId, Long accountId) {
+        RMap<Long,  Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.userinfo." + exchangeId);
         return map.get(accountId);
     }
 

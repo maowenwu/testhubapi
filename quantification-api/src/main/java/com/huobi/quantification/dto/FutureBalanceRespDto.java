@@ -9,17 +9,7 @@ import java.util.Map;
 
 public class FutureBalanceRespDto implements Serializable {
 
-
-    private Date ts;
     private Map<String,DataBean> data;
-
-    public Date getTs() {
-        return ts;
-    }
-
-    public void setTs(Date ts) {
-        this.ts = ts;
-    }
 
     public Map<String, DataBean> getData() {
         return data;

@@ -1,45 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanAccountFutureMapper">
-  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFuture">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
-    <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId" />
-    <result column="accounts_type" jdbcType="VARCHAR" property="accountsType" />
-    <result column="accounts_name" jdbcType="VARCHAR" property="accountsName" />
-    <result column="state" jdbcType="VARCHAR" property="state" />
-  </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFuture">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
+        <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, exchange_id, account_source_id
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_account_future
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_account_future
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
-    insert into quan_account_future (id, exchange_id, account_source_id, 
-      accounts_type, accounts_name, state
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
+    insert into quan_account_future (id, exchange_id, account_source_id
       )
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{accountSourceId,jdbcType=BIGINT}, 
-      #{accountsType,jdbcType=VARCHAR}, #{accountsName,jdbcType=VARCHAR}, #{state,jdbcType=VARCHAR}
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{accountSourceId,jdbcType=BIGINT}
       )
   </insert>
-  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
+    <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
+        insert into quan_account_future
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="exchangeId != null">
+                exchange_id,
+            </if>
+            <if test="accountSourceId != null">
+                account_source_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="exchangeId != null">
+                #{exchangeId,jdbcType=INTEGER},
+            </if>
+            <if test="accountSourceId != null">
+                #{accountSourceId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
+        update quan_account_future
+        <set>
+            <if test="exchangeId != null">
+                exchange_id = #{exchangeId,jdbcType=INTEGER},
+            </if>
+            <if test="accountSourceId != null">
+                account_source_id = #{accountSourceId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
     update quan_account_future
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
-      account_source_id = #{accountSourceId,jdbcType=BIGINT},
-      accounts_type = #{accountsType,jdbcType=VARCHAR},
-      accounts_name = #{accountsName,jdbcType=VARCHAR},
-      state = #{state,jdbcType=VARCHAR}
+      account_source_id = #{accountSourceId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, exchange_id, account_source_id, accounts_type, accounts_name, state
-    from quan_account_future
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
-    select id, exchange_id, account_source_id, accounts_type, accounts_name, state
-    from quan_account_future
-  </select>
+    <select id="selectAccountFutureId" resultType="java.lang.Long">
+        SELECT id FROM quan_account_future where exchange_id=#{exchangeId} and account_source_id=#{accountSourceId}
+    </select>
     <select id="selectByExchangeId" resultType="java.lang.Long">
-      SELECT account_source_id FROM quan_account_future where exchange_id=#{exchangeId}
+        
     </select>
 </mapper>

@@ -8,8 +8,8 @@ import java.util.Map;
 public interface RedisService {
 
     /***************期货*********************/
-    void saveUserInfoFuture(int exchangeId, Long accountId, QuanAccountFutureAsset futureAsset);
-    QuanAccountFutureAsset getUserInfoFuture(int exchangeId, Long accountId);
+    void saveUserInfoFuture(int exchangeId, Long accountId, Map<String, QuanAccountFutureAsset> assetMap);
+    Map<String, QuanAccountFutureAsset> getUserInfoFuture(int exchangeId, Long accountId);
 
     void savePositionFuture(int exchangeId, Long accountId, QuanAccountFuturePosition position);
     QuanAccountFuturePosition getPositionFuture(int exchangeId, Long accountId);
