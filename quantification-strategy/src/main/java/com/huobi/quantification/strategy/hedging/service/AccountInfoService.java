@@ -149,7 +149,7 @@ public class AccountInfoService {
 	 * @param accountId
 	 * @param exchangeId
 	 * @param contractCode
-	 * @return
+	 * @return BigDecimal
 	 */
 	public BigDecimal getFutureUSDPosition(Long accountId, Integer exchangeId, String contractCode) {
 		// FuturePosition futurePosition = getFuturePosition(accountId, exchangeId,
