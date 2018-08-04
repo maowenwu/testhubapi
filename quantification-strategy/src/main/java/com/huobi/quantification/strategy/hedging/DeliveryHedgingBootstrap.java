@@ -29,7 +29,7 @@ import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
 import com.huobi.quantification.strategy.hedging.utils.CommonUtil;
 
 @Component
-public class SpecialHedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {
+public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
