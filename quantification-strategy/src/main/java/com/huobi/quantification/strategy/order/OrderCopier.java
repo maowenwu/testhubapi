@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Scope("prototype")
 @Component
-public class OrderCopy {
+public class OrderCopier {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
