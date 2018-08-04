@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.response.spot.HuobiSpotAccountResponse;
 import org.apache.commons.collections.CollectionUtils;
@@ -53,21 +54,38 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
 
 
     @Override
-    public void updateAccount(Long accountId) {
+    public void updateAccount(Long accountSourceId) {
         logger.info("[HuobiUserInfo]任务开始");
         Stopwatch started = Stopwatch.createStarted();
-        Map<String, String> params = new HashMap<>();
-        params.put("account-id", accountId + "");
-        String body = httpService.doHuobiGet(accountId,
-                HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
-        List<QuanAccountAsset> accountAssets = parseAndSaveAccounts(body);
+        Long accountId = quanAccountMapper.selectAccountId(ExchangeEnum.HUOBI.getExId(), accountSourceId);
+        if (accountId == null) {
+            logger.error("更新火币现货账户信息失败，账户不存在：accountSourceId={}", accountSourceId);
+            return;
+        }
+        String body = queryAccountByAPI(accountSourceId);
+        List<QuanAccountAsset> accountAssets = parseAccount(body);
+        boolean isSave = StorageSupport.checkSavepoint("updateAccountSpot");
+        accountAssets.stream().forEach(e -> {
+            e.setAccountId(accountId);
+            if (isSave) {
+                quanAccountAssetMapper.insert(e);
+            }
+        });
         if (CollectionUtils.isNotEmpty(accountAssets)) {
-            redisService.saveAccountSpot(accountAssets, ExchangeEnum.HUOBI.getExId(), accountId);
+            redisService.saveAccountSpot(accountAssets, ExchangeEnum.HUOBI.getExId(), accountSourceId);
         }
         logger.info("[HuobiUserInfo]任务结束，耗时：" + started);
     }
 
-    private List<QuanAccountAsset> parseAndSaveAccounts(String body) {
+    private String queryAccountByAPI(Long accountId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("account-id", accountId + "");
+        String body = httpService.doHuobiGet(accountId,
+                HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
+        return body;
+    }
+
+    private List<QuanAccountAsset> parseAccount(String body) {
         HuobiSpotAccountResponse response = JSON.parseObject(body, HuobiSpotAccountResponse.class);
         List<QuanAccountAsset> accountAssets = new ArrayList<>();
         if ("ok".equalsIgnoreCase(response.getStatus())) {
@@ -84,7 +102,6 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
                             accountAsset.setFrozen(e.getBalance());
                         }
                     });
-                    accountAsset.setAccountId(response.getData().getId());
                     accountAsset.setCoinType(k);
                     accountAsset.setTotal(accountAsset.getAvailable().add(accountAsset.getFrozen()));
                     accountAsset.setInit(0);

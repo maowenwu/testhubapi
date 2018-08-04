@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.alibaba.fastjson.JSON;
+import com.huobi.quantification.common.util.StorageSupport;
+import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
@@ -58,6 +60,9 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
     @Autowired
     private QuanAccountFutureMapper quanAccountFutureMapper;
 
+    @Autowired
+    private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
+
     @Override
     public void updateHuobiUserInfo(Long accountId) {
         Stopwatch started = Stopwatch.createStarted();
@@ -70,10 +75,14 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         long queryId = System.currentTimeMillis();
         String body = queryUserInfoByAPI(accountId);
         Map<String, QuanAccountFutureAsset> assetMap = parseHuobiFutureBalance(body);
+        boolean isSave = StorageSupport.checkSavepoint("updateHuobiUserInfo");
         assetMap.forEach((k, v) -> {
             v.setCoinType(k);
             v.setQueryId(queryId);
             v.setAccountFutureId(accountFutureId);
+            if (isSave) {
+                quanAccountFutureAssetMapper.insert(v);
+            }
         });
         redisService.saveUserInfoFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, assetMap);
         logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);

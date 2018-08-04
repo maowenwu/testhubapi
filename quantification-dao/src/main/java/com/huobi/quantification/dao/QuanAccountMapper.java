@@ -19,4 +19,6 @@ public interface QuanAccountMapper {
     int updateByPrimaryKey(QuanAccount record);
 
     List<Long> selectAccountByExchangeId(@Param("exId") int exId);
+
+    Long selectAccountId(@Param("exchangeId") int exchangeId, @Param("accountSourceId") Long accountSourceId);
 }

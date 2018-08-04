@@ -11,6 +11,8 @@ import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.redis.RedisService;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,69 +28,65 @@ import java.util.concurrent.TimeoutException;
 @Service
 public class SpotAccountServiceImpl implements SpotAccountService {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-	@Autowired
-	private RedisService redisService;
+    @Autowired
+    private RedisService redisService;
 
-	@Override
-	public ServiceResult<SpotBalanceRespDto> getBalance(SpotBalanceReqDto balanceReqDto) {
-		ServiceResult<SpotBalanceRespDto> serviceResult = null;
-		try {
-			SpotBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
-				while (!Thread.interrupted()) {
-					// 从redis读取最新用户资产
-					List<QuanAccountAsset> assets = redisService.getAccountSpot(balanceReqDto.getAccountId(),
-							balanceReqDto.getExchangeId());
-					if (assets == null) {
-						ThreadUtils.sleep10();
-						continue;
-					}
-					Date ts = assets.get(0).getUpdateTime();
-					if (DateUtils.withinMaxDelay(ts, balanceReqDto.getMaxDelay())) {
-						return parseBalanceResp(balanceReqDto.getExchangeId(), assets);
-					} else {
-						ThreadUtils.sleep10();
-						continue;
-					}
-				}
-				return null;
-			}, balanceReqDto.getTimeout());
-			serviceResult = ServiceResult.buildSuccessResult(balanceRespDto);
-		} catch (ExecutionException e) {
-			logger.error("执行异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-		} catch (TimeoutException e) {
-			logger.error("超时异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
-		}
-		return serviceResult;
-	}
+    @Override
+    public ServiceResult<SpotBalanceRespDto> getBalance(SpotBalanceReqDto reqDto) {
+        ServiceResult<SpotBalanceRespDto> serviceResult = null;
+        try {
+            SpotBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
+                while (!Thread.interrupted()) {
+                    // 从redis读取最新用户资产
+                    List<QuanAccountAsset> assets = redisService.getAccountSpot(reqDto.getAccountId(),
+                            reqDto.getExchangeId());
+                    if (CollectionUtils.isNotEmpty(assets)) {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                    Date ts = assets.get(0).getUpdateTime();
+                    if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
+                        return parseBalance(reqDto.getCoinType(), assets);
+                    } else {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                }
+                return null;
+            }, reqDto.getTimeout());
+            serviceResult = ServiceResult.buildSuccessResult(balanceRespDto);
+        } catch (ExecutionException e) {
+            logger.error("执行异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        } catch (TimeoutException e) {
+            logger.error("超时异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        }
+        return serviceResult;
+    }
 
-	private SpotBalanceRespDto parseBalanceResp(int exchangeId, List<QuanAccountAsset> assets) {
-		if (exchangeId == ExchangeEnum.HUOBI.getExId()) {
-			return parseHuobiSpotBalanceResp(assets);
-		}
-		throw new UnsupportedOperationException("不支持该交易所" + exchangeId);
-	}
+    private SpotBalanceRespDto parseBalance(String coinType, List<QuanAccountAsset> assets) {
+        SpotBalanceRespDto respDto = new SpotBalanceRespDto();
+        Map<String, SpotBalanceRespDto.DataBean> dataMap = new HashMap<>();
+        for (QuanAccountAsset quanAccountAsset : assets) {
+            SpotBalanceRespDto.DataBean dataBean = new SpotBalanceRespDto.DataBean();
+            dataBean.setAvailable(quanAccountAsset.getAvailable());
+            dataBean.setFrozen(quanAccountAsset.getFrozen());
+            dataBean.setTotal(quanAccountAsset.getTotal());
+            dataMap.put(quanAccountAsset.getCoinType(), dataBean);
+        }
+        if (StringUtils.isNotEmpty(coinType)) {
+            dataMap.forEach((k, v) -> {
+                if (!k.equalsIgnoreCase(coinType)) {
+                    dataMap.remove(k);
+                }
+            });
+        }
+        respDto.setData(dataMap);
+        return respDto;
+    }
 
-	private SpotBalanceRespDto parseHuobiSpotBalanceResp(List<QuanAccountAsset> assets) {
-		SpotBalanceRespDto respDto = new SpotBalanceRespDto();
-		respDto.setTs(assets.get(0).getUpdateTime());
-		Map<String, SpotBalanceRespDto.DataBean> dataBean = new HashMap<>();
-		for (QuanAccountAsset quanAccountAsset : assets) {
-			dataBean.put(quanAccountAsset.getCoinType(), convertToDto(quanAccountAsset));
-		}
-		respDto.setData(dataBean);
-		return respDto;
-	}
-
-	private SpotBalanceRespDto.DataBean convertToDto(QuanAccountAsset quanAccountAsset) {
-		SpotBalanceRespDto.DataBean respDto = new SpotBalanceRespDto.DataBean();
-		respDto.setAvailable(quanAccountAsset.getAvailable());
-		respDto.setFrozen(quanAccountAsset.getFrozen());
-		respDto.setTotal(quanAccountAsset.getTotal());
-		return respDto;
-	}
 
 }

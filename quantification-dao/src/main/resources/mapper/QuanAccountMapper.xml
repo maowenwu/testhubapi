@@ -73,4 +73,7 @@
     <select id="selectAccountByExchangeId" resultType="java.lang.Long">
         SELECT account_source_id FROM quan_account where exchange_id=#{exId}
     </select>
+    <select id="selectAccountId" resultType="java.lang.Long">
+        SELECT id FROM quan_account WHERE exchange_id=#{exchangeId} and account_source_id=#{accountSourceId}
+    </select>
 </mapper>
