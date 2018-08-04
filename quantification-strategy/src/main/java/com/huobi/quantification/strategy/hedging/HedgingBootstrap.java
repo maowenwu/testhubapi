@@ -13,9 +13,11 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
+import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
 import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
+import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
 
 @Component
 public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {
@@ -26,7 +28,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 	private StrategyProperties strategyProperties;
 
 	@Autowired
-	private StartHedging startHedging;
+	private StartHedgingService startHedgingService;
 
 	@Autowired
 	CommonService commonService;
@@ -87,7 +89,7 @@ public class HedgingBootstrap implements ApplicationListener<ContextRefreshedEve
 				Long end;
 				begin = System.currentTimeMillis();
 				try {
-					startHedging.startNormal(startHedgingParam);
+					startHedgingService.startNormal(startHedgingParam);
 					end = System.currentTimeMillis();
 					logger.info("第{}次正常对冲期间耗时:{}s", count, (end - begin) / 1000);
 					sleep(1000 * 20);

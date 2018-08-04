@@ -21,9 +21,11 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
+import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
 import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
 import com.huobi.quantification.strategy.hedging.service.CommonService;
 import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
+import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
 import com.huobi.quantification.strategy.hedging.utils.CommonUtil;
 
 @Component
@@ -35,7 +37,7 @@ public class SpecialHedgingBootstrap implements ApplicationListener<ContextRefre
 	private StrategyProperties strategyProperties;
 
 	@Autowired
-	private StartHedging startHedging;
+	private StartHedgingService startHedgingService;
 
 	@Autowired
 	CommonService commonService;
@@ -101,14 +103,14 @@ public class SpecialHedgingBootstrap implements ApplicationListener<ContextRefre
 				Long end;
 				Long begin = System.currentTimeMillis();
 				Integer currentCount = count.get();
-				if (count.get() > totalCount&&CommonUtil.isNormalHedgingDate()) {
+				if (count.get() > totalCount && CommonUtil.isNormalHedgingDate()) {
 					Future future = futures.get(jobID);
 					if (future != null)
 						future.cancel(true);
 					countDownLatch.countDown();
 				}
 				try {
-					startHedging.startSpecial(startHedgingParam, totalCount - currentCount);
+					startHedgingService.startSpecial(startHedgingParam, totalCount - currentCount);
 					end = System.currentTimeMillis();
 					logger.info("第{}次交割期间正常对冲期间耗时:{}s", currentCount, (end - begin) / 1000);
 				} catch (Throwable e) {

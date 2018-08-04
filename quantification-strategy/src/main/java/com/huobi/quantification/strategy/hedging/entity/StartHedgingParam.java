@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging;
+package com.huobi.quantification.strategy.hedging.entity;
 
 import java.math.BigDecimal;
 

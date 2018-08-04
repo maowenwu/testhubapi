@@ -16,7 +16,7 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanAccountHistoryMapper;
 import com.huobi.quantification.dto.ExchangeConfigResqDto;
 import com.huobi.quantification.strategy.hedging.StartHedging;
-import com.huobi.quantification.strategy.hedging.StartHedgingParam;
+import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
 
 @SpringBootTest(classes = StrategyApplication.class)
 @RunWith(SpringRunner.class)

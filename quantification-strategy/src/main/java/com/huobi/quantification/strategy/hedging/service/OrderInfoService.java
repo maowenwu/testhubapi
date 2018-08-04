@@ -14,7 +14,7 @@ import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.dto.SpotCancleAllOrderReqDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
-import com.huobi.quantification.strategy.hedging.StartHedgingParam;
+import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
 
 @Component
 public class OrderInfoService {

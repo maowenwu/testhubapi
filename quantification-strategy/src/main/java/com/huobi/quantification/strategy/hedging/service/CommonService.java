@@ -16,8 +16,8 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
-import com.huobi.quantification.strategy.hedging.StartHedgingParam;
 import com.huobi.quantification.strategy.hedging.config.ExchangeConfigHolder;
+import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
 
 @Service
 public class CommonService {
