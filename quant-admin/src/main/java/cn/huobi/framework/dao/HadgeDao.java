@@ -10,23 +10,25 @@ import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.jdbc.SQL;
 
+import com.huobi.quantification.entity.StrategyHedgeConfig;
+
 import cn.huobi.framework.db.pagination.Page;
 
 public interface HadgeDao {
 	@SelectProvider(type=SqlProvider.class, method="selectByCondition")
-	@ResultType(StrategyHedgingConfig.class)
-	List<StrategyHedgingConfig> selectByCondition(@Param("config")StrategyHedgingConfig config, Page<StrategyHedgingConfig> page);
+	@ResultType(StrategyHedgeConfig.class)
+	List<StrategyHedgeConfig> selectByCondition(@Param("config")StrategyHedgeConfig config, Page<StrategyHedgeConfig> page);
 	
 	@Delete("delete from strategy_hedge_config where id=#{id}")
 	int delete(@Param("id")Integer id);
 	
 	@Update("update strategy_hedge_config set formality_rate = #{config.formalityRate}, slippage = #{config.slippage} where id = #{config.id}")
-	int update(@Param("config")StrategyHedgingConfig config);
+	int update(@Param("config")StrategyHedgeConfig config);
 	
 	public class SqlProvider{
 		
 		public String selectByCondition(Map<String, Object> param){
-			final StrategyHedgingConfig config = (StrategyHedgingConfig) param.get("config");
+			final StrategyHedgeConfig config = (StrategyHedgeConfig) param.get("config");
 			return new SQL(){
 				{
 					SELECT("*");

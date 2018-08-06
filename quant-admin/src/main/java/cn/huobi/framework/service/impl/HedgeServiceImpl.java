@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.huobi.quantification.entity.StrategyHedgingConfig;
+import com.huobi.quantification.entity.StrategyHedgeConfig;
 
 import cn.huobi.framework.dao.HadgeDao;
 import cn.huobi.framework.db.pagination.Page;
@@ -20,13 +20,13 @@ public class HedgeServiceImpl implements HedgeService {
 	private HadgeDao hedgeDao;
 
 	@Override
-	public List<StrategyHedgingConfig> selectByCondition(StrategyHedgingConfig config,
-			Page<StrategyHedgingConfig> page) {
+	public List<StrategyHedgeConfig> selectByCondition(StrategyHedgeConfig config,
+			Page<StrategyHedgeConfig> page) {
 		return hedgeDao.selectByCondition(config, page);
 	}
 
 	@Override
-	public int updateHedge(StrategyHedgingConfig riskConfig) {
+	public int updateHedge(StrategyHedgeConfig riskConfig) {
 		return hedgeDao.update(riskConfig);
 	}
 }
