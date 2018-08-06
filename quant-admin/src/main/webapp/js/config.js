@@ -12,21 +12,21 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
     
     $httpProvider.interceptors.push(function($q,$rootScope){
         // toastr.options = {
-        //     "closeButton": false,
-        //     "debug": false,
-        //     "newestOnTop": false,
-        //     "progressBar": true,
-        //     "positionClass": "toast-top-right",
-        //     "preventDuplicates": false,
-        //     "onclick": null,
-        //     "showDuration": "300",
-        //     "hideDuration": "1000",
-        //     "timeOut": "8000",
-        //     "extendedTimeOut": "1000",
-        //     "showEasing": "swing",
-        //     "hideEasing": "linear",
-        //     "showMethod": "fadeIn",
-        //     "hideMethod": "fadeOut"
+        // "closeButton": false,
+        // "debug": false,
+        // "newestOnTop": false,
+        // "progressBar": true,
+        // "positionClass": "toast-top-right",
+        // "preventDuplicates": false,
+        // "onclick": null,
+        // "showDuration": "300",
+        // "hideDuration": "1000",
+        // "timeOut": "8000",
+        // "extendedTimeOut": "1000",
+        // "showEasing": "swing",
+        // "hideEasing": "linear",
+        // "showMethod": "fadeIn",
+        // "hideMethod": "fadeOut"
         // };
     	return {
 			responseError : function(rejection) {
@@ -34,24 +34,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
 					location.reload();
 				}  else if(rejection.status === 403){
                     // toastr["error"]("没权限");
-//                    $rootScope.back();
+// $rootScope.back();
 					alert('没有足够的权限')
 					history.go(-1)
-//					SweetAlert.swal({
-//			             title: "是否重新登录？",
-//			             text: "登录状态已过期，可以选择否，另外打开窗口再登录，回来继续操作",
-//			             type: "warning",
-//			             showCancelButton: true,
-//			             confirmButtonColor: "#DD6B55",
-//			             confirmButtonText: "确定",
-//			             cancelButtonText: "取消",
-//			             closeOnConfirm: true,
-//			             closeOnCancel: true },
-//				         function (isConfirm) {
-//				             if (isConfirm) {
-//				             	location.reload();
-//				             }
-//			         });
+// SweetAlert.swal({
+// title: "是否重新登录？",
+// text: "登录状态已过期，可以选择否，另外打开窗口再登录，回来继续操作",
+// type: "warning",
+// showCancelButton: true,
+// confirmButtonColor: "#DD6B55",
+// confirmButtonText: "确定",
+// cancelButtonText: "取消",
+// closeOnConfirm: true,
+// closeOnCancel: true },
+// function (isConfirm) {
+// if (isConfirm) {
+// location.reload();
+// }
+// });
 				} else if(rejection.status === 449){
 					location.reload();
 				}
@@ -114,14 +114,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             },{
                 name: 'fancybox',
                 files: ['css/plugins/fancybox/jquery.fancybox.css', 'js/plugins/fancybox/jquery.fancybox.pack.js']
-            }, {//新的时间控件
+            }, {// 新的时间控件
                 name: 'My97DatePicker',
                 files: ['js/plugins/My97DatePicker/WdatePicker.js']
             }
         ]
     });
     $stateProvider
-    	/*欢迎页面*/
+    	/* 欢迎页面 */
 	    .state('welcome', {
 	        abstract: true,
 	        url: "/welcome",
@@ -132,8 +132,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
 	        data: {pageTitle: '欢迎登陆'},
 	        templateUrl: "views/welcome.html",
 	    })
-	    //======================================================================== 
-        /*用户中心*/
+	    // ========================================================================
+        /* 用户中心 */
         .state('user', {
             abstract: true,
             url: "/user",
@@ -407,24 +407,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })
-        .state('user.hedge', {
-        	url: "/user/hedge",
-        	templateUrl: "views/user/hedge.html",
-        	data: {pageTitle: '对冲配置管理'},
-        	controller: "hedgeCtrl",
-        	resolve: {
-        		loadPlugin: function ($ocLazyLoad) {
-        			$ocLazyLoad.load('ui-switch');
-        			$ocLazyLoad.load('oitozero.ngSweetAlert');
-        		},
-        		deps: ["$ocLazyLoad",function($ocLazyLoad){
-        			return $ocLazyLoad.load({
-        				name: "inspinia",
-        				files: ["js/controllers/user/hedgeCtrl.js?ver="+verNo]
-        			});
-        		}]
-        	}
-        })
+
         .state('user.order', {
         	url: "/user/order",
         	templateUrl: "views/user/order.html",
@@ -443,6 +426,34 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })
+        
+        // ========================================================================
+        /* 配置中心 */
+       .state('config', {
+            abstract: true,
+            url: "/config",
+            templateUrl: "views/common/content.html",
+            })
+        
+       .state('config.hedge', {
+        	url: "/user/hedge",
+        	templateUrl: "views/config/hedge.html",
+        	data: {pageTitle: '对冲配置管理'},
+        	controller: "hedgeCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/hedgeCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
+        
 }
 
 
@@ -456,8 +467,8 @@ angular.module('inspinia')
             $rootScope.previousState_name = fromState.name;
             $rootScope.previousState_params = fromParams;
         });
-        //back button function called from back button's ng-click="back()"
-        $rootScope.back = function() {//实现返回的函数
+        // back button function called from back button's ng-click="back()"
+        $rootScope.back = function() {// 实现返回的函数
             $state.go($rootScope.previousState_name,$rootScope.previousState_params);
         };
     });
