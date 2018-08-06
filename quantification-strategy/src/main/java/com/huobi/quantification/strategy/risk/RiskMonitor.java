@@ -2,6 +2,7 @@ package com.huobi.quantification.strategy.risk;
 
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.StrategyRiskConfig;
+import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ public class RiskMonitor {
 
     @Autowired
     private RiskContext riskContext;
+    @Autowired
+    private CommContext commContext;
 
     private StrategyRiskConfig riskConfig;
 
@@ -79,7 +82,7 @@ public class RiskMonitor {
         BigDecimal level1 = riskConfig.getNetPositionLevel1();
         BigDecimal level2 = riskConfig.getNetPositionLevel2();
 
-        BigDecimal netPosition = riskContext.getNetPosition().abs();
+        BigDecimal netPosition = commContext.getNetPosition().abs();
         if (BigDecimalUtils.moreThanOrEquals(netPosition, level2)) {
             // 会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateNetCtrl(2, 2);

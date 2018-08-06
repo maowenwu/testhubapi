@@ -4,104 +4,113 @@ import java.math.BigDecimal;
 
 public class StrategyOrderConfig {
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private String contractType;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 合约手续费
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal contractFee;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 现货手续费
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal spotFee;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 交割手续费
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal deliveryFee;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 期望收益率
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal expectYields;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 合并价格
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal priceStep;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 最大卖单量
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private Integer asksMaxAmount;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 最大买单量
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private Integer bidsMaxAmount;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 卖单基准价格
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal asksBasisPrice;
 
     /**
-     * @mbg.generated 2018-07-30 19:46:41
+     * 买单基准价格
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal bidsBasisPrice;
 
     /**
      * 多仓数量最大限制（包括持仓和未成交的开仓单）
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal longMaxAmount;
 
     /**
      * 空仓数量最大限制（包括持仓和未成交的开仓单）
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal shortMaxAmount;
 
     /**
-     * 最大持仓量（用于控制开平方向）
-     * @mbg.generated 2018-07-30 19:46:41
+     * 最大多仓持仓
+     * @mbg.generated 2018-08-06 19:22:26
      */
-    private BigDecimal maxPositionAmount;
+    private BigDecimal maxLongPosition;
 
     /**
-     * 最小持仓量（用于控制开平方向）
-     * @mbg.generated 2018-07-30 19:46:41
+     * 最大空仓持仓
+     * @mbg.generated 2018-08-06 19:22:26
      */
-    private BigDecimal minPositionAmount;
+    private BigDecimal maxShortPosition;
 
     /**
      * 合约账户保留保证金
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal contractMarginReserve;
 
     /**
      * 币币账户保留币量
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal spotCoinReserve;
 
     /**
      * 币币账户保留资金
-     * @mbg.generated 2018-07-30 19:46:41
+     * @mbg.generated 2018-08-06 19:22:26
      */
     private BigDecimal spotBalanceReserve;
 
@@ -217,20 +226,20 @@ public class StrategyOrderConfig {
         this.shortMaxAmount = shortMaxAmount;
     }
 
-    public BigDecimal getMaxPositionAmount() {
-        return maxPositionAmount;
+    public BigDecimal getMaxLongPosition() {
+        return maxLongPosition;
     }
 
-    public void setMaxPositionAmount(BigDecimal maxPositionAmount) {
-        this.maxPositionAmount = maxPositionAmount;
+    public void setMaxLongPosition(BigDecimal maxLongPosition) {
+        this.maxLongPosition = maxLongPosition;
     }
 
-    public BigDecimal getMinPositionAmount() {
-        return minPositionAmount;
+    public BigDecimal getMaxShortPosition() {
+        return maxShortPosition;
     }
 
-    public void setMinPositionAmount(BigDecimal minPositionAmount) {
-        this.minPositionAmount = minPositionAmount;
+    public void setMaxShortPosition(BigDecimal maxShortPosition) {
+        this.maxShortPosition = maxShortPosition;
     }
 
     public BigDecimal getContractMarginReserve() {

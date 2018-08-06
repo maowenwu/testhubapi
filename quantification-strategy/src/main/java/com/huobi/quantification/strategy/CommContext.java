@@ -260,11 +260,13 @@ public class CommContext {
             SpotBalanceRespDto.DataBean coinBean = result.getData().getData().get(spotBaseCoin);
             SpotBalance.Coin coin = new SpotBalance.Coin();
             BeanUtils.copyProperties(coinBean, coin);
+            coin.setAvailable(BigDecimal.valueOf(999999999));
             spotBalance.setCoin(coin);
 
             SpotBalanceRespDto.DataBean usdtBean = result.getData().getData().get(spotQuoteCoin);
             SpotBalance.Usdt usdt = new SpotBalance.Usdt();
             BeanUtils.copyProperties(usdtBean, usdt);
+            usdt.setAvailable(BigDecimal.valueOf(999999999));
             spotBalance.setUsdt(usdt);
             return spotBalance;
         } else {

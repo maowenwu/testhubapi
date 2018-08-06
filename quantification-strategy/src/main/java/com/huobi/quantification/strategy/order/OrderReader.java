@@ -126,7 +126,7 @@ public class OrderReader {
         BigDecimal sum = BigDecimal.ZERO;
         FuturePosition.Position position = this.position.getLongPosi();
         if (position != null) {
-            sum = sum.add(position.getAvailable());
+            sum = sum.add(position.getAmount());
         }
         for (FutureOrder order : orders) {
             sum = sum.add(order.getOrderQty().subtract(order.getDealQty()));
@@ -144,7 +144,7 @@ public class OrderReader {
         List<FutureOrder> orders = new ArrayList<>();
         priceOffsetSellOrderMap.forEach((k, v) -> {
             v.forEach((k2, v2) -> {
-                if (k2 == OffsetEnum.LONG) {
+                if (k2 == OffsetEnum.SHORT) {
                     orders.addAll(v2);
                 }
             });
@@ -153,7 +153,7 @@ public class OrderReader {
         BigDecimal sum = BigDecimal.ZERO;
         FuturePosition.Position shortPosi = position.getShortPosi();
         if (shortPosi != null) {
-            sum = sum.add(shortPosi.getAvailable());
+            sum = sum.add(shortPosi.getAmount());
         }
         for (FutureOrder order : orders) {
             sum = sum.add(order.getOrderQty().subtract(order.getDealQty()));
