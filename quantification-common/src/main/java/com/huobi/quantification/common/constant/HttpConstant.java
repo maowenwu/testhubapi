@@ -54,11 +54,11 @@ public class HttpConstant {
     public static final String HUOBI_FUTURE_TRADE = "http://127.0.0.1:8882/market/history/trade";
 
     // account相关
-    public static final String HUOBI_FUTURE_ACCOUNTINFO = "http://www.huobiapps.com/contract-query/v1/contract_accountinfo";
-    public static final String HUOBI_FUTURE_POSITION = "http://www.huobiapps.com/contract-query/v1/contract_position";
+    public static final String HUOBI_FUTURE_ACCOUNT_INFO = "http://www.huobiapps.com/contract-query/v1/contract_account_info";
+    public static final String HUOBI_FUTURE_POSITION_INFO = "http://www.huobiapps.com/contract-query/v1/contract_position_info";
     public static final String HUOBI_FUTURE_ORDER = "http://www.huobiapps.com/contract-order/v1/contract_order";
     public static final String HUOBI_FUTURE_ORDER_CANCEL = "http://www.huobiapps.com/contract-order/v1/contract_cancel";
-    public static final String HUOBI_FUTURE_ORDER_INFO = "http://www.huobiapps.com/contract-query/v1/contract_orderinfo";
+    public static final String HUOBI_FUTURE_ORDER_INFO = "http://www.huobiapps.com/contract-query/v1/contract_order_info";
     public static final String HUOBI_FUTURE_ORDER_CANCEL_ALL = "http://www.huobiapps.com/contract-order/v1/contract_cancelall";
     public static final String HUOBI_CONTRACE_CODE = "http://www.huobiapps.com/contract-query/v1/contract_hold_amount";
 

@@ -144,29 +144,18 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 }
             });
         }
-        Map<String, FuturePositionRespDto.Position> resultData = new HashMap<>();
+        Map<String, List<FuturePositionRespDto.Position>> resultData = new HashMap<>();
         dataMap.forEach((k, v) -> {
-            FuturePositionRespDto.Position position = new FuturePositionRespDto.Position();
+            List<FuturePositionRespDto.Position> positionList = new ArrayList<>();
             v.stream().forEach(e -> {
-                FuturePositionRespDto.DataBean dataBean = new FuturePositionRespDto.DataBean();
-                BeanUtils.copyProperties(e, dataBean);
-                if (e.getOffset().equals(OffsetEnum.LONG.getOffset())) {
-                    position.setLongPosi(dataBean);
-                }
-                if (e.getOffset().equals(OffsetEnum.SHORT.getOffset())) {
-                    position.setShortPosi(dataBean);
-                }
+                FuturePositionRespDto.Position posi = new FuturePositionRespDto.Position();
+                BeanUtils.copyProperties(e, posi);
+                positionList.add(posi);
             });
-            resultData.put(k, position);
+            resultData.put(k, positionList);
         });
         return new FuturePositionRespDto(resultData);
     }
-
-
-
-
-
-
 
 
 }

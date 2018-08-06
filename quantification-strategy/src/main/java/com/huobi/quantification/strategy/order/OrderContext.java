@@ -208,19 +208,24 @@ public class OrderContext {
             reqDto.setCoinType(this.futureCoinType);
             ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
             if (result.isSuccess()) {
-                Map<String, FuturePositionRespDto.Position> dataMap = result.getData().getDataMap();
-                FuturePositionRespDto.Position position = dataMap.get(this.futureCoinType);
+                Map<String, List<FuturePositionRespDto.Position>> dataMap = result.getData().getDataMap();
+                List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureCoinType);
                 FuturePosition futurePosition = new FuturePosition();
                 // 如果为null，代表当前账户没有持仓
-                if (position == null) {
-                    FuturePosition.Position longPosi = new FuturePosition.Position();
-                    BeanUtils.copyProperties(position.getLongPosi(), longPosi);
+                if (CollectionUtils.isNotEmpty(positionList)) {
+                    positionList.stream().forEach(e -> {
+                        if (e.getContractType().equalsIgnoreCase(futureContractType) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
+                            FuturePosition.Position longPosi = new FuturePosition.Position();
+                            BeanUtils.copyProperties(e, longPosi);
+                            futurePosition.setLongPosi(longPosi);
+                        }
 
-                    FuturePosition.Position shortPosi = new FuturePosition.Position();
-                    BeanUtils.copyProperties(position.getShortPosi(), shortPosi);
-
-                    futurePosition.setLongPosi(longPosi);
-                    futurePosition.setShortPosi(shortPosi);
+                        if (e.getContractType().equalsIgnoreCase(futureContractType) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
+                            FuturePosition.Position shortPosi = new FuturePosition.Position();
+                            BeanUtils.copyProperties(e, shortPosi);
+                            futurePosition.setShortPosi(shortPosi);
+                        }
+                    });
                     logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
                     return futurePosition;
                 } else {

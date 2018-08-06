@@ -2,47 +2,26 @@ package com.huobi.quantification.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 public class FuturePositionRespDto implements Serializable {
 
-    private Map<String, Position> dataMap;
+    private Map<String, List<Position>> dataMap;
 
-    public FuturePositionRespDto(Map<String, Position> dataMap) {
+    public FuturePositionRespDto(Map<String, List<Position>> dataMap) {
         this.dataMap = dataMap;
     }
 
-    public Map<String, Position> getDataMap() {
+    public Map<String, List<Position>> getDataMap() {
         return dataMap;
     }
 
-    public void setDataMap(Map<String, Position> dataMap) {
+    public void setDataMap(Map<String, List<Position>> dataMap) {
         this.dataMap = dataMap;
     }
 
     public static class Position implements Serializable {
-        private DataBean longPosi;
-        private DataBean shortPosi;
-
-        public DataBean getLongPosi() {
-            return longPosi;
-        }
-
-        public void setLongPosi(DataBean longPosi) {
-            this.longPosi = longPosi;
-        }
-
-        public DataBean getShortPosi() {
-            return shortPosi;
-        }
-
-        public void setShortPosi(DataBean shortPosi) {
-            this.shortPosi = shortPosi;
-        }
-    }
-
-
-    public static class DataBean implements Serializable {
 
         private String baseCoin;
         private String quoteCoin;

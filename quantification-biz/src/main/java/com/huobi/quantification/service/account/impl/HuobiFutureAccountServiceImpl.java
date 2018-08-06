@@ -2,20 +2,16 @@ package com.huobi.quantification.service.account.impl;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
-import com.huobi.quantification.dto.FuturePositionRespDto;
-import com.huobi.quantification.entity.QuanAccountFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
 import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +45,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         HashMap<String, String> params = new HashMap<>();
         params.put("symbol", "BTC");
         params.put("userId", "156138");
-        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ACCOUNTINFO, params);
+        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ACCOUNT_INFO, params);
         return body;
     }
 
@@ -57,7 +53,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
     public String queryPositionByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("userId", "156138");
-        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_POSITION, params);
+        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_POSITION_INFO, params);
         return body;
     }
 
