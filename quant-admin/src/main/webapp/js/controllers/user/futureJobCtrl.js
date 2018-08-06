@@ -70,7 +70,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($sco
 				$scope.submitting = false;
 				if(msg.status){
 					$scope.query();
-					$("#addModal").modal("hide");
+					$("#editRoleModal").modal("hide");
 				}
 			}).error(function(){
 				$socpe.notice("提交失败");

@@ -456,6 +456,25 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         	}
         })        
         
+        .state('config.finance', {
+        	url: "/user/finance",
+        	templateUrl: "views/config/finance.html",
+        	data: {pageTitle: '摆单配置管理'},
+        	controller: "financeCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/financeCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
+        
 }
 
 
