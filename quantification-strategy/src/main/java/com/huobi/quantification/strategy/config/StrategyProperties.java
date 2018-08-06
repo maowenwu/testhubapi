@@ -8,32 +8,15 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "strategy")
 public class StrategyProperties {
 
-    private ConfigGroup group1 = new ConfigGroup();
-    private ConfigGroup group2 = new ConfigGroup();
-    private ConfigGroup group3 = new ConfigGroup();
+    private ConfigGroup group = new ConfigGroup();
 
-    public ConfigGroup getGroup1() {
-        return group1;
+
+    public ConfigGroup getGroup() {
+        return group;
     }
 
-    public void setGroup1(ConfigGroup group1) {
-        this.group1 = group1;
-    }
-
-    public ConfigGroup getGroup2() {
-        return group2;
-    }
-
-    public void setGroup2(ConfigGroup group2) {
-        this.group2 = group2;
-    }
-
-    public ConfigGroup getGroup3() {
-        return group3;
-    }
-
-    public void setGroup3(ConfigGroup group3) {
-        this.group3 = group3;
+    public void setGroup(ConfigGroup group) {
+        this.group = group;
     }
 
     public static class ConfigGroup {

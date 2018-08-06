@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging;
+package com.huobi.quantification.strategy.hedge;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -21,12 +21,12 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
-import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
-import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
-import com.huobi.quantification.strategy.hedging.service.CommonService;
-import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
-import com.huobi.quantification.strategy.hedging.service.StartHedgingService;
-import com.huobi.quantification.strategy.hedging.utils.CommonUtil;
+import com.huobi.quantification.strategy.hedge.entity.StartHedgingParam;
+import com.huobi.quantification.strategy.hedge.service.AccountInfoService;
+import com.huobi.quantification.strategy.hedge.service.CommonService;
+import com.huobi.quantification.strategy.hedge.service.QuanAccountFuturePositionService;
+import com.huobi.quantification.strategy.hedge.service.StartHedgingService;
+import com.huobi.quantification.strategy.hedge.utils.CommonUtil;
 
 @Component
 public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefreshedEvent> {

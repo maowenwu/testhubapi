@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging.utils;
+package com.huobi.quantification.strategy.hedge.utils;
 
 import java.util.Date;
 

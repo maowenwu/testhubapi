@@ -1,10 +1,8 @@
-package com.huobi.quantification.strategy.hedging.service;
+package com.huobi.quantification.strategy.hedge.service;
 
 import java.math.BigDecimal;
 import java.util.Map;
 
-import com.huobi.quantification.enums.OffsetEnum;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -17,8 +15,6 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
-import com.huobi.quantification.dto.FuturePositionReqDto;
-import com.huobi.quantification.dto.FuturePositionRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto.DataBean;

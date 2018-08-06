@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging.service;
+package com.huobi.quantification.strategy.hedge.service;
 
 import java.math.BigDecimal;
 
@@ -11,13 +11,8 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
-import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
-import com.huobi.quantification.strategy.hedging.service.AccountInfoService;
-import com.huobi.quantification.strategy.hedging.service.CommonService;
-import com.huobi.quantification.strategy.hedging.service.MarketInfoService;
-import com.huobi.quantification.strategy.hedging.service.OrderInfoService;
-import com.huobi.quantification.strategy.hedging.service.QuanAccountFuturePositionService;
-import com.huobi.quantification.strategy.hedging.utils.CommonUtil;
+import com.huobi.quantification.strategy.hedge.entity.StartHedgingParam;
+import com.huobi.quantification.strategy.hedge.utils.CommonUtil;
 
 @Component
 public class StartHedgingService {

@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging.service;
+package com.huobi.quantification.strategy.hedge.service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

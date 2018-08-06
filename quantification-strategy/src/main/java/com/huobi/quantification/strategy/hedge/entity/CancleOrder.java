@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging.entity;
+package com.huobi.quantification.strategy.hedge.entity;
 
 public class CancleOrder {
 	private Long accountId;

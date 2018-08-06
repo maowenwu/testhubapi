@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging.service;
+package com.huobi.quantification.strategy.hedge.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,8 +16,8 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
-import com.huobi.quantification.strategy.hedging.config.ExchangeConfigHolder;
-import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
+import com.huobi.quantification.strategy.hedge.config.ExchangeConfigHolder;
+import com.huobi.quantification.strategy.hedge.entity.StartHedgingParam;
 
 @Service
 public class CommonService {

@@ -1,8 +1,7 @@
-package com.huobi.quantification.strategy.hedging.service;
+package com.huobi.quantification.strategy.hedge.service;
 
 import java.math.BigDecimal;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

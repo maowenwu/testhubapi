@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedging.service;
+package com.huobi.quantification.strategy.hedge.service;
 
 import java.math.BigDecimal;
 import java.util.Map;
@@ -14,7 +14,7 @@ import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.dto.SpotCancleAllOrderReqDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
-import com.huobi.quantification.strategy.hedging.entity.StartHedgingParam;
+import com.huobi.quantification.strategy.hedge.entity.StartHedgingParam;
 
 @Component
 public class OrderInfoService {
