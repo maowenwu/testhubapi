@@ -407,11 +407,11 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })
-        .state('user.hedging', {
-        	url: "/user/hedging",
-        	templateUrl: "views/user/hedging.html",
+        .state('user.hedge', {
+        	url: "/user/hedge",
+        	templateUrl: "views/user/hedge.html",
         	data: {pageTitle: '对冲配置管理'},
-        	controller: "hedgingCtrl",
+        	controller: "hedgeCtrl",
         	resolve: {
         		loadPlugin: function ($ocLazyLoad) {
         			$ocLazyLoad.load('ui-switch');
@@ -420,7 +420,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		deps: ["$ocLazyLoad",function($ocLazyLoad){
         			return $ocLazyLoad.load({
         				name: "inspinia",
-        				files: ["js/controllers/user/hedgingCtrl.js?ver="+verNo]
+        				files: ["js/controllers/user/hedgeCtrl.js?ver="+verNo]
         			});
         		}]
         	}

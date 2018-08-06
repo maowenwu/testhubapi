@@ -1,12 +1,12 @@
 /**
  * 用户中心-对冲配置管理 
 */
-angular.module('inspinia',['uiSwitch']).controller('hedgingCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
+angular.module('inspinia',['uiSwitch']).controller('hedgeCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
 	$scope.baseInfo = {status:2};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
-	$scope.hedgingGrid = {
-		data: 'hedgingData',
+	$scope.hedgeGrid = {
+		data: 'hedgeData',
 		enableSorting: true,
 		paginationPageSize: 10,
 		paginationPageSizes: [10, 20, 50, 100],
@@ -35,14 +35,14 @@ angular.module('inspinia',['uiSwitch']).controller('hedgingCtrl',function($scope
 	
 	//查询
 	$scope.query = function(){
-		$http.post('hedge/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('hedge/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.hedgingData = page.result;
-					$scope.hedgingGrid.totalItems = page.totalCount;
+					$scope.hedgeData = page.result;
+					$scope.hedgeGrid.totalItems = page.totalCount;
 				}).error(function(){
 				});
 	}
@@ -61,7 +61,7 @@ angular.module('inspinia',['uiSwitch']).controller('hedgingCtrl',function($scope
 	//提交新的任务
 	$scope.submitNewInfo = function(){
 		$scope.submitting = true;
-		$http.post('hedge/updateHedging.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('hedge/updateHedge.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(msg){
 				$scope.notice(msg.msg);
 				$scope.submitting = false;

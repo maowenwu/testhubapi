@@ -8,25 +8,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.huobi.quantification.entity.StrategyHedgingConfig;
 
-import cn.huobi.framework.dao.HadgingDao;
+import cn.huobi.framework.dao.HadgeDao;
 import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.service.HedgingService;
+import cn.huobi.framework.service.HedgeService;
 
-@Service("hedgingService")
+@Service("hedgeService")
 @Transactional
-public class HedgingServiceImpl implements HedgingService {
+public class HedgeServiceImpl implements HedgeService {
 	
 	@Autowired
-	private HadgingDao hedgingDao;
+	private HadgeDao hedgeDao;
 
 	@Override
-	public List<StrategyHedgingConfig> selectDicByCondition(StrategyHedgingConfig config,
+	public List<StrategyHedgingConfig> selectByCondition(StrategyHedgingConfig config,
 			Page<StrategyHedgingConfig> page) {
-		return hedgingDao.selectDicByCondition(config, page);
+		return hedgeDao.selectByCondition(config, page);
 	}
 
 	@Override
-	public int updateHedging(StrategyHedgingConfig riskConfig) {
-		return hedgingDao.update(riskConfig);
+	public int updateHedge(StrategyHedgingConfig riskConfig) {
+		return hedgeDao.update(riskConfig);
 	}
 }

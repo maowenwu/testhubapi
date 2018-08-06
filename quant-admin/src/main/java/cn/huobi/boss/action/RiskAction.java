@@ -33,13 +33,13 @@ public class RiskAction {
 	private RiskService riskService;
 	
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
-	@RequestMapping(value="/selectJobByCondition.do")
+	@RequestMapping(value="/selectByCondition.do")
 	@ResponseBody
 	public Page<StrategyRiskConfig> selectJobByCondition(@RequestParam("baseInfo") String baseInfo ,
                                               @Param("page") Page<StrategyRiskConfig> page) throws Exception {
 		StrategyRiskConfig config = JSONObject.parseObject(baseInfo, StrategyRiskConfig.class);
 		try {
-			List<StrategyRiskConfig> configs = riskService.selectDicByCondition(config, page);
+			List<StrategyRiskConfig> configs = riskService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
 			log.error("条件查询风控配置失败");
@@ -55,7 +55,7 @@ public class RiskAction {
 		Map<String, Object> msg = new HashMap<>();
 		StrategyRiskConfig riskConfig = JSON.parseObject(newInfo, StrategyRiskConfig.class);
 		try {
-			int status = riskService.updateSpotJob(riskConfig);
+			int status = riskService.updateRisk(riskConfig);
 			if (status > 0) {
 				msg.put("status", true);
 				msg.put("msg", "更新成功！");

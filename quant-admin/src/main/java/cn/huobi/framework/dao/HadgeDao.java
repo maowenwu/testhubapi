@@ -14,25 +14,25 @@ import com.huobi.quantification.entity.StrategyHedgingConfig;
 
 import cn.huobi.framework.db.pagination.Page;
 
-public interface HadgingDao {
-	@SelectProvider(type=SqlProvider.class, method="selectDicByCondition")
+public interface HadgeDao {
+	@SelectProvider(type=SqlProvider.class, method="selectByCondition")
 	@ResultType(StrategyHedgingConfig.class)
-	List<StrategyHedgingConfig> selectDicByCondition(@Param("config")StrategyHedgingConfig config, Page<StrategyHedgingConfig> page);
+	List<StrategyHedgingConfig> selectByCondition(@Param("config")StrategyHedgingConfig config, Page<StrategyHedgingConfig> page);
 	
-	@Delete("delete from strategy_hedging_config where id=#{id}")
+	@Delete("delete from strategy_hedge_config where id=#{id}")
 	int delete(@Param("id")Integer id);
 	
-	@Update("update strategy_hedging_config set formality_rate = #{config.formalityRate}, slippage = #{config.slippage} where id = #{config.id}")
+	@Update("update strategy_hedge_config set formality_rate = #{config.formalityRate}, slippage = #{config.slippage} where id = #{config.id}")
 	int update(@Param("config")StrategyHedgingConfig config);
 	
 	public class SqlProvider{
 		
-		public String selectDicByCondition(Map<String, Object> param){
+		public String selectByCondition(Map<String, Object> param){
 			final StrategyHedgingConfig config = (StrategyHedgingConfig) param.get("config");
 			return new SQL(){
 				{
 					SELECT("*");
-					FROM("strategy_hedging_config");
+					FROM("strategy_hedge_config");
 //					if(job!=null && job.getExchangeId() != null){
 //						WHERE("exchange_id = #{job.exchangeId}");
 //					}

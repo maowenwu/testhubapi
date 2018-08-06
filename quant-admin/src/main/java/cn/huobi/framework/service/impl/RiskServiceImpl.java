@@ -20,12 +20,12 @@ public class RiskServiceImpl implements RiskService {
 	private RiskDao riskDao;
 
 	@Override
-	public List<StrategyRiskConfig> selectDicByCondition(StrategyRiskConfig config, Page<StrategyRiskConfig> page) {
+	public List<StrategyRiskConfig> selectByCondition(StrategyRiskConfig config, Page<StrategyRiskConfig> page) {
 		return riskDao.selectDicByCondition(config,page);
 	}
 
 	@Override
-	public int updateSpotJob(StrategyRiskConfig riskConfig) {
+	public int updateRisk(StrategyRiskConfig riskConfig) {
 		return riskDao.update(riskConfig);
 	}
 
