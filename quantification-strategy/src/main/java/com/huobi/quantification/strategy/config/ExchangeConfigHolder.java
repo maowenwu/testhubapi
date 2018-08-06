@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.hedge.config;
+package com.huobi.quantification.strategy.config;
 
 import java.util.List;
 import java.util.Map;

@@ -2,7 +2,7 @@ package com.huobi.quantification.strategy.order;
 
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
-import com.huobi.quantification.strategy.order.entity.DepthBook;
+import com.huobi.quantification.strategy.entity.DepthBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

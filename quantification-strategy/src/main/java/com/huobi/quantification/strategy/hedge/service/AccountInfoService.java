@@ -18,8 +18,8 @@ import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto.DataBean;
-import com.huobi.quantification.strategy.order.entity.FutureBalance;
-import com.huobi.quantification.strategy.order.entity.FuturePosition;
+import com.huobi.quantification.strategy.entity.FutureBalance;
+import com.huobi.quantification.strategy.entity.FuturePosition;
 
 /**
  * 获取账户信息

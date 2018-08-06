@@ -16,7 +16,7 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgingConfig;
-import com.huobi.quantification.strategy.hedge.config.ExchangeConfigHolder;
+import com.huobi.quantification.strategy.config.ExchangeConfigHolder;
 import com.huobi.quantification.strategy.hedge.entity.StartHedgingParam;
 
 @Service

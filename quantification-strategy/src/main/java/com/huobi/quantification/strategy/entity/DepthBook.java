@@ -1,4 +1,4 @@
-package com.huobi.quantification.strategy.order.entity;
+package com.huobi.quantification.strategy.entity;
 
 import com.huobi.quantification.common.util.BigDecimalUtils;
 

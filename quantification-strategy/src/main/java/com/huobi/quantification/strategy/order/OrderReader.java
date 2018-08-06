@@ -2,8 +2,8 @@ package com.huobi.quantification.strategy.order;
 
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
-import com.huobi.quantification.strategy.order.entity.FutureOrder;
-import com.huobi.quantification.strategy.order.entity.FuturePosition;
+import com.huobi.quantification.strategy.entity.FutureOrder;
+import com.huobi.quantification.strategy.entity.FuturePosition;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.math.BigDecimal;
