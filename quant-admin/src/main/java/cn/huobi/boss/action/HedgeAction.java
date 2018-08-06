@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.huobi.quantification.entity.StrategyHedgeConfig;
 
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
@@ -34,11 +35,11 @@ public class HedgeAction {
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value="/selectByCondition.do")
 	@ResponseBody
-	public Page<StrategyHedgingConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<StrategyHedgingConfig> page) throws Exception {
-		StrategyHedgingConfig config = JSONObject.parseObject(baseInfo, StrategyHedgingConfig.class);
+	public Page<StrategyHedgeConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
+                                              @Param("page") Page<StrategyHedgeConfig> page) throws Exception {
+		StrategyHedgeConfig config = JSONObject.parseObject(baseInfo, StrategyHedgeConfig.class);
 		try {
-			List<StrategyHedgingConfig> configs = hedgeService.selectByCondition(config, page);
+			List<StrategyHedgeConfig> configs = hedgeService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
 			log.error("条件查询风控配置失败");
@@ -52,7 +53,7 @@ public class HedgeAction {
 	@SystemLog(description = "更新配置",operCode="hedge.update")
 	public Map<String, Object> updateSpotJob(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
-		StrategyHedgingConfig riskConfig = JSON.parseObject(newInfo, StrategyHedgingConfig.class);
+		StrategyHedgeConfig riskConfig = JSON.parseObject(newInfo, StrategyHedgeConfig.class);
 		log.error(newInfo);
 		try {
 			int status = hedgeService.updateHedge(riskConfig);
