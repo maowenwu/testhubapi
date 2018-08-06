@@ -19,8 +19,17 @@ public class StartHedgingParam {
 	private BigDecimal slippage;// 滑点
 	private BigDecimal feeRate;// 手续费率
 	private String contractCode;// 合约code
-	private BigDecimal spotInitUSDT;//币币账户期初余额USDT
-	private BigDecimal futureInitUSD;//合约账户期初净空仓金额USD
+	private BigDecimal spotInitUSDT;// 币币账户期初余额USDT
+	private BigDecimal futureInitUSD;// 合约账户期初净空仓金额USD
+	private Integer period;// 交割对冲周期
+
+	public Integer getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Integer period) {
+		this.period = period;
+	}
 
 	public String getBaseCoin() {
 		return baseCoin;
