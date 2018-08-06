@@ -408,8 +408,8 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         	}
         })
         .state('user.hedging', {
-        	url: "/user/hedge",
-        	templateUrl: "views/user/hedge.html",
+        	url: "/user/hedging",
+        	templateUrl: "views/user/hedging.html",
         	data: {pageTitle: '对冲配置管理'},
         	controller: "hedgingCtrl",
         	resolve: {
