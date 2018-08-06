@@ -1,7 +1,6 @@
 package com.huobi.quantification.strategy.hedging.service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -96,35 +95,43 @@ public class AccountInfoService {
 	 * @param exchangeId
 	 * @param contractCode
 	 */
-	public FuturePosition getFuturePosition(Long accountId, Integer exchangeId, String contractCode) {
+	public FuturePosition getFuturePosition(Long accountId, Integer exchangeId, String contractType) {
 		try {
 			FuturePositionReqDto reqDto = new FuturePositionReqDto();
 			reqDto.setExchangeId(exchangeId);
 			reqDto.setAccountId(accountId);
-			reqDto.setCoinType(contractCode);
+			reqDto.setCoinType(contractType);
 			reqDto.setTimeout(100);
 			reqDto.setMaxDelay(3000);
-			ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
-			Map<String, List<FuturePositionRespDto.DataBean>> data = position.getData().getData();
-			List<FuturePositionRespDto.DataBean> beanList = data.get(contractCode);
-			FuturePosition futurePosition = new FuturePosition();
-			beanList.forEach(e -> {
-				if (e.getLongAmount() != null) {
-					FuturePosition.Position longPosi = new FuturePosition.Position();
-					BeanUtils.copyProperties(e, longPosi);
-					futurePosition.setPosition(longPosi);
-				}
-				if (e.getShortAmount() != null) {
-					FuturePosition.ShortPosi shortPosi = new FuturePosition.ShortPosi();
-					BeanUtils.copyProperties(e, shortPosi);
-					futurePosition.setShortPosi(shortPosi);
-				}
-			});
-			return futurePosition;
-		} catch (Exception e) {
-			logger.error("获取期货持仓信息失败，exchangeId={}，accountId={}，coinType={}", exchangeId, accountId, contractCode, e);
-			return null;
-		}
+            ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
+            if (result.isSuccess()) {
+                Map<String, FuturePositionRespDto.Position> dataMap = result.getData().getDataMap();
+                FuturePositionRespDto.Position position = dataMap.get(contractType);
+                FuturePosition futurePosition = new FuturePosition();
+                // 如果为null，代表当前账户没有持仓
+                if (position == null) {
+                    FuturePosition.Position longPosi = new FuturePosition.Position();
+                    BeanUtils.copyProperties(position.getLongPosi(), longPosi);
+
+                    FuturePosition.Position shortPosi = new FuturePosition.Position();
+                    BeanUtils.copyProperties(position.getShortPosi(), shortPosi);
+
+                    futurePosition.setLongPosi(longPosi);
+                    futurePosition.setShortPosi(shortPosi);
+                    logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", exchangeId, accountId, contractType);
+                    return futurePosition;
+                } else {
+                    logger.info("获取期货持仓信息成功，但当前账户没有持仓，exchangeId={}，futureAccountId={}，futureCoinType={}", exchangeId, accountId, contractType);
+                    return futurePosition;
+                }
+            } else {
+                logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={},失败原因={}", exchangeId, accountId, contractType, result.getMessage());
+                return null;
+            }
+        } catch (Exception e) {
+            logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", exchangeId, accountId, contractType, e);
+            return null;
+        }
 	}
 
 	/**

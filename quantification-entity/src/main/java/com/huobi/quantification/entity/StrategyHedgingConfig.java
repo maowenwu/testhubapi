@@ -42,6 +42,16 @@ public class StrategyHedgingConfig {
 	 * @mbg.generated 2018-08-01 16:57:57
 	 */
 	private BigDecimal slippage;
+	
+	private Integer period;
+
+	public Integer getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Integer period) {
+		this.period = period;
+	}
 
 	public Integer getId() {
 		return id;

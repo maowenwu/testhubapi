@@ -132,10 +132,11 @@ public class DeliveryHedgingBootstrap implements ApplicationListener<ContextRefr
 		StrategyProperties.Config spot = group.getSpot();
 		StrategyHedgingConfig strategyHedgingConfig = commonService.getStrategyHedgingConfig(future.getExchangeId(),
 				future.getContractCode(), future.getBaseCoin());
-		startHedgingParam.setBaseCoin(spot.getBaseCoin());
 		startHedgingParam.setFeeRate(strategyHedgingConfig.getFormalityRate());
-		startHedgingParam.setQuoteCoin(spot.getQuotCoin());
 		startHedgingParam.setSlippage(strategyHedgingConfig.getSlippage());
+		startHedgingParam.setPeriod(strategyHedgingConfig.getPeriod());
+		startHedgingParam.setBaseCoin(spot.getBaseCoin());
+		startHedgingParam.setQuoteCoin(spot.getQuotCoin());
 		startHedgingParam.setSpotAccountID(spot.getAccountId());
 		startHedgingParam.setSpotExchangeId(spot.getExchangeId());
 		startHedgingParam.setFutureAccountID(future.getAccountId());

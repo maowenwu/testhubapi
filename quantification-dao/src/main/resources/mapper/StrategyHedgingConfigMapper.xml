@@ -1,59 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper
-	namespace="com.huobi.quantification.dao.StrategyHedgingConfigMapper">
+<mapper namespace="com.huobi.quantification.dao.StrategyHedgingConfigMapper">
 	<resultMap id="BaseResultMap"
 		type="com.huobi.quantification.entity.StrategyHedgingConfig">
 		<id column="id" jdbcType="INTEGER" property="id" />
 		<result column="coin" jdbcType="VARCHAR" property="coin" />
-		<result column="contract_code" jdbcType="VARCHAR"
-			property="contractCode" />
-		<result column="contract_type" jdbcType="VARCHAR"
-			property="contractType" />
-		<result column="formality_rate" jdbcType="DECIMAL"
-			property="formalityRate" />
-		<result column="slippage" jdbcType="DECIMAL"
-			property="slippage" />
+		<result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+		<result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+		<result column="formality_rate" jdbcType="DECIMAL" property="formalityRate" />
+		<result column="slippage" jdbcType="DECIMAL" property="slippage" />
+		<result column="period" jdbcType="INTEGER" property="period" />
 	</resultMap>
-	<delete id="deleteByPrimaryKey"
-		parameterType="java.lang.Integer">
-		delete from strategy_hedging_config
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		strategy_hedging_config
 		where id = #{id,jdbcType=INTEGER}
 	</delete>
 	<insert id="insert"
 		parameterType="com.huobi.quantification.entity.StrategyHedgingConfig">
-		insert into strategy_hedging_config (id, coin, contract_code,
-		contract_type, formality_rate, slippage
+		insert into strategy_hedging_config (id, coin,
+		contract_code,
+		contract_type, formality_rate, slippage,period
 		)
-		values (#{id,jdbcType=INTEGER}, #{coin,jdbcType=VARCHAR},
+		values
+		(#{id,jdbcType=INTEGER}, #{coin,jdbcType=VARCHAR},
 		#{contractCode,jdbcType=VARCHAR},
-		#{contractType,jdbcType=VARCHAR}, #{formalityRate,jdbcType=DECIMAL}, #{slippage,jdbcType=DECIMAL}
+		#{contractType,jdbcType=VARCHAR},
+		#{formalityRate,jdbcType=DECIMAL},
+		#{slippage,jdbcType=DECIMAL},
+		#{period,jdbcType=INTEGER}
 		)
 	</insert>
 	<update id="updateByPrimaryKey"
 		parameterType="com.huobi.quantification.entity.StrategyHedgingConfig">
 		update strategy_hedging_config
-		set coin = #{coin,jdbcType=VARCHAR},
-		contract_code = #{contractCode,jdbcType=VARCHAR},
-		contract_type = #{contractType,jdbcType=VARCHAR},
-		formality_rate = #{formalityRate,jdbcType=DECIMAL},
-		slippage = #{slippage,jdbcType=DECIMAL}
+		set
+		coin
+		=#{coin,jdbcType=VARCHAR},
+		contract_code =
+		#{contractCode,jdbcType=VARCHAR},
+		contract_type =
+		#{contractType,jdbcType=VARCHAR},
+		formality_rate =
+		#{formalityRate,jdbcType=DECIMAL},
+		slippage =
+		#{slippage,jdbcType=DECIMAL},
+		slippage =
+		#{period,jdbcType=INTEGER}
 		where id = #{id,jdbcType=INTEGER}
 	</update>
-	<select id="selectByPrimaryKey"
-		parameterType="java.lang.Integer" resultMap="BaseResultMap">
-		select id, coin, contract_code, contract_type, formality_rate, slippage
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="BaseResultMap">
+		select id, coin, contract_code, contract_type,
+		formality_rate, slippage,period
 		from strategy_hedging_config
-		where id = #{id,jdbcType=INTEGER}
+		where id =
+		#{id,jdbcType=INTEGER}
 	</select>
 	<select id="selectAll" resultMap="BaseResultMap">
-		select id, coin, contract_code, contract_type, formality_rate, slippage
-		from strategy_hedging_config
+		select id, coin, contract_code,
+		contract_type, formality_rate, slippage,period
+		from
+		strategy_hedging_config
 	</select>
 
 	<select id="selectStrategyHedging" resultMap="BaseResultMap">
-		select id, coin, contract_code, contract_type, formality_rate, slippage
-		from strategy_hedging_config
-		where coin=#{coin} and contract_type=#{contractType}
+		select id, coin,
+		contract_code, contract_type, formality_rate, slippage,period
+		from
+		strategy_hedging_config
+		where coin=#{coin} and
+		contract_type=#{contractType}
 	</select>
 </mapper>
