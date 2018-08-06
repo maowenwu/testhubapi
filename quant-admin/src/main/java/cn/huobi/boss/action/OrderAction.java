@@ -16,29 +16,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.huobi.quantification.entity.StrategyOrderConfig;
 
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
 import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.service.HedgingService;
+import cn.huobi.framework.service.OrderService;
 import cn.huobi.framework.util.Constants;
 
 @Controller
-@RequestMapping(value="/hedging")
-public class HedgingAction {
-	private static final Logger log = LoggerFactory.getLogger(HedgingAction.class);
+@RequestMapping(value="/order")
+public class OrderAction {
+	private static final Logger log = LoggerFactory.getLogger(OrderAction.class);
 	
 	@Resource
-	private HedgingService hedgingService;
+	private OrderService orderService;
 	
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
-	@RequestMapping(value="/selectJobByCondition.do")
+	@RequestMapping(value="/selectByCondition.do")
 	@ResponseBody
-	public Page<StrategyHedgingConfig> selectJobByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<StrategyHedgingConfig> page) throws Exception {
-		StrategyHedgingConfig config = JSONObject.parseObject(baseInfo, StrategyHedgingConfig.class);
+	public Page<StrategyOrderConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
+                                              @Param("page") Page<StrategyOrderConfig> page) throws Exception {
+		StrategyOrderConfig config = JSONObject.parseObject(baseInfo, StrategyOrderConfig.class);
 		try {
-			List<StrategyHedgingConfig> configs = hedgingService.selectDicByCondition(config, page);
+			List<StrategyOrderConfig> configs = orderService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
 			log.error("条件查询风控配置失败");
@@ -47,15 +48,14 @@ public class HedgingAction {
 		return page;
 	}
 	
-	@RequestMapping(value="/updateHedging.do")
+	@RequestMapping(value="/updateOrder.do")
 	@ResponseBody
-	@SystemLog(description = "更新配置",operCode="hedge.update")
+	@SystemLog(description = "更新配置",operCode="order.update")
 	public Map<String, Object> updateSpotJob(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
-		StrategyHedgingConfig riskConfig = JSON.parseObject(newInfo, StrategyHedgingConfig.class);
-		log.error(newInfo);
+		StrategyOrderConfig config = JSON.parseObject(newInfo, StrategyOrderConfig.class);
 		try {
-			int status = hedgingService.updateHedging(riskConfig);
+			int status = orderService.updateOrder(config);
 			if (status > 0) {
 				msg.put("status", true);
 				msg.put("msg", "更新成功！");

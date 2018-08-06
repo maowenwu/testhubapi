@@ -41,7 +41,7 @@ angular.module('inspinia',['uiSwitch']).controller('riskCtrl',function($scope,$h
 	
 	//查询
 	$scope.query = function(){
-		$http.post('risk/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('risk/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){

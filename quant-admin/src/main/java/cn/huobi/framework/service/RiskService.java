@@ -8,8 +8,8 @@ import cn.huobi.framework.db.pagination.Page;
 
 public interface RiskService {
 
-	List<StrategyRiskConfig> selectDicByCondition(StrategyRiskConfig config, Page<StrategyRiskConfig> page);
+	List<StrategyRiskConfig> selectByCondition(StrategyRiskConfig config, Page<StrategyRiskConfig> page);
 
-	int updateSpotJob(StrategyRiskConfig riskConfig);
+	int updateRisk(StrategyRiskConfig riskConfig);
 
 }

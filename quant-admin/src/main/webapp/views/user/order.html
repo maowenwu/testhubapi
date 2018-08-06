@@ -10,7 +10,7 @@
 </div>
 <!-- 主要内容 -->
 <div class="wrapper wrapper-content animated fadeIn" ng-app
-	ng-controller="riskCtrl">
+	ng-controller="orderCtrl">
 	<form class="form-horizontal" id="form1">
 		<div class="row">
 			<div class="col-lg-12">
@@ -55,7 +55,7 @@
 						<!--<div ibox-tools="" class="ng-scope"></div>-->
 					</div>
 					<div class="ibox-content">
-						<div class="gridStyle" ui-grid="jobGrid" ui-grid-pagination ui-grid-resize-columns></div>
+						<div class="gridStyle" ui-grid="orderGrid" ui-grid-pagination ui-grid-resize-columns></div>
 					</div>
 				</div>
 				<div style="height: 50px"></div>
@@ -147,37 +147,102 @@
 						<h3 class="modal-title">修改配置</h3>
 					</div>
 					<div class="modal-body">
-						<!-- <div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req">*</i>角色名称：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='roleInfo.roleName' name="roleName" required/>
-								<div class="req_mesg" ng-show="horizontalEdit.roleName.$dirty && horizontalEdit.roleName.$invalid">
-									<span ng-show="horizontalEdit.RoleName.$error.required">角色名称不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>角色编码：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='roleInfo.roleCode' name="roleCode" ng-blur="checkEditCodeUnique()" required>
-								<div class="req_mesg" ng-show="horizontalEdit.roleCode.$dirty && horizontalEdit.roleCode.$invalid">
-									<span ng-show="horizontalEdit.roleCode.$error.required">角色编码不能为空</span>
-								</div>
-								<span class="req_mesg" ng-hide="editCodeCheckFlag">
-									{{editCodeCheckMsg}}
-								</span>
-							</div>
-						</div> -->
-						<!--<div class="form-group">
-							<label class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model='roleInfo.roleRemark'>
-							</div>
-						</div> -->
 						<div class="form-group">
-							<label class="col-sm-2 control-label">任务状态：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>ContractFee：</label>
 							<div class="col-sm-3">
-								<switch class="switch" id="switch" ng-model="newInfo.status"/>
+								<input type="text" class="form-control"
+									ng-model='newInfo.contractFee' name="contractFee" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>SpotFee：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.spotFee' name="spotFee" required/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req"></i>DeliveryFee：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.deliveryFee' name="deliveryFee" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>ExpectYields：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.expectYields' name="expectYields" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>PriceStep：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.priceStep' name="priceStep" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>AsksMaxAmount：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.asksMaxAmount' name="asksMaxAmount" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>BidsMaxAmount：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.bidsMaxAmount' name="bidsMaxAmount" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>AsksBasisPrice：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.asksBasisPrice' name="asksBasisPrice" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>BidsBasisPrice：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.bidsBasisPrice' name="bidsBasisPrice" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>多仓数量最大限制：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.longMaxAmount' name="longMaxAmount" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>空仓数量最大限制：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.shortMaxAmount' name="shortMaxAmount" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>最大持仓量：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.maxPositionAmount' name="maxPositionAmount" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>最小持仓量：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.minPositionAmount' name="minPositionAmount" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>合约账户保留保证金：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.contractMarginReserve' name="contractMarginReserve" required/>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>币币账户保留币量：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.spotCoinReserve' name="spotCoinReserve" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>币币账户保留资金：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.spotBalanceReserve' name="spotBalanceReserve" required>
 							</div>
 						</div>
 						<div class="form-group">
