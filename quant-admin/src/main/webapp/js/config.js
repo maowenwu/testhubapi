@@ -353,79 +353,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             }
         })
-         .state('user.job', {
-            url: "/user/job",
-            templateUrl: "views/user/job.html",
-            data: {pageTitle: '现货任务管理'},
-            controller: "jobCtrl",
-            resolve: {
-                loadPlugin: function ($ocLazyLoad) {
-                    $ocLazyLoad.load('ui-switch');
-                    $ocLazyLoad.load('oitozero.ngSweetAlert');
-                },
-                deps: ["$ocLazyLoad",function($ocLazyLoad){
-                    return $ocLazyLoad.load({
-                        name: "inspinia",
-                        files: ["js/controllers/user/jobCtrl.js?ver="+verNo]
-                    });
-                }]
-            }
-        })
-        .state('user.futureJob', {
-        	url: "/user/futureJob",
-        	templateUrl: "views/user/futureJob.html",
-        	data: {pageTitle: '期货任务管理'},
-        	controller: "futureJobCtrl",
-        	resolve: {
-        		loadPlugin: function ($ocLazyLoad) {
-        			$ocLazyLoad.load('ui-switch');
-        			$ocLazyLoad.load('oitozero.ngSweetAlert');
-        		},
-        		deps: ["$ocLazyLoad",function($ocLazyLoad){
-        			return $ocLazyLoad.load({
-        				name: "inspinia",
-        				files: ["js/controllers/user/futureJobCtrl.js?ver="+verNo]
-        			});
-        		}]
-        	}
-        })
-        .state('user.risk', {
-        	url: "/user/risk",
-        	templateUrl: "views/user/risk.html",
-        	data: {pageTitle: '风控配置管理'},
-        	controller: "riskCtrl",
-        	resolve: {
-        		loadPlugin: function ($ocLazyLoad) {
-        			$ocLazyLoad.load('ui-switch');
-        			$ocLazyLoad.load('oitozero.ngSweetAlert');
-        		},
-        		deps: ["$ocLazyLoad",function($ocLazyLoad){
-        			return $ocLazyLoad.load({
-        				name: "inspinia",
-        				files: ["js/controllers/user/riskCtrl.js?ver="+verNo]
-        			});
-        		}]
-        	}
-        })
 
-        .state('user.order', {
-        	url: "/user/order",
-        	templateUrl: "views/user/order.html",
-        	data: {pageTitle: '摆单配置管理'},
-        	controller: "orderCtrl",
-        	resolve: {
-        		loadPlugin: function ($ocLazyLoad) {
-        			$ocLazyLoad.load('ui-switch');
-        			$ocLazyLoad.load('oitozero.ngSweetAlert');
-        		},
-        		deps: ["$ocLazyLoad",function($ocLazyLoad){
-        			return $ocLazyLoad.load({
-        				name: "inspinia",
-        				files: ["js/controllers/user/orderCtrl.js?ver="+verNo]
-        			});
-        		}]
-        	}
-        })
         
         // ========================================================================
         /* 配置中心 */
@@ -453,6 +381,80 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })
+        
+         .state('config.job', {
+            url: "/user/job",
+            templateUrl: "views/config/job.html",
+            data: {pageTitle: '现货任务管理'},
+            controller: "jobCtrl",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    $ocLazyLoad.load('ui-switch');
+                    $ocLazyLoad.load('oitozero.ngSweetAlert');
+                },
+                deps: ["$ocLazyLoad",function($ocLazyLoad){
+                    return $ocLazyLoad.load({
+                        name: "inspinia",
+                        files: ["js/controllers/user/jobCtrl.js?ver="+verNo]
+                    });
+                }]
+            }
+        })
+        .state('config.futureJob', {
+        	url: "/user/futureJob",
+        	templateUrl: "views/config/futureJob.html",
+        	data: {pageTitle: '期货任务管理'},
+        	controller: "futureJobCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/futureJobCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
+        .state('config.risk', {
+        	url: "/user/risk",
+        	templateUrl: "views/config/risk.html",
+        	data: {pageTitle: '风控配置管理'},
+        	controller: "riskCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/riskCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
+
+        .state('config.order', {
+        	url: "/user/order",
+        	templateUrl: "views/config/order.html",
+        	data: {pageTitle: '摆单配置管理'},
+        	controller: "orderCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/user/orderCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
         
 }
 
