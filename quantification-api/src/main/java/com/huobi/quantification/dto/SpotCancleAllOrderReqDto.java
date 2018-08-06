@@ -3,44 +3,41 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 public class SpotCancleAllOrderReqDto implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private Long accountId;
-	private String symbol;
-	private String side;
-	private Integer size;
+    //交易所id
+    private int exchangeId;
+    private Long accountId;
+    private String baseCoin;
+    private String quoteCoin;
 
-	public Long getAccountId() {
-		return accountId;
-	}
+    public int getExchangeId() {
+        return exchangeId;
+    }
 
-	public void setAccountId(Long accountId) {
-		this.accountId = accountId;
-	}
+    public void setExchangeId(int exchangeId) {
+        this.exchangeId = exchangeId;
+    }
 
-	public String getSymbol() {
-		return symbol;
-	}
+    public Long getAccountId() {
+        return accountId;
+    }
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
 
-	public String getSide() {
-		return side;
-	}
+    public String getBaseCoin() {
+        return baseCoin;
+    }
 
-	public void setSide(String side) {
-		this.side = side;
-	}
+    public void setBaseCoin(String baseCoin) {
+        this.baseCoin = baseCoin;
+    }
 
-	public Integer getSize() {
-		return size;
-	}
+    public String getQuoteCoin() {
+        return quoteCoin;
+    }
 
-	public void setSize(Integer size) {
-		this.size = size;
-	}
+    public void setQuoteCoin(String quoteCoin) {
+        this.quoteCoin = quoteCoin;
+    }
 }

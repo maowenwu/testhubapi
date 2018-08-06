@@ -12,6 +12,7 @@ import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
+import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.FuturePosition;
@@ -49,6 +50,8 @@ public class OrderContext {
     private StrategyOrderConfigMapper strategyOrderConfigMapper;
     @Autowired
     private FutureOrderService futureOrderService;
+    @Autowired
+    private CommContext commContext;
 
     private BigDecimal faceValue = BigDecimal.valueOf(100);
     /**
@@ -87,7 +90,7 @@ public class OrderContext {
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
         this.futureContractCode = Objects.requireNonNull(future.getContractCode());
-        this.futureContractType = getContractTypeFromCode();
+        this.futureContractType = commContext.getContractTypeFromCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
         this.futureCoinType = future.getBaseCoin();
@@ -115,130 +118,6 @@ public class OrderContext {
             return depthBook;
         } else {
             throw new RuntimeException("获取火币现货深度异常");
-        }
-    }
-
-    public BigDecimal getExchangeRateOfUSDT2USD() {
-        for (int i = 0; i < 3; i++) {
-            ServiceResult<BigDecimal> result = futureContractService.getExchangeRateOfUSDT2USD();
-            if (result.isSuccess()) {
-                logger.error("获取USDT2USD汇率成功");
-                return result.getData();
-            } else {
-                continue;
-            }
-        }
-        logger.error("获取USDT2USD汇率异常");
-        return null;
-    }
-
-    public SpotBalance getSpotBalance() {
-        SpotBalance spotBalance = new SpotBalance();
-
-        SpotBalance.Coin coin = new SpotBalance.Coin();
-        coin.setAvailable(BigDecimal.valueOf(9999999999999999L));
-        spotBalance.setCoin(coin);
-
-        SpotBalance.Usdt usdt = new SpotBalance.Usdt();
-        usdt.setAvailable(BigDecimal.valueOf(9999999999999999L));
-        spotBalance.setUsdt(usdt);
-        return spotBalance;
-
-        /*SpotBalance spotBalance = new SpotBalance();
-        try {
-            ServiceResult<SpotBalanceRespDto> balance = spotAccountService.getBalance(null);
-            Map<String, SpotBalanceRespDto.DataBean> data = balance.getData().getData();
-            SpotBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
-            if (dataBean != null) {
-                SpotBalance.Coin coin = new SpotBalance.Coin();
-                BeanUtils.copyProperties(dataBean, coin);
-                spotBalance.setCoin(coin);
-            }
-            SpotBalanceRespDto.DataBean usdtBean = data.get("usdt");
-            if (usdtBean != null) {
-                SpotBalance.Usdt usdt = new SpotBalance.Usdt();
-                BeanUtils.copyProperties(dataBean, usdt);
-                spotBalance.setUsdt(usdt);
-            }
-            return spotBalance;
-        } catch (BeansException e) {
-            logger.error("获取现货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", exchangeId, futureAccountId, futureCoinType, e);
-            return null;
-        }*/
-    }
-
-
-    public FutureBalance getFutureBalance() {
-        try {
-            FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
-            reqDto.setExchangeId(this.futureExchangeId);
-            reqDto.setAccountId(this.futureAccountId);
-            reqDto.setCoinType(this.futureCoinType);
-            ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
-            if (result.isSuccess()) {
-                Map<String, FutureBalanceRespDto.DataBean> data = result.getData().getData();
-                FutureBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
-                if (dataBean == null) {
-                    dataBean = data.get(futureCoinType.toUpperCase());
-                }
-                if (dataBean != null) {
-                    FutureBalance futureBalance = new FutureBalance();
-                    BeanUtils.copyProperties(dataBean, futureBalance);
-                    logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
-                    return futureBalance;
-                } else {
-                    logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
-                    return null;
-                }
-            } else {
-                logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}，失败原因={}", this.futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
-                return null;
-            }
-        } catch (BeansException e) {
-            logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType, e);
-            return null;
-        }
-    }
-
-    public FuturePosition getFuturePosition() {
-        try {
-            FuturePositionReqDto reqDto = new FuturePositionReqDto();
-            reqDto.setExchangeId(this.futureExchangeId);
-            reqDto.setAccountId(this.futureAccountId);
-            reqDto.setCoinType(this.futureCoinType);
-            ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
-            if (result.isSuccess()) {
-                Map<String, List<FuturePositionRespDto.Position>> dataMap = result.getData().getDataMap();
-                List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureCoinType);
-                FuturePosition futurePosition = new FuturePosition();
-                // 如果为null，代表当前账户没有持仓
-                if (CollectionUtils.isNotEmpty(positionList)) {
-                    positionList.stream().forEach(e -> {
-                        if (e.getContractType().equalsIgnoreCase(futureContractType) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
-                            FuturePosition.Position longPosi = new FuturePosition.Position();
-                            BeanUtils.copyProperties(e, longPosi);
-                            futurePosition.setLongPosi(longPosi);
-                        }
-
-                        if (e.getContractType().equalsIgnoreCase(futureContractType) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
-                            FuturePosition.Position shortPosi = new FuturePosition.Position();
-                            BeanUtils.copyProperties(e, shortPosi);
-                            futurePosition.setShortPosi(shortPosi);
-                        }
-                    });
-                    logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
-                    return futurePosition;
-                } else {
-                    logger.info("获取期货持仓信息成功，但当前账户没有持仓，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
-                    return futurePosition;
-                }
-            } else {
-                logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={},失败原因={}", futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
-                return null;
-            }
-        } catch (Exception e) {
-            logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType, e);
-            return null;
         }
     }
 
@@ -606,22 +485,7 @@ public class OrderContext {
         }
     }
 
-    public BigDecimal getSpotCurrentPrice() {
-        SpotCurrentPriceReqDto reqDto = new SpotCurrentPriceReqDto();
-        reqDto.setExchangeId(spotExchangeId);
-        reqDto.setBaseCoin(spotBaseCoin);
-        reqDto.setQuoteCoin(spotQuoteCoin);
-        try {
-            ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
-            if (currentPrice.isSuccess()) {
-                logger.error("获取当前价格成功，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);
-                return currentPrice.getData().getCurrentPrice();
-            }
-        } catch (Exception e) {
-            logger.error("获取当前价格失败，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);
-        }
-        return null;
-    }
+
 
     public void setExchangeRate(BigDecimal exchangeRate) {
         this.exchangeRate = exchangeRate;
@@ -632,16 +496,5 @@ public class OrderContext {
     }
 
 
-    private String getContractTypeFromCode() {
-        try {
-            ServiceResult<ContractCodeDto> result = futureContractService.getContractCode(futureExchangeId, futureContractCode);
-            if (result.isSuccess()) {
-                return result.getData().getContractType();
-            } else {
-                throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务");
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务", e);
-        }
-    }
+
 }

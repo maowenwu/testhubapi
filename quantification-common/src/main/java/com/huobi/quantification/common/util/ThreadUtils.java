@@ -10,4 +10,12 @@ public class ThreadUtils {
             Thread.currentThread().interrupt();
         }
     }
+
+    public static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+
+        }
+    }
 }

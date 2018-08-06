@@ -9,8 +9,16 @@ import java.util.Objects;
 
 public class DepthBook {
 
-    private List<Depth> asks=new ArrayList<>();
-    private List<Depth> bids=new ArrayList<>();
+    private List<Depth> asks = new ArrayList<>();
+    private List<Depth> bids = new ArrayList<>();
+
+    public BigDecimal getAsk1() {
+        return asks.get(0).getPrice();
+    }
+
+    public BigDecimal getBid1() {
+        return bids.get(0).getPrice();
+    }
 
     public List<Depth> getAsks() {
         return asks;

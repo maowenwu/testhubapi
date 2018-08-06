@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.huobi.quantification.entity.StrategyHedgingConfig;
-
 import cn.huobi.framework.dao.HadgingDao;
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.service.HedgingService;

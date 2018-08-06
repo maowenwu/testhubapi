@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.strategy.config.StrategyProperties;
+import com.huobi.quantification.strategy.hedge.Hedger;
 import com.huobi.quantification.strategy.order.OrderCopier;
 import com.huobi.quantification.strategy.risk.RiskMonitor;
 import org.slf4j.Logger;
@@ -41,13 +42,20 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 logger.info("注册job完成");
                 // 等待3秒，保证job已经完全运行
                 sleep(3000);
-                startOrderWithConfig(group);
-                startRiskWithConfig(group);
+                contextInit(group);
+                //startOrderCopierWithConfig(group);
+                startHedgerWithConfig(group);
+                //startRiskMonitorWithConfig(group);
             }
         }
     }
 
-    private void startOrderWithConfig(StrategyProperties.ConfigGroup group) {
+    private void contextInit(StrategyProperties.ConfigGroup group) {
+        CommContext commContext = ApplicationContextHolder.getContext().getBean(CommContext.class);
+        commContext.init(group);
+    }
+
+    private void startOrderCopierWithConfig(StrategyProperties.ConfigGroup group) {
         logger.info("准备启动借深度线程，当前配置：{}", JSON.toJSONString(group));
         OrderCopier orderCopier = ApplicationContextHolder.getContext().getBean(OrderCopier.class);
         logger.info("初始化OrderCopy开始");
@@ -72,7 +80,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         logger.info("合约借深度线程启动...");
     }
 
-    private void startRiskWithConfig(StrategyProperties.ConfigGroup group) {
+    private void startRiskMonitorWithConfig(StrategyProperties.ConfigGroup group) {
         RiskMonitor riskMonitor = ApplicationContextHolder.getContext().getBean(RiskMonitor.class);
         riskMonitor.init(group);
         Thread thread = new Thread(() -> {
@@ -90,6 +98,14 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         thread.setName("风控线程");
         thread.start();
     }
+
+
+    private void startHedgerWithConfig(StrategyProperties.ConfigGroup group) {
+        Hedger hedger = ApplicationContextHolder.getContext().getBean(Hedger.class);
+        hedger.init(group);
+        hedger.hedgePhase1();
+    }
+
 
     private void sleep(long millis) {
         try {

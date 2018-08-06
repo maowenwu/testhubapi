@@ -59,10 +59,6 @@ public class OrderContextTest {
     public void getFutureBalance() {
     }
 
-    @Test
-    public void getFuturePosition() {
-        orderContext.getFuturePosition();
-    }
 
     @Test
     public void getStrategyOrderConfig() {

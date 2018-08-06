@@ -10,8 +10,6 @@ import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.jdbc.SQL;
 
-import com.huobi.quantification.entity.StrategyHedgingConfig;
-
 import cn.huobi.framework.db.pagination.Page;
 
 public interface HadgingDao {
