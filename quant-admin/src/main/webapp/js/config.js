@@ -364,7 +364,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
             })
         
        .state('config.hedge', {
-        	url: "/user/hedge",
+        	url: "/config/hedge",
         	templateUrl: "views/config/hedge.html",
         	data: {pageTitle: '对冲配置管理'},
         	controller: "hedgeCtrl",
@@ -376,14 +376,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		deps: ["$ocLazyLoad",function($ocLazyLoad){
         			return $ocLazyLoad.load({
         				name: "inspinia",
-        				files: ["js/controllers/user/hedgeCtrl.js?ver="+verNo]
+        				files: ["js/controllers/config/hedgeCtrl.js?ver="+verNo]
         			});
         		}]
         	}
         })
         
          .state('config.job', {
-            url: "/user/job",
+            url: "/config/job",
             templateUrl: "views/config/job.html",
             data: {pageTitle: '现货任务管理'},
             controller: "jobCtrl",
@@ -395,13 +395,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 deps: ["$ocLazyLoad",function($ocLazyLoad){
                     return $ocLazyLoad.load({
                         name: "inspinia",
-                        files: ["js/controllers/user/jobCtrl.js?ver="+verNo]
+                        files: ["js/controllers/config/jobCtrl.js?ver="+verNo]
                     });
                 }]
             }
         })
         .state('config.futureJob', {
-        	url: "/user/futureJob",
+        	url: "/config/futureJob",
         	templateUrl: "views/config/futureJob.html",
         	data: {pageTitle: '期货任务管理'},
         	controller: "futureJobCtrl",
@@ -413,13 +413,13 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		deps: ["$ocLazyLoad",function($ocLazyLoad){
         			return $ocLazyLoad.load({
         				name: "inspinia",
-        				files: ["js/controllers/user/futureJobCtrl.js?ver="+verNo]
+        				files: ["js/controllers/config/futureJobCtrl.js?ver="+verNo]
         			});
         		}]
         	}
         })
         .state('config.risk', {
-        	url: "/user/risk",
+        	url: "/config/risk",
         	templateUrl: "views/config/risk.html",
         	data: {pageTitle: '风控配置管理'},
         	controller: "riskCtrl",
@@ -431,14 +431,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		deps: ["$ocLazyLoad",function($ocLazyLoad){
         			return $ocLazyLoad.load({
         				name: "inspinia",
-        				files: ["js/controllers/user/riskCtrl.js?ver="+verNo]
+        				files: ["js/controllers/config/riskCtrl.js?ver="+verNo]
         			});
         		}]
         	}
         })
 
         .state('config.order', {
-        	url: "/user/order",
+        	url: "/config/order",
         	templateUrl: "views/config/order.html",
         	data: {pageTitle: '摆单配置管理'},
         	controller: "orderCtrl",
@@ -450,14 +450,14 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		deps: ["$ocLazyLoad",function($ocLazyLoad){
         			return $ocLazyLoad.load({
         				name: "inspinia",
-        				files: ["js/controllers/user/orderCtrl.js?ver="+verNo]
+        				files: ["js/controllers/config/orderCtrl.js?ver="+verNo]
         			});
         		}]
         	}
         })        
         
         .state('config.finance', {
-        	url: "/user/finance",
+        	url: "/config/finance",
         	templateUrl: "views/config/finance.html",
         	data: {pageTitle: '摆单配置管理'},
         	controller: "financeCtrl",
@@ -469,7 +469,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		deps: ["$ocLazyLoad",function($ocLazyLoad){
         			return $ocLazyLoad.load({
         				name: "inspinia",
-        				files: ["js/controllers/user/financeCtrl.js?ver="+verNo]
+        				files: ["js/controllers/config/financeCtrl.js?ver="+verNo]
         			});
         		}]
         	}
