@@ -8,13 +8,14 @@ import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
+import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.enums.OffsetEnum;
+import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.FuturePosition;
 import com.huobi.quantification.strategy.entity.SpotBalance;
-import com.huobi.quantification.strategy.risk.RiskContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,11 +63,14 @@ public class CommContext {
     /**
      * 币币账户期初余额USDT
      */
-    private BigDecimal initialSpotUsd;
+    private BigDecimal initialSpotUsdt;
     /**
      * 合约账户期初净空仓金额USD
      */
-    private BigDecimal initialFutureUsd;
+    private BigDecimal initialFutureUsdt;
+
+    private QuanExchangeConfig spotExchangeConfig;
+    private QuanExchangeConfig futureExchangeConfig;
 
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config spot = group.getSpot();
@@ -86,11 +90,13 @@ public class CommContext {
         this.futureQuoteCoin = future.getQuotCoin();
         this.futureCoinType = future.getBaseCoin();
         loadInitialUsdt();
+        this.spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
+        this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, spotBaseCoin, spotQuoteCoin);
     }
 
     private void loadInitialUsdt() {
-        initialSpotUsd = getCurrSpotUsd();
-        initialFutureUsd = getCurrFutureUsd();
+        initialSpotUsdt = getCurrSpotUsdt();
+        initialFutureUsdt = getCurrFutureUsdt();
     }
 
     public boolean cancelAllSpotOrder() {
@@ -113,17 +119,16 @@ public class CommContext {
     }
 
     public BigDecimal getNetPosition() {
-        BigDecimal currSpotUsd = getCurrSpotUsd();
-        BigDecimal currFutureUsd = getCurrFutureUsd();
-        BigDecimal netPosition = currSpotUsd.subtract(initialSpotUsd).add(currFutureUsd.subtract(initialFutureUsd));
+        BigDecimal currSpotUsd = getCurrSpotUsdt();
+        BigDecimal currFutureUsd = getCurrFutureUsdt();
+        BigDecimal netPosition = currSpotUsd.subtract(initialSpotUsdt).add(currFutureUsd.subtract(initialFutureUsdt));
         return netPosition;
     }
 
-    private BigDecimal getCurrSpotUsd() {
+    private BigDecimal getCurrSpotUsdt() {
         SpotBalance spotBalance = getSpotBalance();
         SpotBalance.Usdt usdt = spotBalance.getUsdt();
-        exchangeRate = getExchangeRateOfUSDT2USD();
-        return usdt.getAvailable().multiply(exchangeRate);
+        return usdt.getAvailable();
     }
 
     /**
@@ -131,7 +136,7 @@ public class CommContext {
      *
      * @return
      */
-    public BigDecimal getCurrFutureUsd() {
+    public BigDecimal getCurrFutureUsdt() {
         BigDecimal longAmount;
         BigDecimal shortAmount;
         FuturePosition futurePosition = getFuturePosition();
@@ -147,7 +152,9 @@ public class CommContext {
         } else {
             shortAmount = shortPosi.getAmount();
         }
-        return shortAmount.subtract(longAmount).multiply(faceValue);
+        exchangeRate = getExchangeRateOfUSDT2USD();
+        return shortAmount.subtract(longAmount).multiply(futureExchangeConfig.getFaceValue())
+                .divide(exchangeRate, 18, BigDecimal.ROUND_DOWN);
     }
 
     public DepthBook getDepth() {

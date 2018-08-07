@@ -11,14 +11,18 @@ import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sun.rmi.runtime.Log;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Component
 public class HedgerContext {
-
+    Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private CommContext commContext;
@@ -49,6 +53,22 @@ public class HedgerContext {
 
 
     public void init(StrategyProperties.ConfigGroup group) {
+        StrategyProperties.Config future = group.getFuture();
+        StrategyProperties.Config spot = group.getSpot();
+        this.futureExchangeId = future.getExchangeId();
+        this.futureAccountId = future.getAccountId();
+        this.futureLever = future.getLever();
+        this.futureContractCode = Objects.requireNonNull(future.getContractCode());
+        this.futureContractType = commContext.getContractTypeFromCode();
+        this.futureBaseCoin = future.getBaseCoin();
+        this.futureQuoteCoin = future.getQuotCoin();
+        this.futureCoinType = future.getBaseCoin();
+
+        this.spotExchangeId = spot.getExchangeId();
+        this.spotAccountId = spot.getAccountId();
+        this.spotBaseCoin = spot.getBaseCoin();
+        this.spotQuoteCoin = spot.getQuotCoin();
+
         spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
         futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, spotBaseCoin, spotQuoteCoin);
     }
@@ -60,25 +80,42 @@ public class HedgerContext {
 
 
     public void placeBuyOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
+        orderPrice = checkPrice(orderPrice);
+        orderAmount = checkAmount(orderAmount);
         placeOrder(SideEnum.BUY.getSideType(), orderPrice, orderAmount);
     }
 
     public void placeSellOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
+        orderPrice = checkPrice(orderPrice);
+        orderAmount = checkAmount(orderAmount);
         placeOrder(SideEnum.SELL.getSideType(), orderPrice, orderAmount);
     }
 
+    private BigDecimal checkPrice(BigDecimal price) {
+        return price.divide(BigDecimal.ONE, spotExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
+    }
+
+    private BigDecimal checkAmount(BigDecimal amount) {
+        return amount.divide(BigDecimal.ONE, spotExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN);
+    }
+
     private void placeOrder(int side, BigDecimal orderPrice, BigDecimal orderAmount) {
-        SpotPlaceOrderReqDto spotPlaceOrderReqDto = new SpotPlaceOrderReqDto();
-        spotPlaceOrderReqDto.setExchangeId(spotExchangeId);
-        spotPlaceOrderReqDto.setAccountId(spotAccountId);
-        spotPlaceOrderReqDto.setBaseCoin(spotBaseCoin);
-        spotPlaceOrderReqDto.setQuoteCoin(spotQuoteCoin);
-        spotPlaceOrderReqDto.setQuantity(orderAmount);
-        spotPlaceOrderReqDto.setPrice(orderPrice);
-        spotPlaceOrderReqDto.setSide(side + "");
-        spotPlaceOrderReqDto.setOrderType("limit");
-        // todo 检查数量
-        spotOrderService.placeOrder(spotPlaceOrderReqDto);
+        // 检查数量、价格
+        if (BigDecimalUtils.moreThan(orderPrice, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
+            SpotPlaceOrderReqDto spotPlaceOrderReqDto = new SpotPlaceOrderReqDto();
+            spotPlaceOrderReqDto.setExchangeId(spotExchangeId);
+            spotPlaceOrderReqDto.setAccountId(spotAccountId);
+            spotPlaceOrderReqDto.setBaseCoin(spotBaseCoin);
+            spotPlaceOrderReqDto.setQuoteCoin(spotQuoteCoin);
+            spotPlaceOrderReqDto.setQuantity(orderAmount);
+            spotPlaceOrderReqDto.setPrice(orderPrice);
+            spotPlaceOrderReqDto.setSide(side + "");
+            spotPlaceOrderReqDto.setOrderType("limit");
+
+            spotOrderService.placeOrder(spotPlaceOrderReqDto);
+        } else {
+            logger.info("价格或数量<=0，忽略此单，orderPrice={}，orderAmount{}", orderPrice, orderAmount);
+        }
     }
 
 
@@ -94,7 +131,7 @@ public class HedgerContext {
             placeBuyOrder(orderPrice, orderAmount);
         } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
             BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSlippage()));
-            BigDecimal orderAmount = netPosition.divide(orderPrice);
+            BigDecimal orderAmount = netPosition.divide(orderPrice).divide(BigDecimal.ONE.subtract(hedgeConfig.getSpotFee()));
             placeSellOrder(orderPrice, orderAmount);
         }
     }

@@ -1,7 +1,6 @@
 package com.huobi.quantification.strategy;
 
 import com.huobi.quantification.StrategyApplication;
-import com.huobi.quantification.api.comm.ExchangeConfigService;
 import com.huobi.quantification.strategy.hedge.Hedger;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +15,6 @@ public class HedgingTest {
 	Hedger hedger;
 
 
-	@Autowired
-	ExchangeConfigService exchangeConfigService;
 
 
 

@@ -13,14 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalField;
-import java.time.temporal.WeekFields;
-import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -93,7 +86,7 @@ public class Hedger {
                 commContext.cancelAllSpotOrder();
                 // 2.计算当前的两个账户总的净头寸USDT
                 BigDecimal m1 = commContext.getNetPosition();
-                BigDecimal m2 = commContext.getCurrFutureUsd();
+                BigDecimal m2 = commContext.getCurrFutureUsdt();
                 // 3.需要在币币账户对冲的金额
                 BigDecimal m = m2.subtract(m1);
 
