@@ -60,6 +60,6 @@ public class HttpConstant {
     public static final String HUOBI_FUTURE_ORDER_CANCEL = "http://www.huobiapps.com/contract-order/v1/contract_cancel";
     public static final String HUOBI_FUTURE_ORDER_INFO = "http://www.huobiapps.com/contract-query/v1/contract_order_info";
     public static final String HUOBI_FUTURE_ORDER_CANCEL_ALL = "http://www.huobiapps.com/contract-order/v1/contract_cancelall";
-    public static final String HUOBI_CONTRACE_CODE = "http://www.huobiapps.com/contract-query/v1/contract_hold_amount";
+    public static final String HUOBI_CONTRACE_CODE = "http://www.huobiapps.com/contract-query/v1/contract_open_interest";
 
 }

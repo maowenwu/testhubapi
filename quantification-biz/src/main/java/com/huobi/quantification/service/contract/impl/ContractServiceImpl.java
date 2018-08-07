@@ -71,7 +71,7 @@ public class ContractServiceImpl implements ContractService {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("contract_type", contractType);
-        String body = httpService.doPostJson(HttpConstant.HUOBI_CONTRACE_CODE, params);
+        String body = httpService.doGet(HttpConstant.HUOBI_CONTRACE_CODE, params);
         HuobiFutureContractCodeResponse response = JSON.parseObject(body, HuobiFutureContractCodeResponse.class);
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             List<HuobiFutureContractCodeResponse.DataBean> data = response.getData();

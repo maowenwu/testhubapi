@@ -48,6 +48,7 @@ public class HttpServiceImpl implements HttpService {
     private Timer timer = new Timer();
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
     public HttpServiceImpl() {
         timer.schedule(new TimerTask() {
             @Override
@@ -100,7 +101,11 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doGet(String url, Map<String, String> params) throws HttpRequestException {
-        return getHttpClientUtils().doGet(url, params);
+        if (url.startsWith("http://www.huobiapps.com")) {
+            return OkHttpClientUtils.getInstance(null).doGet(url, params);
+        } else {
+            return getHttpClientUtils().doGet(url, params);
+        }
     }
 
     @Override

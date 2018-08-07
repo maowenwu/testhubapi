@@ -158,7 +158,7 @@ public class OkHttpClientUtils {
             String s = response.body().string();
             return s;
         } catch (IOException e) {
-            throw new ApiException(e);
+            throw new RuntimeException("IOException 目标url：" + uri, e);
         }
     }
 
@@ -180,8 +180,8 @@ public class OkHttpClientUtils {
     public static void main(String[] args) {
         OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
-        params.put("symbol","BTC");
-        params.put("userId","156138");
+        params.put("symbol", "BTC");
+        params.put("userId", "156138");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_account_info", params);
         System.out.println(s);
 
