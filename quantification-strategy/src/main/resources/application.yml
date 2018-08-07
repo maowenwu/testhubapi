@@ -50,6 +50,6 @@ strategy:
       lever: 10
     spot:
       exchangeId: 1
-      accountId: 4232061
+      accountId: 4295363
       baseCoin: btc
       quotCoin: usdt

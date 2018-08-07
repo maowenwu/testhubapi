@@ -39,6 +39,7 @@ public class RiskMonitor {
             return;
         }
         riskContext.setCurrPrice(currentPrice);
+
         checkRiskRate();
         checkNetPosition();
         checkProfit();
@@ -54,7 +55,7 @@ public class RiskMonitor {
         BigDecimal level3 = riskConfig.getRiskRateLevel3();
 
         BigDecimal riskRate = riskContext.getRiskRate();
-
+        logger.info("当前保证金率：{}", riskRate);
         if (BigDecimalUtils.lessThanOrEquals(riskRate, level3)) {
             // 停止摆盘，发出警报，撤销所有订单，强平，直至保证金率恢复正常
             riskContext.updateRiskCtrl(2);
@@ -82,7 +83,8 @@ public class RiskMonitor {
         BigDecimal level1 = riskConfig.getNetPositionLevel1();
         BigDecimal level2 = riskConfig.getNetPositionLevel2();
 
-        BigDecimal netPosition = commContext.getNetPosition().abs();
+        BigDecimal netPosition = commContext.getNetPositionUsdt().abs();
+        logger.info("当前净头寸：{}", netPosition);
         if (BigDecimalUtils.moreThanOrEquals(netPosition, level2)) {
             // 会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateNetCtrl(2, 2);
@@ -111,6 +113,7 @@ public class RiskMonitor {
         BigDecimal level2 = riskConfig.getCurrProfitLevel2();
 
         BigDecimal currProfit = riskContext.getCurrProfit();
+        logger.info("本次亏损：{}", currProfit);
         if (BigDecimalUtils.lessThanOrEquals(currProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateProfitCtrl(2, 2);
@@ -130,6 +133,7 @@ public class RiskMonitor {
         BigDecimal level2 = riskConfig.getTotalProfitLevel2();
 
         BigDecimal totalProfit = riskContext.getTotalProfit();
+        logger.info("总亏损：{}", totalProfit);
         if (BigDecimalUtils.lessThanOrEquals(totalProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateProfitCtrl(2, 2);

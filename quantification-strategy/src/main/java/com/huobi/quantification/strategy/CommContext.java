@@ -105,12 +105,16 @@ public class CommContext {
         req.setAccountId(spotAccountId);
         req.setBaseCoin(spotBaseCoin);
         req.setQuoteCoin(spotQuoteCoin);
-        ServiceResult result = spotOrderService.cancelAllOrder(req);
-        if (result.isSuccess()) {
-            return true;
-        } else {
-            return false;
+        ServiceResult result = null;
+        try {
+            result = spotOrderService.cancelAllOrder(req);
+            if (result.isSuccess()) {
+                return true;
+            }
+        } catch (Exception e) {
+            logger.info("取消现货订单失败", e);
         }
+        return false;
     }
 
     public boolean cancelAllFutureOrder() {
@@ -118,10 +122,10 @@ public class CommContext {
         return true;
     }
 
-    public BigDecimal getNetPosition() {
-        BigDecimal currSpotUsd = getCurrSpotUsdt();
-        BigDecimal currFutureUsd = getCurrFutureUsdt();
-        BigDecimal netPosition = currSpotUsd.subtract(initialSpotUsdt).add(currFutureUsd.subtract(initialFutureUsdt));
+    public BigDecimal getNetPositionUsdt() {
+        BigDecimal currSpotUsdt = getCurrSpotUsdt();
+        BigDecimal currFutureUsdt = getCurrFutureUsdt();
+        BigDecimal netPosition = currSpotUsdt.subtract(initialSpotUsdt).add(currFutureUsdt.subtract(initialFutureUsdt));
         return netPosition;
     }
 
@@ -153,6 +157,9 @@ public class CommContext {
             shortAmount = shortPosi.getAmount();
         }
         exchangeRate = getExchangeRateOfUSDT2USD();
+        if (exchangeRate == null) {
+            throw new RuntimeException("获取USDT2USD汇率失败");
+        }
         return shortAmount.subtract(longAmount).multiply(futureExchangeConfig.getFaceValue())
                 .divide(exchangeRate, 18, BigDecimal.ROUND_DOWN);
     }
@@ -279,13 +286,13 @@ public class CommContext {
             SpotBalanceRespDto.DataBean coinBean = result.getData().getData().get(spotBaseCoin);
             SpotBalance.Coin coin = new SpotBalance.Coin();
             BeanUtils.copyProperties(coinBean, coin);
-            coin.setAvailable(BigDecimal.valueOf(999999999));
+            //coin.setAvailable(BigDecimal.valueOf(999999999));
             spotBalance.setCoin(coin);
 
             SpotBalanceRespDto.DataBean usdtBean = result.getData().getData().get(spotQuoteCoin);
             SpotBalance.Usdt usdt = new SpotBalance.Usdt();
             BeanUtils.copyProperties(usdtBean, usdt);
-            usdt.setAvailable(BigDecimal.valueOf(999999999));
+            //usdt.setAvailable(BigDecimal.valueOf(999999999));
             spotBalance.setUsdt(usdt);
             return spotBalance;
         } else {

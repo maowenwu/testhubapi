@@ -59,8 +59,7 @@ public class Hedger {
                         // 1.撤掉币币账户所有未成交订单
                         commContext.cancelAllSpotOrder();
                         // 2.计算当前的两个账户总的净头寸USDT
-                        BigDecimal netPosition = commContext.getNetPosition();
-                        netPosition = BigDecimal.valueOf(-100);
+                        BigDecimal netPosition = commContext.getNetPositionUsdt();
                         // 3. 下单
                         hedgerContext.placeHedgeOrder(netPosition);
                     }
@@ -86,7 +85,7 @@ public class Hedger {
                 // 1.撤掉币币账户所有未成交订单
                 commContext.cancelAllSpotOrder();
                 // 2.计算当前的两个账户总的净头寸USDT
-                BigDecimal m1 = commContext.getNetPosition();
+                BigDecimal m1 = commContext.getNetPositionUsdt();
                 BigDecimal m2 = commContext.getCurrFutureUsdt();
                 // 3.需要在币币账户对冲的金额
                 BigDecimal m = m2.subtract(m1);

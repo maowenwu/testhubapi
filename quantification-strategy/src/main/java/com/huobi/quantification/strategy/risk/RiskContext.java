@@ -99,18 +99,27 @@ public class RiskContext {
     private void loadInitialProfit() {
         // 加载币币账户期初余额
         QuanAccountAsset coinAccountAsset = quanAccountAssetMapper.selectByAccountSourceIdCoinType(spotAccountId, spotBaseCoin);
+        if (coinAccountAsset == null) {
+            throw new RuntimeException("[quan_account_asset]账户资产未初始化，spotAccountId=" + spotAccountId + "，spotBaseCoin={}" + spotBaseCoin);
+        }
         SpotBalance.Coin coin = new SpotBalance.Coin();
         BeanUtils.copyProperties(coinAccountAsset, coin);
         BigDecimal coinNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, true);
         initialSpotCoin = new SpotCoin(coin, coinNetBorrow);
         // 加载币币账户usdt期初余额
         QuanAccountAsset usdtAccountAsset = quanAccountAssetMapper.selectByAccountSourceIdCoinType(spotAccountId, spotQuoteCoin);
+        if (usdtAccountAsset == null) {
+            throw new RuntimeException("[quan_account_asset]账户资产未初始化，spotAccountId=" + spotAccountId + "，spotQuoteCoin={}" + spotQuoteCoin);
+        }
         SpotBalance.Usdt usdt = new SpotBalance.Usdt();
         BeanUtils.copyProperties(usdtAccountAsset, usdt);
         BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, true);
         initialSpotUsdt = new SpotUsdt(usdt, usdtNetBorrow);
         // 加载合约账户权益
         QuanAccountFutureAsset futureAsset = quanAccountFutureAssetMapper.selectByAccountSourceIdCoinType(futureAccountId, futureCoinType);
+        if (futureAsset == null) {
+            throw new RuntimeException("[quan_account_future_asset]账户资产未初始化，futureAccountId=" + futureAccountId + "，futureCoinType={}" + futureCoinType);
+        }
         FutureBalance futureBalance = new FutureBalance();
         BeanUtils.copyProperties(futureAsset, futureBalance);
         BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureCoinType, true);

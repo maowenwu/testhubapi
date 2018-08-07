@@ -36,6 +36,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 StrategyProperties.Config spot = group.getSpot();
                 jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "step1", "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotCurrentPriceJob(spot.getBaseCoin() + spot.getQuotCoin(), "0/1 * * * * ?", true);
+                jobManageService.addHuobiSpotAccountJob(spot.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFuturePositionJob(future.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFutureUserInfoJob(future.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFutureContractCodeJob("0/10 * * * * ?", true);
@@ -45,7 +46,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 contextInit(group);
                 //startOrderCopierWithConfig(group);
                 startHedgerWithConfig(group);
-                //startRiskMonitorWithConfig(group);
+                startRiskMonitorWithConfig(group);
             }
         }
     }
@@ -89,9 +90,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                     riskMonitor.check();
                 } catch (Throwable e) {
                     logger.error("监控保证金率期间出现异常", e);
-                    sleep(5000);
+                    sleep(3000);
                 }
-                sleep(5000);
+                sleep(3000);
             }
         });
         thread.setDaemon(true);

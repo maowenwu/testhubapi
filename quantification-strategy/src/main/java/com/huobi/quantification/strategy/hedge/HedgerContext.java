@@ -1,9 +1,11 @@
 package com.huobi.quantification.strategy.hedge;
 
 import com.huobi.quantification.api.spot.SpotOrderService;
+import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
+import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.enums.SideEnum;
@@ -81,13 +83,13 @@ public class HedgerContext {
     public void placeBuyOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
         orderPrice = checkPrice(orderPrice);
         orderAmount = checkAmount(orderAmount);
-        placeOrder(SideEnum.BUY.getSideType(), orderPrice, orderAmount);
+        placeOrder(SideEnum.BUY, orderPrice, orderAmount);
     }
 
     public void placeSellOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
         orderPrice = checkPrice(orderPrice);
         orderAmount = checkAmount(orderAmount);
-        placeOrder(SideEnum.SELL.getSideType(), orderPrice, orderAmount);
+        placeOrder(SideEnum.SELL, orderPrice, orderAmount);
     }
 
     private BigDecimal checkPrice(BigDecimal price) {
@@ -95,10 +97,10 @@ public class HedgerContext {
     }
 
     private BigDecimal checkAmount(BigDecimal amount) {
-        return amount.divide(BigDecimal.ONE, spotExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN);
+        return amount.divide(BigDecimal.ONE, spotExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN).abs();
     }
 
-    private void placeOrder(int side, BigDecimal orderPrice, BigDecimal orderAmount) {
+    private void placeOrder(SideEnum side, BigDecimal orderPrice, BigDecimal orderAmount) {
         // 检查数量、价格
         if (BigDecimalUtils.moreThan(orderPrice, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
             SpotPlaceOrderReqDto spotPlaceOrderReqDto = new SpotPlaceOrderReqDto();
@@ -108,10 +110,19 @@ public class HedgerContext {
             spotPlaceOrderReqDto.setQuoteCoin(spotQuoteCoin);
             spotPlaceOrderReqDto.setQuantity(orderAmount);
             spotPlaceOrderReqDto.setPrice(orderPrice);
-            spotPlaceOrderReqDto.setSide(side + "");
+            if (side == SideEnum.BUY) {
+                spotPlaceOrderReqDto.setSide("buy");
+            } else {
+                spotPlaceOrderReqDto.setSide("sell");
+            }
             spotPlaceOrderReqDto.setOrderType("limit");
 
-            spotOrderService.placeOrder(spotPlaceOrderReqDto);
+            ServiceResult<SpotPlaceOrderRespDto> result = spotOrderService.placeOrder(spotPlaceOrderReqDto);
+            if (result.isSuccess()) {
+                logger.info("下单成功，方向：{}，价格：{}，数量：{}", side, orderPrice, orderAmount);
+            } else {
+                logger.info("下单失败，方向：{}，价格：{}，数量：{}", side, orderPrice, orderAmount);
+            }
         } else {
             logger.info("价格或数量<=0，忽略此单，orderPrice={}，orderAmount{}", orderPrice, orderAmount);
         }
@@ -126,7 +137,7 @@ public class HedgerContext {
 
         if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
             BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getSlippage()));
-            BigDecimal orderAmount = netPosition.divide(orderPrice,18,BigDecimal.ROUND_DOWN);
+            BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN);
             placeBuyOrder(orderPrice, orderAmount);
         } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
             BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSlippage()));
