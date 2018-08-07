@@ -89,9 +89,9 @@ public class CommContext {
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
         this.futureCoinType = future.getBaseCoin();
-        loadInitialUsdt();
         this.spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
-        this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, spotBaseCoin, spotQuoteCoin);
+        this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
+        loadInitialUsdt();
     }
 
     private void loadInitialUsdt() {

@@ -60,6 +60,7 @@ public class Hedger {
                         commContext.cancelAllSpotOrder();
                         // 2.计算当前的两个账户总的净头寸USDT
                         BigDecimal netPosition = commContext.getNetPosition();
+                        netPosition = BigDecimal.valueOf(-100);
                         // 3. 下单
                         hedgerContext.placeHedgeOrder(netPosition);
                     }

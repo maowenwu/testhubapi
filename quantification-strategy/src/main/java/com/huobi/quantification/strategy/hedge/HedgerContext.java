@@ -69,7 +69,7 @@ public class HedgerContext {
         this.spotQuoteCoin = spot.getQuotCoin();
 
         spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
-        futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, spotBaseCoin, spotQuoteCoin);
+        futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
     }
 
     public StrategyHedgeConfig getStrategyHedgeConfig() {
@@ -126,11 +126,12 @@ public class HedgerContext {
 
         if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
             BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getSlippage()));
-            BigDecimal orderAmount = netPosition.divide(orderPrice);
+            BigDecimal orderAmount = netPosition.divide(orderPrice,18,BigDecimal.ROUND_DOWN);
             placeBuyOrder(orderPrice, orderAmount);
         } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
             BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSlippage()));
-            BigDecimal orderAmount = netPosition.divide(orderPrice).divide(BigDecimal.ONE.subtract(hedgeConfig.getSpotFee()));
+            BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN)
+                    .divide(BigDecimal.ONE.subtract(hedgeConfig.getSpotFee()), 18, BigDecimal.ROUND_DOWN);
             placeSellOrder(orderPrice, orderAmount);
         }
     }
