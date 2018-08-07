@@ -53,7 +53,7 @@ public class FutureJobAction {
 	@RequestMapping(value="/updateFutureJob.do")
 	@ResponseBody
 	@SystemLog(description = "更新任务",operCode="spotJob.update")
-	public Map<String, Object> updateSpotJob(@RequestParam("newInfo")String newInfo) throws Exception {
+	public Map<String, Object> updateJob(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
 		JSONObject parseObject = JSON.parseObject(newInfo);
 		try {
@@ -80,14 +80,14 @@ public class FutureJobAction {
 	@RequestMapping(value="/saveSpotJob.do")
 	@ResponseBody
 	@SystemLog(description = "新增|修改任务",operCode="spotJob.insert")
-	public Map<String, Object> saveSpotJob(@RequestBody String param) throws Exception {
+	public Map<String, Object> saveJob(@RequestBody String param) throws Exception {
 		return null;
 	}
 	
 	@RequestMapping(value="/deleteSpotJob.do")
 	@ResponseBody
 	@SystemLog(description = "删除任务",operCode="spotJob.delete")
-	public Map<String, Object> deleteSpotJob(@RequestParam("id")Integer id) throws Exception {
+	public Map<String, Object> deleteJob(@RequestParam("id")Integer id) throws Exception {
 		try {
 		} catch (Exception e) {
 			log.error("现货任务数据删除失败");

@@ -51,7 +51,7 @@ public class OrderAction {
 	@RequestMapping(value="/updateOrder.do")
 	@ResponseBody
 	@SystemLog(description = "更新配置",operCode="order.update")
-	public Map<String, Object> updateSpotJob(@RequestParam("newInfo")String newInfo) throws Exception {
+	public Map<String, Object> updateOrder(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
 		StrategyOrderConfig config = JSON.parseObject(newInfo, StrategyOrderConfig.class);
 		try {

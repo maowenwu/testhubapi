@@ -52,7 +52,7 @@ public class HedgeAction {
 	@RequestMapping(value="/updateHedge.do")
 	@ResponseBody
 	@SystemLog(description = "更新配置",operCode="hedge.update")
-	public Map<String, Object> updateSpotJob(@RequestParam("newInfo")String newInfo) throws Exception {
+	public Map<String, Object> update(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
 		StrategyHedgeConfig riskConfig = JSON.parseObject(newInfo, StrategyHedgeConfig.class);
 		log.error(newInfo);
