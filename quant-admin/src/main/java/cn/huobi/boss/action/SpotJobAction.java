@@ -9,7 +9,6 @@ import javax.annotation.Resource;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.huobi.quantification.dao.QuanAccountMapper;
-import com.huobi.quantification.entity.QuanAccount;
 
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
@@ -44,7 +41,7 @@ public class SpotJobAction {
                                               @Param("page") Page<SpotJob> page) throws Exception {
 		SpotJob job = JSONObject.parseObject(baseInfo, SpotJob.class);
 		try {
-			List<SpotJob> spotJobs = quanJobService.selectDicByCondition(job, page);
+			List<SpotJob> spotJobs = quanJobService.selectByCondition(job, page);
 			page.setResult(spotJobs);
 		} catch (Exception e) {
 			log.error("条件查询现货任务失败");

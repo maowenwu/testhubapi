@@ -13,11 +13,12 @@ import org.apache.ibatis.jdbc.SQL;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
 
 import cn.huobi.framework.db.pagination.Page;
+import cn.huobi.framework.model.HedgeConfig;
 
 public interface HadgeDao {
 	@SelectProvider(type=SqlProvider.class, method="selectByCondition")
 	@ResultType(StrategyHedgeConfig.class)
-	List<StrategyHedgeConfig> selectByCondition(@Param("config")StrategyHedgeConfig config, Page<StrategyHedgeConfig> page);
+	List<StrategyHedgeConfig> selectByCondition(@Param("config")StrategyHedgeConfig config, Page<HedgeConfig> page);
 	
 	@Delete("delete from strategy_hedge_config where id=#{id}")
 	int delete(@Param("id")Integer id);

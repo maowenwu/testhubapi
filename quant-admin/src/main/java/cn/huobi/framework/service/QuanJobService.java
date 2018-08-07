@@ -6,7 +6,7 @@ import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.SpotJob;
 
 public interface QuanJobService {
-	List<SpotJob> selectDicByCondition(SpotJob job, Page<SpotJob> page);
+	List<SpotJob> selectByCondition(SpotJob job, Page<SpotJob> page);
 
 	int deleteById(Integer id);
 

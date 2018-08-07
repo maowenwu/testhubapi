@@ -14,12 +14,13 @@ angular.module('inspinia',['uiSwitch']).controller('hedgeCtrl',function($scope,$
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'coin', displayName: '币种'},
-            {field: 'contractCode', displayName: '合约code'},
+            {field: 'symbol', displayName: '交易对'},
             {field: 'contractType', displayName: '合约类型'},
-            {field: 'formalityRate', displayName: '手续费率'},
+            {field: 'spotFee', displayName: '手续费率'},
             {field: 'slippage', displayName: '滑点'},
-            {field: 'period', displayName: '交割对冲周期'},
+            {field: 'placeOrderInterval', displayName: '交割对冲周期'},
+            {field: 'createTime', displayName: '创建时间'},
+            {field: 'updateTime', displayName: '更新时间'},
             {field: 'id', displayName: '操作', cellTemplate: 
             	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a>'
             }

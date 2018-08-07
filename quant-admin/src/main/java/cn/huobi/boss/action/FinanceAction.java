@@ -23,6 +23,7 @@ import com.huobi.quantification.entity.StrategyRiskConfig;
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
 import cn.huobi.framework.db.pagination.Page;
+import cn.huobi.framework.model.FinanceHistory;
 import cn.huobi.framework.service.FinanceService;
 import cn.huobi.framework.service.RiskService;
 import cn.huobi.framework.util.Constants;
@@ -38,11 +39,11 @@ public class FinanceAction {
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value="/selectByCondition.do")
 	@ResponseBody
-	public Page<StrategyFinanceHistory> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<StrategyFinanceHistory> page) throws Exception {
-		StrategyFinanceHistory config = JSONObject.parseObject(baseInfo, StrategyFinanceHistory.class);
+	public Page<FinanceHistory> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
+                                              @Param("page") Page<FinanceHistory> page) throws Exception {
+		FinanceHistory config = JSONObject.parseObject(baseInfo, FinanceHistory.class);
 		try {
-			List<StrategyFinanceHistory> configs = financeService.selectByCondition(config, page);
+			List<FinanceHistory> configs = financeService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
 			log.error("条件查询风控配置失败");
@@ -60,6 +61,11 @@ public class FinanceAction {
 		config.setInit(1);
 		config.setCreateTime(new Date());
 		config.setUpdateTime(new Date());
+		if (config.getMoneyType() == null) {
+			msg.put("status", false);
+			msg.put("msg", "更新失败");
+			return msg;
+		}
 		try {
 			int status = financeService.insert(config);
 			if (status > 0) {

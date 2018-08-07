@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.entity.QuanJobFuture;
 
 import cn.huobi.framework.dao.QuanFutureJobDao;
@@ -26,7 +25,7 @@ public class QuanFutreJobServiceImpl implements QuanFutureJobService{
 
 	@Override
 	public List<FutureJob> selectDicByCondition(FutureJob job, Page<FutureJob> page) {
-		QuanJobFuture quanJobFuture = new QuanJobFuture();
+		QuanJobFuture quanJobFuture = convertFutureJob(job);
 		List<QuanJobFuture> quanJobFutures = quanFutureJobDao.selectDicByCondition(quanJobFuture, page);
 		List<FutureJob> futureJobs = new ArrayList<>();
 		for (QuanJobFuture quanJobFuture2 : quanJobFutures) {
@@ -34,6 +33,13 @@ public class QuanFutreJobServiceImpl implements QuanFutureJobService{
 			futureJobs.add(futureJob);
 		}
 		return futureJobs;
+	}
+
+	private QuanJobFuture convertFutureJob(FutureJob job) {
+		QuanJobFuture quanJobFuture = new QuanJobFuture();
+		quanJobFuture.setExchangeId(job.getExchangeId());
+		quanJobFuture.setJobDesc(job.getJobDesc());
+		return quanJobFuture;
 	}
 
 	private FutureJob convertQuanJobFuture2FutureJob(QuanJobFuture quanJobFuture) {

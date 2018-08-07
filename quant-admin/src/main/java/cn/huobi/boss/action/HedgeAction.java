@@ -21,6 +21,7 @@ import com.huobi.quantification.entity.StrategyHedgeConfig;
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
 import cn.huobi.framework.db.pagination.Page;
+import cn.huobi.framework.model.HedgeConfig;
 import cn.huobi.framework.service.HedgeService;
 import cn.huobi.framework.util.Constants;
 
@@ -35,11 +36,11 @@ public class HedgeAction {
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value="/selectByCondition.do")
 	@ResponseBody
-	public Page<StrategyHedgeConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<StrategyHedgeConfig> page) throws Exception {
-		StrategyHedgeConfig config = JSONObject.parseObject(baseInfo, StrategyHedgeConfig.class);
+	public Page<HedgeConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
+                                              @Param("page") Page<HedgeConfig> page) throws Exception {
+		HedgeConfig config = JSONObject.parseObject(baseInfo, HedgeConfig.class);
 		try {
-			List<StrategyHedgeConfig> configs = hedgeService.selectByCondition(config, page);
+			List<HedgeConfig> configs = hedgeService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
 			log.error("条件查询风控配置失败");
