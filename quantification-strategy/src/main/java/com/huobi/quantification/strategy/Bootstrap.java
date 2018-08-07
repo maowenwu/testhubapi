@@ -34,7 +34,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 logger.info("注册job开始");
                 StrategyProperties.Config future = group.getFuture();
                 StrategyProperties.Config spot = group.getSpot();
-                jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "step1", "0/1 * * * * ?", true);
+                jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "step0", "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotCurrentPriceJob(spot.getBaseCoin() + spot.getQuotCoin(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotAccountJob(spot.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFuturePositionJob(future.getAccountId(), "0/1 * * * * ?", true);
@@ -44,7 +44,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 // 等待3秒，保证job已经完全运行
                 //sleep(3000);
                 contextInit(group);
-                //startOrderCopierWithConfig(group);
+                startOrderCopierWithConfig(group);
                 startHedgerWithConfig(group);
                 startRiskMonitorWithConfig(group);
             }

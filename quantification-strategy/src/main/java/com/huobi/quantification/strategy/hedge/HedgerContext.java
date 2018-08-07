@@ -10,6 +10,7 @@ import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.CommContext;
+import com.huobi.quantification.strategy.SpotBalanceMock;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
@@ -84,12 +85,18 @@ public class HedgerContext {
         orderPrice = checkPrice(orderPrice);
         orderAmount = checkAmount(orderAmount);
         placeOrder(SideEnum.BUY, orderPrice, orderAmount);
+        // todo
+        SpotBalanceMock.setUsdt(SpotBalanceMock.getUsdt().subtract(orderPrice.multiply(orderAmount)));
+        SpotBalanceMock.setCoin(SpotBalanceMock.getCoin().add(orderAmount));
     }
 
     public void placeSellOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
         orderPrice = checkPrice(orderPrice);
         orderAmount = checkAmount(orderAmount);
         placeOrder(SideEnum.SELL, orderPrice, orderAmount);
+        // todo
+        SpotBalanceMock.setUsdt(SpotBalanceMock.getUsdt().add(orderPrice.multiply(orderAmount)));
+        SpotBalanceMock.setCoin(SpotBalanceMock.getCoin().subtract(orderPrice.multiply(orderAmount)));
     }
 
     private BigDecimal checkPrice(BigDecimal price) {

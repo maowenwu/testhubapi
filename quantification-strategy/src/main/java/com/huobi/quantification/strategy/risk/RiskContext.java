@@ -344,10 +344,10 @@ public class RiskContext {
             if (result.isSuccess()) {
                 return result.getData().getContractType();
             } else {
-                throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务");
+                throw new RuntimeException("获取ContractType失败");
             }
         } catch (Throwable e) {
-            throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务", e);
+            throw new RuntimeException("获取ContractType失败", e);
         }
     }
 

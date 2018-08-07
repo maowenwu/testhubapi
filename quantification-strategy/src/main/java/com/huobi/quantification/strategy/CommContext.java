@@ -277,7 +277,8 @@ public class CommContext {
     private SpotAccountService spotAccountService;
 
     public SpotBalance getSpotBalance() {
-        SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
+        return SpotBalanceMock.getSpotBalance();
+        /*SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
         reqDto.setExchangeId(spotExchangeId);
         reqDto.setAccountId(spotAccountId);
         ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(reqDto);
@@ -286,18 +287,16 @@ public class CommContext {
             SpotBalanceRespDto.DataBean coinBean = result.getData().getData().get(spotBaseCoin);
             SpotBalance.Coin coin = new SpotBalance.Coin();
             BeanUtils.copyProperties(coinBean, coin);
-            //coin.setAvailable(BigDecimal.valueOf(999999999));
             spotBalance.setCoin(coin);
 
             SpotBalanceRespDto.DataBean usdtBean = result.getData().getData().get(spotQuoteCoin);
             SpotBalance.Usdt usdt = new SpotBalance.Usdt();
             BeanUtils.copyProperties(usdtBean, usdt);
-            //usdt.setAvailable(BigDecimal.valueOf(999999999));
             spotBalance.setUsdt(usdt);
             return spotBalance;
         } else {
             return null;
-        }
+        }*/
     }
 
     public BigDecimal getSpotCurrentPrice() {
