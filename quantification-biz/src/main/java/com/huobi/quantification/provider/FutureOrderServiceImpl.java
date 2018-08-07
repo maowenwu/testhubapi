@@ -473,7 +473,8 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         List<Integer> statusList = new ArrayList<>();
         statusList.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
         statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
-        statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
+        // 活跃订单中不应该包含撤单中的订单
+        //statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
         try {
             List<QuanOrderFuture> list = quanOrderFutureMapper.selectOrderByStatus(reqDto.getExchangeId(), reqDto.getAccountId(), statusList);
             Map<BigDecimal, List<QuanOrderFuture>> result = list.stream().collect(Collectors.groupingBy(e -> e.getOrderPrice()));

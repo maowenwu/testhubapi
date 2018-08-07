@@ -178,12 +178,12 @@ public class OkHttpClientUtils {
 
 
     public static void main(String[] args) {
-        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
         params.put("symbol", "BTC");
         params.put("userId", "156138");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_account_info", params);
-        System.out.println(s);
+        System.out.println(s);*/
 
         /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
@@ -205,5 +205,11 @@ public class OkHttpClientUtils {
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_hold_amount", params);
         System.out.println(s);*/
 
+        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", "BTC");
+        params.put("userId", "156138");
+        String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_account_info", params);
+        System.out.println(s);
     }
 }

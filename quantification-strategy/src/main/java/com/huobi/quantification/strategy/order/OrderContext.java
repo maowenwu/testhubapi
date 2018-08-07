@@ -191,7 +191,7 @@ public class OrderContext {
     // 下买单
     public void placeBuyOrder(BigDecimal price, BigDecimal orderAmount) {
         FuturePosition.Position shortPosi = futurePosition.getShortPosi();
-        if (shortPosi != null && BigDecimalUtils.moreThan(shortPosi.getAvailable(), BigDecimal.ZERO)) {
+        if (shortPosi != null && BigDecimalUtils.moreThan(shortPosi.getAvailable(), config.getMaxShortPosition())) {
             // 空仓的可平量
             BigDecimal shortAvailable = shortPosi.getAvailable();
             // 如果有持仓，那么下平仓单
@@ -217,7 +217,9 @@ public class OrderContext {
 
     public void placeSellOrder(BigDecimal price, BigDecimal orderAmount) {
         FuturePosition.Position longPosi = futurePosition.getLongPosi();
-        if (longPosi != null && BigDecimalUtils.moreThan(longPosi.getAvailable(), BigDecimal.ZERO)) {
+        // 下卖单，先看下多仓可用持仓是否超过最大允许持仓，如果超过那么下平仓单。
+        // 设置最大允许持仓主要是为了能保留一点持仓，如果一点都不需要那么可以设置为0
+        if (longPosi != null && BigDecimalUtils.moreThan(longPosi.getAvailable(), config.getMaxLongPosition())) {
             // 空仓的可平量
             BigDecimal longAvailable = longPosi.getAvailable();
             // 如果有持仓，那么下平仓单
