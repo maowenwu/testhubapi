@@ -47,7 +47,7 @@ public class OrderStatusTable {
 
     public static class HuobiFutureOrderStatus {
 
-        //(1准备提交 2撤单中 3未成交 4部分成交 5部分成交已撤单 6全部成交 7已撤单 )
+        //(1准备提交 2已定序 3未成交 4部分成交 5部分成交已撤单 6全部成交 7已撤单 )
         private static Map<Integer, OrderStatusEnum> map = new HashMap<>();
 
         static {

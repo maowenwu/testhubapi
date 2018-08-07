@@ -224,7 +224,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
                 orderDto.setAmount(reqDto.getQuantity());
             }
         } else {
-            new RuntimeException(ServiceErrorEnum.PARAM_ERROR.getMessage());
+            throw new RuntimeException(ServiceErrorEnum.PARAM_ERROR.getMessage());
         }
         orderDto.setSource("api");
         String symbol = getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin());
@@ -421,7 +421,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
      * 解析批量撤单返回的数据
      *
      * @param input input
-     * @return Map<String                                                                                                                               ,                                                                                                                                                                                                                                                               Object>
+     * @return Map<String                                                                                                                                                                                                                                                               ,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               Object>
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Map<String, Object> parseData(String input) {

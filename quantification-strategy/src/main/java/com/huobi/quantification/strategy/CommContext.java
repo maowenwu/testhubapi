@@ -132,10 +132,22 @@ public class CommContext {
      * @return
      */
     public BigDecimal getCurrFutureUsd() {
+        BigDecimal longAmount;
+        BigDecimal shortAmount;
         FuturePosition futurePosition = getFuturePosition();
         FuturePosition.Position longPosi = futurePosition.getLongPosi();
+        if (longPosi == null) {
+            longAmount = BigDecimal.ZERO;
+        } else {
+            longAmount = longPosi.getAmount();
+        }
         FuturePosition.Position shortPosi = futurePosition.getShortPosi();
-        return shortPosi.getAmount().subtract(longPosi.getAmount()).multiply(faceValue);
+        if (shortPosi == null) {
+            shortAmount = BigDecimal.ZERO;
+        } else {
+            shortAmount = shortPosi.getAmount();
+        }
+        return shortAmount.subtract(longAmount).multiply(faceValue);
     }
 
     public DepthBook getDepth() {
@@ -292,7 +304,7 @@ public class CommContext {
     }
 
     public boolean isThisWeek() {
-        return "this_week".equals(futureContractType);
+        return "this_week".equals(getContractTypeFromCode());
     }
 
     public String getContractTypeFromCode() {

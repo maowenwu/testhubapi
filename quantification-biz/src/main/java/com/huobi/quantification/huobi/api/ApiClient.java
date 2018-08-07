@@ -134,7 +134,7 @@ public class ApiClient {
      */
     public List<Symbol> getSymbols() {
         ApiResponse<List<Symbol>> resp =
-                get("/v1/common/symbols", null, new TypeReference<ApiResponse<List<Symbol>>>() {
+                get("/v1/comm/symbols", null, new TypeReference<ApiResponse<List<Symbol>>>() {
                 });
         return resp.checkAndReturn();
     }
@@ -274,7 +274,7 @@ public class ApiClient {
 
 
     /**
-     * GET /v1/common/symbols 查询系统支持的所有交易对及精度
+     * GET /v1/comm/symbols 查询系统支持的所有交易对及精度
      *
      * @param symbol
      * @return
@@ -282,13 +282,13 @@ public class ApiClient {
     public SymbolsResponse symbols(String symbol) {
         HashMap map = new HashMap();
         map.put("symbol", symbol);
-        SymbolsResponse resp = get("/v1/common/symbols", map, new TypeReference<SymbolsResponse<Symbols>>() {
+        SymbolsResponse resp = get("/v1/comm/symbols", map, new TypeReference<SymbolsResponse<Symbols>>() {
         });
         return resp;
     }
 
     /**
-     * GET /v1/common/currencys 查询系统支持的所有币种
+     * GET /v1/comm/currencys 查询系统支持的所有币种
      *
      * @param symbol
      * @return
@@ -296,18 +296,18 @@ public class ApiClient {
     public CurrencysResponse currencys(String symbol) {
         HashMap map = new HashMap();
         map.put("symbol", symbol);
-        CurrencysResponse resp = get("/v1/common/currencys", map, new TypeReference<CurrencysResponse>() {
+        CurrencysResponse resp = get("/v1/comm/currencys", map, new TypeReference<CurrencysResponse>() {
         });
         return resp;
     }
 
     /**
-     * GET /v1/common/timestamp 查询系统当前时间
+     * GET /v1/comm/timestamp 查询系统当前时间
      *
      * @return
      */
     public TimestampResponse timestamp() {
-        TimestampResponse resp = get("/v1/common/timestamp", null, new TypeReference<TimestampResponse>() {
+        TimestampResponse resp = get("/v1/comm/timestamp", null, new TypeReference<TimestampResponse>() {
         });
         return resp;
     }

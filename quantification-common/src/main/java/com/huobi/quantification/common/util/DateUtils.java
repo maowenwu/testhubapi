@@ -1,10 +1,11 @@
 package com.huobi.quantification.common.util;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class DateUtils {
@@ -43,4 +44,16 @@ public class DateUtils {
     }
 
 
+    public static LocalDateTime getFriday(String time) {
+        TemporalField fieldISO = WeekFields.of(Locale.CHINA).dayOfWeek();
+        LocalDate localDate = LocalDate.now().with(fieldISO, 6);
+        LocalTime localTime = LocalTime.parse(time, DateTimeFormatter.ISO_LOCAL_TIME);
+        return LocalDateTime.of(localDate, localTime);
+    }
+
+    public static long getSecond(String time1, String time2) {
+        LocalTime t1 = LocalTime.parse(time1, DateTimeFormatter.ISO_LOCAL_TIME);
+        LocalTime t2 = LocalTime.parse(time2, DateTimeFormatter.ISO_LOCAL_TIME);
+        return Duration.between(t1, t2).toMillis() / 1000;
+    }
 }

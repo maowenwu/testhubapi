@@ -43,8 +43,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 // 等待3秒，保证job已经完全运行
                 //sleep(3000);
                 contextInit(group);
-                startOrderCopierWithConfig(group);
-                //startHedgerWithConfig(group);
+                //startOrderCopierWithConfig(group);
+                startHedgerWithConfig(group);
                 //startRiskMonitorWithConfig(group);
             }
         }

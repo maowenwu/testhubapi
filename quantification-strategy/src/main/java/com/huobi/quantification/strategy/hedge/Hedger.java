@@ -1,13 +1,12 @@
 package com.huobi.quantification.strategy.hedge;
 
 import com.huobi.quantification.api.future.FutureContractService;
-import com.huobi.quantification.common.util.BigDecimalUtils;
+import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
-import com.huobi.quantification.strategy.entity.DepthBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -64,12 +62,13 @@ public class Hedger {
                 try {
                     if (hedgePhase1Enable.get()) {
                         StrategyHedgeConfig hedgeConfig = hedgerContext.getStrategyHedgeConfig();
+                        hedgerContext.setHedgeConfig(hedgeConfig);
                         // 1.撤掉币币账户所有未成交订单
                         commContext.cancelAllSpotOrder();
                         // 2.计算当前的两个账户总的净头寸USDT
                         BigDecimal netPosition = commContext.getNetPosition();
                         // 3. 下单
-                        placeHedgeOrder(hedgeConfig, netPosition);
+                        hedgerContext.placeHedgeOrder(netPosition);
                     }
                 } catch (Throwable e) {
                     logger.error("对冲期间出现异常,", e);
@@ -86,7 +85,7 @@ public class Hedger {
     public void hedgePhase2() {
         StrategyHedgeConfig hedgeConfig = hedgerContext.getStrategyHedgeConfig();
         Integer interval = hedgeConfig.getPlaceOrderInterval();
-        AtomicLong totalCount = new AtomicLong(getSecond(stopTime1, stopTime2) / interval);
+        AtomicLong totalCount = new AtomicLong(DateUtils.getSecond(stopTime1, stopTime2) / interval);
         scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
         scheduledExecutor.scheduleAtFixedRate(() -> {
             if (hedgePhase2Enable.get() && totalCount.get() > 0) {
@@ -99,27 +98,10 @@ public class Hedger {
                 BigDecimal m = m2.subtract(m1);
 
                 BigDecimal netPosition = m.divide(BigDecimal.valueOf(totalCount.get()), 18, BigDecimal.ROUND_DOWN);
-                placeHedgeOrder(hedgeConfig, netPosition);
+                hedgerContext.placeHedgeOrder(netPosition);
                 totalCount.decrementAndGet();
             }
         }, 0, Long.valueOf(interval), TimeUnit.SECONDS);
-    }
-
-    public void placeHedgeOrder(StrategyHedgeConfig hedgeConfig, BigDecimal netPosition) {
-        // 3. 获取买一卖一价格
-        DepthBook depthBook = commContext.getDepth();
-        BigDecimal ask1 = depthBook.getAsk1();
-        BigDecimal bid1 = depthBook.getBid1();
-
-        if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
-            BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getSlippage()));
-            BigDecimal orderAmount = netPosition.divide(orderPrice);
-            hedgerContext.placeBuyOrder(orderPrice, orderAmount);
-        } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
-            BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSlippage()));
-            BigDecimal orderAmount = netPosition.divide(orderPrice);
-            hedgerContext.placeSellOrder(orderPrice, orderAmount);
-        }
     }
 
 
@@ -139,10 +121,10 @@ public class Hedger {
             while (true) {
                 if (commContext.isThisWeek()) {
                     LocalDateTime now = LocalDateTime.now();
-                    if (now.isAfter(getFriday(stopTime1)) && hedgePhase1Enable.get()) {
+                    if (now.isAfter(DateUtils.getFriday(stopTime1)) && hedgePhase1Enable.get()) {
                         stopHedgePhase1();
                     }
-                    if (now.isAfter(getFriday(stopTime2)) && hedgePhase2Enable.get()) {
+                    if (now.isAfter(DateUtils.getFriday(stopTime2)) && hedgePhase2Enable.get()) {
                         stopHedgePhase2();
                     }
                 } else {
@@ -156,18 +138,5 @@ public class Hedger {
         thread.start();
     }
 
-
-    public LocalDateTime getFriday(String time) {
-        TemporalField fieldISO = WeekFields.of(Locale.CHINA).dayOfWeek();
-        LocalDate localDate = LocalDate.now().with(fieldISO, 6);
-        LocalTime localTime = LocalTime.parse(time, DateTimeFormatter.ISO_LOCAL_TIME);
-        return LocalDateTime.of(localDate, localTime);
-    }
-
-    private long getSecond(String time1, String time2) {
-        LocalTime t1 = LocalTime.parse(time1, DateTimeFormatter.ISO_LOCAL_TIME);
-        LocalTime t2 = LocalTime.parse(time2, DateTimeFormatter.ISO_LOCAL_TIME);
-        return Duration.between(t1, t2).toMillis() / 1000;
-    }
 
 }
