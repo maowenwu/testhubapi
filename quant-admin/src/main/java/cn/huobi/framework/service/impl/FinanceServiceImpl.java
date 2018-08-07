@@ -40,9 +40,9 @@ public class FinanceServiceImpl implements FinanceService {
 		financeHistory.setAccountId(strategyFinanceHistory.getAccountId());
 		financeHistory.setCoinType(strategyFinanceHistory.getCoinType());
 		financeHistory.setExchangeId(strategyFinanceHistory.getExchangeId());
-		if (strategyFinanceHistory.getMoneyType() > 0) {
+		if (strategyFinanceHistory.getMoneyType() == 1) {
 			financeHistory.setMoneyType("充值");
-		}else {
+		}else if (strategyFinanceHistory.getMoneyType() == 2) {
 			financeHistory.setMoneyType("提现");
 		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

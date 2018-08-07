@@ -33,7 +33,7 @@ public class FinanceHistory {
     private BigDecimal transferAmount;
 
     /**
-     * 1.充值  -1. 提现
+     * 1.充值  2. 提现
      * @mbg.generated 2018-08-03 15:13:17
      */
     private String moneyType;

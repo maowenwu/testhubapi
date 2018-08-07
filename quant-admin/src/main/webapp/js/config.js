@@ -474,6 +474,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })        
+        .state('config.spotAccount', {
+        	url: "/config/spotAccount",
+        	templateUrl: "views/config/spotAccount.html",
+        	data: {pageTitle: '现货账号管理'},
+        	controller: "spotAccountCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/config/spotAccountCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
         
 }
 

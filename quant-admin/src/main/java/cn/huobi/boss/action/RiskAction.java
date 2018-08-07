@@ -64,7 +64,7 @@ public class RiskAction {
 				msg.put("msg", "更新失败");
 			}
 		} catch (Exception e) {
-			log.error("更新现货任务失败");
+			log.error("更新风控配置失败");
 			e.printStackTrace();
 		}
 		return msg;

@@ -42,7 +42,7 @@ public class OrderAction {
 			List<StrategyOrderConfig> configs = orderService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
-			log.error("条件查询风控配置失败");
+			log.error("条件查询摆单配置失败");
 			e.printStackTrace();
 		}
 		return page;
@@ -64,7 +64,7 @@ public class OrderAction {
 				msg.put("msg", "更新失败");
 			}
 		} catch (Exception e) {
-			log.error("更新现货任务失败");
+			log.error("更新摆单配置失败");
 			e.printStackTrace();
 		}
 		return msg;

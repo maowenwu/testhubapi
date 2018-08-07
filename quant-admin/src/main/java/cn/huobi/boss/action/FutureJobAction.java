@@ -90,7 +90,7 @@ public class FutureJobAction {
 	public Map<String, Object> deleteSpotJob(@RequestParam("id")Integer id) throws Exception {
 		try {
 		} catch (Exception e) {
-			log.error("{}号任务数据删除失败");
+			log.error("现货任务数据删除失败");
 			e.printStackTrace();
 		}
 		return null;

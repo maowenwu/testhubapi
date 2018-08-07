@@ -46,7 +46,7 @@ public class FinanceAction {
 			List<FinanceHistory> configs = financeService.selectByCondition(config, page);
 			page.setResult(configs);
 		} catch (Exception e) {
-			log.error("条件查询风控配置失败");
+			log.error("条件查询财务列表失败");
 			e.printStackTrace();
 		}
 		return page;
@@ -58,7 +58,7 @@ public class FinanceAction {
 	public Map<String, Object> insertFinance(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
 		StrategyFinanceHistory config = JSON.parseObject(newInfo, StrategyFinanceHistory.class);
-		config.setInit(1);
+		config.setInit(0);
 		config.setCreateTime(new Date());
 		config.setUpdateTime(new Date());
 		if (config.getMoneyType() == null) {
@@ -76,7 +76,7 @@ public class FinanceAction {
 				msg.put("msg", "更新失败");
 			}
 		} catch (Exception e) {
-			log.error("更新现货任务失败");
+			log.error("添加财务列表失败");
 			e.printStackTrace();
 		}
 		return msg;
