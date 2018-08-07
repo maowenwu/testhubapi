@@ -20,7 +20,7 @@ public interface QuanFutureJobDao {
 
 	@SelectProvider(type=SqlProvider.class, method="selectDicByCondition")
 	@ResultType(QuanJobFuture.class)
-	List<QuanJobFuture> selectDicByCondition(@Param("quanJob")QuanJobFuture job, Page<FutureJob> page);
+	List<QuanJobFuture> selectDicByCondition(@Param("quanJob")QuanJobFuture quanJob, Page<FutureJob> page);
 	
 	@Delete("delete from quan_job_future where id=#{id}")
 	int delete(@Param("id")Integer id);
@@ -31,17 +31,17 @@ public interface QuanFutureJobDao {
 	public class SqlProvider{
 		
 		public String selectDicByCondition(Map<String, Object> param){
-			final QuanJobFuture job = (QuanJobFuture) param.get("quanJob");
+			final QuanJobFuture quanJob = (QuanJobFuture) param.get("quanJob");
 			return new SQL(){
 				{
 					SELECT("*");
 					FROM("quan_job_future");
-					if(job!=null && job.getExchangeId() != null){
-						WHERE("exchange_id = #{job.exchangeId}");
+					if(quanJob!=null && quanJob.getExchangeId() != null){
+						WHERE("exchange_id = #{quanJob.exchangeId}");
 					}
-					if(job!=null && StringUtils.isNotBlank(job.getJobDesc())){
-						job.setJobDesc(job.getJobDesc()+"%");
-						WHERE("job_desc like #{job.jobDesc}");
+					if(quanJob!=null && StringUtils.isNotBlank(quanJob.getJobDesc())){
+						quanJob.setJobDesc(quanJob.getJobDesc()+"%");
+						WHERE("job_desc like #{quanJob.jobDesc}");
 					}
 				}
 			}.toString();

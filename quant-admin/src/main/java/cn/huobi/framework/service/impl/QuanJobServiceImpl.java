@@ -24,15 +24,22 @@ public class QuanJobServiceImpl implements QuanJobService {
 	private QuanJobDao quanJobDao;
 
 	@Override
-	public List<SpotJob> selectDicByCondition(SpotJob job, Page<SpotJob> page) {
-		QuanJob quanJob = new QuanJob();
-		List<QuanJob> jobs = quanJobDao.selectDicByCondition(quanJob, page);
+	public List<SpotJob> selectByCondition(SpotJob job, Page<SpotJob> page) {
+		QuanJob quanJob = convertSpotJob(job);
+		List<QuanJob> jobs = quanJobDao.selectByCondition(quanJob, page);
 		List<SpotJob> spotJobs = new ArrayList<>();
 		for (QuanJob job2 : jobs) {
 			SpotJob spotJob = convertQuanJob2SpotJob(job2);
 			spotJobs.add(spotJob);
 		}
 		return spotJobs;
+	}
+
+	private QuanJob convertSpotJob(SpotJob job) {
+		QuanJob quanJob = new QuanJob();
+		quanJob.setExchangeId(job.getExchangeId());
+		quanJob.setJobDesc(job.getJobDesc());
+		return quanJob;
 	}
 
 	private SpotJob convertQuanJob2SpotJob(QuanJob job) {

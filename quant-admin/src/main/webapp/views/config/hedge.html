@@ -151,12 +151,19 @@
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>手续费率：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.formalityRate' name="formalityRate" required/>
+									ng-model='newInfo.spotFee' name="spotFee" required/>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>滑点：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.slippage' name="slippage" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req"></i>交割对冲周期：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.placeOrderInterval' name="placeOrderInterval" required>
 							</div>
 						</div>
 						<div class="form-group">

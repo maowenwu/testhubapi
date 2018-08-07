@@ -13,11 +13,13 @@ import org.apache.ibatis.jdbc.SQL;
 import com.huobi.quantification.entity.StrategyFinanceHistory;
 
 import cn.huobi.framework.db.pagination.Page;
+import cn.huobi.framework.model.FinanceHistory;
+import cn.huobi.framework.util.StringUtil;
 
 public interface FinanceDao {
 	@SelectProvider(type=SqlProvider.class, method="selectDicByCondition")
 	@ResultType(StrategyFinanceHistory.class)
-	List<StrategyFinanceHistory> selectByCondition(@Param("config")StrategyFinanceHistory config, Page<StrategyFinanceHistory> page);
+	List<StrategyFinanceHistory> selectByCondition(@Param("config")StrategyFinanceHistory config, Page<FinanceHistory> page);
 	
 	@Delete("delete from strategy_finance_history where id=#{id}")
 	int delete(@Param("id")Integer id);
@@ -35,13 +37,16 @@ public interface FinanceDao {
 				{
 					SELECT("*");
 					FROM("strategy_finance_history");
-//					if(job!=null && job.getExchangeId() != null){
-//						WHERE("exchange_id = #{job.exchangeId}");
-//					}
-//					if(job!=null && StringUtils.isNotBlank(job.getJobDesc())){
-//						job.setJobDesc(job.getJobDesc()+"%");
-//						WHERE("job_desc like #{job.jobDesc}");
-//					}
+					if(config!=null && config.getExchangeId() != null){
+						WHERE("exchange_id = #{config.exchangeId}");
+					}
+					if(config!=null && config.getAccountId() != null){
+						WHERE("account_id = #{config.accountId}");
+					}
+					if (config!=null && !StringUtil.isBlank(config.getCoinType())) {
+						config.setCoinType(config.getCoinType() + "%");
+						WHERE("coin_type like #{config.coinType}");
+					}
 				}
 			}.toString();
 		}
