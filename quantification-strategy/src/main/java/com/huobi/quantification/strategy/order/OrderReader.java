@@ -27,6 +27,9 @@ public class OrderReader {
 
     private FuturePosition position;
 
+    private List<FutureOrder> buyOrderList;
+    private List<FutureOrder> sellOrderList;
+
     public OrderReader(List<FutureOrder> orders, FuturePosition position) {
         this.position = position;
         this.orders.addAll(orders);
@@ -34,8 +37,8 @@ public class OrderReader {
     }
 
     private void init() {
-        List<FutureOrder> buyOrderList = new ArrayList<>();
-        List<FutureOrder> sellOrderList = new ArrayList<>();
+        buyOrderList = new ArrayList<>();
+        sellOrderList = new ArrayList<>();
         this.orders.stream().forEach(e -> {
             if ((e.getSide().equals(SideEnum.BUY.getSideType()))) {
                 buyOrderList.add(e);
@@ -90,6 +93,7 @@ public class OrderReader {
         }
     }
 
+
     public List<Long> getBidExOrderIdByPrice(BigDecimal price) {
         List<FutureOrder> orders = buyOrderMap.get(price);
         if (CollectionUtils.isEmpty(orders)) {
@@ -134,7 +138,6 @@ public class OrderReader {
         return sum;
     }
 
-
     /**
      * 返回空仓仓位上限（包括持仓和未成交的开仓单）
      *
@@ -162,4 +165,19 @@ public class OrderReader {
     }
 
 
+    public Integer getBidOrderCountTotal() {
+        Integer orderCountTotal = 0;
+        for (FutureOrder futureOrder : buyOrderList) {
+            orderCountTotal += 1;
+        }
+        return orderCountTotal;
+    }
+
+    public Integer getAskOrderCountTotal() {
+        Integer orderCountTotal = 0;
+        for (FutureOrder futureOrder : sellOrderList) {
+            orderCountTotal += 1;
+        }
+        return orderCountTotal;
+    }
 }

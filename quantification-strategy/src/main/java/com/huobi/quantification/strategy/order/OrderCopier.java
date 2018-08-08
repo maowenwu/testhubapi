@@ -106,40 +106,53 @@ public class OrderCopier {
         orderContext.setExchangeRate(exchangeRate);
         // 重置统计工具
         orderContext.resetMetric();
+
         // 先处理买单
-        for (DepthBook.Depth bid : bids) {
-            BigDecimal amountTotal = orderReader.getBidAmountTotalByPrice(bid.getPrice());
-            // 如果预期下单数量大于目前已下单数量，那么补充一些订单
-            if (BigDecimalUtils.moreThan(bid.getAmount(), amountTotal)) {
-                BigDecimal orderAmount = bid.getAmount().subtract(amountTotal);
-                // 下一些单
-                orderContext.placeBuyOrder(bid.getPrice(), orderAmount);
-            } else if (BigDecimalUtils.lessThan(bid.getAmount(), amountTotal)) {
-                // 如果预期下单数量小于当前已下单量，那么先取消所有订单再下预期数量的单
-                // 撤销所有单
-                List<Long> orderIds = orderReader.getBidExOrderIdByPrice(bid.getPrice());
-                orderContext.cancelOrder(orderIds);
-                // 下单
-                orderContext.placeBuyOrder(bid.getPrice(), bid.getAmount());
+        Integer bidCountTotal = orderReader.getBidOrderCountTotal();
+        if (bidCountTotal < orderConfig.getBidsMaxAmount()) {
+            for (DepthBook.Depth bid : bids) {
+                BigDecimal amountTotal = orderReader.getBidAmountTotalByPrice(bid.getPrice());
+                // 如果预期下单数量大于目前已下单数量，那么补充一些订单
+                if (BigDecimalUtils.moreThan(bid.getAmount(), amountTotal)) {
+                    BigDecimal orderAmount = bid.getAmount().subtract(amountTotal);
+                    // 下一些单
+                    orderContext.placeBuyOrder(bid.getPrice(), orderAmount);
+                } else if (BigDecimalUtils.lessThan(bid.getAmount(), amountTotal)) {
+                    // 如果预期下单数量小于当前已下单量，那么先取消所有订单再下预期数量的单
+                    // 撤销所有单
+                    List<Long> orderIds = orderReader.getBidExOrderIdByPrice(bid.getPrice());
+                    orderContext.cancelOrder(orderIds);
+                    // 下单
+                    orderContext.placeBuyOrder(bid.getPrice(), bid.getAmount());
+                }
+
             }
+            orderContext.metricBuyOrder();
+        } else {
+            logger.warn("当前买单的下单总量已经超过限制");
         }
-        orderContext.metricBuyOrder();
+
         // 处理卖单，逻辑与买单一致
-        for (DepthBook.Depth ask : asks) {
-            BigDecimal amountTotal = orderReader.getAskAmountTotalByPrice(ask.getPrice());
-            if (BigDecimalUtils.moreThan(ask.getAmount(), amountTotal)) {
-                BigDecimal orderAmount = ask.getAmount().subtract(amountTotal);
-                // 下一些单
-                orderContext.placeSellOrder(ask.getPrice(), orderAmount);
-            } else if (BigDecimalUtils.lessThan(ask.getAmount(), amountTotal)) {
-                List<Long> orderIds = orderReader.getAskExOrderIdByPrice(ask.getPrice());
-                // 撤销所有单
-                orderContext.cancelOrder(orderIds);
-                // 下单
-                orderContext.placeSellOrder(ask.getPrice(), ask.getAmount());
+        Integer askCountTotal = orderReader.getAskOrderCountTotal();
+        if (askCountTotal < orderConfig.getAsksMaxAmount()) {
+            for (DepthBook.Depth ask : asks) {
+                BigDecimal amountTotal = orderReader.getAskAmountTotalByPrice(ask.getPrice());
+                if (BigDecimalUtils.moreThan(ask.getAmount(), amountTotal)) {
+                    BigDecimal orderAmount = ask.getAmount().subtract(amountTotal);
+                    // 下一些单
+                    orderContext.placeSellOrder(ask.getPrice(), orderAmount);
+                } else if (BigDecimalUtils.lessThan(ask.getAmount(), amountTotal)) {
+                    List<Long> orderIds = orderReader.getAskExOrderIdByPrice(ask.getPrice());
+                    // 撤销所有单
+                    orderContext.cancelOrder(orderIds);
+                    // 下单
+                    orderContext.placeSellOrder(ask.getPrice(), ask.getAmount());
+                }
             }
+            orderContext.metricSellOrder();
+        } else {
+            logger.warn("当前卖单的下单总量已经超过限制");
         }
-        orderContext.metricSellOrder();
         logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
         return true;
     }

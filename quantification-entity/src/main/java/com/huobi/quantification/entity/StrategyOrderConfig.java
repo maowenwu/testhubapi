@@ -4,113 +4,137 @@ import java.math.BigDecimal;
 
 public class StrategyOrderConfig {
     /**
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private String contractType;
 
     /**
-     * 合约手续费
-     * @mbg.generated 2018-08-06 19:22:26
+     * 摆单间隔时间(每次摆单后，sleep多少秒进入下一轮)
+     * @mbg.generated 2018-08-08 14:11:45
      */
-    private BigDecimal contractFee;
+    private Integer placeOrderInterval;
 
     /**
-     * 现货手续费
-     * @mbg.generated 2018-08-06 19:22:26
+     * 币币交易手续费率
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal spotFee;
 
     /**
-     * 交割手续费
-     * @mbg.generated 2018-08-06 19:22:26
+     * 合约交易手续费率(此处填合约交易taker手续费率)
+     * @mbg.generated 2018-08-08 14:11:45
+     */
+    private BigDecimal contractFee;
+
+    /**
+     * 合约交割手续费率
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal deliveryFee;
 
     /**
      * 期望收益率
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal expectYields;
 
     /**
-     * 合并价格
-     * @mbg.generated 2018-08-06 19:22:26
+     * 合并深度价格step
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal priceStep;
 
     /**
-     * 最大卖单量
-     * @mbg.generated 2018-08-06 19:22:26
+     * 拷贝系数-下限(用于设置depthbook数量)
+     * @mbg.generated 2018-08-08 14:11:45
      */
-    private Integer asksMaxAmount;
+    private BigDecimal minCopyFactor;
 
     /**
-     * 最大买单量
-     * @mbg.generated 2018-08-06 19:22:26
+     * 拷贝系数-上限(用于设置depthbook数量)
+     * @mbg.generated 2018-08-08 14:11:45
      */
-    private Integer bidsMaxAmount;
+    private BigDecimal maxCopyFactor;
 
     /**
-     * 卖单基准价格
-     * @mbg.generated 2018-08-06 19:22:26
+     * 单价格最大委托数量(张)
+     * @mbg.generated 2018-08-08 14:11:45
      */
-    private BigDecimal asksBasisPrice;
+    private Integer maxAmountPerPrice;
 
     /**
-     * 买单基准价格
-     * @mbg.generated 2018-08-06 19:22:26
+     * 买单价格向下调整数值
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal bidsBasisPrice;
 
     /**
-     * 多仓数量最大限制（包括持仓和未成交的开仓单）
-     * @mbg.generated 2018-08-06 19:22:26
+     * 卖单价格向上调整数值
+     * @mbg.generated 2018-08-08 14:11:45
+     */
+    private BigDecimal asksBasisPrice;
+
+    /**
+     * 买单挂单数量上限(个)
+     * @mbg.generated 2018-08-08 14:11:45
+     */
+    private Integer bidsMaxAmount;
+
+    /**
+     * 卖单挂单数量上限(个)
+     * @mbg.generated 2018-08-08 14:11:45
+     */
+    private Integer asksMaxAmount;
+
+    /**
+     * 多仓数量上限(张)
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal longMaxAmount;
 
     /**
-     * 空仓数量最大限制（包括持仓和未成交的开仓单）
-     * @mbg.generated 2018-08-06 19:22:26
+     * 空仓数量上限(张)
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal shortMaxAmount;
 
     /**
-     * 最大多仓持仓
-     * @mbg.generated 2018-08-06 19:22:26
+     * 多仓持仓总量上限(张)
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal maxLongPosition;
 
     /**
-     * 最大空仓持仓
-     * @mbg.generated 2018-08-06 19:22:26
+     * 空仓持仓总量上限(张)
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal maxShortPosition;
 
     /**
      * 合约账户保留保证金
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal contractMarginReserve;
 
     /**
      * 币币账户保留币量
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal spotCoinReserve;
 
     /**
      * 币币账户保留资金
-     * @mbg.generated 2018-08-06 19:22:26
+     * @mbg.generated 2018-08-08 14:11:45
      */
     private BigDecimal spotBalanceReserve;
 
@@ -138,12 +162,12 @@ public class StrategyOrderConfig {
         this.contractType = contractType;
     }
 
-    public BigDecimal getContractFee() {
-        return contractFee;
+    public Integer getPlaceOrderInterval() {
+        return placeOrderInterval;
     }
 
-    public void setContractFee(BigDecimal contractFee) {
-        this.contractFee = contractFee;
+    public void setPlaceOrderInterval(Integer placeOrderInterval) {
+        this.placeOrderInterval = placeOrderInterval;
     }
 
     public BigDecimal getSpotFee() {
@@ -152,6 +176,14 @@ public class StrategyOrderConfig {
 
     public void setSpotFee(BigDecimal spotFee) {
         this.spotFee = spotFee;
+    }
+
+    public BigDecimal getContractFee() {
+        return contractFee;
+    }
+
+    public void setContractFee(BigDecimal contractFee) {
+        this.contractFee = contractFee;
     }
 
     public BigDecimal getDeliveryFee() {
@@ -178,20 +210,36 @@ public class StrategyOrderConfig {
         this.priceStep = priceStep;
     }
 
-    public Integer getAsksMaxAmount() {
-        return asksMaxAmount;
+    public BigDecimal getMinCopyFactor() {
+        return minCopyFactor;
     }
 
-    public void setAsksMaxAmount(Integer asksMaxAmount) {
-        this.asksMaxAmount = asksMaxAmount;
+    public void setMinCopyFactor(BigDecimal minCopyFactor) {
+        this.minCopyFactor = minCopyFactor;
     }
 
-    public Integer getBidsMaxAmount() {
-        return bidsMaxAmount;
+    public BigDecimal getMaxCopyFactor() {
+        return maxCopyFactor;
     }
 
-    public void setBidsMaxAmount(Integer bidsMaxAmount) {
-        this.bidsMaxAmount = bidsMaxAmount;
+    public void setMaxCopyFactor(BigDecimal maxCopyFactor) {
+        this.maxCopyFactor = maxCopyFactor;
+    }
+
+    public Integer getMaxAmountPerPrice() {
+        return maxAmountPerPrice;
+    }
+
+    public void setMaxAmountPerPrice(Integer maxAmountPerPrice) {
+        this.maxAmountPerPrice = maxAmountPerPrice;
+    }
+
+    public BigDecimal getBidsBasisPrice() {
+        return bidsBasisPrice;
+    }
+
+    public void setBidsBasisPrice(BigDecimal bidsBasisPrice) {
+        this.bidsBasisPrice = bidsBasisPrice;
     }
 
     public BigDecimal getAsksBasisPrice() {
@@ -202,12 +250,20 @@ public class StrategyOrderConfig {
         this.asksBasisPrice = asksBasisPrice;
     }
 
-    public BigDecimal getBidsBasisPrice() {
-        return bidsBasisPrice;
+    public Integer getBidsMaxAmount() {
+        return bidsMaxAmount;
     }
 
-    public void setBidsBasisPrice(BigDecimal bidsBasisPrice) {
-        this.bidsBasisPrice = bidsBasisPrice;
+    public void setBidsMaxAmount(Integer bidsMaxAmount) {
+        this.bidsMaxAmount = bidsMaxAmount;
+    }
+
+    public Integer getAsksMaxAmount() {
+        return asksMaxAmount;
+    }
+
+    public void setAsksMaxAmount(Integer asksMaxAmount) {
+        this.asksMaxAmount = asksMaxAmount;
     }
 
     public BigDecimal getLongMaxAmount() {

@@ -7,10 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DepthBookAdjuster {
@@ -29,12 +26,21 @@ public class DepthBookAdjuster {
     public DepthBook getAdjustedDepthBook(BigDecimal exchangeRate, StrategyOrderConfig config) {
         try {
             DepthBook depthBook = context.getDepth();
+            // 如果币币现货是以非USD计价，则所有买卖价格，需要乘以汇率，转化为USD计价
             adjPriceByExchangeRate(exchangeRate, depthBook);
+            // 考虑手续费和收益率，买卖单调整后价格
             adjPriceByFee(depthBook, config);
+            // 对买卖盘进行深度合并
             mergeDepth(depthBook, config);
+            // 深度合并后，对每个深度的数量，乘以一个拷贝系数+随机，得到数量调整后的买卖盘列表
+            adjCopyFactor(depthBook, config);
+            // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
             adjMaxAmount(depthBook, config);
+            // 考虑到基差以及挂单远近，将所有买单价格下调p元，卖单上调q元
             adjBasisPrice(depthBook, config);
+            // 对买卖盘进行排序
             sortDepthBook(depthBook);
+            // 将比特币转为张
             calcVolume(depthBook);
             logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());
             return depthBook;
@@ -43,6 +49,10 @@ public class DepthBookAdjuster {
             return null;
         }
     }
+
+
+
+
 
     /**
      * 使用汇率修正价格
@@ -137,29 +147,45 @@ public class DepthBookAdjuster {
 
 
     /**
-     * 设置每个深度的每个深度的数量
+     * 设置每个价格的每个深度的数量
      *
      * @param depthBook
      * @param config
      */
     private void adjMaxAmount(DepthBook depthBook, StrategyOrderConfig config) {
+        Integer maxAmountPerPrice = config.getMaxAmountPerPrice();
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
             BigDecimal amount = e.getAmount();
-            if (BigDecimalUtils.moreThanOrEquals(amount, BigDecimal.valueOf(config.getAsksMaxAmount()))) {
-                e.setAmount(BigDecimal.valueOf(config.getAsksMaxAmount()));
+            if (BigDecimalUtils.moreThanOrEquals(amount, BigDecimal.valueOf(maxAmountPerPrice))) {
+                e.setAmount(BigDecimal.valueOf(maxAmountPerPrice));
             }
         });
 
         List<DepthBook.Depth> bids = depthBook.getBids();
         bids.forEach(e -> {
             BigDecimal amount = e.getAmount();
-            if (BigDecimalUtils.moreThanOrEquals(amount, BigDecimal.valueOf(config.getBidsMaxAmount()))) {
-                e.setAmount(BigDecimal.valueOf(config.getBidsMaxAmount()));
+            if (BigDecimalUtils.moreThanOrEquals(amount, BigDecimal.valueOf(maxAmountPerPrice))) {
+                e.setAmount(BigDecimal.valueOf(maxAmountPerPrice));
             }
         });
     }
 
+    private void adjCopyFactor(DepthBook depthBook, StrategyOrderConfig config) {
+        BigDecimal maxFactor = config.getMaxCopyFactor();
+        BigDecimal minFactor = config.getMinCopyFactor();
+        List<DepthBook.Depth> asks = depthBook.getAsks();
+        asks.forEach(e -> {
+            BigDecimal factor=BigDecimal.valueOf(Math.random()).multiply(maxFactor.subtract(minFactor)).add(minFactor);
+            e.setAmount(e.getAmount().multiply(factor));
+        });
+
+        List<DepthBook.Depth> bids = depthBook.getBids();
+        bids.forEach(e -> {
+            BigDecimal factor=BigDecimal.valueOf(Math.random()).multiply(maxFactor.subtract(minFactor)).add(minFactor);
+            e.setAmount(e.getAmount().multiply(factor));
+        });
+    }
 
     private void adjBasisPrice(DepthBook depthBook, StrategyOrderConfig config) {
         List<DepthBook.Depth> asks = depthBook.getAsks();
