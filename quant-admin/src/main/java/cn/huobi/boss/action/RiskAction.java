@@ -51,7 +51,7 @@ public class RiskAction {
 	@RequestMapping(value="/updateRisk.do")
 	@ResponseBody
 	@SystemLog(description = "更新任务",operCode="risk.update")
-	public Map<String, Object> updateSpotJob(@RequestParam("newInfo")String newInfo) throws Exception {
+	public Map<String, Object> updateRisk(@RequestParam("newInfo")String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
 		StrategyRiskConfig riskConfig = JSON.parseObject(newInfo, StrategyRiskConfig.class);
 		try {

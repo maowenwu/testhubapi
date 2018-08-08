@@ -23,14 +23,14 @@ public class FinanceServiceImpl implements FinanceService {
 	@Resource FinanceDao financeDao;
 
 	@Override
-	public List<FinanceHistory> selectByCondition(FinanceHistory config,
+	public List<FinanceHistory> selectByCondition(FinanceHistory financeHistory,
 			Page<FinanceHistory> page) {
-		StrategyFinanceHistory history = convertFinanceHistory(config);
+		StrategyFinanceHistory history = convertFinanceHistory(financeHistory);
 		List<StrategyFinanceHistory> histories = financeDao.selectByCondition(history, page);
 		List<FinanceHistory> financeHistories = new ArrayList<>();
 		for (StrategyFinanceHistory strategyFinanceHistory : histories) {
-			FinanceHistory financeHistory = convertStrategyFinanceHistory(strategyFinanceHistory);
-			financeHistories.add(financeHistory);
+			FinanceHistory fHistory = convertStrategyFinanceHistory(strategyFinanceHistory);
+			financeHistories.add(fHistory);
 		}
 		return financeHistories;
 	}
@@ -52,17 +52,17 @@ public class FinanceServiceImpl implements FinanceService {
 		return financeHistory;
 	}
 
-	private StrategyFinanceHistory convertFinanceHistory(FinanceHistory config) {
-		StrategyFinanceHistory history = new StrategyFinanceHistory();
-		history.setAccountId(config.getAccountId());
-		history.setExchangeId(config.getExchangeId());
-		history.setCoinType(config.getCoinType());
-		return history;
+	private StrategyFinanceHistory convertFinanceHistory(FinanceHistory history) {
+		StrategyFinanceHistory Fhistory = new StrategyFinanceHistory();
+		Fhistory.setAccountId(history.getAccountId());
+		Fhistory.setExchangeId(history.getExchangeId());
+		Fhistory.setCoinType(history.getCoinType());
+		return Fhistory;
 	}
 
 	@Override
-	public int insert(StrategyFinanceHistory config) {
-		return financeDao.insert(config);
+	public int insert(StrategyFinanceHistory history) {
+		return financeDao.insert(history);
 	}
 
 }

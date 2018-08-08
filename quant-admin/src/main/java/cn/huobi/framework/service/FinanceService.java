@@ -9,8 +9,8 @@ import cn.huobi.framework.model.FinanceHistory;
 
 public interface FinanceService {
 
-	List<FinanceHistory> selectByCondition(FinanceHistory config, Page<FinanceHistory> page);
+	List<FinanceHistory> selectByCondition(FinanceHistory history, Page<FinanceHistory> page);
 
-	int insert(StrategyFinanceHistory riskConfig);
+	int insert(StrategyFinanceHistory history);
 
 }

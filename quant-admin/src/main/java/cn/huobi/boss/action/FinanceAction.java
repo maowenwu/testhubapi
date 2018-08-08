@@ -18,14 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.huobi.quantification.entity.StrategyFinanceHistory;
-import com.huobi.quantification.entity.StrategyRiskConfig;
 
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.FinanceHistory;
 import cn.huobi.framework.service.FinanceService;
-import cn.huobi.framework.service.RiskService;
 import cn.huobi.framework.util.Constants;
 
 @Controller

@@ -20,42 +20,42 @@ import com.alibaba.fastjson.JSONObject;
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
 import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.model.SpotAccount;
-import cn.huobi.framework.service.SpotAccountService;
+import cn.huobi.framework.model.FutureAccount;
+import cn.huobi.framework.service.FutureAccountService;
 import cn.huobi.framework.util.Constants;
 
 @Controller
-@RequestMapping(value = "/spotAccount")
-public class SpotAccountAction {
-	private static final Logger log = LoggerFactory.getLogger(SpotAccountAction.class);
+@RequestMapping(value = "/futureAccount")
+public class FutureAccountAction {
+	private static final Logger log = LoggerFactory.getLogger(FutureAccountAction.class);
 
 	@Resource
-	private SpotAccountService spotAccountService;
+	private FutureAccountService futureAccountService;
 
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value = "/selectByCondition.do")
 	@ResponseBody
-	public Page<SpotAccount> selectByCondition(@RequestParam("baseInfo") String baseInfo,
-			@Param("page") Page<SpotAccount> page) throws Exception {
-		SpotAccount account = JSONObject.parseObject(baseInfo, SpotAccount.class);
+	public Page<FutureAccount> selectByCondition(@RequestParam("baseInfo") String baseInfo,
+			@Param("page") Page<FutureAccount> page) throws Exception {
+		FutureAccount account = JSONObject.parseObject(baseInfo, FutureAccount.class);
 		try {
-			List<SpotAccount> accounts = spotAccountService.selectByCondition(account, page);
+			List<FutureAccount> accounts = futureAccountService.selectByCondition(account, page);
 			page.setResult(accounts);
 		} catch (Exception e) {
-			log.error("条件查询现货账户失败");
+			log.error("条件查询期货账户失败");
 			e.printStackTrace();
 		}
 		return page;
 	}
 
-	@RequestMapping(value = "/updateSpotAccount.do")
+	@RequestMapping(value = "/updateFutureAccount.do")
 	@ResponseBody
-	@SystemLog(description = "更新账户信息", operCode = "spotAccount.update")
+	@SystemLog(description = "更新账户信息", operCode = "futureAccount.update")
 	public Map<String, Object> insert(@RequestParam("newInfo") String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
-		SpotAccount account = JSON.parseObject(newInfo, SpotAccount.class);
+		FutureAccount account = JSON.parseObject(newInfo, FutureAccount.class);
 		try {
-			int status = spotAccountService.update(account);
+			int status = futureAccountService.update(account);
 			if (status > 0) {
 				msg.put("status", true);
 				msg.put("msg", "更新成功！");
@@ -64,21 +64,21 @@ public class SpotAccountAction {
 				msg.put("msg", "更新失败");
 			}
 		} catch (Exception e) {
-			log.error("更新现货账户失败");
+			log.error("更新期货账户失败");
 			e.printStackTrace();
 		}
 		return msg;
 	}
 	
-	@RequestMapping(value = "/insertSpotAccount.do")
+	@RequestMapping(value = "/insertFutureAccount.do")
 	@ResponseBody
-	@SystemLog(description = "添加账户", operCode = "spotAccount.insert")
+	@SystemLog(description = "添加账户", operCode = "futureAccount.insert")
 	public Map<String, Object> update(@RequestParam("newInfo") String newInfo) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
-		SpotAccount account = JSON.parseObject(newInfo, SpotAccount.class);
+		FutureAccount account = JSON.parseObject(newInfo, FutureAccount.class);
 		account.setState("working");
 		try {
-			int status = spotAccountService.insert(account);
+			int status = futureAccountService.insert(account);
 			if (status > 0) {
 				msg.put("status", true);
 				msg.put("msg", "更新成功！");
@@ -87,19 +87,19 @@ public class SpotAccountAction {
 				msg.put("msg", "更新失败");
 			}
 		} catch (Exception e) {
-			log.error("更新现货账户失败");
+			log.error("更新期货账户失败");
 			e.printStackTrace();
 		}
 		return msg;
 	}
 
-	@RequestMapping(value="/deleteSpotAccount.do")
+	@RequestMapping(value="/deleteFutureAccount.do")
 	@ResponseBody
-	@SystemLog(description = "删除账户信息",operCode="spotAccount.delete")
+	@SystemLog(description = "删除账户信息",operCode="futureAccount.delete")
 	public Map<String, Object> delete(@RequestParam("id")Integer id) throws Exception {
 		Map<String, Object> msg = new HashMap<>();
 		try {
-			int status = spotAccountService.deleteById(id);
+			int status = futureAccountService.deleteById(id);
 			if (status > 0) {
 				msg.put("status", true);
 				msg.put("msg", "更新成功！");
@@ -107,7 +107,7 @@ public class SpotAccountAction {
 				msg.put("status", false);
 			}	
 		} catch (Exception e) {
-			log.error("现货账户删除失败");
+			log.error("期货账户删除失败");
 			e.printStackTrace();
 		}
 		return msg;
