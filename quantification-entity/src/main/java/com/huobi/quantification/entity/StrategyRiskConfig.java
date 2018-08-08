@@ -4,121 +4,121 @@ import java.math.BigDecimal;
 
 public class StrategyRiskConfig {
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer id;
 
     /**
      * 币对
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private String symbol;
 
     /**
      * 合约类型
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private String contractType;
 
     /**
      * 保证金率限制1
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal riskRateLevel1;
 
     /**
      * 保证金率限制2
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal riskRateLevel2;
 
     /**
      * 保证金率限制3
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal riskRateLevel3;
 
     /**
      * 强平买单滑点
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal buyCloseSlippage;
 
     /**
      * 强平卖单滑点
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal sellCloseSlippage;
 
     /**
      * 强平单单笔最大数量（张）
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
-    private BigDecimal closeAmount;
+    private BigDecimal maxCloseAmount;
 
     /**
      * 净头寸阈值1
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal netPositionLevel1;
 
     /**
      * 净头寸阈值2
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal netPositionLevel2;
 
     /**
      * 单次盈亏阈值
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal currProfitLevel1;
 
     /**
      * 单次盈亏阈值2
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal currProfitLevel2;
 
     /**
      * 总盈亏阈值1
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal totalProfitLevel1;
 
     /**
      * 总盈亏阈值2
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private BigDecimal totalProfitLevel2;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer riskOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer riskHedgeCtrl;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer netOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer netHedgeCtrl;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer profitOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-08 17:31:50
      */
     private Integer profitHedgeCtrl;
 
@@ -186,12 +186,12 @@ public class StrategyRiskConfig {
         this.sellCloseSlippage = sellCloseSlippage;
     }
 
-    public BigDecimal getCloseAmount() {
-        return closeAmount;
+    public BigDecimal getMaxCloseAmount() {
+        return maxCloseAmount;
     }
 
-    public void setCloseAmount(BigDecimal closeAmount) {
-        this.closeAmount = closeAmount;
+    public void setMaxCloseAmount(BigDecimal maxCloseAmount) {
+        this.maxCloseAmount = maxCloseAmount;
     }
 
     public BigDecimal getNetPositionLevel1() {
