@@ -47,7 +47,7 @@ public class CommContext {
 
     private Integer futureExchangeId;
     private Long futureAccountId;
-    //private String futureContractType;
+
     private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
@@ -95,7 +95,9 @@ public class CommContext {
 
     private void loadInitialUsdt() {
         initialSpotUsdt = getCurrSpotUsdt();
+        logger.info("币币账户期初余额：{}Usdt", initialSpotUsdt);
         initialFutureUsdt = getCurrFutureUsdt();
+        logger.info("合约账户期初净空仓金额：{}Usdt", initialFutureUsdt);
     }
 
     public boolean cancelAllSpotOrder() {
@@ -107,6 +109,8 @@ public class CommContext {
         try {
             ServiceResult result = spotOrderService.cancelAllOrder(req);
             if (result.isSuccess()) {
+                logger.info("对冲取消所有现货订单成功，spotExchangeId={}，spotAccountId={}，spotBaseCoin={}，spotQuoteCoin={}",
+                        spotExchangeId, spotAccountId, spotBaseCoin, spotQuoteCoin);
                 return true;
             }
         } catch (Exception e) {
@@ -132,6 +136,7 @@ public class CommContext {
         BigDecimal currSpotUsdt = getCurrSpotUsdt();
         BigDecimal currFutureUsdt = getCurrFutureUsdt();
         BigDecimal netPosition = currSpotUsdt.subtract(initialSpotUsdt).add(currFutureUsdt.subtract(initialFutureUsdt));
+        logger.info("当前净头寸：{}Usdt", netPosition);
         return netPosition;
     }
 

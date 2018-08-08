@@ -37,7 +37,6 @@ public class HedgerContext {
     private Integer futureExchangeId;
     private Long futureAccountId;
     private Integer futureLever;
-    private String futureContractType;
     private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
@@ -61,7 +60,6 @@ public class HedgerContext {
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
         this.futureContractCode = Objects.requireNonNull(future.getContractCode());
-        this.futureContractType = commContext.getContractTypeFromCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
         this.futureCoinType = future.getBaseCoin();
@@ -131,7 +129,7 @@ public class HedgerContext {
                 logger.info("下单失败，方向：{}，价格：{}，数量：{}", side, orderPrice, orderAmount);
             }
         } else {
-            logger.info("价格或数量<=0，忽略此单，orderPrice={}，orderAmount{}", orderPrice, orderAmount);
+            logger.info("价格或数量<=0，忽略此单，orderPrice={}，orderAmount={}", orderPrice, orderAmount);
         }
     }
 

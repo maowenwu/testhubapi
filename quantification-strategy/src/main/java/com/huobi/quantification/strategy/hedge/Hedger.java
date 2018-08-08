@@ -1,5 +1,6 @@
 package com.huobi.quantification.strategy.hedge;
 
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
@@ -50,22 +51,30 @@ public class Hedger {
     }
 
     public void hedgePhase1() {
+        AtomicLong counter = new AtomicLong(0);
         hedgePhase1Thread = new Thread(() -> {
             while (!hedgePhase1Thread.isInterrupted()) {
                 try {
                     if (hedgePhase1Enable.get()) {
+                        Stopwatch started = Stopwatch.createStarted();
+                        logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
                         StrategyHedgeConfig hedgeConfig = hedgerContext.getStrategyHedgeConfig();
                         hedgerContext.setHedgeConfig(hedgeConfig);
                         // 1.撤掉币币账户所有未成交订单
-                        commContext.cancelAllSpotOrder();
+                        boolean success = commContext.cancelAllSpotOrder();
+                        if (!success) {
+                            logger.error("取消现货所有订单失败，重新开始");
+                            continue;
+                        }
                         // 2.计算当前的两个账户总的净头寸USDT
                         BigDecimal netPosition = commContext.getNetPositionUsdt();
                         // 3. 下单
                         hedgerContext.placeHedgeOrder(netPosition);
+                        logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
                     }
                 } catch (Throwable e) {
                     logger.error("对冲期间出现异常,", e);
-                    ThreadUtils.sleep(1000 * 5);
+                    ThreadUtils.sleep(1000 * 3);
                 }
                 ThreadUtils.sleep(1000 * 3);
             }
