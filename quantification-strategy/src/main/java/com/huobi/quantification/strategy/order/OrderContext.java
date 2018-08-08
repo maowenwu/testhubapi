@@ -23,14 +23,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Component
@@ -63,17 +60,13 @@ public class OrderContext {
     private FutureBalance futureBalance;
     private SpotBalance spotBalance;
     private BigDecimal exchangeRate = BigDecimal.ONE;
-    private BigDecimal currPrice;
-
 
     private Integer futureExchangeId;
     private Long futureAccountId;
     private Integer futureLever;
-    private String futureContractType;
     private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
-    private String futureCoinType;
 
     private Integer spotExchangeId;
     private String spotBaseCoin;
@@ -86,10 +79,8 @@ public class OrderContext {
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
         this.futureContractCode = Objects.requireNonNull(future.getContractCode());
-        this.futureContractType = commContext.getContractTypeFromCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
-        this.futureCoinType = future.getBaseCoin();
 
         this.spotExchangeId = spot.getExchangeId();
         this.spotBaseCoin = spot.getBaseCoin();
@@ -119,7 +110,8 @@ public class OrderContext {
 
 
     public StrategyOrderConfig getStrategyOrderConfig() {
-        StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectByPrimaryKey(1);
+        String contractType = commContext.getContractTypeFromCode();
+        StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
         if (orderConfig != null) {
             logger.info("获取订单策略参数：" + JSON.toJSONString(orderConfig));
         }
@@ -375,9 +367,6 @@ public class OrderContext {
             FutureCancelSingleOrderReqDto reqDto = new FutureCancelSingleOrderReqDto();
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
-            reqDto.setBaseCoin(this.futureBaseCoin);
-            reqDto.setQuoteCoin(this.futureQuoteCoin);
-            reqDto.setContractType(this.futureContractType);
             reqDto.setExOrderId(orderId);
             ServiceResult<Long> result = futureOrderService.cancelSingleOrder(reqDto);
             if (result.isSuccess()) {
@@ -416,9 +405,6 @@ public class OrderContext {
         FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
         reqDto.setExchangeId(this.futureExchangeId);
         reqDto.setAccountId(this.futureAccountId);
-        reqDto.setBaseCoin(this.futureBaseCoin);
-        reqDto.setQuoteCoin(this.futureQuoteCoin);
-        reqDto.setContractType(this.futureContractType);
         reqDto.setContractCode(this.futureContractCode);
         reqDto.setSide(side);
         reqDto.setOffset(offset);
@@ -476,9 +462,6 @@ public class OrderContext {
         this.exchangeRate = exchangeRate;
     }
 
-    public void setCurrPrice(BigDecimal currPrice) {
-        this.currPrice = currPrice;
-    }
 
 
     public void resetMetric() {

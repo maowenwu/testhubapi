@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.StrategyOrderConfig;
+import org.apache.ibatis.annotations.Param;
 
 public interface StrategyOrderConfigMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +15,6 @@ public interface StrategyOrderConfigMapper {
     int updateByPrimaryKeySelective(StrategyOrderConfig record);
 
     int updateByPrimaryKey(StrategyOrderConfig record);
+
+    StrategyOrderConfig selectBySymbolContractType(@Param("symbol") String symbol, @Param("contractType") String contractType);
 }

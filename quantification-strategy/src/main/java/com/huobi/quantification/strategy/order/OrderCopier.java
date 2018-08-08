@@ -67,11 +67,6 @@ public class OrderCopier {
             logger.error("获取汇率失败，方法退出");
             return false;
         }
-        BigDecimal currPrice = commContext.getSpotCurrentPrice();
-        if (currPrice == null) {
-            logger.error("获取现货当前价格失败，方法退出");
-            return false;
-        }
         // todo 撤单 失败次数超过
         // 每一轮搬砖多个流程使用同一份配置
         StrategyOrderConfig orderConfig = orderContext.getStrategyOrderConfig();
@@ -102,7 +97,6 @@ public class OrderCopier {
         orderContext.setConfig(orderConfig);
         orderContext.setFutureBalance(futureBalance);
         orderContext.setSpotBalance(spotBalance);
-        orderContext.setCurrPrice(currPrice);
         orderContext.setExchangeRate(exchangeRate);
         // 重置统计工具
         orderContext.resetMetric();
