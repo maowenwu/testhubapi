@@ -166,18 +166,10 @@ public class OrderReader {
 
 
     public Integer getBidOrderCountTotal() {
-        Integer orderCountTotal = 0;
-        for (FutureOrder futureOrder : buyOrderList) {
-            orderCountTotal += 1;
-        }
-        return orderCountTotal;
+        return buyOrderList.size();
     }
 
     public Integer getAskOrderCountTotal() {
-        Integer orderCountTotal = 0;
-        for (FutureOrder futureOrder : sellOrderList) {
-            orderCountTotal += 1;
-        }
-        return orderCountTotal;
+        return sellOrderList.size();
     }
 }
