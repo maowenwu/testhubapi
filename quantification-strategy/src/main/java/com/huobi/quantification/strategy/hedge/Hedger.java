@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,19 +38,15 @@ public class Hedger {
     @Autowired
     private HedgerContext hedgerContext;
 
-    private ScheduledExecutorService scheduledExecutor;
-
     private AtomicBoolean hedgePhase1Enable = new AtomicBoolean(true);
     private AtomicBoolean hedgePhase2Enable = new AtomicBoolean(true);
 
-    private String stopTime1 = "15:00:00";
-    private String stopTime2 = "15:55:00";
-
     private Thread hedgePhase1Thread;
+    private Thread hedgePhase2Thread;
 
     public void init(StrategyProperties.ConfigGroup group) {
         hedgerContext.init(group);
-        startHedgeCtrlThread(stopTime1, stopTime2);
+        startHedgeCtrlThread();
     }
 
     public void hedgePhase1() {
@@ -88,25 +86,36 @@ public class Hedger {
     }
 
     public void hedgePhase2() {
-        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
-        Integer interval = hedgeConfig.getPlaceOrderInterval();
-        AtomicLong totalCount = new AtomicLong(DateUtils.getSecond(stopTime1, stopTime2) / interval);
-        scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutor.scheduleAtFixedRate(() -> {
-            if (hedgePhase2Enable.get() && totalCount.get() > 0) {
-                // 1.撤掉币币账户所有未成交订单
-                commContext.cancelAllSpotOrder();
-                // 2.计算当前的两个账户总的净头寸USDT
-                BigDecimal m1 = commContext.getNetPositionUsdt();
-                BigDecimal m2 = commContext.getCurrFutureUsdt();
-                // 3.需要在币币账户对冲的金额
-                BigDecimal m = m2.subtract(m1);
+        hedgePhase2Thread = new Thread(() -> {
+            while (!hedgePhase1Thread.isInterrupted()) {
+                if (hedgePhase2Enable.get()) {
+                    long startTime = System.currentTimeMillis();
+                    StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
+                    String stopTime2 = hedgeConfig.getStopTime2();
+                    Integer interval = hedgeConfig.getDeliveryInterval();
+                    long count = DateUtils.getSecond(LocalTime.now(), LocalTime.parse(stopTime2, DateTimeFormatter.ISO_LOCAL_TIME)) / interval;
+                    // 1.撤掉币币账户所有未成交订单
+                    commContext.cancelAllSpotOrder();
+                    // 2.计算当前的两个账户总的净头寸USDT
+                    BigDecimal m1 = commContext.getNetPositionUsdt();
+                    BigDecimal m2 = commContext.getCurrFutureUsdt();
+                    // 3.需要在币币账户对冲的金额
+                    BigDecimal m = m2.subtract(m1);
 
-                BigDecimal netPosition = m.divide(BigDecimal.valueOf(totalCount.get()), 18, BigDecimal.ROUND_DOWN);
-                hedgerContext.placeDeliveryHedgeOrder(netPosition);
-                totalCount.decrementAndGet();
+                    BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
+                    hedgerContext.placeDeliveryHedgeOrder(netPosition);
+
+                    long endTime = System.currentTimeMillis();
+                    long sleepTime=interval * 1000 - (endTime - startTime);
+                    if(sleepTime>0){
+                        ThreadUtils.sleep(sleepTime);
+                    }
+                }
             }
-        }, 0, Long.valueOf(interval), TimeUnit.SECONDS);
+        });
+        hedgePhase2Thread.setDaemon(true);
+        hedgePhase2Thread.setName("2阶段对冲线程");
+        hedgePhase2Thread.start();
     }
 
 
@@ -118,19 +127,19 @@ public class Hedger {
 
     private void stopHedgePhase2() {
         hedgePhase2Enable.set(false);
-        scheduledExecutor.shutdown();
+        hedgePhase2Thread.interrupt();
     }
 
-    private void startHedgeCtrlThread(String stopTime1, String stopTime2) {
+    private void startHedgeCtrlThread() {
         Thread thread = new Thread(() -> {
             while (true) {
                 StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
                 if (commContext.isThisWeek()) {
                     LocalDateTime now = LocalDateTime.now();
-                    if (now.isAfter(DateUtils.getFriday(stopTime1)) && hedgePhase1Enable.get()) {
+                    if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime1())) && hedgePhase1Enable.get()) {
                         stopHedgePhase1();
                     }
-                    if (now.isAfter(DateUtils.getFriday(stopTime2)) && hedgePhase2Enable.get()) {
+                    if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime2())) && hedgePhase2Enable.get()) {
                         stopHedgePhase2();
                     }
                 } else {

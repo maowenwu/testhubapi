@@ -56,4 +56,8 @@ public class DateUtils {
         LocalTime t2 = LocalTime.parse(time2, DateTimeFormatter.ISO_LOCAL_TIME);
         return Duration.between(t1, t2).toMillis() / 1000;
     }
+
+    public static long getSecond(LocalTime time1, LocalTime time2) {
+        return Duration.between(time1, time2).toMillis() / 1000;
+    }
 }

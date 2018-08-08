@@ -124,7 +124,6 @@ public class OrderCopier {
                     // 下单
                     orderContext.placeBuyOrder(bid.getPrice(), bid.getAmount());
                 }
-
             }
             orderContext.metricBuyOrder();
         } else {
