@@ -16,5 +16,5 @@ public interface StrategyOrderConfigMapper {
 
     int updateByPrimaryKey(StrategyOrderConfig record);
 
-    StrategyOrderConfig selectBySymbolContractType(@Param("symbol") String symbol, @Param("contractType") String contractType);
+    StrategyOrderConfig selectBySymbolContractType(@Param("symbol") String symbol, @Param("contractType")String contractType);
 }

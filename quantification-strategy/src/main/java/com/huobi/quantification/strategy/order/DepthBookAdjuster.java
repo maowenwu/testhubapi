@@ -2,6 +2,7 @@ package com.huobi.quantification.strategy.order;
 
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
+import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,26 +19,28 @@ public class DepthBookAdjuster {
 
     private OrderContext context;
 
+    private StrategyOrderConfig orderConfig;
+    private StrategyTradeFee tradeFeeConfig;
 
     public DepthBookAdjuster(OrderContext context) {
         this.context = context;
     }
 
-    public DepthBook getAdjustedDepthBook(BigDecimal exchangeRate, StrategyOrderConfig config) {
+    public DepthBook getAdjustedDepthBook(BigDecimal exchangeRate) {
         try {
             DepthBook depthBook = context.getDepth();
             // 如果币币现货是以非USD计价，则所有买卖价格，需要乘以汇率，转化为USD计价
             adjPriceByExchangeRate(exchangeRate, depthBook);
             // 考虑手续费和收益率，买卖单调整后价格
-            adjPriceByFee(depthBook, config);
+            adjPriceByFee(depthBook);
             // 对买卖盘进行深度合并
-            mergeDepth(depthBook, config);
+            mergeDepth(depthBook);
             // 深度合并后，对每个深度的数量，乘以一个拷贝系数+随机，得到数量调整后的买卖盘列表
-            adjCopyFactor(depthBook, config);
+            adjCopyFactor(depthBook);
             // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
-            adjMaxAmount(depthBook, config);
+            adjMaxAmount(depthBook);
             // 考虑到基差以及挂单远近，将所有买单价格下调p元，卖单上调q元
-            adjBasisPrice(depthBook, config);
+            adjBasisPrice(depthBook);
             // 对买卖盘进行排序
             sortDepthBook(depthBook);
             // 将比特币转为张
@@ -49,9 +52,6 @@ public class DepthBookAdjuster {
             return null;
         }
     }
-
-
-
 
 
     /**
@@ -75,21 +75,21 @@ public class DepthBookAdjuster {
      *
      * @param depthBook
      */
-    private void adjPriceByFee(DepthBook depthBook, StrategyOrderConfig config) {
+    private void adjPriceByFee(DepthBook depthBook) {
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
-            BigDecimal newPrice = e.getPrice().multiply(BigDecimal.ONE.subtract(config.getContractFee()))
-                    .multiply(BigDecimal.ONE.subtract(config.getSpotFee()))
-                    .multiply(BigDecimal.ONE.subtract(config.getDeliveryFee()))
-                    .multiply(BigDecimal.ONE.subtract(config.getExpectYields()));
+            BigDecimal newPrice = e.getPrice().multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getContractFee()))
+                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()))
+                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getDeliveryFee()))
+                    .multiply(BigDecimal.ONE.subtract(orderConfig.getExpectYields()));
             e.setPrice(newPrice);
         });
         List<DepthBook.Depth> bids = depthBook.getBids();
         bids.forEach(e -> {
-            BigDecimal newPrice = e.getPrice().multiply(BigDecimal.ONE.add(config.getContractFee()))
-                    .multiply(BigDecimal.ONE.add(config.getSpotFee()))
-                    .multiply(BigDecimal.ONE.add(config.getDeliveryFee()))
-                    .multiply(BigDecimal.ONE.add(config.getExpectYields()));
+            BigDecimal newPrice = e.getPrice().multiply(BigDecimal.ONE.add(tradeFeeConfig.getContractFee()))
+                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getSpotFee()))
+                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getDeliveryFee()))
+                    .multiply(BigDecimal.ONE.add(orderConfig.getExpectYields()));
             e.setPrice(newPrice);
         });
     }
@@ -101,8 +101,8 @@ public class DepthBookAdjuster {
      * @param depthBook
      * @param config
      */
-    private void mergeDepth(DepthBook depthBook, StrategyOrderConfig config) {
-        BigDecimal priceStep = config.getPriceStep();
+    private void mergeDepth(DepthBook depthBook) {
+        BigDecimal priceStep = orderConfig.getPriceStep();
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
             e.setPrice(priceRoundUp(e.getPrice(), priceStep));
@@ -152,8 +152,8 @@ public class DepthBookAdjuster {
      * @param depthBook
      * @param config
      */
-    private void adjMaxAmount(DepthBook depthBook, StrategyOrderConfig config) {
-        Integer maxAmountPerPrice = config.getMaxAmountPerPrice();
+    private void adjMaxAmount(DepthBook depthBook) {
+        Integer maxAmountPerPrice = orderConfig.getMaxAmountPerPrice();
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
             BigDecimal amount = e.getAmount();
@@ -171,31 +171,31 @@ public class DepthBookAdjuster {
         });
     }
 
-    private void adjCopyFactor(DepthBook depthBook, StrategyOrderConfig config) {
-        BigDecimal maxFactor = config.getMaxCopyFactor();
-        BigDecimal minFactor = config.getMinCopyFactor();
+    private void adjCopyFactor(DepthBook depthBook) {
+        BigDecimal maxFactor = orderConfig.getMaxCopyFactor();
+        BigDecimal minFactor = orderConfig.getMinCopyFactor();
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
-            BigDecimal factor=BigDecimal.valueOf(Math.random()).multiply(maxFactor.subtract(minFactor)).add(minFactor);
+            BigDecimal factor = BigDecimal.valueOf(Math.random()).multiply(maxFactor.subtract(minFactor)).add(minFactor);
             e.setAmount(e.getAmount().multiply(factor));
         });
 
         List<DepthBook.Depth> bids = depthBook.getBids();
         bids.forEach(e -> {
-            BigDecimal factor=BigDecimal.valueOf(Math.random()).multiply(maxFactor.subtract(minFactor)).add(minFactor);
+            BigDecimal factor = BigDecimal.valueOf(Math.random()).multiply(maxFactor.subtract(minFactor)).add(minFactor);
             e.setAmount(e.getAmount().multiply(factor));
         });
     }
 
-    private void adjBasisPrice(DepthBook depthBook, StrategyOrderConfig config) {
+    private void adjBasisPrice(DepthBook depthBook) {
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
-            e.setPrice(e.getPrice().add(config.getAsksBasisPrice()));
+            e.setPrice(e.getPrice().add(orderConfig.getAsksBasisPrice()));
         });
 
         List<DepthBook.Depth> bids = depthBook.getBids();
         bids.forEach(e -> {
-            e.setPrice(e.getPrice().add(config.getBidsBasisPrice()));
+            e.setPrice(e.getPrice().add(orderConfig.getBidsBasisPrice()));
         });
     }
 
@@ -221,4 +221,11 @@ public class DepthBookAdjuster {
         });
     }
 
+    public void setOrderConfig(StrategyOrderConfig orderConfig) {
+        this.orderConfig = orderConfig;
+    }
+
+    public void setTradeFeeConfig(StrategyTradeFee tradeFeeConfig) {
+        this.tradeFeeConfig = tradeFeeConfig;
+    }
 }

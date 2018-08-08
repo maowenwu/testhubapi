@@ -6,6 +6,7 @@ import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
+import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import org.slf4j.Logger;
@@ -58,8 +59,10 @@ public class Hedger {
                     if (hedgePhase1Enable.get()) {
                         Stopwatch started = Stopwatch.createStarted();
                         logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
-                        StrategyHedgeConfig hedgeConfig = hedgerContext.getStrategyHedgeConfig();
+                        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
+                        StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
                         hedgerContext.setHedgeConfig(hedgeConfig);
+                        hedgerContext.setTradeFeeConfig(tradeFeeConfig);
                         // 1.撤掉币币账户所有未成交订单
                         boolean success = commContext.cancelAllSpotOrder();
                         if (!success) {
@@ -85,7 +88,7 @@ public class Hedger {
     }
 
     public void hedgePhase2() {
-        StrategyHedgeConfig hedgeConfig = hedgerContext.getStrategyHedgeConfig();
+        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
         Integer interval = hedgeConfig.getPlaceOrderInterval();
         AtomicLong totalCount = new AtomicLong(DateUtils.getSecond(stopTime1, stopTime2) / interval);
         scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
@@ -100,7 +103,7 @@ public class Hedger {
                 BigDecimal m = m2.subtract(m1);
 
                 BigDecimal netPosition = m.divide(BigDecimal.valueOf(totalCount.get()), 18, BigDecimal.ROUND_DOWN);
-                hedgerContext.placeHedgeOrder(netPosition);
+                hedgerContext.placeDeliveryHedgeOrder(netPosition);
                 totalCount.decrementAndGet();
             }
         }, 0, Long.valueOf(interval), TimeUnit.SECONDS);
@@ -121,6 +124,7 @@ public class Hedger {
     private void startHedgeCtrlThread(String stopTime1, String stopTime2) {
         Thread thread = new Thread(() -> {
             while (true) {
+                StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
                 if (commContext.isThisWeek()) {
                     LocalDateTime now = LocalDateTime.now();
                     if (now.isAfter(DateUtils.getFriday(stopTime1)) && hedgePhase1Enable.get()) {

@@ -4,6 +4,7 @@ package com.huobi.quantification.strategy.order;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
+import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.*;
@@ -67,14 +68,18 @@ public class OrderCopier {
             logger.error("获取汇率失败，方法退出");
             return false;
         }
-        // todo 撤单 失败次数超过
         // 每一轮搬砖多个流程使用同一份配置
-        StrategyOrderConfig orderConfig = orderContext.getStrategyOrderConfig();
+        StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
         if (orderConfig == null) {
             logger.error("获取订单策略参数失败，方法退出");
             return false;
         }
-        DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook(exchangeRate, orderConfig);
+        StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
+        if (tradeFeeConfig == null) {
+            logger.error("获取交易费率参数失败，方法退出");
+            return false;
+        }
+        DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook(exchangeRate);
         if (depthBook == null) {
             logger.error("获取深度信息失败，方法退出");
             return false;

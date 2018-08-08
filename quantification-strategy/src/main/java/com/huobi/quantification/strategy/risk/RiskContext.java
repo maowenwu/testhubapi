@@ -303,9 +303,7 @@ public class RiskContext {
     }
 
 
-    public StrategyRiskConfig getStrategyRiskConfig() {
-        return strategyRiskMapper.selectByPrimaryKey(1);
-    }
+
 
     /**
      * @param orderCtrl 0-正常，1-停止下开仓单，只下平仓单，2-停止合约摆盘，撤销两账户所有未成交订单
@@ -317,7 +315,7 @@ public class RiskContext {
         riskConfig.setContractType(this.futureContractType);
         riskConfig.setRiskOrderCtrl(orderCtrl);
         riskConfig.setRiskHedgeCtrl(0);
-        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
+        //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 
     public void updateProfitCtrl(Integer orderCtrl, Integer hedgeCtrl) {
@@ -326,7 +324,7 @@ public class RiskContext {
         riskConfig.setContractType(this.futureContractType);
         riskConfig.setProfitOrderCtrl(orderCtrl);
         riskConfig.setProfitHedgeCtrl(hedgeCtrl);
-        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
+        //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 
     public void updateNetCtrl(Integer orderCtrl, Integer hedgeCtrl) {
@@ -335,7 +333,7 @@ public class RiskContext {
         riskConfig.setContractType(this.futureContractType);
         riskConfig.setNetOrderCtrl(orderCtrl);
         riskConfig.setNetHedgeCtrl(hedgeCtrl);
-        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
+        //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 
     private String getContractTypeFromCode() {

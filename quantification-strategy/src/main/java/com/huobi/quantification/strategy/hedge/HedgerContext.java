@@ -3,11 +3,11 @@ package com.huobi.quantification.strategy.hedge;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.BigDecimalUtils;
-import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
 import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
+import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.SpotBalanceMock;
@@ -29,8 +29,6 @@ public class HedgerContext {
     @Autowired
     private CommContext commContext;
     @Autowired
-    private StrategyHedgeConfigMapper strategyHedgeConfigMapper;
-    @Autowired
     private SpotOrderService spotOrderService;
 
 
@@ -51,6 +49,7 @@ public class HedgerContext {
     private QuanExchangeConfig spotExchangeConfig;
     private QuanExchangeConfig futureExchangeConfig;
     private StrategyHedgeConfig hedgeConfig;
+    private StrategyTradeFee tradeFeeConfig;
 
 
     public void init(StrategyProperties.ConfigGroup group) {
@@ -71,11 +70,6 @@ public class HedgerContext {
 
         spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
         futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
-    }
-
-    public StrategyHedgeConfig getStrategyHedgeConfig() {
-        StrategyHedgeConfig hedgeConfig = strategyHedgeConfigMapper.selectByPrimaryKey(1);
-        return hedgeConfig;
     }
 
 
@@ -135,26 +129,50 @@ public class HedgerContext {
 
 
     public void placeHedgeOrder(BigDecimal netPosition) {
-        // 3. 获取买一卖一价格
+        // 获取买一卖一价格
         DepthBook depthBook = commContext.getDepth();
         BigDecimal ask1 = depthBook.getAsk1();
         BigDecimal bid1 = depthBook.getBid1();
-
+        // 净头寸大于0，下买单
         if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
-            BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getSlippage()));
+            BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getBuySlippage()));
             BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN);
             placeBuyOrder(orderPrice, orderAmount);
         } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
-            BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSlippage()));
+            // 净头寸小于0，下卖单
+            BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSellSlippage()));
             BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN)
-                    .divide(BigDecimal.ONE.subtract(hedgeConfig.getSpotFee()), 18, BigDecimal.ROUND_DOWN);
+                    .divide(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()), 18, BigDecimal.ROUND_DOWN);
             placeSellOrder(orderPrice, orderAmount);
         }
     }
+
+
+    public void placeDeliveryHedgeOrder(BigDecimal netPosition) {
+        // 获取买一卖一价格
+        DepthBook depthBook = commContext.getDepth();
+        BigDecimal ask1 = depthBook.getAsk1();
+        BigDecimal bid1 = depthBook.getBid1();
+        // 净头寸大于0，下买单
+        if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
+            BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getDeliveryBuySlippage()));
+            BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN);
+            placeBuyOrder(orderPrice, orderAmount);
+        } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
+            // 净头寸小于0，下卖单
+            BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getDeliverySellSlippage()));
+            BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN)
+                    .divide(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()), 18, BigDecimal.ROUND_DOWN);
+            placeSellOrder(orderPrice, orderAmount);
+        }
+    }
+
 
     public void setHedgeConfig(StrategyHedgeConfig hedgeConfig) {
         this.hedgeConfig = hedgeConfig;
     }
 
-
+    public void setTradeFeeConfig(StrategyTradeFee tradeFeeConfig) {
+        this.tradeFeeConfig = tradeFeeConfig;
+    }
 }

@@ -109,14 +109,6 @@ public class OrderContext {
     }
 
 
-    public StrategyOrderConfig getStrategyOrderConfig() {
-        String contractType = commContext.getContractTypeFromCode();
-        StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
-        if (orderConfig != null) {
-            logger.info("获取订单策略参数：" + JSON.toJSONString(orderConfig));
-        }
-        return orderConfig;
-    }
 
     public Map<BigDecimal, List<FutureOrder>> getActiveOrderMap() {
         FuturePriceOrderReqDto reqDto = new FuturePriceOrderReqDto();

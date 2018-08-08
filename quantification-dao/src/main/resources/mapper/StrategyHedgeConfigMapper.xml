@@ -5,14 +5,20 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
         <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
-        <result column="spot_fee" jdbcType="DECIMAL" property="spotFee"/>
-        <result column="slippage" jdbcType="DECIMAL" property="slippage"/>
         <result column="place_order_interval" jdbcType="INTEGER" property="placeOrderInterval"/>
+        <result column="buy_slippage" jdbcType="DECIMAL" property="buySlippage"/>
+        <result column="sell_slippage" jdbcType="DECIMAL" property="sellSlippage"/>
+        <result column="stop_time1" jdbcType="VARCHAR" property="stopTime1"/>
+        <result column="stop_time2" jdbcType="VARCHAR" property="stopTime2"/>
+        <result column="delivery_interval" jdbcType="INTEGER" property="deliveryInterval"/>
+        <result column="delivery_buy_slippage" jdbcType="DECIMAL" property="deliveryBuySlippage"/>
+        <result column="delivery_sell_slippage" jdbcType="DECIMAL" property="deliverySellSlippage"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, symbol, contract_type, spot_fee, slippage, place_order_interval, create_time, 
+    id, symbol, contract_type, place_order_interval, buy_slippage, sell_slippage, stop_time1, 
+    stop_time2, delivery_interval, delivery_buy_slippage, delivery_sell_slippage, create_time, 
     update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -21,16 +27,21 @@
         from strategy_hedge_config
         where id = #{id,jdbcType=INTEGER}
     </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from strategy_hedge_config
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
     insert into strategy_hedge_config (id, symbol, contract_type, 
-      spot_fee, slippage, place_order_interval, 
+      place_order_interval, buy_slippage, sell_slippage, 
+      stop_time1, stop_time2, delivery_interval, 
+      delivery_buy_slippage, delivery_sell_slippage, 
       create_time, update_time)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, 
-      #{spotFee,jdbcType=DECIMAL}, #{slippage,jdbcType=DECIMAL}, #{placeOrderInterval,jdbcType=INTEGER}, 
+      #{placeOrderInterval,jdbcType=INTEGER}, #{buySlippage,jdbcType=DECIMAL}, #{sellSlippage,jdbcType=DECIMAL}, 
+      #{stopTime1,jdbcType=VARCHAR}, #{stopTime2,jdbcType=VARCHAR}, #{deliveryInterval,jdbcType=INTEGER}, 
+      #{deliveryBuySlippage,jdbcType=DECIMAL}, #{deliverySellSlippage,jdbcType=DECIMAL}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
@@ -45,14 +56,29 @@
             <if test="contractType != null">
                 contract_type,
             </if>
-            <if test="spotFee != null">
-                spot_fee,
-            </if>
-            <if test="slippage != null">
-                slippage,
-            </if>
             <if test="placeOrderInterval != null">
                 place_order_interval,
+            </if>
+            <if test="buySlippage != null">
+                buy_slippage,
+            </if>
+            <if test="sellSlippage != null">
+                sell_slippage,
+            </if>
+            <if test="stopTime1 != null">
+                stop_time1,
+            </if>
+            <if test="stopTime2 != null">
+                stop_time2,
+            </if>
+            <if test="deliveryInterval != null">
+                delivery_interval,
+            </if>
+            <if test="deliveryBuySlippage != null">
+                delivery_buy_slippage,
+            </if>
+            <if test="deliverySellSlippage != null">
+                delivery_sell_slippage,
             </if>
             <if test="createTime != null">
                 create_time,
@@ -71,14 +97,29 @@
             <if test="contractType != null">
                 #{contractType,jdbcType=VARCHAR},
             </if>
-            <if test="spotFee != null">
-                #{spotFee,jdbcType=DECIMAL},
-            </if>
-            <if test="slippage != null">
-                #{slippage,jdbcType=DECIMAL},
-            </if>
             <if test="placeOrderInterval != null">
                 #{placeOrderInterval,jdbcType=INTEGER},
+            </if>
+            <if test="buySlippage != null">
+                #{buySlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="sellSlippage != null">
+                #{sellSlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="stopTime1 != null">
+                #{stopTime1,jdbcType=VARCHAR},
+            </if>
+            <if test="stopTime2 != null">
+                #{stopTime2,jdbcType=VARCHAR},
+            </if>
+            <if test="deliveryInterval != null">
+                #{deliveryInterval,jdbcType=INTEGER},
+            </if>
+            <if test="deliveryBuySlippage != null">
+                #{deliveryBuySlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="deliverySellSlippage != null">
+                #{deliverySellSlippage,jdbcType=DECIMAL},
             </if>
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
@@ -97,14 +138,29 @@
             <if test="contractType != null">
                 contract_type = #{contractType,jdbcType=VARCHAR},
             </if>
-            <if test="spotFee != null">
-                spot_fee = #{spotFee,jdbcType=DECIMAL},
-            </if>
-            <if test="slippage != null">
-                slippage = #{slippage,jdbcType=DECIMAL},
-            </if>
             <if test="placeOrderInterval != null">
                 place_order_interval = #{placeOrderInterval,jdbcType=INTEGER},
+            </if>
+            <if test="buySlippage != null">
+                buy_slippage = #{buySlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="sellSlippage != null">
+                sell_slippage = #{sellSlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="stopTime1 != null">
+                stop_time1 = #{stopTime1,jdbcType=VARCHAR},
+            </if>
+            <if test="stopTime2 != null">
+                stop_time2 = #{stopTime2,jdbcType=VARCHAR},
+            </if>
+            <if test="deliveryInterval != null">
+                delivery_interval = #{deliveryInterval,jdbcType=INTEGER},
+            </if>
+            <if test="deliveryBuySlippage != null">
+                delivery_buy_slippage = #{deliveryBuySlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="deliverySellSlippage != null">
+                delivery_sell_slippage = #{deliverySellSlippage,jdbcType=DECIMAL},
             </if>
             <if test="createTime != null">
                 create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -119,11 +175,22 @@
     update strategy_hedge_config
     set symbol = #{symbol,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
-      spot_fee = #{spotFee,jdbcType=DECIMAL},
-      slippage = #{slippage,jdbcType=DECIMAL},
       place_order_interval = #{placeOrderInterval,jdbcType=INTEGER},
+      buy_slippage = #{buySlippage,jdbcType=DECIMAL},
+      sell_slippage = #{sellSlippage,jdbcType=DECIMAL},
+      stop_time1 = #{stopTime1,jdbcType=VARCHAR},
+      stop_time2 = #{stopTime2,jdbcType=VARCHAR},
+      delivery_interval = #{deliveryInterval,jdbcType=INTEGER},
+      delivery_buy_slippage = #{deliveryBuySlippage,jdbcType=DECIMAL},
+      delivery_sell_slippage = #{deliverySellSlippage,jdbcType=DECIMAL},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+    <select id="selectBySymbolContractType" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from strategy_hedge_config
+        where symbol = #{symbol} and contract_type=#{contractType}
+    </select>
 </mapper>

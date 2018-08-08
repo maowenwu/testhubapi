@@ -1,6 +1,7 @@
 package com.huobi.quantification.strategy;
 
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.future.FutureOrderService;
@@ -8,8 +9,12 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
+import com.huobi.quantification.dao.StrategyOrderConfigMapper;
+import com.huobi.quantification.dao.StrategyRiskConfigMapper;
+import com.huobi.quantification.dao.StrategyTradeFeeMapper;
 import com.huobi.quantification.dto.*;
-import com.huobi.quantification.entity.QuanExchangeConfig;
+import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
@@ -44,6 +49,15 @@ public class CommContext {
     private SpotOrderService spotOrderService;
     @Autowired
     private FutureOrderService futureOrderService;
+    @Autowired
+    private StrategyRiskConfigMapper strategyRiskMapper;
+    @Autowired
+    private StrategyOrderConfigMapper strategyOrderConfigMapper;
+    @Autowired
+    private StrategyHedgeConfigMapper strategyHedgeConfigMapper;
+    @Autowired
+    private StrategyTradeFeeMapper strategyTradeFeeMapper;
+
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -346,4 +360,42 @@ public class CommContext {
             throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务", e);
         }
     }
+
+
+    public StrategyTradeFee getStrategyTradeFeeConfig() {
+        String contractType = getContractTypeFromCode();
+        StrategyTradeFee tradeFeeConfig = strategyTradeFeeMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (tradeFeeConfig != null) {
+            logger.info("获取交易费用策略参数：" + JSON.toJSONString(tradeFeeConfig));
+        }
+        return tradeFeeConfig;
+    }
+
+    public StrategyOrderConfig getStrategyOrderConfig() {
+        String contractType = getContractTypeFromCode();
+        StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (orderConfig != null) {
+            logger.info("获取订单策略参数：" + JSON.toJSONString(orderConfig));
+        }
+        return orderConfig;
+    }
+
+    public StrategyHedgeConfig getStrategyHedgeConfig() {
+        String contractType = getContractTypeFromCode();
+        StrategyHedgeConfig hedgeConfig = strategyHedgeConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (hedgeConfig != null) {
+            logger.info("获取对冲策略参数：" + JSON.toJSONString(hedgeConfig));
+        }
+        return hedgeConfig;
+    }
+
+    public StrategyRiskConfig getStrategyRiskConfig() {
+        String contractType = getContractTypeFromCode();
+        StrategyRiskConfig riskConfig = strategyRiskMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (riskConfig != null) {
+            logger.info("获取风控策略参数：" + JSON.toJSONString(riskConfig));
+        }
+        return riskConfig;
+    }
+
 }

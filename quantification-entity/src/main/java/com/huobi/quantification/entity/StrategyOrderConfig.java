@@ -4,139 +4,133 @@ import java.math.BigDecimal;
 
 public class StrategyOrderConfig {
     /**
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private String contractType;
 
     /**
      * 摆单间隔时间(每次摆单后，sleep多少秒进入下一轮)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private Integer placeOrderInterval;
 
     /**
-     * 币币交易手续费率
-     * @mbg.generated 2018-08-08 14:11:45
-     */
-    private BigDecimal spotFee;
-
-    /**
-     * 合约交易手续费率(此处填合约交易taker手续费率)
-     * @mbg.generated 2018-08-08 14:11:45
-     */
-    private BigDecimal contractFee;
-
-    /**
-     * 合约交割手续费率
-     * @mbg.generated 2018-08-08 14:11:45
-     */
-    private BigDecimal deliveryFee;
-
-    /**
      * 期望收益率
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal expectYields;
 
     /**
      * 合并深度价格step
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal priceStep;
 
     /**
      * 拷贝系数-下限(用于设置depthbook数量)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal minCopyFactor;
 
     /**
      * 拷贝系数-上限(用于设置depthbook数量)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal maxCopyFactor;
 
     /**
      * 单价格最大委托数量(张)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private Integer maxAmountPerPrice;
 
     /**
      * 买单价格向下调整数值
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal bidsBasisPrice;
 
     /**
      * 卖单价格向上调整数值
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal asksBasisPrice;
 
     /**
      * 买单挂单数量上限(个)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private Integer bidsMaxAmount;
 
     /**
      * 卖单挂单数量上限(个)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private Integer asksMaxAmount;
 
     /**
      * 多仓数量上限(张)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal longMaxAmount;
 
     /**
      * 空仓数量上限(张)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal shortMaxAmount;
 
     /**
      * 多仓持仓总量上限(张)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal maxLongPosition;
 
     /**
      * 空仓持仓总量上限(张)
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal maxShortPosition;
 
     /**
      * 合约账户保留保证金
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal contractMarginReserve;
 
     /**
      * 币币账户保留币量
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal spotCoinReserve;
 
     /**
      * 币币账户保留资金
-     * @mbg.generated 2018-08-08 14:11:45
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private BigDecimal spotBalanceReserve;
+
+    /**
+     * 临近交割停止下开仓单时间
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private String stopTime1;
+
+    /**
+     * 停止摆盘开始时间
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private String stopTime2;
 
     public Integer getId() {
         return id;
@@ -168,30 +162,6 @@ public class StrategyOrderConfig {
 
     public void setPlaceOrderInterval(Integer placeOrderInterval) {
         this.placeOrderInterval = placeOrderInterval;
-    }
-
-    public BigDecimal getSpotFee() {
-        return spotFee;
-    }
-
-    public void setSpotFee(BigDecimal spotFee) {
-        this.spotFee = spotFee;
-    }
-
-    public BigDecimal getContractFee() {
-        return contractFee;
-    }
-
-    public void setContractFee(BigDecimal contractFee) {
-        this.contractFee = contractFee;
-    }
-
-    public BigDecimal getDeliveryFee() {
-        return deliveryFee;
-    }
-
-    public void setDeliveryFee(BigDecimal deliveryFee) {
-        this.deliveryFee = deliveryFee;
     }
 
     public BigDecimal getExpectYields() {
@@ -320,5 +290,21 @@ public class StrategyOrderConfig {
 
     public void setSpotBalanceReserve(BigDecimal spotBalanceReserve) {
         this.spotBalanceReserve = spotBalanceReserve;
+    }
+
+    public String getStopTime1() {
+        return stopTime1;
+    }
+
+    public void setStopTime1(String stopTime1) {
+        this.stopTime1 = stopTime1;
+    }
+
+    public String getStopTime2() {
+        return stopTime2;
+    }
+
+    public void setStopTime2(String stopTime2) {
+        this.stopTime2 = stopTime2;
     }
 }

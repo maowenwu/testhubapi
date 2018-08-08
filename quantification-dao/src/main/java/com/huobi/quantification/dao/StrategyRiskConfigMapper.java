@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.StrategyRiskConfig;
+import org.apache.ibatis.annotations.Param;
 
 public interface StrategyRiskConfigMapper {
     int deleteByPrimaryKey(Integer id);
@@ -15,5 +16,5 @@ public interface StrategyRiskConfigMapper {
 
     int updateByPrimaryKey(StrategyRiskConfig record);
 
-    int updateBySymbolTypeSelective(StrategyRiskConfig record);
+    StrategyRiskConfig selectBySymbolContractType(@Param("symbol") String symbol,@Param("contractType") String contractType);
 }

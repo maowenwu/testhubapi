@@ -1,6 +1,7 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.StrategyHedgeConfig;
+import org.apache.ibatis.annotations.Param;
 
 public interface StrategyHedgeConfigMapper {
     int deleteByPrimaryKey(Integer id);
@@ -14,4 +15,7 @@ public interface StrategyHedgeConfigMapper {
     int updateByPrimaryKeySelective(StrategyHedgeConfig record);
 
     int updateByPrimaryKey(StrategyHedgeConfig record);
+
+    StrategyHedgeConfig selectBySymbolContractType(@Param("symbol") String symbol, @Param("contractType") String contractType);
+
 }

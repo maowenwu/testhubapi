@@ -6,9 +6,6 @@
         <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
         <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
         <result column="place_order_interval" jdbcType="INTEGER" property="placeOrderInterval"/>
-        <result column="spot_fee" jdbcType="DECIMAL" property="spotFee"/>
-        <result column="contract_fee" jdbcType="DECIMAL" property="contractFee"/>
-        <result column="delivery_fee" jdbcType="DECIMAL" property="deliveryFee"/>
         <result column="expect_yields" jdbcType="DECIMAL" property="expectYields"/>
         <result column="price_step" jdbcType="DECIMAL" property="priceStep"/>
         <result column="min_copy_factor" jdbcType="DECIMAL" property="minCopyFactor"/>
@@ -25,13 +22,14 @@
         <result column="contract_margin_reserve" jdbcType="DECIMAL" property="contractMarginReserve"/>
         <result column="spot_coin_reserve" jdbcType="DECIMAL" property="spotCoinReserve"/>
         <result column="spot_balance_reserve" jdbcType="DECIMAL" property="spotBalanceReserve"/>
+        <result column="stop_time1" jdbcType="VARCHAR" property="stopTime1"/>
+        <result column="stop_time2" jdbcType="VARCHAR" property="stopTime2"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, symbol, contract_type, place_order_interval, spot_fee, contract_fee, delivery_fee, 
-    expect_yields, price_step, min_copy_factor, max_copy_factor, max_amount_per_price, 
-    bids_basis_price, asks_basis_price, bids_max_amount, asks_max_amount, long_max_amount, 
-    short_max_amount, max_long_position, max_short_position, contract_margin_reserve, 
-    spot_coin_reserve, spot_balance_reserve
+    id, symbol, contract_type, place_order_interval, expect_yields, price_step, min_copy_factor, 
+    max_copy_factor, max_amount_per_price, bids_basis_price, asks_basis_price, bids_max_amount, 
+    asks_max_amount, long_max_amount, short_max_amount, max_long_position, max_short_position, 
+    contract_margin_reserve, spot_coin_reserve, spot_balance_reserve, stop_time1, stop_time2
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -46,21 +44,21 @@
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
     insert into strategy_order_config (id, symbol, contract_type, 
-      place_order_interval, spot_fee, contract_fee, 
-      delivery_fee, expect_yields, price_step, 
+      place_order_interval, expect_yields, price_step, 
       min_copy_factor, max_copy_factor, max_amount_per_price, 
       bids_basis_price, asks_basis_price, bids_max_amount, 
       asks_max_amount, long_max_amount, short_max_amount, 
       max_long_position, max_short_position, contract_margin_reserve, 
-      spot_coin_reserve, spot_balance_reserve)
+      spot_coin_reserve, spot_balance_reserve, stop_time1, 
+      stop_time2)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, 
-      #{placeOrderInterval,jdbcType=INTEGER}, #{spotFee,jdbcType=DECIMAL}, #{contractFee,jdbcType=DECIMAL}, 
-      #{deliveryFee,jdbcType=DECIMAL}, #{expectYields,jdbcType=DECIMAL}, #{priceStep,jdbcType=DECIMAL}, 
+      #{placeOrderInterval,jdbcType=INTEGER}, #{expectYields,jdbcType=DECIMAL}, #{priceStep,jdbcType=DECIMAL}, 
       #{minCopyFactor,jdbcType=DECIMAL}, #{maxCopyFactor,jdbcType=DECIMAL}, #{maxAmountPerPrice,jdbcType=INTEGER}, 
       #{bidsBasisPrice,jdbcType=DECIMAL}, #{asksBasisPrice,jdbcType=DECIMAL}, #{bidsMaxAmount,jdbcType=INTEGER}, 
       #{asksMaxAmount,jdbcType=INTEGER}, #{longMaxAmount,jdbcType=DECIMAL}, #{shortMaxAmount,jdbcType=DECIMAL}, 
       #{maxLongPosition,jdbcType=DECIMAL}, #{maxShortPosition,jdbcType=DECIMAL}, #{contractMarginReserve,jdbcType=DECIMAL}, 
-      #{spotCoinReserve,jdbcType=DECIMAL}, #{spotBalanceReserve,jdbcType=DECIMAL})
+      #{spotCoinReserve,jdbcType=DECIMAL}, #{spotBalanceReserve,jdbcType=DECIMAL}, #{stopTime1,jdbcType=VARCHAR}, 
+      #{stopTime2,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
         insert into strategy_order_config
@@ -76,15 +74,6 @@
             </if>
             <if test="placeOrderInterval != null">
                 place_order_interval,
-            </if>
-            <if test="spotFee != null">
-                spot_fee,
-            </if>
-            <if test="contractFee != null">
-                contract_fee,
-            </if>
-            <if test="deliveryFee != null">
-                delivery_fee,
             </if>
             <if test="expectYields != null">
                 expect_yields,
@@ -134,6 +123,12 @@
             <if test="spotBalanceReserve != null">
                 spot_balance_reserve,
             </if>
+            <if test="stopTime1 != null">
+                stop_time1,
+            </if>
+            <if test="stopTime2 != null">
+                stop_time2,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -147,15 +142,6 @@
             </if>
             <if test="placeOrderInterval != null">
                 #{placeOrderInterval,jdbcType=INTEGER},
-            </if>
-            <if test="spotFee != null">
-                #{spotFee,jdbcType=DECIMAL},
-            </if>
-            <if test="contractFee != null">
-                #{contractFee,jdbcType=DECIMAL},
-            </if>
-            <if test="deliveryFee != null">
-                #{deliveryFee,jdbcType=DECIMAL},
             </if>
             <if test="expectYields != null">
                 #{expectYields,jdbcType=DECIMAL},
@@ -205,6 +191,12 @@
             <if test="spotBalanceReserve != null">
                 #{spotBalanceReserve,jdbcType=DECIMAL},
             </if>
+            <if test="stopTime1 != null">
+                #{stopTime1,jdbcType=VARCHAR},
+            </if>
+            <if test="stopTime2 != null">
+                #{stopTime2,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
@@ -218,15 +210,6 @@
             </if>
             <if test="placeOrderInterval != null">
                 place_order_interval = #{placeOrderInterval,jdbcType=INTEGER},
-            </if>
-            <if test="spotFee != null">
-                spot_fee = #{spotFee,jdbcType=DECIMAL},
-            </if>
-            <if test="contractFee != null">
-                contract_fee = #{contractFee,jdbcType=DECIMAL},
-            </if>
-            <if test="deliveryFee != null">
-                delivery_fee = #{deliveryFee,jdbcType=DECIMAL},
             </if>
             <if test="expectYields != null">
                 expect_yields = #{expectYields,jdbcType=DECIMAL},
@@ -276,6 +259,12 @@
             <if test="spotBalanceReserve != null">
                 spot_balance_reserve = #{spotBalanceReserve,jdbcType=DECIMAL},
             </if>
+            <if test="stopTime1 != null">
+                stop_time1 = #{stopTime1,jdbcType=VARCHAR},
+            </if>
+            <if test="stopTime2 != null">
+                stop_time2 = #{stopTime2,jdbcType=VARCHAR},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -284,9 +273,6 @@
     set symbol = #{symbol,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
       place_order_interval = #{placeOrderInterval,jdbcType=INTEGER},
-      spot_fee = #{spotFee,jdbcType=DECIMAL},
-      contract_fee = #{contractFee,jdbcType=DECIMAL},
-      delivery_fee = #{deliveryFee,jdbcType=DECIMAL},
       expect_yields = #{expectYields,jdbcType=DECIMAL},
       price_step = #{priceStep,jdbcType=DECIMAL},
       min_copy_factor = #{minCopyFactor,jdbcType=DECIMAL},
@@ -302,13 +288,15 @@
       max_short_position = #{maxShortPosition,jdbcType=DECIMAL},
       contract_margin_reserve = #{contractMarginReserve,jdbcType=DECIMAL},
       spot_coin_reserve = #{spotCoinReserve,jdbcType=DECIMAL},
-      spot_balance_reserve = #{spotBalanceReserve,jdbcType=DECIMAL}
+      spot_balance_reserve = #{spotBalanceReserve,jdbcType=DECIMAL},
+      stop_time1 = #{stopTime1,jdbcType=VARCHAR},
+      stop_time2 = #{stopTime2,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
-
     <select id="selectBySymbolContractType" resultMap="BaseResultMap">
-        SELECT
+        select
         <include refid="Base_Column_List"/>
-        FROM strategy_order_config where symbol=#{symbol} and contract_type=#{contractType}
+        from strategy_order_config
+        where symbol = #{symbol} and contract_type=#{contractType}
     </select>
 </mapper>
