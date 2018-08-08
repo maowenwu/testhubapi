@@ -22,12 +22,13 @@ public interface OrderDao {
 	@Delete("delete from strategy_order_config where id=#{id}")
 	int delete(@Param("id")Integer id);
 	
-	@Update("update strategy_order_config set contract_fee = #{config.contractFee}, spot_fee = #{config.spotFee}, delivery_fee = #{config.deliveryFee}, "
-			+ "expect_yields = #{config.expectYields}, price_step = #{config.priceStep}, asks_max_amount = #{config.asksMaxAmount}, "
-			+ "bids_max_amount = #{config.bidsMaxAmount}, asks_basis_price = #{config.asksBasisPrice}, bids_basis_price = #{config.bidsBasisPrice}, "
-			+ "long_max_amount = #{config.longMaxAmount}, short_max_amount = #{config.shortMaxAmount} ,max_position_amount = #{config.maxPositionAmount}, "
-			+ "min_position_amount = #{config.minPositionAmount}, contract_margin_reserve = #{config.contractMarginReserve}, "
-			+ "spot_coin_reserve = #{config.spotCoinReserve}, spot_balance_reserve = #{config.spotBalanceReserve} "
+	@Update("update strategy_order_config set place_order_interval =#{config.placeOrderInterval}, expect_yields =#{config.expectYields}, "
+			+ "price_step =#{config.priceStep}, min_copy_factor=#{config.minCopyFactor}, max_copy_factor=#{config.maxCopyFactor}, "
+			+ "max_amount_per_price =#{config.maxAmountPerPrice}, bids_basis_price=#{config.bidsBasisPrice}, asks_basis_price=#{config.asksBasisPrice}, "
+			+ "bids_max_amount =#{config.bidsMaxAmount}, asks_max_amount=#{config.asksMaxAmount}, long_max_amount=#{config.longMaxAmount}, "
+			+ "short_max_amount =#{config.shortMaxAmount}, max_long_position=#{config.maxLongPosition}, max_short_position=#{config.maxShortPosition}, "
+			+ "contract_margin_reserve =#{config.contractMarginReserve}, spot_coin_reserve =#{config.spotCoinReserve}, spot_balance_reserve=#{config.spotBalanceReserve}, "
+			+ "stop_time1 =#{config.stopTime1}, stop_time2 =#{config.stopTime2} "
 			+ " where id = #{config.id}")
 	int update(@Param("config")StrategyOrderConfig config);
 	

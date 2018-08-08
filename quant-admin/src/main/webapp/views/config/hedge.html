@@ -62,80 +62,6 @@
 			</div>
 		</div>
 	</form>
-	<!-- add role -->
-	<!-- 
-	<form class="form-horizontal" id="form2" name="horizontal" novalidate>
-		<div id="addModal" class="modal fade"  role="dialog">
-			<div class="modal-dialog" style="width: 900px">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							&times;</button>
-						<h3 class="modal-title">新增任务</h3>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysKey' name="sysKey" required/>
-								<div class="req_mesg" ng-show="horizontal.sysKey.$dirty && horizontal.sysKey.$invalid">
-									<span ng-show="horizontal.sysKey.$error.required">字典Key不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典名称：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysName' name="sysName" required>
-								<div class="req_mesg" ng-show="horizontal.sysName.$dirty && horizontal.sysName.$invalid">
-									<span ng-show="horizontal.sysName.$error.required">字典名称不能为空</span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典值：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" name="sysValue" required ng-model='newInfo.sysValue'>
-								<div class="req_mesg" ng-show="horizontal.sysValue.$dirty && horizontal.sysValue.$invalid">
-									<span ng-show="horizontal.sysValue.$error.required">字典值不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label">上级字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.parentId'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">排序：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.orderNo'>
-							</div>
-							<label class="col-sm-2 control-label">状态：</label>
-							<div class="col-sm-3">
-								<switch class="switch" ng-model="newInfo.status" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model='newInfo.remark'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"></label>
-							<div class="col-sm-6">
-								<button class="btn btn-primary btn-mr20" type="button" ng-click='submit()'
-									id="btnSubmit" ng-disabled="horizontal.$invalid || submitting">提交</button>
-									<button class="btn btn-primary8" type="button" ng-click='cancel()'
-									>取消</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form> -->
-	<!-- add role -->
 	<!-- edit role -->
 	<form class="form-horizontal" id="form3" name="horizontalEdit" novalidate>
 		<div id="editRoleModal" class="modal fade" role="dialog">
@@ -148,22 +74,51 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>手续费率：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>对冲间隔时间：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.spotFee' name="spotFee" required/>
+									ng-model='newInfo.hedgeInterval' name="hedgeInterval" required>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>滑点：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>交割对冲单时间间隔：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.slippage' name="slippage" required>
+									ng-model='newInfo.deliveryInterval' name="deliveryInterval" required>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交割对冲周期：</label>
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>对冲买单滑点：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.placeOrderInterval' name="placeOrderInterval" required>
+									ng-model='newInfo.buySlippage' name="buySlippage" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>对冲卖单滑点：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.sellSlippage' name="sellSlippage" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>开始交割对冲时间：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.stopTime1' name="stopTime1" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>结束交割对冲时间：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.stopTime2' name="stopTime2" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>交割买单滑点：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.deliveryBuySlippage' name="deliveryBuySlippage" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>交割卖单滑点：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.deliverySellSlippage' name="deliverySellSlippage" required>
 							</div>
 						</div>
 						<div class="form-group">

@@ -23,7 +23,7 @@ public interface FutureAccountDao {
 	@Delete("delete from quan_account_future where id=#{id}")
 	int delete(@Param("id")Integer id);
 	
-	@Insert("insert into quan_account_future(exchange_id,account_source_id,accounts_type,accounts_name,state) values(#{account.exchangeId}, #{account.accountSourceId}, accounts_type = #{account.accountsType},"
+	@Insert("insert into quan_account_future(exchange_id,account_source_id,accounts_type,accounts_name,state) values(#{account.exchangeId}, #{account.accountSourceId}, #{account.accountsType},"
 			+ " #{account.accountsName}, #{account.state})")
 	int insert(@Param("account")FutureAccount account);
 	

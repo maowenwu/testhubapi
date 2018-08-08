@@ -21,7 +21,7 @@ public class RiskServiceImpl implements RiskService {
 
 	@Override
 	public List<StrategyRiskConfig> selectByCondition(StrategyRiskConfig config, Page<StrategyRiskConfig> page) {
-		return riskDao.selectDicByCondition(config,page);
+		return riskDao.selectByCondition(config,page);
 	}
 
 	@Override

@@ -23,7 +23,10 @@ public interface HadgeDao {
 	@Delete("delete from strategy_hedge_config where id=#{id}")
 	int delete(@Param("id")Integer id);
 	
-	@Update("update strategy_hedge_config set formality_rate = #{config.formalityRate}, slippage = #{config.slippage} where id = #{config.id}")
+	@Update("update strategy_hedge_config set hedge_interval = #{config.hedgeInterval}, buy_slippage = #{config.buySlippage}, "
+			+ "sell_slippage = #{config.sellSlippage}, stop_time1 = #{config.stopTime1}, stop_time2 = #{config.stopTime2} , delivery_interval=#{config.deliveryInterval}, "
+			+ "delivery_buy_slippage = #{config.deliveryBuySlippage}, delivery_sell_slippage = #{config.deliverySellSlippage}, update_time = #{config.updateTime}"
+			+ "where id = #{config.id}")
 	int update(@Param("config")StrategyHedgeConfig config);
 	
 	public class SqlProvider{
