@@ -25,7 +25,7 @@ public class StrategyHedgeConfig {
      * 对冲间隔时间
      * @mbg.generated 2018-08-08 16:28:34
      */
-    private Integer placeOrderInterval;
+    private Integer hedgeInterval;
 
     /**
      * 对冲买单滑点
@@ -103,12 +103,12 @@ public class StrategyHedgeConfig {
         this.contractType = contractType;
     }
 
-    public Integer getPlaceOrderInterval() {
-        return placeOrderInterval;
+    public Integer getHedgeInterval() {
+        return hedgeInterval;
     }
 
-    public void setPlaceOrderInterval(Integer placeOrderInterval) {
-        this.placeOrderInterval = placeOrderInterval;
+    public void setHedgeInterval(Integer hedgeInterval) {
+        this.hedgeInterval = hedgeInterval;
     }
 
     public BigDecimal getBuySlippage() {

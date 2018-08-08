@@ -65,7 +65,7 @@ public class CommContext {
     private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
-    private String futureCoinType;
+    //private String futureCoinType;
 
     private Integer spotExchangeId;
     private Long spotAccountId;
@@ -95,7 +95,6 @@ public class CommContext {
         this.futureContractCode = future.getContractCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
-        this.futureCoinType = future.getBaseCoin();
 
         this.spotExchangeId = spot.getExchangeId();
         this.spotAccountId = spot.getAccountId();
@@ -226,44 +225,38 @@ public class CommContext {
     }
 
     public FuturePosition getFuturePosition() {
-        try {
-            FuturePositionReqDto reqDto = new FuturePositionReqDto();
-            reqDto.setExchangeId(this.futureExchangeId);
-            reqDto.setAccountId(this.futureAccountId);
-            reqDto.setCoinType(this.futureCoinType);
-            ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
-            if (result.isSuccess()) {
-                Map<String, List<FuturePositionRespDto.Position>> dataMap = result.getData().getDataMap();
-                List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureCoinType);
-                FuturePosition futurePosition = new FuturePosition();
-                // 如果为null，代表当前账户没有持仓
-                if (CollectionUtils.isNotEmpty(positionList)) {
-                    positionList.stream().forEach(e -> {
-                        if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
-                            FuturePosition.Position longPosi = new FuturePosition.Position();
-                            BeanUtils.copyProperties(e, longPosi);
-                            futurePosition.setLongPosi(longPosi);
-                        }
+        FuturePositionReqDto reqDto = new FuturePositionReqDto();
+        reqDto.setExchangeId(this.futureExchangeId);
+        reqDto.setAccountId(this.futureAccountId);
+        reqDto.setCoinType(this.futureBaseCoin);
+        ServiceResult<FuturePositionRespDto> result = futureAccountService.getPosition(reqDto);
+        if (result.isSuccess()) {
+            Map<String, List<FuturePositionRespDto.Position>> dataMap = result.getData().getDataMap();
+            FuturePosition futurePosition = new FuturePosition();
+            // 如果为null，代表当前账户没有持仓
+            if (dataMap != null && CollectionUtils.isNotEmpty(dataMap.get(this.futureBaseCoin))) {
+                List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureBaseCoin);
+                positionList.stream().forEach(e -> {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
+                        FuturePosition.Position longPosi = new FuturePosition.Position();
+                        BeanUtils.copyProperties(e, longPosi);
+                        futurePosition.setLongPosi(longPosi);
+                    }
 
-                        if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
-                            FuturePosition.Position shortPosi = new FuturePosition.Position();
-                            BeanUtils.copyProperties(e, shortPosi);
-                            futurePosition.setShortPosi(shortPosi);
-                        }
-                    });
-                    logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
-                    return futurePosition;
-                } else {
-                    logger.info("获取期货持仓信息成功，但当前账户没有持仓，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType);
-                    return futurePosition;
-                }
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
+                        FuturePosition.Position shortPosi = new FuturePosition.Position();
+                        BeanUtils.copyProperties(e, shortPosi);
+                        futurePosition.setShortPosi(shortPosi);
+                    }
+                });
+                logger.info("获取期货持仓信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureBaseCoin);
+                return futurePosition;
             } else {
-                logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={},失败原因={}", futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
-                return null;
+                logger.info("获取期货持仓信息成功，但当前账户没有持仓，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureBaseCoin);
+                return futurePosition;
             }
-        } catch (Exception e) {
-            logger.error("获取期货持仓信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", futureExchangeId, futureAccountId, futureCoinType, e);
-            return null;
+        } else {
+            throw new RuntimeException("获取期货持仓信息失败，exchangeId=" + futureExchangeId + "，futureAccountId=" + futureAccountId + "，futureCoinType=" + futureBaseCoin + ",失败原因={}" + result.getMessage());
         }
     }
 
@@ -272,29 +265,29 @@ public class CommContext {
             FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
-            reqDto.setCoinType(this.futureCoinType);
+            reqDto.setCoinType(this.futureBaseCoin);
             ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
             if (result.isSuccess()) {
                 Map<String, FutureBalanceRespDto.DataBean> data = result.getData().getData();
-                FutureBalanceRespDto.DataBean dataBean = data.get(futureCoinType);
+                FutureBalanceRespDto.DataBean dataBean = data.get(futureBaseCoin);
                 if (dataBean == null) {
-                    dataBean = data.get(futureCoinType.toUpperCase());
+                    dataBean = data.get(futureBaseCoin.toUpperCase());
                 }
                 if (dataBean != null) {
                     FutureBalance futureBalance = new FutureBalance();
                     BeanUtils.copyProperties(dataBean, futureBalance);
-                    logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
+                    logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
                     return futureBalance;
                 } else {
-                    logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType);
+                    logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
                     return null;
                 }
             } else {
-                logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}，失败原因={}", this.futureExchangeId, futureAccountId, futureCoinType, result.getMessage());
+                logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}，失败原因={}", this.futureExchangeId, futureAccountId, futureBaseCoin, result.getMessage());
                 return null;
             }
         } catch (BeansException e) {
-            logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureCoinType, e);
+            logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin, e);
             return null;
         }
     }
@@ -383,9 +376,6 @@ public class CommContext {
     public StrategyHedgeConfig getStrategyHedgeConfig() {
         String contractType = getContractTypeFromCode();
         StrategyHedgeConfig hedgeConfig = strategyHedgeConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
-        if (hedgeConfig != null) {
-            logger.info("获取对冲策略参数：" + JSON.toJSONString(hedgeConfig));
-        }
         return hedgeConfig;
     }
 

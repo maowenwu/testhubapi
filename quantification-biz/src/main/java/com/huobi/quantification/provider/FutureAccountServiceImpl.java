@@ -109,16 +109,20 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新资产
                     List<QuanAccountFuturePosition> futurePositions = redisService.getPositionFuture(reqDto.getExchangeId(), reqDto.getAccountId());
-                    if (CollectionUtils.isEmpty(futurePositions)) {
+                    if (futurePositions == null) {
                         ThreadUtils.sleep10();
                         continue;
-                    }
-                    Date ts = futurePositions.get(0).getUpdateTime();
-                    if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
-                        return parsePosition(reqDto.getCoinType(), futurePositions);
+                    } else if (futurePositions.isEmpty()) {
+                        // 说明持仓为空
+                        return new FuturePositionRespDto(null);
                     } else {
-                        ThreadUtils.sleep10();
-                        continue;
+                        Date ts = futurePositions.get(0).getUpdateTime();
+                        if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
+                            return parsePosition(reqDto.getCoinType(), futurePositions);
+                        } else {
+                            ThreadUtils.sleep10();
+                            continue;
+                        }
                     }
                 }
                 return null;

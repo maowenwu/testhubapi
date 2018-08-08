@@ -72,12 +72,12 @@ public class Hedger {
                         // 3. 下单
                         hedgerContext.placeHedgeOrder(netPosition);
                         logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
+                        Integer interval = hedgeConfig.getHedgeInterval();
                     }
                 } catch (Throwable e) {
                     logger.error("对冲期间出现异常,", e);
                     ThreadUtils.sleep(1000 * 3);
                 }
-                ThreadUtils.sleep(1000 * 3);
             }
         });
         hedgePhase1Thread.setDaemon(true);
@@ -106,8 +106,8 @@ public class Hedger {
                     hedgerContext.placeDeliveryHedgeOrder(netPosition);
 
                     long endTime = System.currentTimeMillis();
-                    long sleepTime=interval * 1000 - (endTime - startTime);
-                    if(sleepTime>0){
+                    long sleepTime = interval * 1000 - (endTime - startTime);
+                    if (sleepTime > 0) {
                         ThreadUtils.sleep(sleepTime);
                     }
                 }
@@ -133,19 +133,24 @@ public class Hedger {
     private void startHedgeCtrlThread() {
         Thread thread = new Thread(() -> {
             while (true) {
-                StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
-                if (commContext.isThisWeek()) {
-                    LocalDateTime now = LocalDateTime.now();
-                    if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime1())) && hedgePhase1Enable.get()) {
-                        stopHedgePhase1();
+                try {
+                    StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
+                    if (commContext.isThisWeek()) {
+                        LocalDateTime now = LocalDateTime.now();
+                        if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime1())) && hedgePhase1Enable.get()) {
+                            stopHedgePhase1();
+                        }
+                        if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime2())) && hedgePhase2Enable.get()) {
+                            stopHedgePhase2();
+                        }
+                    } else {
+                        logger.info("合约类型不是当周");
                     }
-                    if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime2())) && hedgePhase2Enable.get()) {
-                        stopHedgePhase2();
-                    }
-                } else {
-                    logger.info("合约类型不是当周");
+                    ThreadUtils.sleep(1000);
+                } catch (Exception e) {
+                    logger.error("对冲监控线程出现异常", e);
+                    ThreadUtils.sleep(1000);
                 }
-                ThreadUtils.sleep(1000);
             }
         });
         thread.setDaemon(true);
