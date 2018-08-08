@@ -22,5 +22,5 @@ public interface HuobiFutureOrderService {
 
     boolean updateHuobiOrderInfo(Long accountId);
 
-    void cancelAllOrder(String symbol);
+    boolean cancelAllOrder(String symbol);
 }

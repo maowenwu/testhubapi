@@ -3,6 +3,7 @@ package com.huobi.quantification.strategy;
 
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureContractService;
+import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
@@ -41,13 +42,12 @@ public class CommContext {
     private SpotMarketService spotMarketService;
     @Autowired
     private SpotOrderService spotOrderService;
-
-    private BigDecimal faceValue = BigDecimal.valueOf(100);
+    @Autowired
+    private FutureOrderService futureOrderService;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
-    private Integer futureLever;
-    private String futureContractType;
+    //private String futureContractType;
     private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
@@ -76,19 +76,18 @@ public class CommContext {
         StrategyProperties.Config spot = group.getSpot();
         StrategyProperties.Config future = group.getFuture();
 
+        this.futureExchangeId = future.getExchangeId();
+        this.futureAccountId = future.getAccountId();
+        this.futureContractCode = future.getContractCode();
+        this.futureBaseCoin = future.getBaseCoin();
+        this.futureQuoteCoin = future.getQuotCoin();
+        this.futureCoinType = future.getBaseCoin();
+
         this.spotExchangeId = spot.getExchangeId();
         this.spotAccountId = spot.getAccountId();
         this.spotBaseCoin = spot.getBaseCoin();
         this.spotQuoteCoin = spot.getQuotCoin();
 
-        this.futureExchangeId = future.getExchangeId();
-        this.futureAccountId = future.getAccountId();
-        this.futureLever = future.getLever();
-        this.futureContractCode = future.getContractCode();
-        this.futureContractType = getContractTypeFromCode();
-        this.futureBaseCoin = future.getBaseCoin();
-        this.futureQuoteCoin = future.getQuotCoin();
-        this.futureCoinType = future.getBaseCoin();
         this.spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         loadInitialUsdt();
@@ -105,9 +104,8 @@ public class CommContext {
         req.setAccountId(spotAccountId);
         req.setBaseCoin(spotBaseCoin);
         req.setQuoteCoin(spotQuoteCoin);
-        ServiceResult result = null;
         try {
-            result = spotOrderService.cancelAllOrder(req);
+            ServiceResult result = spotOrderService.cancelAllOrder(req);
             if (result.isSuccess()) {
                 return true;
             }
@@ -118,8 +116,16 @@ public class CommContext {
     }
 
     public boolean cancelAllFutureOrder() {
-
-        return true;
+        FutureCancelAllOrderReqDto reqDto = new FutureCancelAllOrderReqDto();
+        reqDto.setExchangeId(spotExchangeId);
+        reqDto.setAccountId(spotAccountId);
+        reqDto.setSymbol(spotBaseCoin.toUpperCase());
+        ServiceResult result = futureOrderService.cancelAllOrder(reqDto);
+        if (result.isSuccess()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public BigDecimal getNetPositionUsdt() {
@@ -160,7 +166,8 @@ public class CommContext {
         if (exchangeRate == null) {
             throw new RuntimeException("获取USDT2USD汇率失败");
         }
-        return shortAmount.subtract(longAmount).multiply(futureExchangeConfig.getFaceValue())
+        return shortAmount.subtract(longAmount)
+                .multiply(futureExchangeConfig.getFaceValue())
                 .divide(exchangeRate, 18, BigDecimal.ROUND_DOWN);
     }
 
@@ -213,13 +220,13 @@ public class CommContext {
                 // 如果为null，代表当前账户没有持仓
                 if (CollectionUtils.isNotEmpty(positionList)) {
                     positionList.stream().forEach(e -> {
-                        if (e.getContractType().equalsIgnoreCase(futureContractType) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
+                        if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
                             FuturePosition.Position longPosi = new FuturePosition.Position();
                             BeanUtils.copyProperties(e, longPosi);
                             futurePosition.setLongPosi(longPosi);
                         }
 
-                        if (e.getContractType().equalsIgnoreCase(futureContractType) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
+                        if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
                             FuturePosition.Position shortPosi = new FuturePosition.Position();
                             BeanUtils.copyProperties(e, shortPosi);
                             futurePosition.setShortPosi(shortPosi);
@@ -277,6 +284,7 @@ public class CommContext {
     private SpotAccountService spotAccountService;
 
     public SpotBalance getSpotBalance() {
+        logger.info("获取现货资产信息成功");
         return SpotBalanceMock.getSpotBalance();
         /*SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
         reqDto.setExchangeId(spotExchangeId);
@@ -307,8 +315,9 @@ public class CommContext {
         try {
             ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
             if (currentPrice.isSuccess()) {
-                logger.error("获取当前价格成功，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);
-                return currentPrice.getData().getCurrentPrice();
+                BigDecimal price = currentPrice.getData().getCurrentPrice();
+                logger.error("获取当前价格成功,price={}，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", price, futureExchangeId, futureBaseCoin, futureQuoteCoin);
+                return price;
             }
         } catch (Exception e) {
             logger.error("获取当前价格失败，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);

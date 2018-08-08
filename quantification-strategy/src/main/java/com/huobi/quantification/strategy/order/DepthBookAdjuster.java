@@ -21,16 +21,15 @@ public class DepthBookAdjuster {
 
     private OrderContext context;
 
-    private BigDecimal exchangeRate;
 
     public DepthBookAdjuster(OrderContext context) {
         this.context = context;
     }
 
-    public DepthBook getAdjustedDepthBook(StrategyOrderConfig config) {
+    public DepthBook getAdjustedDepthBook(BigDecimal exchangeRate, StrategyOrderConfig config) {
         try {
             DepthBook depthBook = context.getDepth();
-            adjPriceByExchangeRate(depthBook);
+            adjPriceByExchangeRate(exchangeRate, depthBook);
             adjPriceByFee(depthBook, config);
             mergeDepth(depthBook, config);
             adjMaxAmount(depthBook, config);
@@ -50,7 +49,7 @@ public class DepthBookAdjuster {
      *
      * @param depthBook
      */
-    private void adjPriceByExchangeRate(DepthBook depthBook) {
+    private void adjPriceByExchangeRate(BigDecimal exchangeRate, DepthBook depthBook) {
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
             e.setPrice(e.getPrice().multiply(exchangeRate));
@@ -196,7 +195,4 @@ public class DepthBookAdjuster {
         });
     }
 
-    public void setExchangeRate(BigDecimal exchangeRate) {
-        this.exchangeRate = exchangeRate;
-    }
 }

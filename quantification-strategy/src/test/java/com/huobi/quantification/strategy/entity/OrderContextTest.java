@@ -34,10 +34,6 @@ public class OrderContextTest {
         orderContext.placeOrder(1,1,BigDecimal.valueOf(152.24),BigDecimal.valueOf(10));
     }
 
-    @Test
-    public void cancelAllOrder(){
-        orderContext.cancelAllOrder();
-    }
 
     @Test
     public void init() {

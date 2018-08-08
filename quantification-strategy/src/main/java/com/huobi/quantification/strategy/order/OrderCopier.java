@@ -74,9 +74,12 @@ public class OrderCopier {
         }
         // todo 撤单 失败次数超过
         // 每一轮搬砖多个流程使用同一份配置
-        StrategyOrderConfig config = orderContext.getStrategyOrderConfig();
-        depthBookAdjuster.setExchangeRate(exchangeRate);
-        DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook(config);
+        StrategyOrderConfig orderConfig = orderContext.getStrategyOrderConfig();
+        if (orderConfig == null) {
+            logger.error("获取订单策略参数失败，方法退出");
+            return false;
+        }
+        DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook(exchangeRate, orderConfig);
         if (depthBook == null) {
             logger.error("获取深度信息失败，方法退出");
             return false;
@@ -96,12 +99,13 @@ public class OrderCopier {
 
         orderContext.setOrderReader(orderReader);
         orderContext.setFuturePosition(position);
-        orderContext.setConfig(config);
+        orderContext.setConfig(orderConfig);
         orderContext.setFutureBalance(futureBalance);
         orderContext.setSpotBalance(spotBalance);
         orderContext.setCurrPrice(currPrice);
         orderContext.setExchangeRate(exchangeRate);
-
+        // 重置统计工具
+        orderContext.resetMetric();
         // 先处理买单
         for (DepthBook.Depth bid : bids) {
             BigDecimal amountTotal = orderReader.getBidAmountTotalByPrice(bid.getPrice());
@@ -119,7 +123,7 @@ public class OrderCopier {
                 orderContext.placeBuyOrder(bid.getPrice(), bid.getAmount());
             }
         }
-
+        orderContext.metricBuyOrder();
         // 处理卖单，逻辑与买单一致
         for (DepthBook.Depth ask : asks) {
             BigDecimal amountTotal = orderReader.getAskAmountTotalByPrice(ask.getPrice());
@@ -135,6 +139,7 @@ public class OrderCopier {
                 orderContext.placeSellOrder(ask.getPrice(), ask.getAmount());
             }
         }
+        orderContext.metricSellOrder();
         logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
         return true;
     }

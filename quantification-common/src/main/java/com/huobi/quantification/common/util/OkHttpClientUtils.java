@@ -209,7 +209,7 @@ public class OkHttpClientUtils {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", "BTC");
         params.put("userId", "156138");
-        String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_account_info", params);
+        String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-order/v1/contract_cancelall", params);
         System.out.println(s);
     }
 }

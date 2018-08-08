@@ -72,7 +72,7 @@ public interface FutureOrderService {
 
     ServiceResult<FuturePriceOrderRespDto> getActiveOrderMap(FuturePriceOrderReqDto reqDto);
 
-    ServiceResult cancelAllOrder(String symbol);
+    ServiceResult cancelAllOrder(FutureCancelAllOrderReqDto reqDto);
 
     ServiceResult updateOrderInfo(Integer exchangeId, Long accountId);
 }

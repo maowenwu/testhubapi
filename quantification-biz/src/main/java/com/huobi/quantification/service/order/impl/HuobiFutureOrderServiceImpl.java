@@ -18,6 +18,7 @@ import com.huobi.quantification.request.future.FutureHuobiOrderRequest;
 import com.huobi.quantification.response.future.FutureHuobiOrderCancelResponse;
 import com.huobi.quantification.response.future.FutureHuobiOrderInfoResponse;
 import com.huobi.quantification.response.future.FutureHuobiOrderResponse;
+import com.huobi.quantification.response.future.HuobiFutureOrderCancelAllResponse;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.order.HuobiFutureOrderService;
 import org.apache.commons.collections.CollectionUtils;
@@ -205,11 +206,16 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
 
 
     @Override
-    public void cancelAllOrder(String symbol) {
+    public boolean cancelAllOrder(String symbol) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("userId", "156138");
         String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER_CANCEL_ALL, params);
-        System.out.println(body);
+        HuobiFutureOrderCancelAllResponse response = JSON.parseObject(body, HuobiFutureOrderCancelAllResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

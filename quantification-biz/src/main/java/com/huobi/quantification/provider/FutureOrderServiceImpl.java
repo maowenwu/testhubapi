@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
@@ -511,9 +512,21 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     }
 
     @Override
-    public ServiceResult cancelAllOrder(String symbol) {
-        huobiFutureOrderService.cancelAllOrder(symbol);
-        return null;
+    public ServiceResult cancelAllOrder(FutureCancelAllOrderReqDto reqDto) {
+        try {
+            boolean success = false;
+            if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
+                success = huobiFutureOrderService.cancelAllOrder(reqDto.getSymbol());
+            }
+            if (success) {
+                return ServiceResult.buildSuccessResult(null);
+            } else {
+                return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            }
+        } catch (HttpRequestException e) {
+            logger.error("取消火币期货所有订单失败", e);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        }
     }
 
     @Override

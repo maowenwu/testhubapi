@@ -1,5 +1,6 @@
 package com.huobi.quantification.strategy.order;
 
+import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.future.FutureOrderService;
@@ -32,7 +33,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-@Scope("prototype")
 @Component
 public class OrderContext {
 
@@ -54,12 +54,8 @@ public class OrderContext {
     private CommContext commContext;
 
     private BigDecimal faceValue = BigDecimal.valueOf(100);
-    /**
-     * 用于表示开仓平仓方向,true 代表开仓
-     */
-    private AtomicBoolean isBuyOpen = new AtomicBoolean(true);
 
-    private AtomicBoolean isSellOpen = new AtomicBoolean(true);
+    private StrategyMetric strategyMetric = new StrategyMetric();
 
     private OrderReader orderReader;
     private FuturePosition futurePosition;
@@ -124,7 +120,9 @@ public class OrderContext {
 
     public StrategyOrderConfig getStrategyOrderConfig() {
         StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectByPrimaryKey(1);
-        logger.info("获取策略配置：" + orderConfig);
+        if (orderConfig != null) {
+            logger.info("获取订单策略参数：" + JSON.toJSONString(orderConfig));
+        }
         return orderConfig;
     }
 
@@ -249,11 +247,20 @@ public class OrderContext {
         // 当已有仓位量大于配置允许的量，那么不下单
         if (BigDecimalUtils.moreThanOrEquals(positionTotal, config.getLongMaxAmount())) {
             logger.warn("买入开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getLongMaxAmount());
+            strategyMetric.ignoreBuyOpenOrderIncrement();
             return;
         }
         BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.LONG, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            Long orderId = placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            if (orderId != null) {
+                strategyMetric.successBuyOpenOrderAdd(orderId);
+            } else {
+                strategyMetric.failedBuyOpenOrderIncrement();
+            }
+        } else {
+            strategyMetric.ignoreBuyOpenOrderIncrement();
+            logger.warn("可用买入开仓数量为0，忽略该笔下单");
         }
     }
 
@@ -263,12 +270,20 @@ public class OrderContext {
         BigDecimal positionTotal = orderReader.getAskPositionTotal();
         // 当已有仓位量大于配置允许的量，那么不下单
         if (BigDecimalUtils.moreThanOrEquals(positionTotal, config.getShortMaxAmount())) {
+            strategyMetric.ignoreSellOpenOrderIncrement();
             logger.warn("卖出开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getShortMaxAmount());
             return;
         }
         BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.LONG, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            if (orderId != null) {
+                strategyMetric.successSellOpenOrderAdd(orderId);
+            } else {
+                strategyMetric.failedSellOpenOrderIncrement();
+            }
+        } else {
+            strategyMetric.ignoreSellOpenOrderIncrement();
         }
     }
 
@@ -278,10 +293,16 @@ public class OrderContext {
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
             Long orderId = placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
             if (orderId != null) {
+                strategyMetric.successBuyCloseOrderAdd(orderId);
                 return true;
+            } else {
+                strategyMetric.failedBuyCloseOrderIncrement();
+                return false;
             }
+        } else {
+            strategyMetric.ignoreBuyCloseOrderIncrement();
+            return false;
         }
-        return false;
     }
 
     // 下平仓卖单
@@ -290,10 +311,16 @@ public class OrderContext {
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
             Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
             if (orderId != null) {
+                strategyMetric.successSellCloseOrderAdd(orderId);
                 return true;
+            } else {
+                strategyMetric.failedSellCloseOrderIncrement();
+                return false;
             }
+        } else {
+            strategyMetric.ignoreSellCloseOrderIncrement();
+            return false;
         }
-        return false;
     }
 
     /**
@@ -426,9 +453,6 @@ public class OrderContext {
         orderReader.addOrder(futureOrder);
     }
 
-    public void cancelAllOrder() {
-        ServiceResult result = futureOrderService.cancelAllOrder(null);
-    }
 
     public boolean updateOrderInfo() {
         ServiceResult result = null;
@@ -457,4 +481,15 @@ public class OrderContext {
     }
 
 
+    public void resetMetric() {
+        strategyMetric.reset();
+    }
+
+    public void metricBuyOrder() {
+        strategyMetric.metricBuyOrder();
+    }
+
+    public void metricSellOrder() {
+        strategyMetric.metricSellOrder();
+    }
 }

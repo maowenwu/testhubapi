@@ -28,8 +28,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
-            logger.info("==>spring 容器启动");
+            logger.info("spring 容器启动");
             StrategyProperties.ConfigGroup group = strategyProperties.getGroup();
+            logger.info("当前配置：{}", JSON.toJSONString(group));
             if (group.getEnable()) {
                 logger.info("注册job开始");
                 StrategyProperties.Config future = group.getFuture();
@@ -45,8 +46,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 //sleep(3000);
                 contextInit(group);
                 startOrderCopierWithConfig(group);
-                startHedgerWithConfig(group);
-                startRiskMonitorWithConfig(group);
+                /*startHedgerWithConfig(group);
+                startRiskMonitorWithConfig(group);*/
             }
         }
     }
