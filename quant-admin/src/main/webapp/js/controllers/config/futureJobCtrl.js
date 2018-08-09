@@ -1,5 +1,5 @@
 /**
- * 用户中心-现货任务管理 
+ * 用户中心-期货任务管理 
 */
 angular.module('inspinia',['uiSwitch']).controller('futureJobCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');

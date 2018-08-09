@@ -1,12 +1,12 @@
 /**
- * 用户中心-现货用户管理 
+ * 用户中心-现货账户密钥配置管理 
 */
-angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
+angular.module('inspinia',['uiSwitch']).controller('futureSecretCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
 	$scope.baseInfo = {status:2};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
-	$scope.spotAccountGrid = {
-		data: 'spotAccountData',
+	$scope.futureSecretGrid = {
+		data: 'futureSecretData',
 		enableSorting: true,
 		paginationPageSize: 10,
 		paginationPageSizes: [10, 20, 50, 100],
@@ -14,14 +14,12 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'exchangeId', displayName: '交易所id'},
-            {field: 'accountSourceId', displayName: '用户id'},
-            {field: 'accountsType', displayName: '账号类型'},
-            {field: 'accountsName', displayName: '账号名'},
-            {field: 'state', displayName: '账号状态'},
+            {field: 'accountSourceId', displayName: '账号id'},
+            {field: 'accessKey', displayName: 'accessKey'},
+            {field: 'secretKey', displayName: 'secretKey'},
             {field: 'id', displayName: '操作', cellTemplate: 
-           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'sysDict.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a> | '
-               +'<a ng-show="grid.appScope.hasPermit(\'sysDict.delete\')"  ng-click="grid.appScope.deleteInfo(row.entity)">删除</a></div>'
+           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a> | '
+               +'<a ng-show="grid.appScope.hasPermit(\'futureAccount.delete\')"  ng-click="grid.appScope.deleteInfo(row.entity)">删除</a></div>'
             }
         ],
         onRegisterApi: function(gridApi){
@@ -36,14 +34,14 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
 	
 	//查询
 	$scope.query = function(){
-		$http.post('spotAccount/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('futureSecret/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.spotAccountData = page.result;
-					$scope.spotAccountGrid.totalItems = page.totalCount;
+					$scope.futureSecretData = page.result;
+					$scope.futureSecretGrid.totalItems = page.totalCount;
 				}).error(function(){
 				});
 	}
@@ -59,7 +57,7 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
 	}
 	
 	$scope.submit = function(){
-		$http.post('spotAccount/insertSpotAccount.do',"newInfo=" + angular.toJson($scope.addInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('futureSecret/insertFutureSecret.do',"newInfo=" + angular.toJson($scope.addInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(msg){
 			$scope.notice(msg.msg);
 			$scope.submitting = false;
@@ -76,7 +74,7 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
 	//提交新的任务
 	$scope.submitNewInfo = function(){
 		$scope.submitting = true;
-		$http.post('spotAccount/updateSpotAccount.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('futureSecret/updateFutureSecret.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(msg){
 				$scope.notice(msg.msg);
 				$scope.submitting = false;
@@ -107,7 +105,7 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
             closeOnCancel: true },
 	        function (isConfirm) {
 	            if (isConfirm) {
-	            	$http.post("spotAccount/deleteSpotAccount.do","id="+entity.id,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+	            	$http.post("futureSecret/deleteFutureSecret.do","id="+entity.id,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 	    			.success(function(msg){
 	    				$scope.notice(msg.msg);
 	    				$scope.query();

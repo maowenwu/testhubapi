@@ -1,5 +1,5 @@
 /**
- * 用户中心-风控配置管理 
+ * 用户中心-代理IP配置管理 
 */
 angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
