@@ -231,7 +231,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         List<QuanOrderFuture> allList = new ArrayList<>();
         while (true) {
             Map<String, String> params = new HashMap<>();
-            //params.put("symbol", "BTC");
+            params.put("symbol", symbol);
             params.put("userId", String.valueOf(accountId));
             params.put("page_size", String.valueOf(pageSize));
             params.put("page_index", String.valueOf(pageIndex++));
@@ -257,7 +257,6 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             queryEntity.setExOrderId(e.getExOrderId());
             if (!isExist(queryEntity)) {// 判断是否存在，不存在则插入数据库
                 e.setAccountId(accountId);
-                e.setSourceStatus(1);
                 quanOrderFutureMapper.insert(e);
             }
         });
@@ -331,6 +330,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 orderFuture.setContractCode(e.getContractCode());
                 orderFuture.setFees(e.getFee());
                 orderFuture.setSourceStatus(e.getStatus());
+                orderFuture.setOrderSource(e.getOrderSource());
                 list.add(orderFuture);
             });
         }

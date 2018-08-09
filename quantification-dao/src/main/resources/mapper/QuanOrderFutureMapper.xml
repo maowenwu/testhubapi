@@ -28,12 +28,13 @@
         <result column="fees" jdbcType="DECIMAL" property="fees"/>
         <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
         <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="order_source" jdbcType="VARCHAR" property="orderSource"/>
     </resultMap>
     <sql id="Base_Column_List">
     inner_order_id, strategy_name, strategy_version, exchange_id, account_id, ex_order_id, 
     link_order_id, base_coin, quote_coin, contract_type, contract_code, status, source_status, 
     side, offset, lever, order_type, order_price, deal_price, order_qty, deal_qty, remaining_qty, 
-    margin_frozen, fees, create_date, update_date
+    margin_frozen, fees, create_date, update_date,order_source
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -55,7 +56,7 @@
       lever, order_type, order_price, 
       deal_price, order_qty, deal_qty, 
       remaining_qty, margin_frozen, fees, 
-      create_date, update_date)
+      create_date, update_date,order_source)
     values (#{innerOrderId,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
       #{exchangeId,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, #{exOrderId,jdbcType=BIGINT}, 
       #{linkOrderId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR}, 
@@ -64,7 +65,7 @@
       #{lever,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL}, 
       #{dealPrice,jdbcType=DECIMAL}, #{orderQty,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL}, 
       #{remainingQty,jdbcType=DECIMAL}, #{marginFrozen,jdbcType=DECIMAL}, #{fees,jdbcType=DECIMAL}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{orderSource,jdbcType=VARCHAR})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
         insert into quan_order_future
