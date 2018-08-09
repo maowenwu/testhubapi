@@ -4,13 +4,13 @@
 		<ol class="breadcrumb">
 			<li><a>主页</a></li>
 			<li><a>用户中心</a></li>
-			<li class="active"><strong>火币对冲模块配置菜单</strong></li>
+			<li class="active"><strong>火币费率配置菜单</strong></li>
 		</ol>
 	</div>
 </div>
 <!-- 主要内容 -->
 <div class="wrapper wrapper-content animated fadeIn" ng-app
-	ng-controller="hedgeCtrl">
+	ng-controller="feeCtrl">
 	<form class="form-horizontal" id="form1">
 		<div class="row">
 			<div class="col-lg-12">
@@ -41,14 +41,13 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="panel-body ibox float-e-margins">
 					<div class="ibox-title">
 						<h5>配置列表</h5>
 						<!--<div ibox-tools="" class="ng-scope"></div>-->
 					</div>
 					<div class="ibox-content">
-						<div class="gridStyle" ui-grid="hedgeGrid" ui-grid-pagination ui-grid-resize-columns></div>
+						<div class="gridStyle" ui-grid="feeGrid" ui-grid-pagination ui-grid-resize-columns></div>
 					</div>
 				</div>
 				<div style="height: 50px"></div>
@@ -67,51 +66,22 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>对冲间隔时间：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>币币交易手续费率：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.hedgeInterval' name="hedgeInterval" required>
+									ng-model='newInfo.spotFee' name="spotFee" required>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交割对冲单时间间隔：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>合约交易手续费率：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.deliveryInterval' name="deliveryInterval" required>
-							</div>
-						</div>
-						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>对冲买单滑点：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.buySlippage' name="buySlippage" required/>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>对冲卖单滑点：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sellSlippage' name="sellSlippage" required>
+									ng-model='newInfo.contractFee' name="contractFee" required>
 							</div>
 						</div>
 						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>开始交割对冲时间：</label>
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>合约交割手续费率：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.stopTime1' name="stopTime1" required/>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>结束交割对冲时间：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.stopTime2' name="stopTime2" required>
-							</div>
-						</div>
-						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>交割买单滑点：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.deliveryBuySlippage' name="deliveryBuySlippage" required/>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交割卖单滑点：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.deliverySellSlippage' name="deliverySellSlippage" required>
+									ng-model='newInfo.deliveryFee' name="deliveryFee" required/>
 							</div>
 						</div>
 						<div class="form-group">

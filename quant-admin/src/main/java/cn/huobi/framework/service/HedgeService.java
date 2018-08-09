@@ -11,6 +11,6 @@ public interface HedgeService {
 
 	List<HedgeConfig> selectByCondition(HedgeConfig config, Page<HedgeConfig> page);
 
-	int updateHedge(StrategyHedgeConfig riskConfig);
+	int updateHedge(HedgeConfig riskConfig);
 
 }

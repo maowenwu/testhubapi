@@ -564,6 +564,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })        
+        .state('config.fee', {
+        	url: "/config/fee",
+        	templateUrl: "views/config/fee.html",
+        	data: {pageTitle: '费率配置管理'},
+        	controller: "feeCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/config/feeCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
         
 }
 

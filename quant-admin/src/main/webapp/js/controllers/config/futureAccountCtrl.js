@@ -1,5 +1,5 @@
 /**
- * 用户中心-期货用户管理 
+ * 配置中心-期货用户管理 
 */
 angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
