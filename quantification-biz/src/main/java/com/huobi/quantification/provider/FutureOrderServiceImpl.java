@@ -530,9 +530,9 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     }
 
     @Override
-    public ServiceResult updateOrderInfo(Integer exchangeId, Long accountId) {
+    public ServiceResult updateOrderInfo(Integer exchangeId, Long accountId,String baseCoin) {
         if (ExchangeEnum.HUOBI_FUTURE.getExId() == exchangeId) {
-            boolean success = huobiFutureOrderService.updateHuobiOrderInfo(accountId);
+            boolean success = huobiFutureOrderService.updateHuobiOrderInfo(accountId,baseCoin);
             if (success) {
                 return ServiceResult.buildSuccessResult(success);
             } else {

@@ -394,7 +394,7 @@ public class OrderContext {
     public boolean updateOrderInfo() {
         ServiceResult result = null;
         try {
-            result = futureOrderService.updateOrderInfo(this.futureExchangeId, this.futureAccountId);
+            result = futureOrderService.updateOrderInfo(this.futureExchangeId, this.futureAccountId, futureBaseCoin);
         } catch (Exception e) {
             logger.error("更新订单信息，dubbo调用失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return false;

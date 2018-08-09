@@ -590,7 +590,8 @@
         </where>
     </select>
     <select id="selectExOrderIdByStatus" resultType="java.lang.Long">
-        select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId}
+        select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId} and
+        base_coin=#{baseCoin}
         and status in
         <foreach item="item" index="index" collection="statusList" open="("
                  separator="," close=")">

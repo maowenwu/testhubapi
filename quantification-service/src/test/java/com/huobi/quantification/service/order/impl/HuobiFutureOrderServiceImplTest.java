@@ -40,6 +40,6 @@ public class HuobiFutureOrderServiceImplTest {
 
 	@Test
 	public void replenishOrder() {
-		huobiFutureOrderService.replenishOrder(156138L);
+		//huobiFutureOrderService.replenishOrder(156138L);
 	}
 }

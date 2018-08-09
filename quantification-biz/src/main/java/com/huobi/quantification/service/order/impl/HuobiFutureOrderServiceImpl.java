@@ -106,7 +106,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     }
 
     @Override
-    public boolean updateHuobiOrderInfo(Long accountId) {
+    public boolean updateHuobiOrderInfo(Long accountId, String baseCoin) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[HuobiOrder][symbol={},contractType={}]任务开始");
         // 查找出订单状态不为已完成、撤单的订单
@@ -115,7 +115,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
         statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
         List<Long> orderIds = quanOrderFutureMapper.selectExOrderIdByStatus(ExchangeEnum.HUOBI_FUTURE.getExId(),
-                accountId, statusList);
+                accountId, baseCoin, statusList);
         // 用于标记是否更新完成，当待更新订单量与实际更新订单量相同时才算更新完成
         boolean updateSuccess;
         List<Long> dealOrder = new ArrayList<>();

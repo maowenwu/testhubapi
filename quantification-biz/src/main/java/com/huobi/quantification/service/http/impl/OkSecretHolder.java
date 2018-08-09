@@ -23,7 +23,7 @@ public class OkSecretHolder {
 
     private Map<Long, Long> accountUsageCounter = new HashMap<>();
 
-    @PostConstruct
+    //@PostConstruct
     public void loadAllSecret() {
         List<Long> accountIds = okFutureAccountService.findAccountFutureByExchangeId(ExchangeEnum.OKEX.getExId());
         if (accountIds.size() <= 0) {

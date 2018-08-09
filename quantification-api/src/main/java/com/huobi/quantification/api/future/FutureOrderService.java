@@ -74,5 +74,5 @@ public interface FutureOrderService {
 
     ServiceResult cancelAllOrder(FutureCancelAllOrderReqDto reqDto);
 
-    ServiceResult updateOrderInfo(Integer exchangeId, Long accountId);
+    ServiceResult updateOrderInfo(Integer exchangeId, Long accountId, String baseCoin);
 }

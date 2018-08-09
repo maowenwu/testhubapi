@@ -267,17 +267,14 @@ public class CommContext {
             reqDto.setCoinType(this.futureBaseCoin);
             ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
             if (result.isSuccess()) {
-                Map<String, FutureBalanceRespDto.DataBean> data = result.getData().getData();
-                FutureBalanceRespDto.DataBean dataBean = data.get(futureBaseCoin);
-                if (dataBean == null) {
-                    dataBean = data.get(futureBaseCoin.toUpperCase());
-                }
-                if (dataBean != null) {
-                    FutureBalance futureBalance = new FutureBalance();
+                FutureBalance futureBalance = new FutureBalance();
+                Map<String, FutureBalanceRespDto.DataBean> dataMap = result.getData().getData();
+                if (dataMap != null && dataMap.get(futureBaseCoin) != null) {
+                    FutureBalanceRespDto.DataBean dataBean = dataMap.get(futureBaseCoin);
                     BeanUtils.copyProperties(dataBean, futureBalance);
                     logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
                     return futureBalance;
-                } else {
+                }else {
                     logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
                     return null;
                 }

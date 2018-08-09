@@ -25,13 +25,13 @@ public interface QuanOrderFutureMapper {
 
     int updateByExIdAccountIdExOrderId(QuanOrderFuture record);
 
-    List<QuanOrderFuture> selectByInnerOrderIds(@Param("innerOrderId")List<Long> innerOrderId);
+    List<QuanOrderFuture> selectByInnerOrderIds(@Param("innerOrderId") List<Long> innerOrderId);
 
     List<QuanOrderFuture> selectByExOrderIds(Map params);
 
     List<QuanOrderFuture> selectByLinkOrderIds(Map params);
 
-    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("statusList") List<Integer> statusList);
+    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("baseCoin") String baseCoin, @Param("statusList") List<Integer> statusList);
 
     List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("statusList") List<Integer> statusList);
 }
