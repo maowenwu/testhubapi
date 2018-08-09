@@ -39,7 +39,6 @@ import com.huobi.quantification.service.redis.RedisService;
  * @author zhangl
  * @since 2018/6/26
  */
-@DependsOn("httpServiceImpl")
 @Service
 @Transactional
 public class OkFutureAccountServiceImpl implements OkFutureAccountService {
@@ -58,10 +57,10 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
     @Autowired
     private QuanAccountFuturePositionMapper quanAccountFuturePositionMapper;
 
-    @Resource
+    @Autowired
     private QuanAccountFutureMapper quanAccountFutureMapper;
 
-    @Resource
+    @Autowired
     private QuanAccountFutureSecretMapper quanAccountFutureSecretMapper;
 
 
