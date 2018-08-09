@@ -218,4 +218,9 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             return false;
         }
     }
+
+    @Override
+    public void replenishOrder(Long accountId) {
+
+    }
 }
