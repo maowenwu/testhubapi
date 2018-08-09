@@ -13,6 +13,6 @@ public class HuobiFutureReplenishOrderJob extends AbstractQuartzJob {
     @Override
     public void execute(JobParamDto data) {
         HuobiFutureOrderService futureOrderService = ApplicationContextHolder.getContext().getBean(HuobiFutureOrderService.class);
-        futureOrderService.replenishOrder(data.getAccountId());
+        futureOrderService.replenishOrder(data.getAccountId(),data.getSymbol());
     }
 }
