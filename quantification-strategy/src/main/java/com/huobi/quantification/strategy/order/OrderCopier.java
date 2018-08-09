@@ -50,11 +50,11 @@ public class OrderCopier {
                 try {
                     boolean b = copyOrder();
                     if (!b) {
-                        ThreadUtils.sleep(10 * 1000);
+                        ThreadUtils.sleep(1000);
                     }
                 } catch (Throwable e) {
                     logger.error("拷贝订单期间出现异常", e);
-                    ThreadUtils.sleep(10 * 1000);
+                    ThreadUtils.sleep(1000);
                 }
             }
         });
@@ -200,7 +200,7 @@ public class OrderCopier {
         orderContext.setRiskCloseOrderOnly(true);
     }
 
-    private void stopHedgePhase2() {
+    private void stopOrderPhase2() {
         orderPhase2Enable.set(false);
         copyOrderThread.interrupt();
     }
@@ -219,7 +219,7 @@ public class OrderCopier {
                             stopOrderPhase1();
                         }
                         if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime2())) && orderPhase2Enable.get()) {
-                            stopHedgePhase2();
+                            stopOrderPhase2();
                         }
                     } else {
                         logger.info("合约类型不是当周");
