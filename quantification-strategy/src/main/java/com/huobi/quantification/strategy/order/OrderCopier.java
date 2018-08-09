@@ -3,20 +3,23 @@ package com.huobi.quantification.strategy.order;
 
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.util.BigDecimalUtils;
+import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.*;
+import com.huobi.quantification.strategy.enums.OrderActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -38,13 +41,14 @@ public class OrderCopier {
     public void init(StrategyProperties.ConfigGroup group) {
         depthBookAdjuster.init(group);
         orderContext.init(group);
+        startOrderCtrlThread();
     }
 
-    public void copyOrder() {
+    public void start() {
         copyOrderThread = new Thread(() -> {
-            while (true) {
+            while (!copyOrderThread.isInterrupted() && orderPhase2Enable.get()) {
                 try {
-                    boolean b = doCopyOrder();
+                    boolean b = copyOrder();
                     if (!b) {
                         ThreadUtils.sleep(10 * 1000);
                     }
@@ -59,9 +63,22 @@ public class OrderCopier {
         copyOrderThread.start();
     }
 
-    public boolean doCopyOrder() {
+    public boolean copyOrder() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约借深度第{}轮 开始", counter.incrementAndGet());
+        OrderActionEnum orderAction = commContext.getOrderAction();
+        switch (orderAction) {
+            case NORMAL:
+                orderContext.setRiskCloseOrderOnly(false);
+                break;
+            case CLOSE_ORDER_ONLY:
+                orderContext.setRiskCloseOrderOnly(true);
+                break;
+            case STOP_ORDER:
+                commContext.cancelAllFutureOrder();
+                logger.error("风控已经发出停止摆单指令，本轮摆单结束并撤销所有订单");
+                return true;
+        }
         // 更新订单信息
         boolean success = orderContext.updateOrderInfo();
         if (!success) {
@@ -176,6 +193,47 @@ public class OrderCopier {
         }
         logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
         return true;
+    }
+
+    private void stopOrderPhase1() {
+        orderPhase1Enable.set(false);
+        orderContext.setRiskCloseOrderOnly(true);
+    }
+
+    private void stopHedgePhase2() {
+        orderPhase2Enable.set(false);
+        copyOrderThread.interrupt();
+    }
+
+    private AtomicBoolean orderPhase1Enable = new AtomicBoolean(true);
+    private AtomicBoolean orderPhase2Enable = new AtomicBoolean(true);
+
+    private void startOrderCtrlThread() {
+        Thread thread = new Thread(() -> {
+            while (true) {
+                try {
+                    StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
+                    if (commContext.isThisWeek()) {
+                        LocalDateTime now = LocalDateTime.now();
+                        if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime1())) && orderPhase1Enable.get()) {
+                            stopOrderPhase1();
+                        }
+                        if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime2())) && orderPhase2Enable.get()) {
+                            stopHedgePhase2();
+                        }
+                    } else {
+                        logger.info("合约类型不是当周");
+                    }
+                    ThreadUtils.sleep(1000);
+                } catch (Exception e) {
+                    logger.error("订单监控线程出现异常", e);
+                    ThreadUtils.sleep(1000);
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("订单控制线程");
+        thread.start();
     }
 
 }

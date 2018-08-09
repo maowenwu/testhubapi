@@ -7,6 +7,8 @@ import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
+import com.huobi.quantification.strategy.enums.HedgerActionEnum;
+import com.huobi.quantification.strategy.enums.OrderActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +44,11 @@ public class Hedger {
         startHedgeCtrlThread();
     }
 
-    public void hedgePhase1() {
+    public void startHedgePhase1() {
         hedgePhase1Thread = new Thread(() -> {
             while (!hedgePhase1Thread.isInterrupted() && hedgePhase1Enable.get()) {
                 try {
-                    boolean b = doHedgePhase1();
+                    boolean b = hedgePhase1();
                     if (!b) {
                         ThreadUtils.sleep(10 * 1000);
                     }
@@ -61,10 +63,17 @@ public class Hedger {
         hedgePhase1Thread.start();
     }
 
-    private boolean doHedgePhase1() {
+    private boolean hedgePhase1() {
         Stopwatch started = Stopwatch.createStarted();
         long startTime = System.currentTimeMillis();
         logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
+        HedgerActionEnum hedgeAction = commContext.getHedgeAction();
+        switch (hedgeAction) {
+            case STOP_HEDGER:
+                commContext.cancelAllSpotOrder();
+                logger.error("风控已经发出停止摆单指令，本轮对冲结束并撤销所有订单");
+                return true;
+        }
         StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
         if (tradeFeeConfig == null) {
             logger.error("交易手续费配置获取失败，方法退出");
@@ -78,8 +87,8 @@ public class Hedger {
         hedgerContext.setHedgeConfig(hedgeConfig);
         hedgerContext.setTradeFeeConfig(tradeFeeConfig);
         // 撤掉币币账户所有未成交订单
-        boolean success = commContext.cancelAllSpotOrder();
-        if (!success) {
+        boolean b = commContext.cancelAllSpotOrder();
+        if (!b) {
             logger.error("取消现货所有订单失败，方法退出");
             return false;
         }
@@ -93,11 +102,11 @@ public class Hedger {
     }
 
 
-    public void hedgePhase2() {
+    public void startHedgePhase2() {
         hedgePhase2Thread = new Thread(() -> {
             while (!hedgePhase1Thread.isInterrupted() && hedgePhase2Enable.get()) {
                 try {
-                    boolean b = doHedgePhase2();
+                    boolean b = hedgePhase2();
                     if (!b) {
                         ThreadUtils.sleep(10 * 1000);
                     }
@@ -112,7 +121,7 @@ public class Hedger {
         hedgePhase2Thread.start();
     }
 
-    private boolean doHedgePhase2() {
+    private boolean hedgePhase2() {
         long startTime = System.currentTimeMillis();
         StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
         if (hedgeConfig == null) {
@@ -144,7 +153,7 @@ public class Hedger {
     private void stopHedgePhase1() {
         hedgePhase1Enable.set(false);
         hedgePhase1Thread.interrupt();
-        hedgePhase2();
+        startHedgePhase2();
     }
 
     private void stopHedgePhase2() {

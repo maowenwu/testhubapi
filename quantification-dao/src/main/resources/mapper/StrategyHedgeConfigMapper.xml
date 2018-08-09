@@ -1,66 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.StrategyHedgeConfigMapper">
-    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskConfig">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyHedgeConfig">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
         <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
-        <result column="risk_rate_level1" jdbcType="DECIMAL" property="riskRateLevel1"/>
-        <result column="risk_rate_level2" jdbcType="DECIMAL" property="riskRateLevel2"/>
-        <result column="risk_rate_level3" jdbcType="DECIMAL" property="riskRateLevel3"/>
-        <result column="buy_close_slippage" jdbcType="DECIMAL" property="buyCloseSlippage"/>
-        <result column="sell_close_slippage" jdbcType="DECIMAL" property="sellCloseSlippage"/>
-        <result column="max_close_amount" jdbcType="DECIMAL" property="maxCloseAmount"/>
-        <result column="net_position_level1" jdbcType="DECIMAL" property="netPositionLevel1"/>
-        <result column="net_position_level2" jdbcType="DECIMAL" property="netPositionLevel2"/>
-        <result column="curr_profit_level1" jdbcType="DECIMAL" property="currProfitLevel1"/>
-        <result column="curr_profit_level2" jdbcType="DECIMAL" property="currProfitLevel2"/>
-        <result column="total_profit_level1" jdbcType="DECIMAL" property="totalProfitLevel1"/>
-        <result column="total_profit_level2" jdbcType="DECIMAL" property="totalProfitLevel2"/>
-        <result column="risk_order_ctrl" jdbcType="INTEGER" property="riskOrderCtrl"/>
-        <result column="risk_hedge_ctrl" jdbcType="INTEGER" property="riskHedgeCtrl"/>
-        <result column="net_order_ctrl" jdbcType="INTEGER" property="netOrderCtrl"/>
-        <result column="net_hedge_ctrl" jdbcType="INTEGER" property="netHedgeCtrl"/>
-        <result column="profit_order_ctrl" jdbcType="INTEGER" property="profitOrderCtrl"/>
-        <result column="profit_hedge_ctrl" jdbcType="INTEGER" property="profitHedgeCtrl"/>
+        <result column="hedge_interval" jdbcType="INTEGER" property="hedgeInterval"/>
+        <result column="buy_slippage" jdbcType="DECIMAL" property="buySlippage"/>
+        <result column="sell_slippage" jdbcType="DECIMAL" property="sellSlippage"/>
+        <result column="stop_time1" jdbcType="VARCHAR" property="stopTime1"/>
+        <result column="stop_time2" jdbcType="VARCHAR" property="stopTime2"/>
+        <result column="delivery_interval" jdbcType="INTEGER" property="deliveryInterval"/>
+        <result column="delivery_buy_slippage" jdbcType="DECIMAL" property="deliveryBuySlippage"/>
+        <result column="delivery_sell_slippage" jdbcType="DECIMAL" property="deliverySellSlippage"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, symbol, contract_type, risk_rate_level1, risk_rate_level2, risk_rate_level3,
-    buy_close_slippage, sell_close_slippage, max_close_amount, net_position_level1, net_position_level2,
-    curr_profit_level1, curr_profit_level2, total_profit_level1, total_profit_level2,
-    risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl, net_hedge_ctrl, profit_order_ctrl,
-    profit_hedge_ctrl
+    id, symbol, contract_type, hedge_interval, buy_slippage, sell_slippage, stop_time1,
+    stop_time2, delivery_interval, delivery_buy_slippage, delivery_sell_slippage, create_time,
+    update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from strategy_risk_config
+        from strategy_hedge_config
         where id = #{id,jdbcType=INTEGER}
     </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
-    delete from strategy_risk_config
+    delete from strategy_hedge_config
     where id = #{id,jdbcType=INTEGER}
   </delete>
-    <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-    insert into strategy_risk_config (id, symbol, contract_type,
-      risk_rate_level1, risk_rate_level2, risk_rate_level3,
-      buy_close_slippage, sell_close_slippage, max_close_amount,
-      net_position_level1, net_position_level2, curr_profit_level1,
-      curr_profit_level2, total_profit_level1, total_profit_level2,
-      risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl,
-      net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl
-      )
+    <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
+    insert into strategy_hedge_config (id, symbol, contract_type,
+      hedge_interval, buy_slippage, sell_slippage,
+      stop_time1, stop_time2, delivery_interval,
+      delivery_buy_slippage, delivery_sell_slippage,
+      create_time, update_time)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR},
-      #{riskRateLevel1,jdbcType=DECIMAL}, #{riskRateLevel2,jdbcType=DECIMAL}, #{riskRateLevel3,jdbcType=DECIMAL},
-      #{buyCloseSlippage,jdbcType=DECIMAL}, #{sellCloseSlippage,jdbcType=DECIMAL}, #{maxCloseAmount,jdbcType=DECIMAL},
-      #{netPositionLevel1,jdbcType=DECIMAL}, #{netPositionLevel2,jdbcType=DECIMAL}, #{currProfitLevel1,jdbcType=DECIMAL},
-      #{currProfitLevel2,jdbcType=DECIMAL}, #{totalProfitLevel1,jdbcType=DECIMAL}, #{totalProfitLevel2,jdbcType=DECIMAL},
-      #{riskOrderCtrl,jdbcType=INTEGER}, #{riskHedgeCtrl,jdbcType=INTEGER}, #{netOrderCtrl,jdbcType=INTEGER},
-      #{netHedgeCtrl,jdbcType=INTEGER}, #{profitOrderCtrl,jdbcType=INTEGER}, #{profitHedgeCtrl,jdbcType=INTEGER}
-      )
+      #{hedgeInterval,jdbcType=INTEGER}, #{buySlippage,jdbcType=DECIMAL}, #{sellSlippage,jdbcType=DECIMAL},
+      #{stopTime1,jdbcType=VARCHAR}, #{stopTime2,jdbcType=VARCHAR}, #{deliveryInterval,jdbcType=INTEGER},
+      #{deliveryBuySlippage,jdbcType=DECIMAL}, #{deliverySellSlippage,jdbcType=DECIMAL},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-    <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-        insert into strategy_risk_config
+    <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
+        insert into strategy_hedge_config
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
@@ -71,59 +55,35 @@
             <if test="contractType != null">
                 contract_type,
             </if>
-            <if test="riskRateLevel1 != null">
-                risk_rate_level1,
+            <if test="hedgeInterval != null">
+                hedge_interval,
             </if>
-            <if test="riskRateLevel2 != null">
-                risk_rate_level2,
+            <if test="buySlippage != null">
+                buy_slippage,
             </if>
-            <if test="riskRateLevel3 != null">
-                risk_rate_level3,
+            <if test="sellSlippage != null">
+                sell_slippage,
             </if>
-            <if test="buyCloseSlippage != null">
-                buy_close_slippage,
+            <if test="stopTime1 != null">
+                stop_time1,
             </if>
-            <if test="sellCloseSlippage != null">
-                sell_close_slippage,
+            <if test="stopTime2 != null">
+                stop_time2,
             </if>
-            <if test="maxCloseAmount != null">
-                max_close_amount,
+            <if test="deliveryInterval != null">
+                delivery_interval,
             </if>
-            <if test="netPositionLevel1 != null">
-                net_position_level1,
+            <if test="deliveryBuySlippage != null">
+                delivery_buy_slippage,
             </if>
-            <if test="netPositionLevel2 != null">
-                net_position_level2,
+            <if test="deliverySellSlippage != null">
+                delivery_sell_slippage,
             </if>
-            <if test="currProfitLevel1 != null">
-                curr_profit_level1,
+            <if test="createTime != null">
+                create_time,
             </if>
-            <if test="currProfitLevel2 != null">
-                curr_profit_level2,
-            </if>
-            <if test="totalProfitLevel1 != null">
-                total_profit_level1,
-            </if>
-            <if test="totalProfitLevel2 != null">
-                total_profit_level2,
-            </if>
-            <if test="riskOrderCtrl != null">
-                risk_order_ctrl,
-            </if>
-            <if test="riskHedgeCtrl != null">
-                risk_hedge_ctrl,
-            </if>
-            <if test="netOrderCtrl != null">
-                net_order_ctrl,
-            </if>
-            <if test="netHedgeCtrl != null">
-                net_hedge_ctrl,
-            </if>
-            <if test="profitOrderCtrl != null">
-                profit_order_ctrl,
-            </if>
-            <if test="profitHedgeCtrl != null">
-                profit_hedge_ctrl,
+            <if test="updateTime != null">
+                update_time,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -136,64 +96,40 @@
             <if test="contractType != null">
                 #{contractType,jdbcType=VARCHAR},
             </if>
-            <if test="riskRateLevel1 != null">
-                #{riskRateLevel1,jdbcType=DECIMAL},
+            <if test="hedgeInterval != null">
+                #{hedgeInterval,jdbcType=INTEGER},
             </if>
-            <if test="riskRateLevel2 != null">
-                #{riskRateLevel2,jdbcType=DECIMAL},
+            <if test="buySlippage != null">
+                #{buySlippage,jdbcType=DECIMAL},
             </if>
-            <if test="riskRateLevel3 != null">
-                #{riskRateLevel3,jdbcType=DECIMAL},
+            <if test="sellSlippage != null">
+                #{sellSlippage,jdbcType=DECIMAL},
             </if>
-            <if test="buyCloseSlippage != null">
-                #{buyCloseSlippage,jdbcType=DECIMAL},
+            <if test="stopTime1 != null">
+                #{stopTime1,jdbcType=VARCHAR},
             </if>
-            <if test="sellCloseSlippage != null">
-                #{sellCloseSlippage,jdbcType=DECIMAL},
+            <if test="stopTime2 != null">
+                #{stopTime2,jdbcType=VARCHAR},
             </if>
-            <if test="maxCloseAmount != null">
-                #{maxCloseAmount,jdbcType=DECIMAL},
+            <if test="deliveryInterval != null">
+                #{deliveryInterval,jdbcType=INTEGER},
             </if>
-            <if test="netPositionLevel1 != null">
-                #{netPositionLevel1,jdbcType=DECIMAL},
+            <if test="deliveryBuySlippage != null">
+                #{deliveryBuySlippage,jdbcType=DECIMAL},
             </if>
-            <if test="netPositionLevel2 != null">
-                #{netPositionLevel2,jdbcType=DECIMAL},
+            <if test="deliverySellSlippage != null">
+                #{deliverySellSlippage,jdbcType=DECIMAL},
             </if>
-            <if test="currProfitLevel1 != null">
-                #{currProfitLevel1,jdbcType=DECIMAL},
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="currProfitLevel2 != null">
-                #{currProfitLevel2,jdbcType=DECIMAL},
-            </if>
-            <if test="totalProfitLevel1 != null">
-                #{totalProfitLevel1,jdbcType=DECIMAL},
-            </if>
-            <if test="totalProfitLevel2 != null">
-                #{totalProfitLevel2,jdbcType=DECIMAL},
-            </if>
-            <if test="riskOrderCtrl != null">
-                #{riskOrderCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="riskHedgeCtrl != null">
-                #{riskHedgeCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="netOrderCtrl != null">
-                #{netOrderCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="netHedgeCtrl != null">
-                #{netHedgeCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="profitOrderCtrl != null">
-                #{profitOrderCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="profitHedgeCtrl != null">
-                #{profitHedgeCtrl,jdbcType=INTEGER},
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
             </if>
         </trim>
     </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-        update strategy_risk_config
+    <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
+        update strategy_hedge_config
         <set>
             <if test="symbol != null">
                 symbol = #{symbol,jdbcType=VARCHAR},
@@ -201,85 +137,53 @@
             <if test="contractType != null">
                 contract_type = #{contractType,jdbcType=VARCHAR},
             </if>
-            <if test="riskRateLevel1 != null">
-                risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
+            <if test="hedgeInterval != null">
+                hedge_interval = #{hedgeInterval,jdbcType=INTEGER},
             </if>
-            <if test="riskRateLevel2 != null">
-                risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
+            <if test="buySlippage != null">
+                buy_slippage = #{buySlippage,jdbcType=DECIMAL},
             </if>
-            <if test="riskRateLevel3 != null">
-                risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
+            <if test="sellSlippage != null">
+                sell_slippage = #{sellSlippage,jdbcType=DECIMAL},
             </if>
-            <if test="buyCloseSlippage != null">
-                buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
+            <if test="stopTime1 != null">
+                stop_time1 = #{stopTime1,jdbcType=VARCHAR},
             </if>
-            <if test="sellCloseSlippage != null">
-                sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
+            <if test="stopTime2 != null">
+                stop_time2 = #{stopTime2,jdbcType=VARCHAR},
             </if>
-            <if test="maxCloseAmount != null">
-                max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
+            <if test="deliveryInterval != null">
+                delivery_interval = #{deliveryInterval,jdbcType=INTEGER},
             </if>
-            <if test="netPositionLevel1 != null">
-                net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
+            <if test="deliveryBuySlippage != null">
+                delivery_buy_slippage = #{deliveryBuySlippage,jdbcType=DECIMAL},
             </if>
-            <if test="netPositionLevel2 != null">
-                net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
+            <if test="deliverySellSlippage != null">
+                delivery_sell_slippage = #{deliverySellSlippage,jdbcType=DECIMAL},
             </if>
-            <if test="currProfitLevel1 != null">
-                curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="currProfitLevel2 != null">
-                curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
-            </if>
-            <if test="totalProfitLevel1 != null">
-                total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
-            </if>
-            <if test="totalProfitLevel2 != null">
-                total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
-            </if>
-            <if test="riskOrderCtrl != null">
-                risk_order_ctrl = #{riskOrderCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="riskHedgeCtrl != null">
-                risk_hedge_ctrl = #{riskHedgeCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="netOrderCtrl != null">
-                net_order_ctrl = #{netOrderCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="netHedgeCtrl != null">
-                net_hedge_ctrl = #{netHedgeCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="profitOrderCtrl != null">
-                profit_order_ctrl = #{profitOrderCtrl,jdbcType=INTEGER},
-            </if>
-            <if test="profitHedgeCtrl != null">
-                profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER},
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-    update strategy_risk_config
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
+    update strategy_hedge_config
     set symbol = #{symbol,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
-      risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
-      risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
-      risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
-      buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
-      sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
-      max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
-      net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
-      net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
-      curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
-      curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
-      total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
-      total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
-      risk_order_ctrl = #{riskOrderCtrl,jdbcType=INTEGER},
-      risk_hedge_ctrl = #{riskHedgeCtrl,jdbcType=INTEGER},
-      net_order_ctrl = #{netOrderCtrl,jdbcType=INTEGER},
-      net_hedge_ctrl = #{netHedgeCtrl,jdbcType=INTEGER},
-      profit_order_ctrl = #{profitOrderCtrl,jdbcType=INTEGER},
-      profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER}
+      hedge_interval = #{hedgeInterval,jdbcType=INTEGER},
+      buy_slippage = #{buySlippage,jdbcType=DECIMAL},
+      sell_slippage = #{sellSlippage,jdbcType=DECIMAL},
+      stop_time1 = #{stopTime1,jdbcType=VARCHAR},
+      stop_time2 = #{stopTime2,jdbcType=VARCHAR},
+      delivery_interval = #{deliveryInterval,jdbcType=INTEGER},
+      delivery_buy_slippage = #{deliveryBuySlippage,jdbcType=DECIMAL},
+      delivery_sell_slippage = #{deliverySellSlippage,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
     <select id="selectBySymbolContractType" resultMap="BaseResultMap">

@@ -17,7 +17,7 @@ public class OrderCopierTest {
 
     @Test
     public void copyOrder() {
-        orderCopier.doCopyOrder();
+        orderCopier.copyOrder();
     }
 
 

@@ -47,6 +47,10 @@ public class OrderContext {
     private FutureBalance futureBalance;
     private SpotBalance spotBalance;
     private BigDecimal exchangeRate = BigDecimal.ONE;
+    /*******该字段用于风控控制摆单是否之下平仓单*******/
+    private boolean riskCloseOrderOnly = false;
+    /*******该字段用于周五交割前只下平仓单*******/
+    private boolean deliveryCloseOrderOnly = false;
 
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config future = group.getFuture();
@@ -146,7 +150,7 @@ public class OrderContext {
                     shortPosi.setAvailable(shortPosi.getAvailable().subtract(orderAmount));
                 }
             }
-        } else {
+        } else if (!closeOrderOnly()) {
             placeBuyOpenOrder(price, orderAmount);
         }
     }
@@ -174,7 +178,7 @@ public class OrderContext {
                     longPosi.setAvailable(longPosi.getAvailable().subtract(orderAmount));
                 }
             }
-        } else {
+        } else if (!closeOrderOnly()) {
             placeSellOpenOrder(price, orderAmount);
         }
     }
@@ -404,9 +408,16 @@ public class OrderContext {
         }
     }
 
+    private boolean closeOrderOnly() {
+        return riskCloseOrderOnly || deliveryCloseOrderOnly;
+    }
 
     public void setExchangeRate(BigDecimal exchangeRate) {
         this.exchangeRate = exchangeRate;
+    }
+
+    public void setRiskCloseOrderOnly(boolean riskCloseOrderOnly) {
+        this.riskCloseOrderOnly = riskCloseOrderOnly;
     }
 
     public void resetMetric() {

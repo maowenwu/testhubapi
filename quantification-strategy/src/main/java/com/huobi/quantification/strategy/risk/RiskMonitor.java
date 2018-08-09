@@ -1,15 +1,19 @@
 package com.huobi.quantification.strategy.risk;
 
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.util.BigDecimalUtils;
+import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author lichenyang
@@ -19,6 +23,8 @@ import java.math.BigDecimal;
 public class RiskMonitor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private AtomicLong counter = new AtomicLong(0);
 
     @Autowired
     private RiskContext riskContext;
@@ -31,18 +37,49 @@ public class RiskMonitor {
         riskContext.init(group);
     }
 
-    public void check() {
+    private Thread riskMonitorThread;
+
+    public void start() {
+        riskMonitorThread = new Thread(() -> {
+            while (true) {
+                try {
+                    boolean b = check();
+                    if (!b) {
+                        ThreadUtils.sleep(10 * 1000);
+                    }
+                } catch (Throwable e) {
+                    logger.error("监控保证金率期间出现异常", e);
+                    ThreadUtils.sleep(10 * 1000);
+                }
+
+            }
+        });
+        riskMonitorThread.setDaemon(true);
+        riskMonitorThread.setName("风控线程");
+        riskMonitorThread.start();
+    }
+
+    public boolean check() {
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("========>合约监控第{}轮 开始", counter.incrementAndGet());
         this.riskConfig = commContext.getStrategyRiskConfig();
+        if (riskConfig == null) {
+            logger.error("未获取到风控配置参数，方法退出");
+            return false;
+        }
         BigDecimal currentPrice = commContext.getSpotCurrentPrice();
         if (currentPrice == null) {
             logger.error("未获取到现货当前价格，方法退出");
-            return;
+            return false;
         }
         riskContext.setCurrPrice(currentPrice);
 
         checkRiskRate();
         checkNetPosition();
         checkProfit();
+        logger.info("========>合约监控第{}轮 结束，耗时：{}", counter.get(), started);
+        ThreadUtils.sleep(3000);
+        return true;
     }
 
     /**
@@ -71,7 +108,6 @@ public class RiskMonitor {
             // 修改为正常状态
             riskContext.updateRiskCtrl(0);
         }
-
     }
 
     /**
@@ -84,7 +120,7 @@ public class RiskMonitor {
         BigDecimal level2 = riskConfig.getNetPositionLevel2();
 
         BigDecimal netPosition = commContext.getNetPositionUsdt().abs();
-        logger.info("当前净头寸：{}", netPosition);
+
         if (BigDecimalUtils.moreThanOrEquals(netPosition, level2)) {
             // 会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateNetCtrl(2, 2);
@@ -113,7 +149,7 @@ public class RiskMonitor {
         BigDecimal level2 = riskConfig.getCurrProfitLevel2();
 
         BigDecimal currProfit = riskContext.getCurrProfit();
-        logger.info("本次亏损：{}", currProfit);
+        logger.info("本次亏损：{}" + riskContext.getSpotBaseCoin(), currProfit);
         if (BigDecimalUtils.lessThanOrEquals(currProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateProfitCtrl(2, 2);
@@ -133,7 +169,7 @@ public class RiskMonitor {
         BigDecimal level2 = riskConfig.getTotalProfitLevel2();
 
         BigDecimal totalProfit = riskContext.getTotalProfit();
-        logger.info("总亏损：{}", totalProfit);
+        logger.info("总亏损：{}" + riskContext.getSpotBaseCoin(), totalProfit);
         if (BigDecimalUtils.lessThanOrEquals(totalProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateProfitCtrl(2, 2);

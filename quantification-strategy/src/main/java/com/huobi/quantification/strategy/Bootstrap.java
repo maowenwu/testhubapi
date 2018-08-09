@@ -46,8 +46,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 //sleep(3000);
                 contextInit(group);
                 startOrderCopierWithConfig(group);
-                //startHedgerWithConfig(group);
-                //startRiskMonitorWithConfig(group);
+                startHedgerWithConfig(group);
+                startRiskMonitorWithConfig(group);
             }
         }
     }
@@ -63,43 +63,21 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         logger.info("初始化OrderCopy开始");
         orderCopier.init(group);
         logger.info("初始化OrderCopy完成");
-        orderCopier.copyOrder();
+        orderCopier.start();
         logger.info("合约借深度线程启动...");
     }
 
     private void startRiskMonitorWithConfig(StrategyProperties.ConfigGroup group) {
         RiskMonitor riskMonitor = ApplicationContextHolder.getContext().getBean(RiskMonitor.class);
         riskMonitor.init(group);
-        Thread thread = new Thread(() -> {
-            while (true) {
-                try {
-                    riskMonitor.check();
-                } catch (Throwable e) {
-                    logger.error("监控保证金率期间出现异常", e);
-                    sleep(3000);
-                }
-                sleep(3000);
-            }
-        });
-        thread.setDaemon(true);
-        thread.setName("风控线程");
-        thread.start();
+        riskMonitor.start();
     }
 
 
     private void startHedgerWithConfig(StrategyProperties.ConfigGroup group) {
         Hedger hedger = ApplicationContextHolder.getContext().getBean(Hedger.class);
         hedger.init(group);
-        hedger.hedgePhase1();
-    }
-
-
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e1) {
-
-        }
+        hedger.startHedgePhase1();
     }
 
 

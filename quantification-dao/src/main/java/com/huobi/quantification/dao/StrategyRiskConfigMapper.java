@@ -17,4 +17,10 @@ public interface StrategyRiskConfigMapper {
     int updateByPrimaryKey(StrategyRiskConfig record);
 
     StrategyRiskConfig selectBySymbolContractType(@Param("symbol") String symbol,@Param("contractType") String contractType);
+
+    void updateBySymbolTypeSelective(StrategyRiskConfig riskConfig);
+
+    int selectOrderAction(@Param("symbol") String symbol,@Param("contractType") String contractType);
+
+    int selectHedgeAction(@Param("symbol") String symbol,@Param("contractType") String contractType);
 }

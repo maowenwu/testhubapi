@@ -283,10 +283,88 @@
       profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
     <select id="selectBySymbolContractType" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from strategy_risk_config
         where symbol = #{symbol} and contract_type=#{contractType}
+    </select>
+
+
+    <update id="updateBySymbolTypeSelective">
+        update strategy_risk_config
+        <set>
+            <if test="symbol != null">
+                symbol = #{symbol,jdbcType=VARCHAR},
+            </if>
+            <if test="contractType != null">
+                contract_type = #{contractType,jdbcType=VARCHAR},
+            </if>
+            <if test="riskRateLevel1 != null">
+                risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel2 != null">
+                risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="riskRateLevel3 != null">
+                risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
+            </if>
+            <if test="buyCloseSlippage != null">
+                buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="sellCloseSlippage != null">
+                sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
+            </if>
+            <if test="maxCloseAmount != null">
+                max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel1 != null">
+                net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="netPositionLevel2 != null">
+                net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel1 != null">
+                curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="currProfitLevel2 != null">
+                curr_profit_level2 = #{currProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel1 != null">
+                total_profit_level1 = #{totalProfitLevel1,jdbcType=DECIMAL},
+            </if>
+            <if test="totalProfitLevel2 != null">
+                total_profit_level2 = #{totalProfitLevel2,jdbcType=DECIMAL},
+            </if>
+            <if test="riskOrderCtrl != null">
+                risk_order_ctrl = #{riskOrderCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="riskHedgeCtrl != null">
+                risk_hedge_ctrl = #{riskHedgeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="netOrderCtrl != null">
+                net_order_ctrl = #{netOrderCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="netHedgeCtrl != null">
+                net_hedge_ctrl = #{netHedgeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="profitOrderCtrl != null">
+                profit_order_ctrl = #{profitOrderCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="profitHedgeCtrl != null">
+                profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER},
+            </if>
+        </set>
+        where symbol=#{symbol} and contract_type=#{contractType}
+    </update>
+
+    <select id="selectOrderAction" resultType="java.lang.Integer">
+        SELECT GREATEST(risk_order_ctrl,net_order_ctrl,profit_order_ctrl) FROM strategy_risk_config
+        where symbol=#{symbol} and contract_type=#{contractType}
+    </select>
+    <select id="selectHedgeAction" resultType="java.lang.Integer">
+        SELECT GREATEST(risk_hedge_ctrl,net_hedge_ctrl,profit_hedge_ctrl) FROM strategy_risk_config
+        where symbol=#{symbol} and contract_type=#{contractType}
     </select>
 </mapper>

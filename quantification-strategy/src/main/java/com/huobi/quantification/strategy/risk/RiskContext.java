@@ -6,6 +6,7 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanAccountAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.StrategyFinanceHistoryMapper;
+import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
@@ -39,6 +40,8 @@ public class RiskContext {
     private QuanAccountAssetMapper quanAccountAssetMapper;
     @Autowired
     private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
+    @Autowired
+    private StrategyRiskConfigMapper strategyRiskMapper;
     @Autowired
     private CommContext commContext;
 
@@ -192,7 +195,7 @@ public class RiskContext {
 
 
     /**
-     * 获得本次运行盈亏
+     * 获得本次运行盈亏，返回单位为币
      *
      * @param contractCode
      * @return
@@ -292,7 +295,7 @@ public class RiskContext {
         riskConfig.setContractType(this.commContext.getContractTypeFromCode());
         riskConfig.setRiskOrderCtrl(orderCtrl);
         riskConfig.setRiskHedgeCtrl(0);
-        //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
+        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 
     public void updateProfitCtrl(Integer orderCtrl, Integer hedgeCtrl) {
@@ -301,7 +304,7 @@ public class RiskContext {
         riskConfig.setContractType(this.commContext.getContractTypeFromCode());
         riskConfig.setProfitOrderCtrl(orderCtrl);
         riskConfig.setProfitHedgeCtrl(hedgeCtrl);
-        //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
+        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 
     public void updateNetCtrl(Integer orderCtrl, Integer hedgeCtrl) {
@@ -310,10 +313,14 @@ public class RiskContext {
         riskConfig.setContractType(this.commContext.getContractTypeFromCode());
         riskConfig.setNetOrderCtrl(orderCtrl);
         riskConfig.setNetHedgeCtrl(hedgeCtrl);
-        //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
+        strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
     }
 
     public void setCurrPrice(BigDecimal currPrice) {
         this.currPrice = currPrice;
+    }
+
+    public String getSpotBaseCoin() {
+        return spotBaseCoin;
     }
 }

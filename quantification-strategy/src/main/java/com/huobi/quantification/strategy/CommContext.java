@@ -22,6 +22,8 @@ import com.huobi.quantification.strategy.entity.DepthBook;
 import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.FuturePosition;
 import com.huobi.quantification.strategy.entity.SpotBalance;
+import com.huobi.quantification.strategy.enums.HedgerActionEnum;
+import com.huobi.quantification.strategy.enums.OrderActionEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +142,9 @@ public class CommContext {
     }
 
     public BigDecimal getNetPositionUsdt() {
+        // 币币账户期末余额USDT
         BigDecimal currSpotUsdt = getCurrSpotUsdt();
+        // 合约账户期末净空仓金额USDT
         BigDecimal currFutureUsdt = getCurrFutureUsdt();
         BigDecimal netPosition = currSpotUsdt.subtract(initialSpotUsdt).add(currFutureUsdt.subtract(initialFutureUsdt));
         logger.info("当前净头寸：{}Usdt", netPosition);
@@ -154,7 +158,7 @@ public class CommContext {
     }
 
     /**
-     * 净持仓金额M2
+     * 合约账户净空仓金额USDT记为M2
      *
      * @return
      */
@@ -178,6 +182,7 @@ public class CommContext {
         if (exchangeRate == null) {
             throw new RuntimeException("获取USDT2USD汇率失败");
         }
+        logger.info("计算合约账户净空仓金额，空仓：{}，多仓：{}，汇率：{}，面值：{}", shortAmount, longAmount, exchangeRate, futureExchangeConfig.getFaceValue());
         return shortAmount.subtract(longAmount)
                 .multiply(futureExchangeConfig.getFaceValue())
                 .divide(exchangeRate, 18, BigDecimal.ROUND_DOWN);
@@ -208,7 +213,7 @@ public class CommContext {
         for (int i = 0; i < 3; i++) {
             ServiceResult<BigDecimal> result = futureContractService.getExchangeRateOfUSDT2USD();
             if (result.isSuccess()) {
-                logger.error("获取USDT2USD汇率成功");
+                logger.info("获取USDT2USD汇率成功");
                 return result.getData();
             } else {
                 continue;
@@ -322,7 +327,7 @@ public class CommContext {
             ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
             if (currentPrice.isSuccess()) {
                 BigDecimal price = currentPrice.getData().getCurrentPrice();
-                logger.error("获取当前价格成功,price={}，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", price, futureExchangeId, futureBaseCoin, futureQuoteCoin);
+                logger.info("获取当前价格成功,price={}，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", price, futureExchangeId, futureBaseCoin, futureQuoteCoin);
                 return price;
             }
         } catch (Exception e) {
@@ -382,4 +387,15 @@ public class CommContext {
         return riskConfig;
     }
 
+    public OrderActionEnum getOrderAction() {
+        String contractType = getContractTypeFromCode();
+        int orderAction = strategyRiskMapper.selectOrderAction(futureBaseCoin, contractType);
+        return OrderActionEnum.valueOf(orderAction);
+    }
+
+    public HedgerActionEnum getHedgeAction() {
+        String contractType = getContractTypeFromCode();
+        int action = strategyRiskMapper.selectHedgeAction(futureBaseCoin, contractType);
+        return HedgerActionEnum.valueOf(action);
+    }
 }
