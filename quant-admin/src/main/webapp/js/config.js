@@ -528,6 +528,42 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })        
+        .state('config.spotSecret', {
+        	url: "/config/spotSecret",
+        	templateUrl: "views/config/spotSecret.html",
+        	data: {pageTitle: '现货账号密钥管理'},
+        	controller: "spotSecretCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/config/spotSecretCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
+        .state('config.futureSecret', {
+        	url: "/config/futureSecret",
+        	templateUrl: "views/config/futureSecret.html",
+        	data: {pageTitle: '期货账号密钥管理'},
+        	controller: "futureSecretCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/config/futureSecretCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
         
 }
 
