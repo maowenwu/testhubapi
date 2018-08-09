@@ -166,6 +166,23 @@
 								<input type="text" class="form-control"
 									ng-model='newInfo.riskRateLevel3' name="riskRateLevel3"required>
 							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>强平单单笔最大数量：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.maxCloseAmount' name="maxCloseAmount"required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req"></i>强平买单滑点：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.buyCloseSlippage' name="buyCloseSlippage"required>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>强平卖单滑点：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.sellCloseSlippage' name="sellCloseSlippage"required>
+							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>净头寸阈值1：</label>

@@ -59,7 +59,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 	}
 	
 	$scope.submit = function(){
-		$http.post('futureAccount/insertFutureAccount.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('futureAccount/insertFutureAccount.do',"newInfo=" + angular.toJson($scope.addInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(msg){
 			$scope.notice(msg.msg);
 			$scope.submitting = false;
@@ -92,6 +92,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 	//取消
 	$scope.cancel = function(){
 		$("#editRoleModal").modal("hide");
+		$("#addModal").modal("hide");
 	}
 	$scope.deleteInfo=function(entity){
         SweetAlert.swal({

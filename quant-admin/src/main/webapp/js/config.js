@@ -510,6 +510,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })        
+        .state('config.proxy', {
+        	url: "/config/proxy",
+        	templateUrl: "views/config/proxy.html",
+        	data: {pageTitle: '代理IP管理'},
+        	controller: "proxyCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/config/proxyCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })        
         
 }
 

@@ -87,7 +87,7 @@ public class SpotAccountAction {
 				msg.put("msg", "更新失败");
 			}
 		} catch (Exception e) {
-			log.error("更新现货账户失败");
+			log.error("添加现货账户失败");
 			e.printStackTrace();
 		}
 		return msg;

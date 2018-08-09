@@ -2,6 +2,7 @@ package cn.huobi.framework.service.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +40,15 @@ public class HedgeServiceImpl implements HedgeService {
 		HedgeConfig hedgeConfig = new HedgeConfig();
 		hedgeConfig.setContractType(strategyHedgeConfig.getContractType());
 		hedgeConfig.setId(strategyHedgeConfig.getId());
-		hedgeConfig.setPlaceOrderInterval(strategyHedgeConfig.getPlaceOrderInterval());
-		hedgeConfig.setSlippage(strategyHedgeConfig.getSlippage());
-		hedgeConfig.setSpotFee(strategyHedgeConfig.getSpotFee());
+		hedgeConfig.setHedgeInterval(strategyHedgeConfig.getHedgeInterval());
 		hedgeConfig.setSymbol(strategyHedgeConfig.getSymbol());
+		hedgeConfig.setBuySlippage(strategyHedgeConfig.getBuySlippage());
+		hedgeConfig.setSellSlippage(strategyHedgeConfig.getSellSlippage());
+		hedgeConfig.setStopTime1(strategyHedgeConfig.getStopTime1());
+		hedgeConfig.setStopTime2(strategyHedgeConfig.getStopTime2());
+		hedgeConfig.setDeliveryInterval(strategyHedgeConfig.getDeliveryInterval());
+		hedgeConfig.setDeliveryBuySlippage(strategyHedgeConfig.getDeliveryBuySlippage());
+		hedgeConfig.setDeliverySellSlippage(strategyHedgeConfig.getDeliverySellSlippage());
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		hedgeConfig.setCreateTime(formatter.format(strategyHedgeConfig.getCreateTime()));
 		hedgeConfig.setUpdateTime(formatter.format(strategyHedgeConfig.getUpdateTime()));
@@ -55,7 +61,8 @@ public class HedgeServiceImpl implements HedgeService {
 	}
 
 	@Override
-	public int updateHedge(StrategyHedgeConfig riskConfig) {
-		return hedgeDao.update(riskConfig);
+	public int updateHedge(StrategyHedgeConfig config) {
+		config.setUpdateTime(new Date());
+		return hedgeDao.update(config);
 	}
 }

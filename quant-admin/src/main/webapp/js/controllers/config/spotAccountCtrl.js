@@ -59,7 +59,7 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
 	}
 	
 	$scope.submit = function(){
-		$http.post('spotAccount/insertSpotAccount.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('spotAccount/insertSpotAccount.do',"newInfo=" + angular.toJson($scope.addInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 		.success(function(msg){
 			$scope.notice(msg.msg);
 			$scope.submitting = false;
@@ -92,6 +92,7 @@ angular.module('inspinia',['uiSwitch']).controller('spotAccountCtrl',function($s
 	//取消
 	$scope.cancel = function(){
 		$("#editRoleModal").modal("hide");
+		$("#addModal").modal("hide");
 	}
 	$scope.deleteInfo=function(entity){
         SweetAlert.swal({

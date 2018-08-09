@@ -17,7 +17,7 @@ import cn.huobi.framework.db.pagination.Page;
 public interface RiskDao {
 	@SelectProvider(type=SqlProvider.class, method="selectDicByCondition")
 	@ResultType(StrategyRiskConfig.class)
-	List<StrategyRiskConfig> selectDicByCondition(@Param("config")StrategyRiskConfig job, Page<StrategyRiskConfig> page);
+	List<StrategyRiskConfig> selectByCondition(@Param("config")StrategyRiskConfig job, Page<StrategyRiskConfig> page);
 	
 	@Delete("delete from strategy_risk_config where id=#{id}")
 	int delete(@Param("id")Integer id);
@@ -25,7 +25,8 @@ public interface RiskDao {
 	@Update("update strategy_risk_config set risk_rate_level1 = #{config.riskRateLevel1}, risk_rate_level2 = #{config.riskRateLevel2}, "
 			+ "risk_rate_level3 = #{config.riskRateLevel3}, net_position_level1 =#{config.netPositionLevel1}, net_position_level2 =#{config.netPositionLevel2}, "
 			+ "curr_profit_level1 = #{config.currProfitLevel1}, curr_profit_level2 = #{config.currProfitLevel2}, "
-			+ "total_profit_level1 = #{config.totalProfitLevel1}, total_profit_level2 = #{config.totalProfitLevel2} "
+			+ "total_profit_level1 = #{config.totalProfitLevel1}, total_profit_level2 = #{config.totalProfitLevel2}, buy_close_slippage = #{config.buyCloseSlippage}, "
+			+ "sell_close_slippage = #{config.sellCloseSlippage}, max_close_amount = #{config.maxCloseAmount} "
 			+ " where id = #{config.id}")
 	int update(@Param("config")StrategyRiskConfig config);
 	

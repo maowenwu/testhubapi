@@ -148,58 +148,63 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>合约手续费：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>摆单间隔时间：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.contractFee' name="contractFee" required/>
+									ng-model='newInfo.placeOrderInterval' name="placeOrderInterval" required/>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>现货手续费：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.spotFee' name="spotFee" required/>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交割手续费：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.deliveryFee' name="deliveryFee" required>
-							</div>
-						</div>
-						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>期望收益率：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>期望收益率：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.expectYields' name="expectYields" required/>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>合并价格：</label>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req"></i>合并深度价格：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.priceStep' name="priceStep" required>
 							</div>
-						</div>
-						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>最大卖单量：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>单价格最大委托数量：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.asksMaxAmount' name="asksMaxAmount" required/>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>最大买单量：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.bidsMaxAmount' name="bidsMaxAmount" required>
+									ng-model='newInfo.maxAmountPerPrice' name="maxAmountPerPrice" required/>
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req"></i>拷贝系数-下限：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.minCopyFactor' name="minCopyFactor" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>拷贝系数-上限：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.maxCopyFactor' name="maxCopyFactor" required>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label"><i class="red_req"></i>买单基准价格：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.bidsBasisPrice' name="bidsBasisPrice" required>
+							</div>
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>卖单基准价格：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.asksBasisPrice' name="asksBasisPrice" required/>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>买单基准价格：</label>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>买单挂单数量上限：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.bidsBasisPrice' name="bidsBasisPrice" required>
+									ng-model='newInfo.bidsMaxAmount' name="bidsMaxAmount" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>卖单挂单数量上限：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.asksMaxAmount' name="asksMaxAmount" required>
 							</div>
 						</div>
 						<div class="form-group">
@@ -215,15 +220,15 @@
 							</div>
 						</div>
 						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>最大持仓量：</label>
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>多仓持仓总量上限：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.maxPositionAmount' name="maxPositionAmount" required/>
+									ng-model='newInfo.maxLongPosition' name="maxLongPosition" required/>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>最小持仓量：</label>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>空仓持仓总量上限：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
-									ng-model='newInfo.minPositionAmount' name="minPositionAmount" required>
+									ng-model='newInfo.maxShortPosition' name="maxShortPosition" required>
 							</div>
 						</div>
 						<div class="form-group">
@@ -243,6 +248,18 @@
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.spotBalanceReserve' name="spotBalanceReserve" required>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-2 control-label"><i class="red_req"></i>临近交割停止下开仓单时间：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.stopTime1' name="stopTime1" required/>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>停止摆盘开始时间：</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control"
+									ng-model='newInfo.stopTime2' name="stopTime2" required>
 							</div>
 						</div>
 						<div class="form-group">

@@ -3,48 +3,78 @@ package cn.huobi.framework.model;
 import java.math.BigDecimal;
 
 public class HedgeConfig {
-    /**
-     * @mbg.generated 2018-08-06 11:33:39
+	 /**
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private Integer id;
 
     /**
      * 币种
-     * @mbg.generated 2018-08-06 11:33:39
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private String symbol;
 
     /**
      * 合约类型
-     * @mbg.generated 2018-08-06 11:33:39
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private String contractType;
 
     /**
-     * 手续费率
-     * @mbg.generated 2018-08-06 11:33:39
+     * 对冲间隔时间
+     * @mbg.generated 2018-08-08 16:28:34
      */
-    private BigDecimal spotFee;
+    private Integer hedgeInterval;
 
     /**
-     * 滑点
-     * @mbg.generated 2018-08-06 11:33:39
+     * 对冲买单滑点
+     * @mbg.generated 2018-08-08 16:28:34
      */
-    private BigDecimal slippage;
+    private BigDecimal buySlippage;
 
     /**
-     * 交割对冲周期
-     * @mbg.generated 2018-08-06 11:33:39
+     * 对冲卖单滑点
+     * @mbg.generated 2018-08-08 16:28:34
      */
-    private Integer placeOrderInterval;
+    private BigDecimal sellSlippage;
 
     /**
-     * @mbg.generated 2018-08-06 11:33:39
+     * 开始交割对冲时间
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private String stopTime1;
+
+    /**
+     * 结束交割对冲时间
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private String stopTime2;
+
+    /**
+     * 交割对冲单时间间隔
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private Integer deliveryInterval;
+
+    /**
+     * 交割买单滑点
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private BigDecimal deliveryBuySlippage;
+
+    /**
+     * 交割卖单滑点
+     * @mbg.generated 2018-08-08 16:28:34
+     */
+    private BigDecimal deliverySellSlippage;
+
+    /**
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private String createTime;
 
     /**
-     * @mbg.generated 2018-08-06 11:33:39
+     * @mbg.generated 2018-08-08 16:28:34
      */
     private String updateTime;
 
@@ -72,29 +102,69 @@ public class HedgeConfig {
         this.contractType = contractType;
     }
 
-    public BigDecimal getSpotFee() {
-        return spotFee;
-    }
+	public Integer getHedgeInterval() {
+		return hedgeInterval;
+	}
 
-    public void setSpotFee(BigDecimal spotFee) {
-        this.spotFee = spotFee;
-    }
+	public void setHedgeInterval(Integer hedgeInterval) {
+		this.hedgeInterval = hedgeInterval;
+	}
 
-    public BigDecimal getSlippage() {
-        return slippage;
-    }
+	public BigDecimal getBuySlippage() {
+		return buySlippage;
+	}
 
-    public void setSlippage(BigDecimal slippage) {
-        this.slippage = slippage;
-    }
+	public void setBuySlippage(BigDecimal buySlippage) {
+		this.buySlippage = buySlippage;
+	}
 
-    public Integer getPlaceOrderInterval() {
-        return placeOrderInterval;
-    }
+	public BigDecimal getSellSlippage() {
+		return sellSlippage;
+	}
 
-    public void setPlaceOrderInterval(Integer placeOrderInterval) {
-        this.placeOrderInterval = placeOrderInterval;
-    }
+	public void setSellSlippage(BigDecimal sellSlippage) {
+		this.sellSlippage = sellSlippage;
+	}
+
+	public String getStopTime1() {
+		return stopTime1;
+	}
+
+	public void setStopTime1(String stopTime1) {
+		this.stopTime1 = stopTime1;
+	}
+
+	public String getStopTime2() {
+		return stopTime2;
+	}
+
+	public void setStopTime2(String stopTime2) {
+		this.stopTime2 = stopTime2;
+	}
+
+	public Integer getDeliveryInterval() {
+		return deliveryInterval;
+	}
+
+	public void setDeliveryInterval(Integer deliveryInterval) {
+		this.deliveryInterval = deliveryInterval;
+	}
+
+	public BigDecimal getDeliveryBuySlippage() {
+		return deliveryBuySlippage;
+	}
+
+	public void setDeliveryBuySlippage(BigDecimal deliveryBuySlippage) {
+		this.deliveryBuySlippage = deliveryBuySlippage;
+	}
+
+	public BigDecimal getDeliverySellSlippage() {
+		return deliverySellSlippage;
+	}
+
+	public void setDeliverySellSlippage(BigDecimal deliverySellSlippage) {
+		this.deliverySellSlippage = deliverySellSlippage;
+	}
 
 	public String getCreateTime() {
 		return createTime;
