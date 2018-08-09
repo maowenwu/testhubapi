@@ -240,7 +240,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 body = httpService.doPostJson(HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
             } catch (HttpRequestException e) {
                 logger.error("根据用户id查询订单信息失败，用户id：{}", accountId, e);
-                throw new RuntimeException("批量查询订单信息失败");
+                throw new RuntimeException("根据用户id查询订单信息失败");
             }
             FutureHuobiOrderPageInfoResponse response = JSON.parseObject(body, FutureHuobiOrderPageInfoResponse.class);
             List<QuanOrderFuture> list = parseRespToList(response);
