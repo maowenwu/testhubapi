@@ -3,6 +3,7 @@ package cn.huobi.framework.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
@@ -37,13 +38,14 @@ public interface HadgeDao {
 				{
 					SELECT("*");
 					FROM("strategy_hedge_config");
-//					if(job!=null && job.getExchangeId() != null){
-//						WHERE("exchange_id = #{job.exchangeId}");
-//					}
-//					if(job!=null && StringUtils.isNotBlank(job.getJobDesc())){
-//						job.setJobDesc(job.getJobDesc()+"%");
-//						WHERE("job_desc like #{job.jobDesc}");
-//					}
+					if(config!=null && StringUtils.isNotBlank(config.getSymbol())){
+						config.setSymbol("%"+ config.getSymbol() +"%");
+						WHERE("symbol like #{config.symbol}");
+					}
+					if(config!=null && StringUtils.isNotBlank(config.getContractType())){
+						config.setContractType("%"+ config.getContractType() +"%");
+						WHERE("contract_type like #{config.contractType}");
+					}
 				}
 			}.toString();
 		}

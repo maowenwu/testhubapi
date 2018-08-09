@@ -91,7 +91,7 @@ public class SpotJobAction {
 		try {
 			quanJobService.deleteById(id);
 		} catch (Exception e) {
-			log.error("{}号任务数据删除失败");
+			log.error("{}号任务数据删除失败",id);
 			e.printStackTrace();
 		}
 		return null;

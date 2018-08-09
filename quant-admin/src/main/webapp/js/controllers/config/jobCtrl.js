@@ -1,5 +1,5 @@
 /**
- * 用户中心-现货任务管理 
+ * 配置中心-现货任务管理 
 */
 angular.module('inspinia',['uiSwitch']).controller('jobCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');

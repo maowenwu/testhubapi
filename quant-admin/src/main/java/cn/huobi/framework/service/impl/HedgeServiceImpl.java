@@ -57,12 +57,24 @@ public class HedgeServiceImpl implements HedgeService {
 
 	private StrategyHedgeConfig convertHedgeConfig(HedgeConfig config) {
 		StrategyHedgeConfig hedgeConfig = new StrategyHedgeConfig();
+		hedgeConfig.setContractType(config.getContractType());
+		hedgeConfig.setId(config.getId());
+		hedgeConfig.setHedgeInterval(config.getHedgeInterval());
+		hedgeConfig.setSymbol(config.getSymbol());
+		hedgeConfig.setBuySlippage(config.getBuySlippage());
+		hedgeConfig.setSellSlippage(config.getSellSlippage());
+		hedgeConfig.setStopTime1(config.getStopTime1());
+		hedgeConfig.setStopTime2(config.getStopTime2());
+		hedgeConfig.setDeliveryInterval(config.getDeliveryInterval());
+		hedgeConfig.setDeliveryBuySlippage(config.getDeliveryBuySlippage());
+		hedgeConfig.setDeliverySellSlippage(config.getDeliverySellSlippage());		
+		hedgeConfig.setUpdateTime(new Date());
 		return hedgeConfig;
 	}
 
 	@Override
-	public int updateHedge(StrategyHedgeConfig config) {
-		config.setUpdateTime(new Date());
-		return hedgeDao.update(config);
+	public int updateHedge(HedgeConfig config) {
+		StrategyHedgeConfig hedgeConfig = convertHedgeConfig(config);
+		return hedgeDao.update(hedgeConfig);
 	}
 }

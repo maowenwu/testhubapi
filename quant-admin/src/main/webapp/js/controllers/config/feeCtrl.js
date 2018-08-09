@@ -1,12 +1,12 @@
 /**
- * 配置中心-代理IP配置管理 
+ * 配置中心-费率配置管理 
 */
-angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
+angular.module('inspinia',['uiSwitch']).controller('feeCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
 	$scope.baseInfo = {status:2};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
-	$scope.proxyGrid = {
-		data: 'proxyData',
+	$scope.feeGrid = {
+		data: 'feeData',
 		enableSorting: true,
 		paginationPageSize: 10,
 		paginationPageSizes: [10, 20, 50, 100],
@@ -14,16 +14,15 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'host', displayName: '主机地址'},
-            {field: 'port', displayName: '端口号'},
-            {field: 'userName', displayName: '用户名'},
-            {field: 'password', displayName: '用户密码'},
-            {field: 'state', displayName: '代理状态'},
-            {field: 'updateTime', displayName: '更新时间'},
+            {field: 'symbol', displayName: '交易对'},
+            {field: 'contractType', displayName: '合约类型'},
+            {field: 'spotFee', displayName: '币币交易手续费率'},
+            {field: 'contractFee', displayName: '合约交易手续费率'},
+            {field: 'deliveryFee', displayName: '合约交割手续费率'},
             {field: 'createTime', displayName: '创建时间'},
+            {field: 'updateTime', displayName: '更新时间'},
             {field: 'id', displayName: '操作', cellTemplate: 
-           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a> | '
-               +'<a ng-show="grid.appScope.hasPermit(\'futureAccount.delete\')"  ng-click="grid.appScope.deleteInfo(row.entity)">删除</a></div>'
+            	'<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'spotJob.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a>'
             }
         ],
         onRegisterApi: function(gridApi){
@@ -38,21 +37,22 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 	
 	//查询
 	$scope.query = function(){
-		$http.post('proxy/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('fee/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.proxyData = page.result;
-					$scope.proxyGrid.totalItems = page.totalCount;
+					$scope.feeData = page.result;
+					$scope.feeGrid.totalItems = page.totalCount;
 				}).error(function(){
 				});
 	}
 	$scope.query();
 	//增加新的任务
 	$scope.addModal = function(){
-		$("#addModal").modal("show");
+		$scope.newInfo = {status:1};
+		$("#editRoleModal").modal("show");
 	}
 	//修改任务
 	$scope.editModal = function(entity){
@@ -60,25 +60,10 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 		$("#editRoleModal").modal("show");
 	}
 	
-	$scope.submit = function(){
-		$http.post('proxy/insertProxy.do',"newInfo=" + angular.toJson($scope.addInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
-		.success(function(msg){
-			$scope.notice(msg.msg);
-			$scope.submitting = false;
-			if(msg.status){
-				$scope.query();
-				$("#addModal").modal("hide");
-			}
-		}).error(function(){
-			$socpe.notice("提交失败");
-			$scope.submitting = false;
-		})
-	}
-	
 	//提交新的任务
 	$scope.submitNewInfo = function(){
 		$scope.submitting = true;
-		$http.post('proxy/updateProxy.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+		$http.post('fee/updateFee.do',"newInfo=" + angular.toJson($scope.newInfo),{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 			.success(function(msg){
 				$scope.notice(msg.msg);
 				$scope.submitting = false;
@@ -94,7 +79,6 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 	//取消
 	$scope.cancel = function(){
 		$("#editRoleModal").modal("hide");
-		$("#addModal").modal("hide");
 	}
 	$scope.deleteInfo=function(entity){
         SweetAlert.swal({
@@ -109,7 +93,7 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
             closeOnCancel: true },
 	        function (isConfirm) {
 	            if (isConfirm) {
-	            	$http.post("proxy/deleteProxy.do","id="+entity.id,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+	            	$http.post("spotJob/deleteSpotJob.do","id="+entity.id,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 	    			.success(function(msg){
 	    				$scope.notice(msg.msg);
 	    				$scope.query();
