@@ -3,6 +3,7 @@ package com.huobi.quantification.strategy.order;
 
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.util.BigDecimalUtils;
+import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
@@ -29,17 +30,36 @@ public class OrderCopier {
     private OrderContext orderContext;
     @Autowired
     private CommContext commContext;
-
+    @Autowired
     private DepthBookAdjuster depthBookAdjuster;
 
+    private Thread copyOrderThread;
 
     public void init(StrategyProperties.ConfigGroup group) {
-        depthBookAdjuster = new DepthBookAdjuster(orderContext);
+        depthBookAdjuster.init(group);
         orderContext.init(group);
     }
 
+    public void copyOrder() {
+        copyOrderThread = new Thread(() -> {
+            while (true) {
+                try {
+                    boolean b = doCopyOrder();
+                    if (!b) {
+                        ThreadUtils.sleep(10 * 1000);
+                    }
+                } catch (Throwable e) {
+                    logger.error("拷贝订单期间出现异常", e);
+                    ThreadUtils.sleep(10 * 1000);
+                }
+            }
+        });
+        copyOrderThread.setDaemon(true);
+        copyOrderThread.setName("摆单线程");
+        copyOrderThread.start();
+    }
 
-    public boolean copyOrder() {
+    public boolean doCopyOrder() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约借深度第{}轮 开始", counter.incrementAndGet());
         // 更新订单信息
@@ -79,7 +99,10 @@ public class OrderCopier {
             logger.error("获取交易费率参数失败，方法退出");
             return false;
         }
-        DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook(exchangeRate);
+        depthBookAdjuster.setOrderConfig(orderConfig);
+        depthBookAdjuster.setTradeFeeConfig(tradeFeeConfig);
+        depthBookAdjuster.setExchangeRate(exchangeRate);
+        DepthBook depthBook = depthBookAdjuster.getAdjustedDepthBook();
         if (depthBook == null) {
             logger.error("获取深度信息失败，方法退出");
             return false;

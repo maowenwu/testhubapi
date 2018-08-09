@@ -1,23 +1,15 @@
 package com.huobi.quantification.strategy.order;
 
-import com.alibaba.fastjson.JSON;
-import com.huobi.quantification.api.future.FutureAccountService;
-import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.future.FutureOrderService;
-import com.huobi.quantification.api.spot.SpotAccountService;
-import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.BigDecimalUtils;
-import com.huobi.quantification.dao.StrategyOrderConfigMapper;
 import com.huobi.quantification.dto.*;
+import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
-import com.huobi.quantification.strategy.CommContext;
+import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
-import com.huobi.quantification.strategy.entity.FutureBalance;
-import com.huobi.quantification.strategy.entity.FuturePosition;
-import com.huobi.quantification.strategy.entity.SpotBalance;
 import com.huobi.quantification.strategy.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -36,30 +28,9 @@ public class OrderContext {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private SpotMarketService spotMarketService;
-    @Autowired
-    private FutureContractService futureContractService;
-    @Autowired
-    private SpotAccountService spotAccountService;
-    @Autowired
-    private FutureAccountService futureAccountService;
-    @Autowired
-    private StrategyOrderConfigMapper strategyOrderConfigMapper;
-    @Autowired
     private FutureOrderService futureOrderService;
-    @Autowired
-    private CommContext commContext;
-
-    private BigDecimal faceValue = BigDecimal.valueOf(100);
 
     private StrategyMetric strategyMetric = new StrategyMetric();
-
-    private OrderReader orderReader;
-    private FuturePosition futurePosition;
-    private StrategyOrderConfig config;
-    private FutureBalance futureBalance;
-    private SpotBalance spotBalance;
-    private BigDecimal exchangeRate = BigDecimal.ONE;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -68,13 +39,17 @@ public class OrderContext {
     private String futureBaseCoin;
     private String futureQuoteCoin;
 
-    private Integer spotExchangeId;
-    private String spotBaseCoin;
-    private String spotQuoteCoin;
+    private QuanExchangeConfig futureExchangeConfig;
+
+    private OrderReader orderReader;
+    private FuturePosition futurePosition;
+    private StrategyOrderConfig config;
+    private FutureBalance futureBalance;
+    private SpotBalance spotBalance;
+    private BigDecimal exchangeRate = BigDecimal.ONE;
 
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config future = group.getFuture();
-        StrategyProperties.Config spot = group.getSpot();
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
@@ -82,32 +57,11 @@ public class OrderContext {
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
 
-        this.spotExchangeId = spot.getExchangeId();
-        this.spotBaseCoin = spot.getBaseCoin();
-        this.spotQuoteCoin = spot.getQuotCoin();
-    }
-
-    public DepthBook getDepth() {
-        SpotDepthReqDto reqDto = new SpotDepthReqDto();
-        reqDto.setExchangeId(spotExchangeId);
-        reqDto.setBaseCoin(spotBaseCoin);
-        reqDto.setQuoteCoin(spotQuoteCoin);
-        ServiceResult<SpotDepthRespDto> result = spotMarketService.getDepth(reqDto);
-        if (result.isSuccess()) {
-            SpotDepthRespDto.DataBean data = result.getData().getData();
-            DepthBook depthBook = new DepthBook();
-            data.getAsks().forEach(e -> {
-                depthBook.getAsks().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
-            });
-            data.getBids().forEach(e -> {
-                depthBook.getBids().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
-            });
-            return depthBook;
-        } else {
-            throw new RuntimeException("获取火币现货深度异常");
+        futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
+        if (futureExchangeConfig == null) {
+            throw new RuntimeException("获取期货交易所配置失败，这里需要使用到面值");
         }
     }
-
 
 
     public Map<BigDecimal, List<FutureOrder>> getActiveOrderMap() {
@@ -321,7 +275,7 @@ public class OrderContext {
             // 可用余额单位为btc币
             BigDecimal marginBalance = futureBalance.getMarginAvailable().subtract(config.getContractMarginReserve());
             // 期货可开张数=余额*杠杆*价格*汇率/面值
-            BigDecimal amount = marginBalance.multiply(BigDecimal.valueOf(this.futureLever)).multiply(price).divide(faceValue, 18, BigDecimal.ROUND_DOWN);
+            BigDecimal amount = marginBalance.multiply(BigDecimal.valueOf(this.futureLever)).multiply(price).divide(futureExchangeConfig.getFaceValue(), 18, BigDecimal.ROUND_DOWN);
             minAmount = min(amount, orderAmount);
         } else {
             // 如果是平仓，那么不需要关心账户余额
@@ -420,6 +374,7 @@ public class OrderContext {
         return null;
     }
 
+    // 下单后需要将订单添加到orderReader中
     private void postPlaceOrder(Long exOrderId, int side, int offset, BigDecimal price, BigDecimal orderAmount) {
         FutureOrder futureOrder = new FutureOrder();
         futureOrder.setExOrderId(exOrderId);
@@ -453,8 +408,6 @@ public class OrderContext {
     public void setExchangeRate(BigDecimal exchangeRate) {
         this.exchangeRate = exchangeRate;
     }
-
-
 
     public void resetMetric() {
         strategyMetric.reset();

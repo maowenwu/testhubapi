@@ -1,10 +1,8 @@
 package com.huobi.quantification.strategy.hedge;
 
 import com.google.common.base.Stopwatch;
-import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
-import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
@@ -18,9 +16,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,10 +24,6 @@ public class Hedger {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    FutureContractService futureContractService;
-    @Autowired
-    StrategyRiskConfigMapper strategyRiskConfigMapper;
     @Autowired
     private CommContext commContext;
     @Autowired
@@ -44,39 +35,24 @@ public class Hedger {
     private Thread hedgePhase1Thread;
     private Thread hedgePhase2Thread;
 
+    private AtomicLong counter = new AtomicLong(0);
+
     public void init(StrategyProperties.ConfigGroup group) {
         hedgerContext.init(group);
         startHedgeCtrlThread();
     }
 
     public void hedgePhase1() {
-        AtomicLong counter = new AtomicLong(0);
         hedgePhase1Thread = new Thread(() -> {
-            while (!hedgePhase1Thread.isInterrupted()) {
+            while (!hedgePhase1Thread.isInterrupted() && hedgePhase1Enable.get()) {
                 try {
-                    if (hedgePhase1Enable.get()) {
-                        Stopwatch started = Stopwatch.createStarted();
-                        logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
-                        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
-                        StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
-                        hedgerContext.setHedgeConfig(hedgeConfig);
-                        hedgerContext.setTradeFeeConfig(tradeFeeConfig);
-                        // 1.撤掉币币账户所有未成交订单
-                        boolean success = commContext.cancelAllSpotOrder();
-                        if (!success) {
-                            logger.error("取消现货所有订单失败，重新开始");
-                            continue;
-                        }
-                        // 2.计算当前的两个账户总的净头寸USDT
-                        BigDecimal netPosition = commContext.getNetPositionUsdt();
-                        // 3. 下单
-                        hedgerContext.placeHedgeOrder(netPosition);
-                        logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
-                        Integer interval = hedgeConfig.getHedgeInterval();
+                    boolean b = doHedgePhase1();
+                    if (!b) {
+                        ThreadUtils.sleep(10 * 1000);
                     }
                 } catch (Throwable e) {
-                    logger.error("对冲期间出现异常,", e);
-                    ThreadUtils.sleep(1000 * 3);
+                    logger.error("对冲1阶段出现异常,", e);
+                    ThreadUtils.sleep(10 * 1000);
                 }
             }
         });
@@ -85,31 +61,49 @@ public class Hedger {
         hedgePhase1Thread.start();
     }
 
+    private boolean doHedgePhase1() {
+        Stopwatch started = Stopwatch.createStarted();
+        long startTime = System.currentTimeMillis();
+        logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
+        StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
+        if (tradeFeeConfig == null) {
+            logger.error("交易手续费配置获取失败，方法退出");
+            return false;
+        }
+        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
+        if (hedgeConfig == null) {
+            logger.error("对冲参数配置获取失败，方法退出");
+            return false;
+        }
+        hedgerContext.setHedgeConfig(hedgeConfig);
+        hedgerContext.setTradeFeeConfig(tradeFeeConfig);
+        // 撤掉币币账户所有未成交订单
+        boolean success = commContext.cancelAllSpotOrder();
+        if (!success) {
+            logger.error("取消现货所有订单失败，方法退出");
+            return false;
+        }
+        // 2.计算当前的两个账户总的净头寸USDT
+        BigDecimal netPosition = commContext.getNetPositionUsdt();
+        // 3. 下单
+        hedgerContext.placeHedgeOrder(netPosition);
+        logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
+        ThreadUtils.sleep(startTime, hedgeConfig.getHedgeInterval());
+        return true;
+    }
+
+
     public void hedgePhase2() {
         hedgePhase2Thread = new Thread(() -> {
-            while (!hedgePhase1Thread.isInterrupted()) {
-                if (hedgePhase2Enable.get()) {
-                    long startTime = System.currentTimeMillis();
-                    StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
-                    String stopTime2 = hedgeConfig.getStopTime2();
-                    Integer interval = hedgeConfig.getDeliveryInterval();
-                    long count = DateUtils.getSecond(LocalTime.now(), LocalTime.parse(stopTime2, DateTimeFormatter.ISO_LOCAL_TIME)) / interval;
-                    // 1.撤掉币币账户所有未成交订单
-                    commContext.cancelAllSpotOrder();
-                    // 2.计算当前的两个账户总的净头寸USDT
-                    BigDecimal m1 = commContext.getNetPositionUsdt();
-                    BigDecimal m2 = commContext.getCurrFutureUsdt();
-                    // 3.需要在币币账户对冲的金额
-                    BigDecimal m = m2.subtract(m1);
-
-                    BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
-                    hedgerContext.placeDeliveryHedgeOrder(netPosition);
-
-                    long endTime = System.currentTimeMillis();
-                    long sleepTime = interval * 1000 - (endTime - startTime);
-                    if (sleepTime > 0) {
-                        ThreadUtils.sleep(sleepTime);
+            while (!hedgePhase1Thread.isInterrupted() && hedgePhase2Enable.get()) {
+                try {
+                    boolean b = doHedgePhase2();
+                    if (!b) {
+                        ThreadUtils.sleep(10 * 1000);
                     }
+                } catch (Exception e) {
+                    logger.error("对冲2阶段出现异常,", e);
+                    ThreadUtils.sleep(10 * 1000);
                 }
             }
         });
@@ -118,6 +112,34 @@ public class Hedger {
         hedgePhase2Thread.start();
     }
 
+    private boolean doHedgePhase2() {
+        long startTime = System.currentTimeMillis();
+        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
+        if (hedgeConfig == null) {
+            logger.error("对冲参数配置获取失败，方法退出");
+            return false;
+        }
+        String stopTime2 = hedgeConfig.getStopTime2();
+        Integer deliveryInterval = hedgeConfig.getDeliveryInterval();
+        long count = DateUtils.getSecond(LocalTime.now(), LocalTime.parse(stopTime2, DateTimeFormatter.ISO_LOCAL_TIME)) / deliveryInterval;
+        // 撤掉币币账户所有未成交订单
+        boolean success = commContext.cancelAllSpotOrder();
+        if (!success) {
+            logger.error("取消现货所有订单失败，方法退出");
+            return false;
+        }
+        // 2.计算当前的两个账户总的净头寸USDT
+        BigDecimal m1 = commContext.getNetPositionUsdt();
+        BigDecimal m2 = commContext.getCurrFutureUsdt();
+        // 3.需要在币币账户对冲的金额
+        BigDecimal m = m2.subtract(m1);
+
+        BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
+        hedgerContext.placeDeliveryHedgeOrder(netPosition);
+
+        ThreadUtils.sleep(startTime, deliveryInterval);
+        return true;
+    }
 
     private void stopHedgePhase1() {
         hedgePhase1Enable.set(false);

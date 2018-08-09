@@ -45,8 +45,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 // 等待3秒，保证job已经完全运行
                 //sleep(3000);
                 contextInit(group);
-                //startOrderCopierWithConfig(group);
-                startHedgerWithConfig(group);
+                startOrderCopierWithConfig(group);
+                //startHedgerWithConfig(group);
                 //startRiskMonitorWithConfig(group);
             }
         }
@@ -63,22 +63,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         logger.info("初始化OrderCopy开始");
         orderCopier.init(group);
         logger.info("初始化OrderCopy完成");
-        Thread thread = new Thread(() -> {
-            while (true) {
-                try {
-                    boolean success = orderCopier.copyOrder();
-                    if (!success) {
-                        sleep(5000);
-                    }
-                } catch (Throwable e) {
-                    logger.error("拷贝订单期间出现异常", e);
-                    sleep(5000);
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.setName("摆单线程");
-        thread.start();
+        orderCopier.copyOrder();
         logger.info("合约借深度线程启动...");
     }
 

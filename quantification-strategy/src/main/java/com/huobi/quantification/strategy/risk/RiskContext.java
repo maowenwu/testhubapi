@@ -1,18 +1,19 @@
 package com.huobi.quantification.strategy.risk;
 
 import com.huobi.quantification.api.future.FutureAccountService;
-import com.huobi.quantification.api.future.FutureContractService;
 import com.huobi.quantification.api.spot.SpotAccountService;
-import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.QuanAccountAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.StrategyFinanceHistoryMapper;
-import com.huobi.quantification.dao.StrategyRiskConfigMapper;
-import com.huobi.quantification.dto.*;
+import com.huobi.quantification.dto.FutureBalanceReqDto;
+import com.huobi.quantification.dto.FutureBalanceRespDto;
+import com.huobi.quantification.dto.SpotBalanceReqDto;
+import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.StrategyRiskConfig;
+import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.SpotBalance;
@@ -35,22 +36,15 @@ public class RiskContext {
     @Autowired
     private SpotAccountService spotAccountService;
     @Autowired
-    private SpotMarketService spotMarketService;
-    @Autowired
-    private StrategyRiskConfigMapper strategyRiskMapper;
-    @Autowired
-    private FutureContractService futureContractService;
-    @Autowired
     private QuanAccountAssetMapper quanAccountAssetMapper;
     @Autowired
     private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
+    @Autowired
+    private CommContext commContext;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
-    private String futureCoinType;
-    private String futureSymbol;
-    private String futureContractType;
-    private String futureContractCode;
+    private String futureBaseCoin;
 
     private Long spotAccountId;
     private Integer spotExchangeId;
@@ -58,16 +52,16 @@ public class RiskContext {
     private String spotQuoteCoin;
 
 
-    private BigDecimal currPrice;
-
+    /********本次期初余额*********/
     private SpotCoin currSpotCoin;
     private SpotUsdt currSpotUsdt;
     private FutureRight currFutureRight;
-
+    /********历史期初余额*********/
     private SpotCoin initialSpotCoin;
     private SpotUsdt initialSpotUsdt;
     private FutureRight initialFutureRight;
 
+    private BigDecimal currPrice;
 
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config future = group.getFuture();
@@ -75,10 +69,7 @@ public class RiskContext {
 
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
-        this.futureCoinType = future.getBaseCoin();
-        this.futureSymbol = future.getBaseCoin();
-        this.futureContractCode = future.getContractCode();
-        this.futureContractType = getContractTypeFromCode();
+        this.futureBaseCoin = future.getBaseCoin();
 
         this.spotExchangeId = spot.getExchangeId();
         this.spotAccountId = spot.getAccountId();
@@ -116,13 +107,13 @@ public class RiskContext {
         BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, true);
         initialSpotUsdt = new SpotUsdt(usdt, usdtNetBorrow);
         // 加载合约账户权益
-        QuanAccountFutureAsset futureAsset = quanAccountFutureAssetMapper.selectByAccountSourceIdCoinType(futureAccountId, futureCoinType);
+        QuanAccountFutureAsset futureAsset = quanAccountFutureAssetMapper.selectByAccountSourceIdCoinType(futureAccountId, futureBaseCoin);
         if (futureAsset == null) {
-            throw new RuntimeException("[quan_account_future_asset]账户资产未初始化，futureAccountId=" + futureAccountId + "，futureCoinType={}" + futureCoinType);
+            throw new RuntimeException("[quan_account_future_asset]账户资产未初始化，futureAccountId=" + futureAccountId + "，futureCoinType={}" + futureBaseCoin);
         }
         FutureBalance futureBalance = new FutureBalance();
         BeanUtils.copyProperties(futureAsset, futureBalance);
-        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureCoinType, true);
+        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, true);
         initialFutureRight = new FutureRight(futureBalance, futureNetBorrow);
     }
 
@@ -167,14 +158,14 @@ public class RiskContext {
         FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
         reqDto.setExchangeId(futureExchangeId);
         reqDto.setAccountId(futureAccountId);
-        reqDto.setCoinType(futureCoinType);
+        reqDto.setCoinType(futureBaseCoin);
         ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
         FutureBalance futureBalance = new FutureBalance();
         if (result.isSuccess()) {
-            FutureBalanceRespDto.DataBean dataBean = result.getData().getData().get(futureCoinType);
+            FutureBalanceRespDto.DataBean dataBean = result.getData().getData().get(futureBaseCoin);
             BeanUtils.copyProperties(dataBean, futureBalance);
         }
-        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureCoinType, false);
+        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, false);
         return new FutureRight(futureBalance, futureNetBorrow);
     }
 
@@ -189,10 +180,10 @@ public class RiskContext {
         FutureBalanceReqDto balanceReqDto = new FutureBalanceReqDto();
         balanceReqDto.setExchangeId(futureExchangeId);
         balanceReqDto.setAccountId(futureAccountId);
-        balanceReqDto.setCoinType(futureCoinType);
+        balanceReqDto.setCoinType(futureBaseCoin);
         ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(balanceReqDto);
         if (result.isSuccess()) {
-            return result.getData().getData().get(futureCoinType).getRiskRate();
+            return result.getData().getData().get(futureBaseCoin).getRiskRate();
         } else {
             logger.error("取不到期货账户余额，错误信息：{}", result.getMessage());
             throw new RuntimeException("取不到期货账户余额，错误信息：" + result.getMessage());
@@ -292,27 +283,13 @@ public class RiskContext {
 
 
     /**
-     * 调用接口方法获取当前账号组净头寸，并返回
-     *
-     * @param contractCode
-     * @return
-     */
-    public BigDecimal getNetPosition() {
-
-        return BigDecimal.ZERO;
-    }
-
-
-
-
-    /**
      * @param orderCtrl 0-正常，1-停止下开仓单，只下平仓单，2-停止合约摆盘，撤销两账户所有未成交订单
      * @param hedgeCtrl 0-正常，2- 停止对冲程序，撤销两账户所有未成交订单
      */
     public void updateRiskCtrl(Integer orderCtrl) {
         StrategyRiskConfig riskConfig = new StrategyRiskConfig();
-        riskConfig.setSymbol(this.futureSymbol);
-        riskConfig.setContractType(this.futureContractType);
+        riskConfig.setSymbol(this.futureBaseCoin);
+        riskConfig.setContractType(this.commContext.getContractTypeFromCode());
         riskConfig.setRiskOrderCtrl(orderCtrl);
         riskConfig.setRiskHedgeCtrl(0);
         //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
@@ -320,8 +297,8 @@ public class RiskContext {
 
     public void updateProfitCtrl(Integer orderCtrl, Integer hedgeCtrl) {
         StrategyRiskConfig riskConfig = new StrategyRiskConfig();
-        riskConfig.setSymbol(this.futureSymbol);
-        riskConfig.setContractType(this.futureContractType);
+        riskConfig.setSymbol(this.futureBaseCoin);
+        riskConfig.setContractType(this.commContext.getContractTypeFromCode());
         riskConfig.setProfitOrderCtrl(orderCtrl);
         riskConfig.setProfitHedgeCtrl(hedgeCtrl);
         //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
@@ -329,42 +306,11 @@ public class RiskContext {
 
     public void updateNetCtrl(Integer orderCtrl, Integer hedgeCtrl) {
         StrategyRiskConfig riskConfig = new StrategyRiskConfig();
-        riskConfig.setSymbol(this.futureSymbol);
-        riskConfig.setContractType(this.futureContractType);
+        riskConfig.setSymbol(this.futureBaseCoin);
+        riskConfig.setContractType(this.commContext.getContractTypeFromCode());
         riskConfig.setNetOrderCtrl(orderCtrl);
         riskConfig.setNetHedgeCtrl(hedgeCtrl);
         //strategyRiskMapper.updateBySymbolTypeSelective(riskConfig);
-    }
-
-    private String getContractTypeFromCode() {
-        try {
-            ServiceResult<ContractCodeDto> result = futureContractService.getContractCode(futureExchangeId, futureContractCode);
-            if (result.isSuccess()) {
-                return result.getData().getContractType();
-            } else {
-                throw new RuntimeException("获取ContractType失败");
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException("获取ContractType失败", e);
-        }
-    }
-
-
-    public BigDecimal getSpotCurrentPrice() {
-        SpotCurrentPriceReqDto reqDto = new SpotCurrentPriceReqDto();
-        reqDto.setExchangeId(spotExchangeId);
-        reqDto.setBaseCoin(spotBaseCoin);
-        reqDto.setQuoteCoin(spotQuoteCoin);
-        try {
-            ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
-            if (currentPrice.isSuccess()) {
-                logger.info("获取当前价格成功，spotExchangeId={}，spotBaseCoin={}，futureQuoteCoin={}", spotExchangeId, spotBaseCoin, spotQuoteCoin);
-                return currentPrice.getData().getCurrentPrice();
-            }
-        } catch (Exception e) {
-            logger.error("获取当前价格失败，spotExchangeId={}，spotBaseCoin={}，futureQuoteCoin={}", spotExchangeId, spotBaseCoin, spotQuoteCoin, e);
-        }
-        return null;
     }
 
     public void setCurrPrice(BigDecimal currPrice) {

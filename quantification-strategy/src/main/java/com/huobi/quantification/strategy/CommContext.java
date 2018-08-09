@@ -58,33 +58,25 @@ public class CommContext {
     @Autowired
     private StrategyTradeFeeMapper strategyTradeFeeMapper;
 
-
     private Integer futureExchangeId;
     private Long futureAccountId;
-
-    private String futureContractCode;
     private String futureBaseCoin;
     private String futureQuoteCoin;
-    //private String futureCoinType;
+    private String futureContractCode;
 
     private Integer spotExchangeId;
     private Long spotAccountId;
     private String spotBaseCoin;
     private String spotQuoteCoin;
 
-    private BigDecimal exchangeRate = BigDecimal.ONE;
 
-    /**
-     * 币币账户期初余额USDT
-     */
+    private QuanExchangeConfig futureExchangeConfig;
+
+    /********本次期初余额，用于计算净头寸*********/
     private BigDecimal initialSpotUsdt;
-    /**
-     * 合约账户期初净空仓金额USD
-     */
     private BigDecimal initialFutureUsdt;
 
-    private QuanExchangeConfig spotExchangeConfig;
-    private QuanExchangeConfig futureExchangeConfig;
+    private BigDecimal exchangeRate;
 
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config spot = group.getSpot();
@@ -101,8 +93,10 @@ public class CommContext {
         this.spotBaseCoin = spot.getBaseCoin();
         this.spotQuoteCoin = spot.getQuotCoin();
 
-        this.spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
+        if (futureExchangeConfig == null) {
+            throw new RuntimeException("获取期货交易所配置失败，这里需要使用到面值");
+        }
         loadInitialUsdt();
     }
 

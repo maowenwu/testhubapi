@@ -21,13 +21,7 @@ public class OrderContextTest {
     @Autowired
     private OrderContext orderContext;
 
-    @Test
-    public void testGetDepth() {
-        DepthBook eth_usdt = orderContext.getDepth();
-        List<DepthBook.Depth> asks = eth_usdt.getAsks();
 
-        System.out.println(JSON.toJSONString(eth_usdt));
-    }
 
     @Test
     public void placeOrder() {

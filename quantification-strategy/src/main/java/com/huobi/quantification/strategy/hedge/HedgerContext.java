@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Component
 public class HedgerContext {
@@ -31,37 +30,19 @@ public class HedgerContext {
     @Autowired
     private SpotOrderService spotOrderService;
 
-
-    private Integer futureExchangeId;
-    private Long futureAccountId;
-    private Integer futureLever;
-    private String futureContractCode;
-    private String futureBaseCoin;
-    private String futureQuoteCoin;
-    private String futureCoinType;
-
     private Integer spotExchangeId;
     private Long spotAccountId;
     private String spotBaseCoin;
     private String spotQuoteCoin;
 
-
     private QuanExchangeConfig spotExchangeConfig;
-    private QuanExchangeConfig futureExchangeConfig;
+
     private StrategyHedgeConfig hedgeConfig;
     private StrategyTradeFee tradeFeeConfig;
 
 
     public void init(StrategyProperties.ConfigGroup group) {
-        StrategyProperties.Config future = group.getFuture();
         StrategyProperties.Config spot = group.getSpot();
-        this.futureExchangeId = future.getExchangeId();
-        this.futureAccountId = future.getAccountId();
-        this.futureLever = future.getLever();
-        this.futureContractCode = Objects.requireNonNull(future.getContractCode());
-        this.futureBaseCoin = future.getBaseCoin();
-        this.futureQuoteCoin = future.getQuotCoin();
-        this.futureCoinType = future.getBaseCoin();
 
         this.spotExchangeId = spot.getExchangeId();
         this.spotAccountId = spot.getAccountId();
@@ -69,7 +50,9 @@ public class HedgerContext {
         this.spotQuoteCoin = spot.getQuotCoin();
 
         spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
-        futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
+        if (spotExchangeConfig == null) {
+            throw new RuntimeException("获取现货交易所配置失败，这里需要使用到价格精度和数量精度");
+        }
     }
 
 
@@ -77,7 +60,7 @@ public class HedgerContext {
         orderPrice = checkPrice(orderPrice);
         orderAmount = checkAmount(orderAmount);
         placeOrder(SideEnum.BUY, orderPrice, orderAmount);
-        // todo
+        // todo 这里是用的mock对象
         SpotBalanceMock.setUsdt(SpotBalanceMock.getUsdt().subtract(orderPrice.multiply(orderAmount)));
         SpotBalanceMock.setCoin(SpotBalanceMock.getCoin().add(orderAmount));
     }
@@ -86,7 +69,7 @@ public class HedgerContext {
         orderPrice = checkPrice(orderPrice);
         orderAmount = checkAmount(orderAmount);
         placeOrder(SideEnum.SELL, orderPrice, orderAmount);
-        // todo
+        // todo 这里是用的mock对象
         SpotBalanceMock.setUsdt(SpotBalanceMock.getUsdt().add(orderPrice.multiply(orderAmount)));
         SpotBalanceMock.setCoin(SpotBalanceMock.getCoin().subtract(orderPrice.multiply(orderAmount)));
     }

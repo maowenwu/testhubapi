@@ -1,34 +1,55 @@
 package com.huobi.quantification.strategy.order;
 
 import com.huobi.quantification.common.util.BigDecimalUtils;
+import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
+import com.huobi.quantification.strategy.CommContext;
+import com.huobi.quantification.strategy.config.ExchangeConfig;
+import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
 public class DepthBookAdjuster {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private BigDecimal faceValue = BigDecimal.valueOf(100);
+    @Autowired
+    private CommContext commContext;
 
-    private OrderContext context;
+    private Integer futureExchangeId;
+    private String futureBaseCoin;
+    private String futureQuoteCoin;
+
+    private QuanExchangeConfig futureExchangeConfig;
 
     private StrategyOrderConfig orderConfig;
     private StrategyTradeFee tradeFeeConfig;
+    private BigDecimal exchangeRate;
 
-    public DepthBookAdjuster(OrderContext context) {
-        this.context = context;
+    public void init(StrategyProperties.ConfigGroup group) {
+        StrategyProperties.Config future = group.getFuture();
+        this.futureExchangeId = future.getExchangeId();
+        this.futureBaseCoin = future.getBaseCoin();
+        this.futureQuoteCoin = future.getQuotCoin();
+
+        this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
+        if (futureExchangeConfig == null) {
+            throw new RuntimeException("获取期货交易所配置失败，这里需要使用到面值");
+        }
     }
 
-    public DepthBook getAdjustedDepthBook(BigDecimal exchangeRate) {
+    public DepthBook getAdjustedDepthBook() {
         try {
-            DepthBook depthBook = context.getDepth();
+            DepthBook depthBook = commContext.getDepth();
             // 如果币币现货是以非USD计价，则所有买卖价格，需要乘以汇率，转化为USD计价
             adjPriceByExchangeRate(exchangeRate, depthBook);
             // 考虑手续费和收益率，买卖单调整后价格
@@ -211,12 +232,12 @@ public class DepthBookAdjuster {
      */
     private void calcVolume(DepthBook depthBook) {
         depthBook.getAsks().forEach(e -> {
-            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(faceValue, 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
             e.setAmount(volume);
         });
 
         depthBook.getBids().forEach(e -> {
-            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(faceValue, 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
             e.setAmount(volume);
         });
     }
@@ -227,5 +248,9 @@ public class DepthBookAdjuster {
 
     public void setTradeFeeConfig(StrategyTradeFee tradeFeeConfig) {
         this.tradeFeeConfig = tradeFeeConfig;
+    }
+
+    public void setExchangeRate(BigDecimal exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 }
