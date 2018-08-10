@@ -249,38 +249,17 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             }
         }
 
-        // 2  判断是否存在，不存在则插入数据库  根据exchangeId  exOrderId判断
-        /*Stopwatch start=Stopwatch.createStarted();
         allList.stream().forEach(e -> {
-            QuanOrderFuture queryEntity = new QuanOrderFuture();
-            queryEntity.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-            queryEntity.setExOrderId(e.getExOrderId());
-            if (!isExist(queryEntity)) {// 判断是否存在，不存在则插入数据库
-                e.setAccountId(accountId);
-                quanOrderFutureMapper.insert(e);
-            }
+            e.setAccountId(accountId);
+            e.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         });
-        logger.info("单个插入耗时:{},total:{}",start,allList.size());*/
-        //改用批量插入并且数据库过滤
+        // 2  改用批量插入并且数据库过滤  根据exchangeId  exOrderId判断
         Stopwatch start=Stopwatch.createStarted();
         int success=quanOrderFutureMapper.insertBatch(allList);
         logger.info("批量插入耗时:{},total:{},success:{}",start,allList.size(),success);
         
     }
 
-    /**
-     * 根据条件判断数据库是否存在记录
-     *
-     * @param quanOrderFuture
-     * @return
-     */
-    private Boolean isExist(QuanOrderFuture quanOrderFuture) {
-        List<QuanOrderFuture> list = quanOrderFutureMapper.selectBySelective(quanOrderFuture);
-        if (CollectionUtils.isNotEmpty(list)) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * 将分页查询的返回值解析为对应的实体
@@ -293,12 +272,10 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if (resp.getStatus().equalsIgnoreCase("ok")) {
             resp.getData().getOrders().forEach(e -> {
                 QuanOrderFuture orderFuture = new QuanOrderFuture();
-                orderFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
                 // 交易所订单id
                 orderFuture.setExOrderId(e.getOrderId());
-                // 下单前已填充
+                // 下单前已填充?????
                 // orderFuture.setLinkOrderId();
-                // 下单前已填充
                 orderFuture.setCreateDate(e.getCreatedAt());
                 orderFuture.setUpdateDate(new Date());
                 orderFuture.setStatus(
@@ -319,7 +296,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 }
                 // 杠杆率
                 orderFuture.setLever(e.getLeverRate());
-                orderFuture.setOrderType("limit");
+                orderFuture.setOrderType(e.getOrderPriceType());
                 // 订单价格
                 orderFuture.setOrderPrice(e.getPrice());
                 // 成交均价
