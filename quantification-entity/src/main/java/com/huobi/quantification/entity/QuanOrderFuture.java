@@ -148,6 +148,16 @@ public class QuanOrderFuture {
      */
     private Date updateDate;
 
+    private String orderSource;//订单来源
+
+    public String getOrderSource() {
+        return orderSource;
+    }
+
+    public void setOrderSource(String orderSource) {
+        this.orderSource = orderSource;
+    }
+
     public Long getInnerOrderId() {
         return innerOrderId;
     }

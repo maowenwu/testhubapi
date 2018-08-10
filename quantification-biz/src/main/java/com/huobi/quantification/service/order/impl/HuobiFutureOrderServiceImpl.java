@@ -230,7 +230,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         List<QuanOrderFuture> allList = new ArrayList<>();
         while (true) {
             Map<String, String> params = new HashMap<>();
-            //params.put("symbol", "BTC");
+            params.put("symbol", symbol);
             params.put("userId", String.valueOf(accountId));
             params.put("page_size", String.valueOf(pageSize));
             params.put("page_index", String.valueOf(pageIndex++));
@@ -239,7 +239,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 body = httpService.doPostJson(HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
             } catch (HttpRequestException e) {
                 logger.error("根据用户id查询订单信息失败，用户id：{}", accountId, e);
-                throw new RuntimeException("批量查询订单信息失败");
+                throw new RuntimeException("根据用户id查询订单信息失败");
             }
             FutureHuobiOrderPageInfoResponse response = JSON.parseObject(body, FutureHuobiOrderPageInfoResponse.class);
             List<QuanOrderFuture> list = parseRespToList(response);
@@ -250,17 +250,22 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         }
 
         // 2  判断是否存在，不存在则插入数据库  根据exchangeId  exOrderId判断
+        /*Stopwatch start=Stopwatch.createStarted();
         allList.stream().forEach(e -> {
             QuanOrderFuture queryEntity = new QuanOrderFuture();
             queryEntity.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
             queryEntity.setExOrderId(e.getExOrderId());
             if (!isExist(queryEntity)) {// 判断是否存在，不存在则插入数据库
                 e.setAccountId(accountId);
-                e.setSourceStatus(1);
                 quanOrderFutureMapper.insert(e);
             }
         });
-
+        logger.info("单个插入耗时:{},total:{}",start,allList.size());*/
+        //改用批量插入并且数据库过滤
+        Stopwatch start=Stopwatch.createStarted();
+        int success=quanOrderFutureMapper.insertBatch(allList);
+        logger.info("批量插入耗时:{},total:{},success:{}",start,allList.size(),success);
+        
     }
 
     /**
@@ -330,6 +335,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 orderFuture.setContractCode(e.getContractCode());
                 orderFuture.setFees(e.getFee());
                 orderFuture.setSourceStatus(e.getStatus());
+                orderFuture.setOrderSource(e.getOrderSource());
                 list.add(orderFuture);
             });
         }
