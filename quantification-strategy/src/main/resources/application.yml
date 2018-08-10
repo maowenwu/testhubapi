@@ -44,12 +44,12 @@ strategy:
     future:
       exchangeId: 0
       accountId: 101
-      baseCoin: eth
+      baseCoin: eos
       quotCoin: usd
-      contractCode: ETH180810
+      contractCode: EOS180817
       lever: 10
     spot:
       exchangeId: 1
       accountId: 4295363
-      baseCoin: eth
+      baseCoin: eos
       quotCoin: usdt

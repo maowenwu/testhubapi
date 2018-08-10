@@ -72,6 +72,7 @@ public class OrderContext {
         FuturePriceOrderReqDto reqDto = new FuturePriceOrderReqDto();
         reqDto.setExchangeId(this.futureExchangeId);
         reqDto.setAccountId(this.futureAccountId);
+        reqDto.setContractCode(this.futureContractCode);
         ServiceResult<FuturePriceOrderRespDto> activeOrderMap = futureOrderService.getActiveOrderMap(reqDto);
         if (activeOrderMap.isSuccess()) {
             Map<BigDecimal, List<FuturePriceOrderRespDto.DataBean>> priceOrderMap = activeOrderMap.getData().getPriceOrderMap();
@@ -370,12 +371,13 @@ public class OrderContext {
                 postPlaceOrder(exOrderId, side, offset, price, orderAmount);
                 return exOrderId;
             } else {
-                logger.error("placeOrder失败，订单：" + reqDto);
+                logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
+                return null;
             }
         } catch (Throwable e) {
-            logger.error("dubbo服务调用异常，placeOrder失败，订单：" + reqDto, e);
+            logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
+            return null;
         }
-        return null;
     }
 
     // 下单后需要将订单添加到orderReader中
@@ -394,7 +396,11 @@ public class OrderContext {
     public boolean updateOrderInfo() {
         ServiceResult result = null;
         try {
-            result = futureOrderService.updateOrderInfo(this.futureExchangeId, this.futureAccountId, futureBaseCoin);
+            FutureUpdateOrderReqDto reqDto = new FutureUpdateOrderReqDto();
+            reqDto.setExchangeId(futureExchangeId);
+            reqDto.setAccountId(futureAccountId);
+            reqDto.setContractCode(futureContractCode);
+            result = futureOrderService.updateOrderInfo(reqDto);
         } catch (Exception e) {
             logger.error("更新订单信息，dubbo调用失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return false;

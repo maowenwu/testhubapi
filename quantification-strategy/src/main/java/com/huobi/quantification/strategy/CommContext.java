@@ -363,9 +363,6 @@ public class CommContext {
     public StrategyOrderConfig getStrategyOrderConfig() {
         String contractType = getContractTypeFromCode();
         StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
-        if (orderConfig != null) {
-            logger.info("获取订单策略参数：" + JSON.toJSONString(orderConfig));
-        }
         return orderConfig;
     }
 

@@ -57,6 +57,13 @@ public class ServiceResult<T> implements Serializable {
         return serviceResult;
     }
 
+    public static ServiceResult buildAPIErrorResult(String message) {
+        ServiceResult serviceResult = new ServiceResult();
+        serviceResult.setCode(1101);
+        serviceResult.setMessage("api异常：" + message);
+        return serviceResult;
+    }
+
     public boolean isSuccess() {
         return code == ServiceErrorEnum.SUCCESS.getCode();
     }

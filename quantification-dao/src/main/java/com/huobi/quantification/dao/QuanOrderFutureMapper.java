@@ -31,7 +31,7 @@ public interface QuanOrderFutureMapper {
 
     List<QuanOrderFuture> selectByLinkOrderIds(Map params);
 
-    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("baseCoin") String baseCoin, @Param("statusList") List<Integer> statusList);
+    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
 
-    List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("statusList") List<Integer> statusList);
+    List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
 }

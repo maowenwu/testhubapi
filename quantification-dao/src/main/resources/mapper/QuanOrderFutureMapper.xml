@@ -591,7 +591,7 @@
     </select>
     <select id="selectExOrderIdByStatus" resultType="java.lang.Long">
         select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId} and
-        base_coin=#{baseCoin}
+        contract_code=#{contractCode}
         and status in
         <foreach item="item" index="index" collection="statusList" open="("
                  separator="," close=")">
@@ -601,7 +601,8 @@
     <select id="selectOrderByStatus" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId}
+        from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId} and
+        contract_code=#{contractCode}
         and status in
         <foreach item="item" index="index" collection="statusList" open="("
                  separator="," close=")">

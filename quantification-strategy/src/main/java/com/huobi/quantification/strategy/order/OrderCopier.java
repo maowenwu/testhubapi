@@ -221,8 +221,6 @@ public class OrderCopier {
                         if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime2())) && orderPhase2Enable.get()) {
                             stopOrderPhase2();
                         }
-                    } else {
-                        logger.info("合约类型不是当周");
                     }
                     ThreadUtils.sleep(1000);
                 } catch (Exception e) {

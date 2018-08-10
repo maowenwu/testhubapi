@@ -20,7 +20,7 @@ public interface HuobiFutureOrderService {
     Long cancelOrder(Long orderId, Long clientOrderId);
 
 
-    boolean updateHuobiOrderInfo(Long accountId, String baseCoin);
+    boolean updateHuobiOrderInfo(Long accountId, String contractCode);
 
     boolean cancelAllOrder(String symbol);
 
