@@ -79,6 +79,7 @@ public class RiskContext {
         this.spotBaseCoin = spot.getBaseCoin();
         this.spotQuoteCoin = spot.getQuotCoin();
 
+        // todo 使用total
         loadInitialProfit();
         loadCurrProfit();
     }

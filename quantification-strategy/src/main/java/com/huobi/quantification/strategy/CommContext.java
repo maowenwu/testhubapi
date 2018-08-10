@@ -154,7 +154,7 @@ public class CommContext {
     private BigDecimal getCurrSpotUsdt() {
         SpotBalance spotBalance = getSpotBalance();
         SpotBalance.Usdt usdt = spotBalance.getUsdt();
-        return usdt.getAvailable();
+        return usdt.getTotal();
     }
 
     /**

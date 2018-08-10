@@ -77,7 +77,7 @@ public class OrderCopier {
             case STOP_ORDER:
                 commContext.cancelAllFutureOrder();
                 logger.error("风控已经发出停止摆单指令，本轮摆单结束并撤销所有订单");
-                return true;
+                return false;
         }
         // 更新订单信息
         boolean success = orderContext.updateOrderInfo();
@@ -197,7 +197,7 @@ public class OrderCopier {
 
     private void stopOrderPhase1() {
         orderPhase1Enable.set(false);
-        orderContext.setRiskCloseOrderOnly(true);
+        orderContext.setDeliveryCloseOrderOnly(true);
     }
 
     private void stopOrderPhase2() {

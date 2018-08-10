@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.text.Bidi;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -154,12 +155,11 @@ public class DepthBookAdjuster {
             mergedBids.add(new DepthBook.Depth(k, sum));
         });
         depthBook.setBids(mergedBids);
-
     }
 
 
     private static BigDecimal priceRoundUp(BigDecimal price, BigDecimal priceStep) {
-        return price.divide(priceStep, 0, BigDecimal.ROUND_FLOOR).add(BigDecimal.ONE).multiply(priceStep);
+        return price.divide(priceStep, 0, BigDecimal.ROUND_CEILING).multiply(priceStep);
     }
 
     private static BigDecimal priceRoundDown(BigDecimal price, BigDecimal priceStep) {

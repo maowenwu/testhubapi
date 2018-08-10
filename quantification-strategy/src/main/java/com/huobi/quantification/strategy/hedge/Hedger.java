@@ -174,8 +174,6 @@ public class Hedger {
                         if (now.isAfter(DateUtils.getFriday(hedgeConfig.getStopTime2())) && hedgePhase2Enable.get()) {
                             stopHedgePhase2();
                         }
-                    } else {
-                        logger.info("合约类型不是当周");
                     }
                     ThreadUtils.sleep(1000);
                 } catch (Exception e) {
