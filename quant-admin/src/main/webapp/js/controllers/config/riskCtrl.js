@@ -14,7 +14,7 @@ angular.module('inspinia',['uiSwitch']).controller('riskCtrl',function($scope,$h
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'symbol', displayName: '币对'},
+            {field: 'symbol', displayName: '交易对'},
             {field: 'contractType', displayName: '合约类型'},
             {field: 'riskRateLevel1', displayName: '保证金率限制1'},
             {field: 'riskRateLevel2', displayName: '保证金率限制2'},

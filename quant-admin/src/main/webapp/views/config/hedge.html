@@ -69,25 +69,41 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>对冲间隔时间：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.hedgeInterval' name="hedgeInterval" required>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交割对冲单时间间隔：</label>
+							<div class="req_mesg" ng-show="horizontalEdit.hedgeInterval.$dirty" >
+									<span ng-show="horizontalEdit.hedgeInterval.$error.required">时间不能为空</span>
+									<span ng-show="horizontalEdit.hedgeInterval.$error.number">非法的时间</span>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req"></i>交割对冲单间隔时间：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.deliveryInterval' name="deliveryInterval" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.deliveryInterval.$dirty" >
+									<span ng-show="horizontalEdit.deliveryInterval.$error.required">时间不能为空</span>
+									<span ng-show="horizontalEdit.deliveryInterval.$error.number">非法的时间</span>
 							</div>
 						</div>
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>对冲买单滑点：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.buySlippage' name="buySlippage" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.buySlippage.$dirty" >
+									<span ng-show="horizontalEdit.buySlippage.$error.required">滑点不能为空</span>
+									<span ng-show="horizontalEdit.buySlippage.$error.number">非法的滑点</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>对冲卖单滑点：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.sellSlippage' name="sellSlippage" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.sellSlippage.$dirty" >
+									<span ng-show="horizontalEdit.sellSlippage.$error.required">滑点不能为空</span>
+									<span ng-show="horizontalEdit.sellSlippage.$error.number">非法的滑点</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -105,20 +121,28 @@
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>交割买单滑点：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.deliveryBuySlippage' name="deliveryBuySlippage" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.deliveryBuySlippage.$dirty" >
+									<span ng-show="horizontalEdit.deliveryBuySlippage.$error.required">滑点不能为空</span>
+									<span ng-show="horizontalEdit.deliveryBuySlippage.$error.number">非法的滑点</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>交割卖单滑点：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.deliverySellSlippage' name="deliverySellSlippage" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.deliverySellSlippage.$dirty" >
+									<span ng-show="horizontalEdit.deliverySellSlippage.$error.required">滑点不能为空</span>
+									<span ng-show="horizontalEdit.deliverySellSlippage.$error.number">非法的滑点</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontalEdit.$invalid || submitting">提交</button>
 								<button class="btn btn-primary8" type="button" ng-click='cancel()'>取消</button>
 							</div>
 						</div>

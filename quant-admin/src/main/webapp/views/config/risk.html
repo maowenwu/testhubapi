@@ -55,84 +55,10 @@
 			</div>
 		</div>
 	</form>
-	<!-- add role -->
-	<!-- 
-	<form class="form-horizontal" id="form2" name="horizontal" novalidate>
-		<div id="addModal" class="modal fade"  role="dialog">
-			<div class="modal-dialog" style="width: 900px">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							&times;</button>
-						<h3 class="modal-title">新增任务</h3>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysKey' name="sysKey" required/>
-								<div class="req_mesg" ng-show="horizontal.sysKey.$dirty && horizontal.sysKey.$invalid">
-									<span ng-show="horizontal.sysKey.$error.required">字典Key不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典名称：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysName' name="sysName" required>
-								<div class="req_mesg" ng-show="horizontal.sysName.$dirty && horizontal.sysName.$invalid">
-									<span ng-show="horizontal.sysName.$error.required">字典名称不能为空</span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典值：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" name="sysValue" required ng-model='newInfo.sysValue'>
-								<div class="req_mesg" ng-show="horizontal.sysValue.$dirty && horizontal.sysValue.$invalid">
-									<span ng-show="horizontal.sysValue.$error.required">字典值不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label">上级字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.parentId'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">排序：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.orderNo'>
-							</div>
-							<label class="col-sm-2 control-label">状态：</label>
-							<div class="col-sm-3">
-								<switch class="switch" ng-model="newInfo.status" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model='newInfo.remark'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"></label>
-							<div class="col-sm-6">
-								<button class="btn btn-primary btn-mr20" type="button" ng-click='submit()'
-									id="btnSubmit" ng-disabled="horizontal.$invalid || submitting">提交</button>
-									<button class="btn btn-primary8" type="button" ng-click='cancel()'
-									>取消</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form> -->
-	<!-- add role -->
 	<!-- edit role -->
 	<form class="form-horizontal" id="form3" name="horizontalEdit" novalidate>
 		<div id="editRoleModal" class="modal fade" role="dialog">
-			<div class="modal-dialog" style="width: 900px">
+			<div class="modal-dialog" style="width: 1400px">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">
@@ -143,81 +69,128 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>保证金率1：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.riskRateLevel1' name="riskRateLevel1" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.riskRateLevel1.$dirty" >
+									<span ng-show="horizontalEdit.riskRateLevel1.$error.required">保证金率不能为空</span>
+									<span ng-show="horizontalEdit.riskRateLevel1.$error.number">非法的保证金率</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>保证金率2：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.riskRateLevel2' name="riskRateLevel2"required>
 							</div>
-							
+							<div class="req_mesg" ng-show="horizontalEdit.riskRateLevel2.$dirty" >
+									<span ng-show="horizontalEdit.riskRateLevel2.$error.required">保证金率不能为空</span>
+									<span ng-show="horizontalEdit.riskRateLevel2.$error.number">非法的保证金率</span>
+							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>保证金率3：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control" 
 									ng-model='newInfo.riskRateLevel3' name="riskRateLevel3"required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.riskRateLevel3.$dirty" >
+									<span ng-show="horizontalEdit.riskRateLevel3.$error.required">保证金率不能为空</span>
+									<span ng-show="horizontalEdit.riskRateLevel3.$error.number">非法的保证金率</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>强平单单笔最大数量：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.maxCloseAmount' name="maxCloseAmount"required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.maxCloseAmount.$dirty" >
+									<span ng-show="horizontalEdit.maxCloseAmount.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.maxCloseAmount.$error.number">非法的数量</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>强平买单滑点：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.buyCloseSlippage' name="buyCloseSlippage"required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.buyCloseSlippage.$dirty" >
+									<span ng-show="horizontalEdit.buyCloseSlippage.$error.required">滑点不能为空</span>
+									<span ng-show="horizontalEdit.buyCloseSlippage.$error.number">非法的滑点</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>强平卖单滑点：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.sellCloseSlippage' name="sellCloseSlippage"required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.sellCloseSlippage.$dirty" >
+									<span ng-show="horizontalEdit.sellCloseSlippage.$error.required">滑点不能为空</span>
+									<span ng-show="horizontalEdit.sellCloseSlippage.$error.number">非法的滑点</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>净头寸阈值1：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control" 
 									ng-model='newInfo.netPositionLevel1' name="netPositionLevel1" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.netPositionLevel1.$dirty" >
+									<span ng-show="horizontalEdit.netPositionLevel1.$error.required">阈值不能为空</span>
+									<span ng-show="horizontalEdit.netPositionLevel1.$error.number">非法的阈值</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>净头寸阈值2：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.netPositionLevel2' name="netPositionLevel2" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.netPositionLevel2.$dirty" >
+									<span ng-show="horizontalEdit.netPositionLevel2.$error.required">阈值不能为空</span>
+									<span ng-show="horizontalEdit.netPositionLevel2.$error.number">非法的阈值</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>单次盈亏阈值1：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.currProfitLevel1' name="currProfitLevel1" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.currProfitLevel1.$dirty" >
+									<span ng-show="horizontalEdit.currProfitLevel1.$error.required">阈值不能为空</span>
+									<span ng-show="horizontalEdit.currProfitLevel1.$error.number">非法的阈值</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>单次盈亏阈值2：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.currProfitLevel2' name="currProfitLevel2" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.currProfitLevel2.$dirty" >
+									<span ng-show="horizontalEdit.currProfitLevel2.$error.required">阈值不能为空</span>
+									<span ng-show="horizontalEdit.currProfitLevel2.$error.number">非法的阈值</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>总盈亏阈值1：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control" 
 									ng-model='newInfo.totalProfitLevel1' name="totalProfitLevel1" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.totalProfitLevel1.$dirty" >
+									<span ng-show="horizontalEdit.totalProfitLevel1.$error.required">阈值不能为空</span>
+									<span ng-show="horizontalEdit.totalProfitLevel1.$error.number">非法的阈值</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>总盈亏阈值2：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control" 
 									ng-model='newInfo.totalProfitLevel2' name="totalProfitLevel2" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.totalProfitLevel2.$dirty" >
+									<span ng-show="horizontalEdit.totalProfitLevel2.$error.required">阈值不能为空</span>
+									<span ng-show="horizontalEdit.totalProfitLevel2.$error.number">非法的阈值</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontalEdit.$invalid || submitting">提交</button>
 								<button class="btn btn-primary8" type="button" ng-click='cancel()'>取消</button>
 							</div>
 						</div>

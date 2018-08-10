@@ -8646,3 +8646,9 @@ select.input-sm{ font-size: 13px;}
   right: -20px;
   margin-top: 6px;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none; 
+    margin: 0; 
+}

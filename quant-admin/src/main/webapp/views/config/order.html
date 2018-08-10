@@ -55,84 +55,10 @@
 			</div>
 		</div>
 	</form>
-	<!-- add role -->
-	<!-- 
-	<form class="form-horizontal" id="form2" name="horizontal" novalidate>
-		<div id="addModal" class="modal fade"  role="dialog">
-			<div class="modal-dialog" style="width: 900px">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							&times;</button>
-						<h3 class="modal-title">新增任务</h3>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysKey' name="sysKey" required/>
-								<div class="req_mesg" ng-show="horizontal.sysKey.$dirty && horizontal.sysKey.$invalid">
-									<span ng-show="horizontal.sysKey.$error.required">字典Key不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典名称：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysName' name="sysName" required>
-								<div class="req_mesg" ng-show="horizontal.sysName.$dirty && horizontal.sysName.$invalid">
-									<span ng-show="horizontal.sysName.$error.required">字典名称不能为空</span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典值：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" name="sysValue" required ng-model='newInfo.sysValue'>
-								<div class="req_mesg" ng-show="horizontal.sysValue.$dirty && horizontal.sysValue.$invalid">
-									<span ng-show="horizontal.sysValue.$error.required">字典值不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label">上级字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.parentId'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">排序：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.orderNo'>
-							</div>
-							<label class="col-sm-2 control-label">状态：</label>
-							<div class="col-sm-3">
-								<switch class="switch" ng-model="newInfo.status" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model='newInfo.remark'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"></label>
-							<div class="col-sm-6">
-								<button class="btn btn-primary btn-mr20" type="button" ng-click='submit()'
-									id="btnSubmit" ng-disabled="horizontal.$invalid || submitting">提交</button>
-									<button class="btn btn-primary8" type="button" ng-click='cancel()'
-									>取消</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form> -->
-	<!-- add role -->
 	<!-- edit role -->
 	<form class="form-horizontal" id="form3" name="horizontalEdit" novalidate>
 		<div id="editRoleModal" class="modal fade" role="dialog">
-			<div class="modal-dialog" style="width: 900px">
+			<div class="modal-dialog" style="width: 1400px">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal">
@@ -143,104 +69,172 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>摆单间隔时间：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.placeOrderInterval' name="placeOrderInterval" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.placeOrderInterval.$dirty" >
+									<span ng-show="horizontalEdit.placeOrderInterval.$error.required">时间不能为空</span>
+									<span ng-show="horizontalEdit.placeOrderInterval.$error.number">非法的时间</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>期望收益率：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.expectYields' name="expectYields" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.expectYields.$dirty" >
+									<span ng-show="horizontalEdit.expectYields.$error.required">收益率不能为空</span>
+									<span ng-show="horizontalEdit.expectYields.$error.number">非法的收益率</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>合并深度价格：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.priceStep' name="priceStep" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.priceStep.$dirty" >
+									<span ng-show="horizontalEdit.priceStep.$error.required">价格不能为空</span>
+									<span ng-show="horizontalEdit.priceStep.$error.number">非法的价格</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>单价格最大委托数量：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.maxAmountPerPrice' name="maxAmountPerPrice" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.maxAmountPerPrice.$dirty" >
+									<span ng-show="horizontalEdit.maxAmountPerPrice.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.maxAmountPerPrice.$error.number">非法的数量</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>拷贝系数-下限：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.minCopyFactor' name="minCopyFactor" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.minCopyFactor.$dirty" >
+									<span ng-show="horizontalEdit.minCopyFactor.$error.required">系数不能为空</span>
+									<span ng-show="horizontalEdit.minCopyFactor.$error.number">非法的系数</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>拷贝系数-上限：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.maxCopyFactor' name="maxCopyFactor" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.maxCopyFactor.$dirty" >
+									<span ng-show="horizontalEdit.maxCopyFactor.$error.required">系数不能为空</span>
+									<span ng-show="horizontalEdit.maxCopyFactor.$error.number">非法的系数</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>买单基准价格：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.bidsBasisPrice' name="bidsBasisPrice" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.bidsBasisPrice.$dirty" >
+									<span ng-show="horizontalEdit.bidsBasisPrice.$error.required">价格不能为空</span>
+									<span ng-show="horizontalEdit.bidsBasisPrice.$error.number">非法的价格</span>
 							</div>
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>卖单基准价格：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.asksBasisPrice' name="asksBasisPrice" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.asksBasisPrice.$dirty" >
+									<span ng-show="horizontalEdit.asksBasisPrice.$error.required">价格不能为空</span>
+									<span ng-show="horizontalEdit.asksBasisPrice.$error.number">非法的价格</span>
 							</div>
 						</div>
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>买单挂单数量上限：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.bidsMaxAmount' name="bidsMaxAmount" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.bidsMaxAmount.$dirty" >
+									<span ng-show="horizontalEdit.bidsMaxAmount.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.bidsMaxAmount.$error.number">非法的数量</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>卖单挂单数量上限：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.asksMaxAmount' name="asksMaxAmount" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.asksMaxAmount.$dirty" >
+									<span ng-show="horizontalEdit.asksMaxAmount.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.asksMaxAmount.$error.number">非法的数量</span>
 							</div>
 						</div>
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>多仓数量最大限制：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.longMaxAmount' name="longMaxAmount" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.longMaxAmount.$dirty" >
+									<span ng-show="horizontalEdit.longMaxAmount.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.longMaxAmount.$error.number">非法的数量</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>空仓数量最大限制：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.shortMaxAmount' name="shortMaxAmount" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.shortMaxAmount.$dirty" >
+									<span ng-show="horizontalEdit.shortMaxAmount.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.shortMaxAmount.$error.number">非法的数量</span>
 							</div>
 						</div>
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>多仓持仓总量上限：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.maxLongPosition' name="maxLongPosition" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.maxLongPosition.$dirty" >
+									<span ng-show="horizontalEdit.maxLongPosition.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.maxLongPosition.$error.number">非法的数量</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>空仓持仓总量上限：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.maxShortPosition' name="maxShortPosition" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.maxShortPosition.$dirty" >
+									<span ng-show="horizontalEdit.maxShortPosition.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.maxShortPosition.$error.number">非法的数量</span>
 							</div>
 						</div>
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>合约账户保留保证金：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.contractMarginReserve' name="contractMarginReserve" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.contractMarginReserve.$dirty" >
+									<span ng-show="horizontalEdit.contractMarginReserve.$error.required">保证金不能为空</span>
+									<span ng-show="horizontalEdit.contractMarginReserve.$error.number">非法的保证金</span>
 							</div>
 						</div>
 						<div class="form-group">
 							 <label class="col-sm-2 control-label"><i class="red_req"></i>币币账户保留币量：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.spotCoinReserve' name="spotCoinReserve" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.spotCoinReserve.$dirty" >
+									<span ng-show="horizontalEdit.spotCoinReserve.$error.required">数量不能为空</span>
+									<span ng-show="horizontalEdit.spotCoinReserve.$error.number">非法的数量</span>
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>币币账户保留资金：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.spotBalanceReserve' name="spotBalanceReserve" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.spotBalanceReserve.$dirty" >
+									<span ng-show="horizontalEdit.spotBalanceReserve.$error.required">资金不能为空</span>
+									<span ng-show="horizontalEdit.spotBalanceReserve.$error.number">非法的资金</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -259,7 +253,7 @@
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontalEdit.$invalid || submitting">提交</button>
 								<button class="btn btn-primary8" type="button" ng-click='cancel()'>取消</button>
 							</div>
 						</div>
