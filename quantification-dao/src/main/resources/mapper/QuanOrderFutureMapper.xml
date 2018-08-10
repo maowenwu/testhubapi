@@ -609,4 +609,45 @@
             #{item}
         </foreach>
     </select>
+
+
+	<insert id="insertBatch" parameterType="java.util.List"
+		useGeneratedKeys="true" keyProperty="innerOrderId">
+		insert ignore into quan_order_future (inner_order_id, strategy_name,
+		strategy_version,
+		exchange_id, account_id, ex_order_id,
+		link_order_id, base_coin, quote_coin,
+		contract_type, contract_code, status,
+		source_status, side, offset,
+		lever, order_type, order_price,
+		deal_price, order_qty, deal_qty,
+		remaining_qty, margin_frozen, fees,
+		create_date, update_date,order_source)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.innerOrderId,jdbcType=BIGINT}, #{item.strategyName,jdbcType=VARCHAR},
+			#{item.strategyVersion,jdbcType=BIGINT},
+			#{item.exchangeId,jdbcType=INTEGER},
+			#{item.accountId,jdbcType=BIGINT}, #{item.exOrderId,jdbcType=BIGINT},
+			#{item.linkOrderId,jdbcType=BIGINT},
+			#{item.baseCoin,jdbcType=VARCHAR},
+			#{item.quoteCoin,jdbcType=VARCHAR},
+			#{item.contractType,jdbcType=VARCHAR},
+			#{item.contractCode,jdbcType=VARCHAR},
+			#{item.status,jdbcType=INTEGER},
+			#{item.sourceStatus,jdbcType=INTEGER}, #{item.side,jdbcType=INTEGER},
+			#{item.offset,jdbcType=INTEGER},
+			#{item.lever,jdbcType=INTEGER}, #{item.orderType,jdbcType=VARCHAR},
+			#{item.orderPrice,jdbcType=DECIMAL},
+			#{item.dealPrice,jdbcType=DECIMAL},
+			#{item.orderQty,jdbcType=DECIMAL}, #{item.dealQty,jdbcType=DECIMAL},
+			#{item.remainingQty,jdbcType=DECIMAL},
+			#{item.marginFrozen,jdbcType=DECIMAL}, #{item.fees,jdbcType=DECIMAL},
+			#{item.createDate,jdbcType=TIMESTAMP},
+			#{item.updateDate,jdbcType=TIMESTAMP},
+			#{item.orderSource,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+
 </mapper>

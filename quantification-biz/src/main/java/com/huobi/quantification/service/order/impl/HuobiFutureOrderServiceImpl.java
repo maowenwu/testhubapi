@@ -251,6 +251,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         }
 
         // 2  判断是否存在，不存在则插入数据库  根据exchangeId  exOrderId判断
+        /*Stopwatch start=Stopwatch.createStarted();
         allList.stream().forEach(e -> {
             QuanOrderFuture queryEntity = new QuanOrderFuture();
             queryEntity.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
@@ -260,7 +261,12 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 quanOrderFutureMapper.insert(e);
             }
         });
-
+        logger.info("单个插入耗时:{},total:{}",start,allList.size());*/
+        //改用批量插入并且数据库过滤
+        Stopwatch start=Stopwatch.createStarted();
+        int success=quanOrderFutureMapper.insertBatch(allList);
+        logger.info("批量插入耗时:{},total:{},success:{}",start,allList.size(),success);
+        
     }
 
     /**
