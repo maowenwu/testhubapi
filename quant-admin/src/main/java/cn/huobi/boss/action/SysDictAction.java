@@ -30,7 +30,7 @@ public class SysDictAction {
 	
 	@Resource
 	private SysDictService sysDictService;
-
+ 
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value="/selectDicByCondition.do")
 	@ResponseBody

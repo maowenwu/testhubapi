@@ -72,6 +72,7 @@ public class OrderContext {
         FuturePriceOrderReqDto reqDto = new FuturePriceOrderReqDto();
         reqDto.setExchangeId(this.futureExchangeId);
         reqDto.setAccountId(this.futureAccountId);
+        reqDto.setContractCode(this.futureContractCode);
         ServiceResult<FuturePriceOrderRespDto> activeOrderMap = futureOrderService.getActiveOrderMap(reqDto);
         if (activeOrderMap.isSuccess()) {
             Map<BigDecimal, List<FuturePriceOrderRespDto.DataBean>> priceOrderMap = activeOrderMap.getData().getPriceOrderMap();
@@ -103,28 +104,47 @@ public class OrderContext {
         allDepth.addAll(depthBook.getBids());
         List<BigDecimal> allPrice = allDepth.stream().map(e -> e.getPrice()).collect(Collectors.toList());
 
-        List<Long> preCancelOrderIds = new ArrayList<>();
+        List<FutureOrder> preCancelOrders = new ArrayList<>();
+        // 所有已经下的单有哪些价格
         Map<BigDecimal, List<FutureOrder>> orderMap = getActiveOrderMap();
         orderMap.forEach((k, v) -> {
             if (!allPrice.contains(k)) {
-                List<Long> list = v.stream().map(e -> e.getExOrderId()).collect(Collectors.toList());
-                preCancelOrderIds.addAll(list);
+                // 已下订单价格不在depthBook中，那么收集起来准备取消
+                preCancelOrders.addAll(v);
             }
         });
 
-        if (CollectionUtils.isNotEmpty(preCancelOrderIds)) {
-            cancelOrder(preCancelOrderIds);
+        List<Long> canceledOrderIds = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(preCancelOrders)) {
+            cancelBySide(preCancelOrders);
+            canceledOrderIds.addAll(preCancelOrders.stream().map(e -> e.getExOrderId()).collect(Collectors.toList()));
         }
 
+        // 价格在depthBook中的所有订单
         List<FutureOrder> remainOrders = new ArrayList<>();
         orderMap.forEach((k, v) -> {
             v.stream().forEach(e -> {
-                if (!preCancelOrderIds.contains(e.getExOrderId())) {
+                if (!canceledOrderIds.contains(e.getExOrderId())) {
                     remainOrders.add(e);
                 }
             });
         });
         return remainOrders;
+    }
+
+
+    private void cancelBySide(List<FutureOrder> preCancelOrders) {
+        Map<SideEnum, List<FutureOrder>> orderMap = preCancelOrders.stream().collect(Collectors.groupingBy(e -> SideEnum.valueOf(e.getSide())));
+        orderMap.forEach((k, v) -> {
+            if (k == SideEnum.BUY) {
+                v.sort(Comparator.comparing(FutureOrder::getOrderPrice).reversed());
+                cancelOrder(v.stream().map(e -> e.getExOrderId()).collect(Collectors.toList()));
+            } else {
+                v.sort(Comparator.comparing(FutureOrder::getOrderPrice));
+                cancelOrder(v.stream().map(e -> e.getExOrderId()).collect(Collectors.toList()));
+            }
+        });
     }
 
 
@@ -288,15 +308,15 @@ public class OrderContext {
 
         if (sideEnum == SideEnum.BUY) {
             // 看下现货账户是否有足够的币卖出
-            BigDecimal minBalance = min(minAmount.multiply(price), spotBalance.getCoin().getAvailable().subtract(config.getSpotCoinReserve()).multiply(price));
-            BigDecimal contractAmount = minBalance.divide(price, 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal minBalance = min(minAmount.multiply(futureExchangeConfig.getFaceValue()), spotBalance.getCoin().getAvailable().subtract(config.getSpotCoinReserve()).multiply(price));
+            BigDecimal contractAmount = minBalance.divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
             return contractAmount;
         } else {
             // 看下现货账户是否有足够的usdt买币
-            BigDecimal usdBalance = minAmount.multiply(price);
+            BigDecimal usdBalance = minAmount.multiply(futureExchangeConfig.getFaceValue());
             // 查看现货账户可用usdt
             BigDecimal minBalance = min(usdBalance, spotBalance.getUsdt().getAvailable().subtract(config.getSpotBalanceReserve()).multiply(exchangeRate));
-            BigDecimal contractAmount = minBalance.divide(price, 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal contractAmount = minBalance.divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
             return contractAmount;
         }
     }
@@ -370,12 +390,13 @@ public class OrderContext {
                 postPlaceOrder(exOrderId, side, offset, price, orderAmount);
                 return exOrderId;
             } else {
-                logger.error("placeOrder失败，订单：" + reqDto);
+                logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
+                return null;
             }
         } catch (Throwable e) {
-            logger.error("dubbo服务调用异常，placeOrder失败，订单：" + reqDto, e);
+            logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
+            return null;
         }
-        return null;
     }
 
     // 下单后需要将订单添加到orderReader中
@@ -394,7 +415,11 @@ public class OrderContext {
     public boolean updateOrderInfo() {
         ServiceResult result = null;
         try {
-            result = futureOrderService.updateOrderInfo(this.futureExchangeId, this.futureAccountId, futureBaseCoin);
+            FutureUpdateOrderReqDto reqDto = new FutureUpdateOrderReqDto();
+            reqDto.setExchangeId(futureExchangeId);
+            reqDto.setAccountId(futureAccountId);
+            reqDto.setContractCode(futureContractCode);
+            result = futureOrderService.updateOrderInfo(reqDto);
         } catch (Exception e) {
             logger.error("更新订单信息，dubbo调用失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return false;
@@ -418,6 +443,10 @@ public class OrderContext {
 
     public void setRiskCloseOrderOnly(boolean riskCloseOrderOnly) {
         this.riskCloseOrderOnly = riskCloseOrderOnly;
+    }
+
+    public void setDeliveryCloseOrderOnly(boolean deliveryCloseOrderOnly) {
+        this.deliveryCloseOrderOnly = deliveryCloseOrderOnly;
     }
 
     public void resetMetric() {

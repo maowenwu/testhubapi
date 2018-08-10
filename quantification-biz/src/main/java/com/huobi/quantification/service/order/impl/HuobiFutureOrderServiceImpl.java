@@ -75,8 +75,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             return response.getData().getOrderId();
         } else {
-            logger.error("火币期货下单失败，order：{}，返回结果：{}", JSON.toJSONString(order), body);
-            return null;
+            throw new RuntimeException(body);
         }
     }
 
@@ -106,7 +105,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     }
 
     @Override
-    public boolean updateHuobiOrderInfo(Long accountId, String baseCoin) {
+    public boolean updateHuobiOrderInfo(Long accountId, String contractCode) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[HuobiOrder][symbol={},contractType={}]任务开始");
         // 查找出订单状态不为已完成、撤单的订单
@@ -115,7 +114,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
         statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
         List<Long> orderIds = quanOrderFutureMapper.selectExOrderIdByStatus(ExchangeEnum.HUOBI_FUTURE.getExId(),
-                accountId, baseCoin, statusList);
+                accountId, contractCode, statusList);
         // 用于标记是否更新完成，当待更新订单量与实际更新订单量相同时才算更新完成
         boolean updateSuccess;
         List<Long> dealOrder = new ArrayList<>();
@@ -231,7 +230,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         List<QuanOrderFuture> allList = new ArrayList<>();
         while (true) {
             Map<String, String> params = new HashMap<>();
-            //params.put("symbol", "BTC");
+            params.put("symbol", symbol);
             params.put("userId", String.valueOf(accountId));
             params.put("page_size", String.valueOf(pageSize));
             params.put("page_index", String.valueOf(pageIndex++));
@@ -240,7 +239,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 body = httpService.doPostJson(HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
             } catch (HttpRequestException e) {
                 logger.error("根据用户id查询订单信息失败，用户id：{}", accountId, e);
-                throw new RuntimeException("批量查询订单信息失败");
+                throw new RuntimeException("根据用户id查询订单信息失败");
             }
             FutureHuobiOrderPageInfoResponse response = JSON.parseObject(body, FutureHuobiOrderPageInfoResponse.class);
             List<QuanOrderFuture> list = parseRespToList(response);
@@ -250,33 +249,17 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             }
         }
 
-        // 2  判断是否存在，不存在则插入数据库  根据exchangeId  exOrderId判断
         allList.stream().forEach(e -> {
-            QuanOrderFuture queryEntity = new QuanOrderFuture();
-            queryEntity.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-            queryEntity.setExOrderId(e.getExOrderId());
-            if (!isExist(queryEntity)) {// 判断是否存在，不存在则插入数据库
-                e.setAccountId(accountId);
-                e.setSourceStatus(1);
-                quanOrderFutureMapper.insert(e);
-            }
+            e.setAccountId(accountId);
+            e.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         });
-
+        // 2  改用批量插入并且数据库过滤  根据exchangeId  exOrderId判断
+        Stopwatch start=Stopwatch.createStarted();
+        int success=quanOrderFutureMapper.insertBatch(allList);
+        logger.info("批量插入耗时:{},total:{},success:{}",start,allList.size(),success);
+        
     }
 
-    /**
-     * 根据条件判断数据库是否存在记录
-     *
-     * @param quanOrderFuture
-     * @return
-     */
-    private Boolean isExist(QuanOrderFuture quanOrderFuture) {
-        List<QuanOrderFuture> list = quanOrderFutureMapper.selectBySelective(quanOrderFuture);
-        if (CollectionUtils.isNotEmpty(list)) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * 将分页查询的返回值解析为对应的实体
@@ -289,12 +272,10 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if (resp.getStatus().equalsIgnoreCase("ok")) {
             resp.getData().getOrders().forEach(e -> {
                 QuanOrderFuture orderFuture = new QuanOrderFuture();
-                orderFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
                 // 交易所订单id
                 orderFuture.setExOrderId(e.getOrderId());
-                // 下单前已填充
+                // 下单前已填充?????
                 // orderFuture.setLinkOrderId();
-                // 下单前已填充
                 orderFuture.setCreateDate(e.getCreatedAt());
                 orderFuture.setUpdateDate(new Date());
                 orderFuture.setStatus(
@@ -315,7 +296,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 }
                 // 杠杆率
                 orderFuture.setLever(e.getLeverRate());
-                orderFuture.setOrderType("limit");
+                orderFuture.setOrderType(e.getOrderPriceType());
                 // 订单价格
                 orderFuture.setOrderPrice(e.getPrice());
                 // 成交均价
@@ -331,6 +312,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 orderFuture.setContractCode(e.getContractCode());
                 orderFuture.setFees(e.getFee());
                 orderFuture.setSourceStatus(e.getStatus());
+                orderFuture.setOrderSource(e.getOrderSource());
                 list.add(orderFuture);
             });
         }

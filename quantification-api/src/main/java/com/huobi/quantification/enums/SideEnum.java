@@ -13,4 +13,13 @@ public enum SideEnum {
     public int getSideType() {
         return sideType;
     }
+
+    public static SideEnum valueOf(int side) {
+        for (SideEnum sideEnum : values()) {
+            if (sideEnum.getSideType() == side) {
+                return sideEnum;
+            }
+        }
+        throw new IllegalArgumentException("输入SideEnum异常，side=" + side);
+    }
 }

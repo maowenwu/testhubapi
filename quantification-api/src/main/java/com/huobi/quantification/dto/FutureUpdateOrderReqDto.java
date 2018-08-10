@@ -2,7 +2,7 @@ package com.huobi.quantification.dto;
 
 import java.io.Serializable;
 
-public class FuturePriceOrderReqDto implements Serializable {
+public class FutureUpdateOrderReqDto implements Serializable {
 
     private Integer exchangeId;
     private Long accountId;

@@ -1,10 +1,11 @@
 package com.huobi.quantification.dao;
 
-import com.huobi.quantification.entity.QuanOrderFuture;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.huobi.quantification.entity.QuanOrderFuture;
 
 public interface QuanOrderFutureMapper {
     int deleteByPrimaryKey(Long innerOrderId);
@@ -12,6 +13,8 @@ public interface QuanOrderFutureMapper {
     int insert(QuanOrderFuture record);
 
     int insertSelective(QuanOrderFuture record);
+    
+    int insertBatch(List<QuanOrderFuture> list);
 
     QuanOrderFuture selectByPrimaryKey(Long innerOrderId);
 
@@ -31,7 +34,7 @@ public interface QuanOrderFutureMapper {
 
     List<QuanOrderFuture> selectByLinkOrderIds(Map params);
 
-    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("baseCoin") String baseCoin, @Param("statusList") List<Integer> statusList);
+    List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
 
-    List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("statusList") List<Integer> statusList);
+    List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
 }

@@ -75,10 +75,12 @@ public class HedgerContext {
     }
 
     private BigDecimal checkPrice(BigDecimal price) {
+        // todo 最少下单价格
         return price.divide(BigDecimal.ONE, spotExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
     }
 
     private BigDecimal checkAmount(BigDecimal amount) {
+        // todo 最少下单量
         return amount.divide(BigDecimal.ONE, spotExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN).abs();
     }
 
