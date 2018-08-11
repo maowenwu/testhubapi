@@ -37,7 +37,7 @@ public class MenuAction {
 	
 	@Resource
 	private UserGrantService userGrantService;
-	
+	 
 	@Resource
 	public MenuService menuService;
 

@@ -62,15 +62,21 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label">主机地址</label>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>主机地址</label>
 							<div class="col-sm-2">
 								<input type="text" class="form-control"
-									ng-model='addInfo.host'>
+									ng-model='addInfo.host' name="host" required>
 							</div>
-							<label class="col-sm-2 control-label">端口号</label>
+							<div class="req_mesg" ng-show="horizontal.host.$dirty">
+									<span ng-show="horizontal.host.$error.required">主机地址不能为空</span>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>端口号</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control"
-									ng-model='addInfo.port'>
+								<input class="form-control" name="port" ng-model='addInfo.port' type="number" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontal.port.$dirty">
+									<span ng-show="horizontal.port.$error.required">端口号不能为空</span>
+									<span ng-show="horizontal.port.$error.number">非法的端口号</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -95,7 +101,7 @@
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submit()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontal.$invalid || submitting">提交</button>
 									<button class="btn btn-primary8" type="button" ng-click='cancel()'
 									>取消</button>
 							</div>
@@ -121,12 +127,19 @@
 							<label class="col-sm-2 control-label">主机地址</label>
 							<div class="col-sm-2">
 								<input type="text" class="form-control"
-									ng-model='newInfo.host'>
+									ng-model='newInfo.host' name='host' required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.host.$dirty">
+									<span ng-show="horizontalEdit.host.$error.required">主机地址不能为空</span>
 							</div>
 							<label class="col-sm-2 control-label">端口号</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control"
-									ng-model='newInfo.port'>
+								<input type="number" class="form-control"
+									ng-model='newInfo.port' name='port' required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.port.$dirty">
+									<span ng-show="horizontalEdit.port.$error.required">端口号不能为空</span>
+									<span ng-show="horizontalEdit.port.$error.number">非法的端口号</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -151,14 +164,14 @@
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontalEdit.$invalid || submitting">提交</button>
 								<button class="btn btn-primary8" type="button" ng-click='cancel()'>取消</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> 
 	</form>
 	<!-- edit role -->
 </div>
