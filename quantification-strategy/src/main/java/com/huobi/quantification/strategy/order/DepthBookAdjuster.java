@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.text.Bidi;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,7 @@ public class DepthBookAdjuster {
 
     public DepthBook getAdjustedDepthBook() {
         try {
-            DepthBook depthBook = commContext.getDepth();
+            DepthBook depthBook = commContext.getSpotDepth();
             // 如果币币现货是以非USD计价，则所有买卖价格，需要乘以汇率，转化为USD计价
             adjPriceByExchangeRate(exchangeRate, depthBook);
             // 考虑手续费和收益率，买卖单调整后价格
@@ -59,14 +58,14 @@ public class DepthBookAdjuster {
             mergeDepth(depthBook);
             // 深度合并后，对每个深度的数量，乘以一个拷贝系数+随机，得到数量调整后的买卖盘列表
             adjCopyFactor(depthBook);
-            // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
-            adjMaxAmount(depthBook);
             // 考虑到基差以及挂单远近，将所有买单价格下调p元，卖单上调q元
             adjBasisPrice(depthBook);
             // 对买卖盘进行排序
             sortDepthBook(depthBook);
             // 将比特币转为张
             calcVolume(depthBook);
+            // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
+            adjMaxAmount(depthBook);
             logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());
             return depthBook;
         } catch (Exception e) {

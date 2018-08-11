@@ -2,7 +2,7 @@ package com.huobi.quantification.strategy.enums;
 
 public enum OrderActionEnum {
 
-    NORMAL(0), CLOSE_ORDER_ONLY(1), STOP_ORDER(2);
+    NORMAL(0), CLOSE_ORDER_ONLY(1), STOP_CANCEL_ORDER(2), STOP_FORCE_CLOSE_ORDER(3);
 
     private int action;
 

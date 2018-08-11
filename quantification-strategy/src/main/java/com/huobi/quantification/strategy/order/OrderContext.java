@@ -460,4 +460,9 @@ public class OrderContext {
     public void metricSellOrder() {
         strategyMetric.metricSellOrder();
     }
+
+    // 撤销所有开仓订单
+    public void cancelAllOpenOrder() {
+        // todo
+    }
 }

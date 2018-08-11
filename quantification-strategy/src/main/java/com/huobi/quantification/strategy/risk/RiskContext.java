@@ -32,8 +32,7 @@ public class RiskContext {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
     private FutureAccountService futureAccountService;
-    @Autowired
-    private StrategyFinanceHistoryMapper financeHistoryMapper;
+
     @Autowired
     private SpotAccountService spotAccountService;
     @Autowired
@@ -79,7 +78,6 @@ public class RiskContext {
         this.spotBaseCoin = spot.getBaseCoin();
         this.spotQuoteCoin = spot.getQuotCoin();
 
-        // todo 使用total
         loadInitialProfit();
         loadCurrProfit();
     }
@@ -99,7 +97,7 @@ public class RiskContext {
         }
         SpotBalance.Coin coin = new SpotBalance.Coin();
         BeanUtils.copyProperties(coinAccountAsset, coin);
-        BigDecimal coinNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, true);
+        BigDecimal coinNetBorrow = commContext.getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, true);
         initialSpotCoin = new SpotCoin(coin, coinNetBorrow);
         // 加载币币账户usdt期初余额
         QuanAccountAsset usdtAccountAsset = quanAccountAssetMapper.selectByAccountSourceIdCoinType(spotAccountId, spotQuoteCoin);
@@ -108,7 +106,7 @@ public class RiskContext {
         }
         SpotBalance.Usdt usdt = new SpotBalance.Usdt();
         BeanUtils.copyProperties(usdtAccountAsset, usdt);
-        BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, true);
+        BigDecimal usdtNetBorrow = commContext.getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, true);
         initialSpotUsdt = new SpotUsdt(usdt, usdtNetBorrow);
         // 加载合约账户权益
         QuanAccountFutureAsset futureAsset = quanAccountFutureAssetMapper.selectByAccountSourceIdCoinType(futureAccountId, futureBaseCoin);
@@ -117,7 +115,7 @@ public class RiskContext {
         }
         FutureBalance futureBalance = new FutureBalance();
         BeanUtils.copyProperties(futureAsset, futureBalance);
-        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, true);
+        BigDecimal futureNetBorrow = commContext.getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, true);
         initialFutureRight = new FutureRight(futureBalance, futureNetBorrow);
     }
 
@@ -139,7 +137,7 @@ public class RiskContext {
             SpotBalanceRespDto.DataBean dataBean = result.getData().getData().get(spotBaseCoin);
             BeanUtils.copyProperties(dataBean, coin);
         }
-        BigDecimal coinNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, false);
+        BigDecimal coinNetBorrow = commContext.getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, false);
         return new SpotCoin(coin, coinNetBorrow);
     }
 
@@ -154,7 +152,7 @@ public class RiskContext {
             SpotBalanceRespDto.DataBean dataBean = result.getData().getData().get(spotQuoteCoin);
             BeanUtils.copyProperties(dataBean, usdt);
         }
-        BigDecimal usdtNetBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
+        BigDecimal usdtNetBorrow = commContext.getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
         return new SpotUsdt(usdt, usdtNetBorrow);
     }
 
@@ -169,7 +167,7 @@ public class RiskContext {
             FutureBalanceRespDto.DataBean dataBean = result.getData().getData().get(futureBaseCoin);
             BeanUtils.copyProperties(dataBean, futureBalance);
         }
-        BigDecimal futureNetBorrow = getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, false);
+        BigDecimal futureNetBorrow = commContext.getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, false);
         return new FutureRight(futureBalance, futureNetBorrow);
     }
 
@@ -257,7 +255,7 @@ public class RiskContext {
         }
 
         private BigDecimal getNetBalance() {
-            return coin.getAvailable().subtract(coinNetBorrow);
+            return coin.getTotal().subtract(coinNetBorrow);
         }
     }
 
@@ -271,19 +269,12 @@ public class RiskContext {
         }
 
         private BigDecimal getNetBalance() {
-            return usdt.getAvailable().subtract(usdtNetBorrow);
+            return usdt.getTotal().subtract(usdtNetBorrow);
         }
     }
 
 
-    private BigDecimal getNetBorrow(int exchangeId, Long accountId, String coinType, boolean initialOnly) {
-        BigDecimal netBorrow = financeHistoryMapper.getNetBorrow(exchangeId, accountId, coinType, initialOnly);
-        if (netBorrow == null) {
-            return BigDecimal.ZERO;
-        } else {
-            return netBorrow;
-        }
-    }
+
 
 
     /**

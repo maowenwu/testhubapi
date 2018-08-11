@@ -115,7 +115,7 @@ public class HedgerContext {
 
     public void placeHedgeOrder(BigDecimal netPosition) {
         // 获取买一卖一价格
-        DepthBook depthBook = commContext.getDepth();
+        DepthBook depthBook = commContext.getSpotDepth();
         BigDecimal ask1 = depthBook.getAsk1();
         BigDecimal bid1 = depthBook.getBid1();
         // 净头寸大于0，下买单
@@ -135,7 +135,7 @@ public class HedgerContext {
 
     public void placeDeliveryHedgeOrder(BigDecimal netPosition) {
         // 获取买一卖一价格
-        DepthBook depthBook = commContext.getDepth();
+        DepthBook depthBook = commContext.getSpotDepth();
         BigDecimal ask1 = depthBook.getAsk1();
         BigDecimal bid1 = depthBook.getBid1();
         // 净头寸大于0，下买单

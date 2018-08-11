@@ -9,10 +9,7 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
-import com.huobi.quantification.dao.StrategyOrderConfigMapper;
-import com.huobi.quantification.dao.StrategyRiskConfigMapper;
-import com.huobi.quantification.dao.StrategyTradeFeeMapper;
+import com.huobi.quantification.dao.*;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.OffsetEnum;
@@ -59,6 +56,8 @@ public class CommContext {
     private StrategyHedgeConfigMapper strategyHedgeConfigMapper;
     @Autowired
     private StrategyTradeFeeMapper strategyTradeFeeMapper;
+    @Autowired
+    private StrategyFinanceHistoryMapper financeHistoryMapper;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -154,7 +153,17 @@ public class CommContext {
     private BigDecimal getCurrSpotUsdt() {
         SpotBalance spotBalance = getSpotBalance();
         SpotBalance.Usdt usdt = spotBalance.getUsdt();
-        return usdt.getTotal();
+        BigDecimal netBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
+        return usdt.getTotal().subtract(netBorrow);
+    }
+
+    public BigDecimal getNetBorrow(int exchangeId, Long accountId, String coinType, boolean initialOnly) {
+        BigDecimal netBorrow = financeHistoryMapper.getNetBorrow(exchangeId, accountId, coinType, initialOnly);
+        if (netBorrow == null) {
+            return BigDecimal.ZERO;
+        } else {
+            return netBorrow;
+        }
     }
 
     /**
@@ -188,7 +197,7 @@ public class CommContext {
                 .divide(exchangeRate, 18, BigDecimal.ROUND_DOWN);
     }
 
-    public DepthBook getDepth() {
+    public DepthBook getSpotDepth() {
         SpotDepthReqDto reqDto = new SpotDepthReqDto();
         reqDto.setExchangeId(spotExchangeId);
         reqDto.setBaseCoin(spotBaseCoin);
@@ -207,6 +216,13 @@ public class CommContext {
         } else {
             throw new RuntimeException("获取火币现货深度异常");
         }
+    }
+
+    public DepthBook getFutureDepth() {
+
+        // todo
+
+        return new DepthBook();
     }
 
     public BigDecimal getExchangeRateOfUSDT2USD() {
@@ -274,7 +290,7 @@ public class CommContext {
                     BeanUtils.copyProperties(dataBean, futureBalance);
                     logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
                     return futureBalance;
-                }else {
+                } else {
                     logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
                     return null;
                 }
@@ -392,4 +408,6 @@ public class CommContext {
         int action = strategyRiskMapper.selectHedgeAction(futureBaseCoin, contractType);
         return HedgerActionEnum.valueOf(action);
     }
+
+
 }

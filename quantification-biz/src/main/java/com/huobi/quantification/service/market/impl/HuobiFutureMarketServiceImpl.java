@@ -124,22 +124,19 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
     public void updateHuobiDepth(String symbol, String contractType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[Huobi深度][symbol={},contractType={}]任务开始", symbol, contractType);
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", getHuobiSymbol(symbol, contractType));
-        params.put("type", "step5");
-        // todo 修改url地址
-        String body = httpService.doGet(HttpConstant.OK_DEPTH, params);
-        parseAndSaveQuanDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
+        HuobiFutureDepthResponse response = queryDepthByAPI(symbol, contractType, "step0");
+        //parseAndSaveDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
         logger.info("[Huobi深度][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
 
-    private void parseAndSaveQuanDepth(String body, OkSymbolEnum symbolEnum, String contractType) {
-        QuanDepthFuture quanDepthFuture = new QuanDepthFuture();
+    private void parseAndSaveDepth(HuobiFutureDepthResponse response, String symbol, String contractType) {
+      /*  QuanDepthFuture quanDepthFuture = new QuanDepthFuture();
         quanDepthFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         quanDepthFuture.setDepthTs(new Date());
-        quanDepthFuture.setBaseCoin(symbolEnum.getBaseCoin());
-        quanDepthFuture.setQuoteCoin(symbolEnum.getQuoteCoin());
+        String[] split = symbol.split("_");
+        quanDepthFuture.setBaseCoin(split[0]);
+        quanDepthFuture.setQuoteCoin(split[1]);
         quanDepthFuture.setSymbol(symbolEnum.getSymbol());
         quanDepthFuture.setContractType(contractType);
         quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
@@ -172,7 +169,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         for (QuanDepthFutureDetail detail : list) {
             quanDepthFutureDetailMapper.insert(detail);
         }
-        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbolEnum.getSymbol(), contractType, list);
+        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbolEnum.getSymbol(), contractType, list);*/
     }
 
     @Override

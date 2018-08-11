@@ -8,9 +8,6 @@
         <result column="risk_rate_level1" jdbcType="DECIMAL" property="riskRateLevel1"/>
         <result column="risk_rate_level2" jdbcType="DECIMAL" property="riskRateLevel2"/>
         <result column="risk_rate_level3" jdbcType="DECIMAL" property="riskRateLevel3"/>
-        <result column="buy_close_slippage" jdbcType="DECIMAL" property="buyCloseSlippage"/>
-        <result column="sell_close_slippage" jdbcType="DECIMAL" property="sellCloseSlippage"/>
-        <result column="max_close_amount" jdbcType="DECIMAL" property="maxCloseAmount"/>
         <result column="net_position_level1" jdbcType="DECIMAL" property="netPositionLevel1"/>
         <result column="net_position_level2" jdbcType="DECIMAL" property="netPositionLevel2"/>
         <result column="curr_profit_level1" jdbcType="DECIMAL" property="currProfitLevel1"/>
@@ -25,11 +22,10 @@
         <result column="profit_hedge_ctrl" jdbcType="INTEGER" property="profitHedgeCtrl"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, symbol, contract_type, risk_rate_level1, risk_rate_level2, risk_rate_level3, 
-    buy_close_slippage, sell_close_slippage, max_close_amount, net_position_level1, net_position_level2, 
-    curr_profit_level1, curr_profit_level2, total_profit_level1, total_profit_level2, 
-    risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl, net_hedge_ctrl, profit_order_ctrl, 
-    profit_hedge_ctrl
+    id, symbol, contract_type, risk_rate_level1, risk_rate_level2, risk_rate_level3,
+    net_position_level1, net_position_level2, curr_profit_level1, curr_profit_level2,
+    total_profit_level1, total_profit_level2, risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl,
+    net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -37,26 +33,23 @@
         from strategy_risk_config
         where id = #{id,jdbcType=INTEGER}
     </select>
-
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from strategy_risk_config
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
-    insert into strategy_risk_config (id, symbol, contract_type, 
-      risk_rate_level1, risk_rate_level2, risk_rate_level3, 
-      buy_close_slippage, sell_close_slippage, max_close_amount, 
-      net_position_level1, net_position_level2, curr_profit_level1, 
-      curr_profit_level2, total_profit_level1, total_profit_level2, 
-      risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl, 
+    insert into strategy_risk_config (id, symbol, contract_type,
+      risk_rate_level1, risk_rate_level2, risk_rate_level3,
+      net_position_level1, net_position_level2, curr_profit_level1,
+      curr_profit_level2, total_profit_level1, total_profit_level2,
+      risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl,
       net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl
       )
-    values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR}, 
-      #{riskRateLevel1,jdbcType=DECIMAL}, #{riskRateLevel2,jdbcType=DECIMAL}, #{riskRateLevel3,jdbcType=DECIMAL}, 
-      #{buyCloseSlippage,jdbcType=DECIMAL}, #{sellCloseSlippage,jdbcType=DECIMAL}, #{maxCloseAmount,jdbcType=DECIMAL}, 
-      #{netPositionLevel1,jdbcType=DECIMAL}, #{netPositionLevel2,jdbcType=DECIMAL}, #{currProfitLevel1,jdbcType=DECIMAL}, 
-      #{currProfitLevel2,jdbcType=DECIMAL}, #{totalProfitLevel1,jdbcType=DECIMAL}, #{totalProfitLevel2,jdbcType=DECIMAL}, 
-      #{riskOrderCtrl,jdbcType=INTEGER}, #{riskHedgeCtrl,jdbcType=INTEGER}, #{netOrderCtrl,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR},
+      #{riskRateLevel1,jdbcType=DECIMAL}, #{riskRateLevel2,jdbcType=DECIMAL}, #{riskRateLevel3,jdbcType=DECIMAL},
+      #{netPositionLevel1,jdbcType=DECIMAL}, #{netPositionLevel2,jdbcType=DECIMAL}, #{currProfitLevel1,jdbcType=DECIMAL},
+      #{currProfitLevel2,jdbcType=DECIMAL}, #{totalProfitLevel1,jdbcType=DECIMAL}, #{totalProfitLevel2,jdbcType=DECIMAL},
+      #{riskOrderCtrl,jdbcType=INTEGER}, #{riskHedgeCtrl,jdbcType=INTEGER}, #{netOrderCtrl,jdbcType=INTEGER},
       #{netHedgeCtrl,jdbcType=INTEGER}, #{profitOrderCtrl,jdbcType=INTEGER}, #{profitHedgeCtrl,jdbcType=INTEGER}
       )
   </insert>
@@ -80,15 +73,6 @@
             </if>
             <if test="riskRateLevel3 != null">
                 risk_rate_level3,
-            </if>
-            <if test="buyCloseSlippage != null">
-                buy_close_slippage,
-            </if>
-            <if test="sellCloseSlippage != null">
-                sell_close_slippage,
-            </if>
-            <if test="maxCloseAmount != null">
-                max_close_amount,
             </if>
             <if test="netPositionLevel1 != null">
                 net_position_level1,
@@ -146,15 +130,6 @@
             <if test="riskRateLevel3 != null">
                 #{riskRateLevel3,jdbcType=DECIMAL},
             </if>
-            <if test="buyCloseSlippage != null">
-                #{buyCloseSlippage,jdbcType=DECIMAL},
-            </if>
-            <if test="sellCloseSlippage != null">
-                #{sellCloseSlippage,jdbcType=DECIMAL},
-            </if>
-            <if test="maxCloseAmount != null">
-                #{maxCloseAmount,jdbcType=DECIMAL},
-            </if>
             <if test="netPositionLevel1 != null">
                 #{netPositionLevel1,jdbcType=DECIMAL},
             </if>
@@ -211,15 +186,6 @@
             <if test="riskRateLevel3 != null">
                 risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
             </if>
-            <if test="buyCloseSlippage != null">
-                buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
-            </if>
-            <if test="sellCloseSlippage != null">
-                sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
-            </if>
-            <if test="maxCloseAmount != null">
-                max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
-            </if>
             <if test="netPositionLevel1 != null">
                 net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
             </if>
@@ -266,9 +232,6 @@
       risk_rate_level1 = #{riskRateLevel1,jdbcType=DECIMAL},
       risk_rate_level2 = #{riskRateLevel2,jdbcType=DECIMAL},
       risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
-      buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
-      sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
-      max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
       net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
       net_position_level2 = #{netPositionLevel2,jdbcType=DECIMAL},
       curr_profit_level1 = #{currProfitLevel1,jdbcType=DECIMAL},

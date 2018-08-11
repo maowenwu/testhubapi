@@ -35,6 +35,8 @@ public class OrderCopier {
     private CommContext commContext;
     @Autowired
     private DepthBookAdjuster depthBookAdjuster;
+    @Autowired
+    private OrderCloser orderCloser;
 
     private Thread copyOrderThread;
 
@@ -73,10 +75,15 @@ public class OrderCopier {
                 break;
             case CLOSE_ORDER_ONLY:
                 orderContext.setRiskCloseOrderOnly(true);
+                orderContext.cancelAllOpenOrder();
                 break;
-            case STOP_ORDER:
+            case STOP_CANCEL_ORDER:
                 commContext.cancelAllFutureOrder();
-                logger.error("风控已经发出停止摆单指令，本轮摆单结束并撤销所有订单");
+                logger.error("风控已经发出停止摆单指令，停止本轮摆单并撤销所有订单");
+                return false;
+            case STOP_FORCE_CLOSE_ORDER:
+                orderCloser.startForceCloseOrder();
+                logger.error("风控已经发出强平指令，停止本轮摆单并强平部分仓位");
                 return false;
         }
         // 更新订单信息
@@ -194,6 +201,7 @@ public class OrderCopier {
         logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
         return true;
     }
+
 
     private void stopOrderPhase1() {
         orderPhase1Enable.set(false);

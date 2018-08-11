@@ -95,14 +95,14 @@ public class RiskMonitor {
         logger.info("当前保证金率：{}", riskRate);
         if (BigDecimalUtils.lessThanOrEquals(riskRate, level3)) {
             // 停止摆盘，发出警报，撤销所有订单，强平，直至保证金率恢复正常
-            riskContext.updateRiskCtrl(2);
+            riskContext.updateRiskCtrl(3);
             warn();
         } else if (BigDecimalUtils.lessThanOrEquals(riskRate, level2)) {
-            // 停止下开仓单，只下平仓单，撤销当前开仓单，发出警报
-            riskContext.updateRiskCtrl(1);
+            // 撤销所有未成交订单，停止借深度策略，还会发出警报；
+            riskContext.updateRiskCtrl(2);
             warn();
         } else if (BigDecimalUtils.lessThanOrEquals(riskRate, level1)) {
-            // 停止下开仓单，只下平仓单
+            // 借深度策略会停止下开仓单，只下平仓单，并撤销当前所有开仓订单；
             riskContext.updateRiskCtrl(1);
         } else {
             // 修改为正常状态
