@@ -102,7 +102,7 @@ public class CommContext {
 
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {
-            throw new RuntimeException("获取期货交易所配置失败，这里需要使用到面值");
+            throw new RuntimeException("获取交易所配置失败，futureExchangeId=" + futureExchangeId + "，futureBaseCoin=" + futureBaseCoin + "，futureQuoteCoin=" + futureQuoteCoin);
         }
         loadInitialUsdt();
     }
@@ -140,8 +140,10 @@ public class CommContext {
         reqDto.setSymbol(futureBaseCoin.toUpperCase());
         ServiceResult result = futureOrderService.cancelAllOrder(reqDto);
         if (result.isSuccess()) {
+            logger.info("取消所有期货订单成功");
             return true;
         } else {
+            logger.info("取消所有期货订单失败，失败原因：{}", result.getMessage());
             return false;
         }
     }
@@ -158,6 +160,7 @@ public class CommContext {
 
     private BigDecimal getCurrSpotUsdt() {
         SpotBalance spotBalance = getSpotBalance();
+        // 火币现货会返回所有资产信息，所以不会存在null的情况
         SpotBalance.Usdt usdt = spotBalance.getUsdt();
         BigDecimal netBorrow = getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
         return usdt.getTotal().subtract(netBorrow);
@@ -194,9 +197,6 @@ public class CommContext {
             shortAmount = shortPosi.getAmount();
         }
         exchangeRate = getExchangeRateOfUSDT2USD();
-        if (exchangeRate == null) {
-            throw new RuntimeException("获取USDT2USD汇率失败");
-        }
         logger.info("计算合约账户净空仓金额，空仓：{}，多仓：{}，汇率：{}，面值：{}", shortAmount, longAmount, exchangeRate, futureExchangeConfig.getFaceValue());
         return shortAmount.subtract(longAmount)
                 .multiply(futureExchangeConfig.getFaceValue())
@@ -223,7 +223,6 @@ public class CommContext {
             throw new RuntimeException("获取火币现货深度异常");
         }
     }
-
 
 
     public DepthBook getFutureDepth() {
@@ -259,8 +258,7 @@ public class CommContext {
                 continue;
             }
         }
-        logger.error("获取USDT2USD汇率异常");
-        return null;
+        throw new RuntimeException("获取USDT2USD汇率失败");
     }
 
     public FuturePosition getFuturePosition() {

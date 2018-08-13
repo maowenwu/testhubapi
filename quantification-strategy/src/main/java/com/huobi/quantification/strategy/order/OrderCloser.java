@@ -33,15 +33,18 @@ public class OrderCloser {
         // 如果正在强平则忽略
         if (!forceCloseOrderEnable.get()) {
             forceCloseOrderEnable.set(true);
+            int failedCount = 0;
             while (forceCloseOrderEnable.get()) {
-                try {
-                    boolean b = closeOrder();
-                    if (!b) {
-                        ThreadUtils.sleep(1000);
+                boolean b = closeOrder();
+                if (!b) {
+                    failedCount += 1;
+                    if (failedCount > 3) {
+                        commContext.cancelAllFutureOrder();
+                        failedCount = 0;
                     }
-                } catch (Exception e) {
-                    logger.error("强平期间出现异常", e);
                     ThreadUtils.sleep(1000);
+                } else {
+                    failedCount = 0;
                 }
             }
         } else {
@@ -50,58 +53,48 @@ public class OrderCloser {
     }
 
     private boolean closeOrder() {
-        OrderActionEnum orderAction = commContext.getOrderAction();
-        if (orderAction == OrderActionEnum.STOP_FORCE_CLOSE_ORDER) {
-            StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
-            if (orderConfig == null) {
-                logger.error("获取期货订单参数配置异常");
-                return false;
-            }
-            FuturePosition position = commContext.getFuturePosition();
-            if (position == null) {
-                logger.error("获取期货持仓异常");
-                return false;
-            }
-            DepthBook depthBook = commContext.getFutureDepth();
-            if (depthBook == null) {
-                logger.error("获取期货DepthBook异常");
-                return false;
-            }
-            FuturePosition.Position longPosi = position.getLongPosi();
-            FuturePosition.Position shortPosi = position.getShortPosi();
-            BigDecimal ask1 = depthBook.getAsk1();
-            BigDecimal bid1 = depthBook.getBid1();
-            boolean b = commContext.cancelAllFutureOrder();
-            if (!b) {
-                logger.error("获取期货所有订单异常");
-                return false;
-            }
-            if (longPosi == null && shortPosi == null) {
-                // 如果多空仓都为空，那么直接退出强平循环
-                forceCloseOrderEnable.set(false);
-                return true;
-            } else if (longPosi == null) {
-                // 如果多仓为空，空仓不为空，那么下平空单
-                if (ask1 != null) {
-                    BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), shortPosi.getAvailable());
-                    BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(orderConfig.getSellCloseSlippage()));
-                    placeCloseShortOrder(orderPrice, orderAmount);
-                } else {
-                    logger.error("卖一价为空，忽略本笔平空单");
+        try {
+            OrderActionEnum orderAction = commContext.getOrderAction();
+            if (orderAction == OrderActionEnum.STOP_FORCE_CLOSE_ORDER) {
+                StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
+                if (orderConfig == null) {
+                    logger.error("获取期货订单参数配置异常");
+                    return false;
                 }
-            } else if (shortPosi == null) {
-                // 如果多仓不为空，空仓为空，那么下平多单
-                if (bid1 != null) {
-                    BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), longPosi.getAvailable());
-                    BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(orderConfig.getBuyCloseSlippage()));
-                    placeCloseLongOrder(orderPrice, orderAmount);
-                } else {
-                    logger.error("买一价为空，忽略本笔平多单");
+                FuturePosition position = commContext.getFuturePosition();
+                if (position == null) {
+                    logger.error("获取期货持仓异常");
+                    return false;
                 }
-            } else {
-                // 多仓空仓都不为空，那么按大小下单
-                if (BigDecimalUtils.moreThanOrEquals(longPosi.getAvailable(), shortPosi.getAvailable())) {
-                    // 如果当前持仓多仓>=空仓，则下平多订单
+                DepthBook depthBook = commContext.getFutureDepth();
+                if (depthBook == null) {
+                    logger.error("获取期货DepthBook异常");
+                    return false;
+                }
+                FuturePosition.Position longPosi = position.getLongPosi();
+                FuturePosition.Position shortPosi = position.getShortPosi();
+                BigDecimal ask1 = depthBook.getAsk1();
+                BigDecimal bid1 = depthBook.getBid1();
+                boolean b = commContext.cancelAllFutureOrder();
+                if (!b) {
+                    logger.error("获取期货所有订单异常");
+                    return false;
+                }
+                if (longPosi == null && shortPosi == null) {
+                    // 如果多空仓都为空，那么直接退出强平循环
+                    forceCloseOrderEnable.set(false);
+                    return false;
+                } else if (longPosi == null) {
+                    // 如果多仓为空，空仓不为空，那么下平空单
+                    if (ask1 != null) {
+                        BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), shortPosi.getAvailable());
+                        BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(orderConfig.getSellCloseSlippage()));
+                        placeCloseShortOrder(orderPrice, orderAmount);
+                    } else {
+                        logger.error("卖一价为空，忽略本笔平空单");
+                    }
+                } else if (shortPosi == null) {
+                    // 如果多仓不为空，空仓为空，那么下平多单
                     if (bid1 != null) {
                         BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), longPosi.getAvailable());
                         BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(orderConfig.getBuyCloseSlippage()));
@@ -110,21 +103,37 @@ public class OrderCloser {
                         logger.error("买一价为空，忽略本笔平多单");
                     }
                 } else {
-                    // 则下平空订单
-                    if (ask1 != null) {
-                        BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), shortPosi.getAvailable());
-                        BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(orderConfig.getSellCloseSlippage()));
-                        placeCloseShortOrder(orderPrice, orderAmount);
+                    // 多仓空仓都不为空，那么按大小下单
+                    if (BigDecimalUtils.moreThanOrEquals(longPosi.getAvailable(), shortPosi.getAvailable())) {
+                        // 如果当前持仓多仓>=空仓，则下平多订单
+                        if (bid1 != null) {
+                            BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), longPosi.getAvailable());
+                            BigDecimal orderPrice = bid1.multiply(BigDecimal.ONE.subtract(orderConfig.getBuyCloseSlippage()));
+                            placeCloseLongOrder(orderPrice, orderAmount);
+                        } else {
+                            logger.error("买一价为空，忽略本笔平多单");
+                        }
                     } else {
-                        logger.error("卖一价为空，忽略本笔平空单");
+                        // 则下平空订单
+                        if (ask1 != null) {
+                            BigDecimal orderAmount = BigDecimalUtils.min(orderConfig.getMaxCloseAmount(), shortPosi.getAvailable());
+                            BigDecimal orderPrice = ask1.multiply(BigDecimal.ONE.add(orderConfig.getSellCloseSlippage()));
+                            placeCloseShortOrder(orderPrice, orderAmount);
+                        } else {
+                            logger.error("卖一价为空，忽略本笔平空单");
+                        }
                     }
                 }
+                ThreadUtils.sleep(orderConfig.getCloseOrderInterval() * 1000);
+            } else {
+                forceCloseOrderEnable.set(false);
             }
-            ThreadUtils.sleep(orderConfig.getCloseOrderInterval() * 1000);
-        } else {
-            forceCloseOrderEnable.set(false);
+            return true;
+        } catch (Exception e) {
+            logger.error("强平期间出现异常", e);
+            ThreadUtils.sleep(1000);
+            return false;
         }
-        return true;
     }
 
 

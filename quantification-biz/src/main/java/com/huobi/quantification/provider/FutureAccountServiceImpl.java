@@ -40,7 +40,6 @@ public class FutureAccountServiceImpl implements FutureAccountService {
 
     @Override
     public ServiceResult<FutureBalanceRespDto> getBalance(FutureBalanceReqDto reqDto) {
-        ServiceResult<FutureBalanceRespDto> serviceResult = null;
         try {
             FutureBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -60,15 +59,14 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(balanceRespDto);
+            return ServiceResult.buildSuccessResult(balanceRespDto);
         } catch (ExecutionException e) {
             logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
             logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
-        return serviceResult;
     }
 
     private FutureBalanceRespDto parseBalance(String coinType, Map<String, QuanAccountFutureAsset> assetMap) {
@@ -103,7 +101,6 @@ public class FutureAccountServiceImpl implements FutureAccountService {
 
     @Override
     public ServiceResult<FuturePositionRespDto> getPosition(FuturePositionReqDto reqDto) {
-        ServiceResult<FuturePositionRespDto> serviceResult = null;
         try {
             FuturePositionRespDto positionRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -127,15 +124,14 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(positionRespDto);
+            return ServiceResult.buildSuccessResult(positionRespDto);
         } catch (ExecutionException e) {
             logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
             logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
-        return serviceResult;
     }
 
     private FuturePositionRespDto parsePosition(String coinType, List<QuanAccountFuturePosition> futurePositions) {

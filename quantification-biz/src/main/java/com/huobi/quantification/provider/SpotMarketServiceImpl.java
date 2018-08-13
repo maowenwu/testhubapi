@@ -39,43 +39,43 @@ public class SpotMarketServiceImpl implements SpotMarketService {
     @Autowired
     private RedisService redisService;
 
-	@Override
-	public ServiceResult<SpotCurrentPriceRespDto> getCurrentPrice(SpotCurrentPriceReqDto currentPriceReqDto) {
-		ServiceResult<SpotCurrentPriceRespDto> serviceResult = null;
-		try {
-			SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
-				while (!Thread.interrupted()) {
-					// 从redis读取最新成交价格
-					QuanTrade quanTrade = redisService.getCurrentPriceSpot(currentPriceReqDto.getExchangeId(),
-							getSymbol(currentPriceReqDto.getExchangeId(), currentPriceReqDto.getBaseCoin(),
-									currentPriceReqDto.getQuoteCoin()));
-					if (quanTrade == null) {
-						ThreadUtils.sleep10();
-						continue;
-					}
-					Date ts = quanTrade.getTs();
-					if (DateUtils.withinMaxDelay(ts, currentPriceReqDto.getMaxDelay())) {
-						SpotCurrentPriceRespDto respDto = new SpotCurrentPriceRespDto();
-						respDto.setTs(ts);
-						respDto.setCurrentPrice(quanTrade.getPrice());
-						return respDto;
-					} else {
-						ThreadUtils.sleep10();
-						continue;
-					}
-				}
-				return null;
-			}, currentPriceReqDto.getTimeout());
-			serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
-		} catch (ExecutionException e) {
-			logger.error("执行异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-		} catch (TimeoutException e) {
-			logger.error("超时异常：", e);
-			serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
-		}
-		return serviceResult;
-	}
+    @Override
+    public ServiceResult<SpotCurrentPriceRespDto> getCurrentPrice(SpotCurrentPriceReqDto currentPriceReqDto) {
+        ServiceResult<SpotCurrentPriceRespDto> serviceResult = null;
+        try {
+            SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
+                while (!Thread.interrupted()) {
+                    // 从redis读取最新成交价格
+                    QuanTrade quanTrade = redisService.getCurrentPriceSpot(currentPriceReqDto.getExchangeId(),
+                            getSymbol(currentPriceReqDto.getExchangeId(), currentPriceReqDto.getBaseCoin(),
+                                    currentPriceReqDto.getQuoteCoin()));
+                    if (quanTrade == null) {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                    Date ts = quanTrade.getTs();
+                    if (DateUtils.withinMaxDelay(ts, currentPriceReqDto.getMaxDelay())) {
+                        SpotCurrentPriceRespDto respDto = new SpotCurrentPriceRespDto();
+                        respDto.setTs(ts);
+                        respDto.setCurrentPrice(quanTrade.getPrice());
+                        return respDto;
+                    } else {
+                        ThreadUtils.sleep10();
+                        continue;
+                    }
+                }
+                return null;
+            }, currentPriceReqDto.getTimeout());
+            serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
+        } catch (ExecutionException e) {
+            logger.error("执行异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+        } catch (TimeoutException e) {
+            logger.error("超时异常：", e);
+            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        }
+        return serviceResult;
+    }
 
     private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
         if (exchangeId == ExchangeEnum.HUOBI.getExId() || exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
@@ -87,7 +87,6 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 
     @Override
     public ServiceResult<SpotDepthRespDto> getDepth(SpotDepthReqDto depthReqDto) {
-        ServiceResult<SpotDepthRespDto> serviceResult = null;
         try {
             SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -112,15 +111,14 @@ public class SpotMarketServiceImpl implements SpotMarketService {
                 }
                 return null;
             }, depthReqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
+            return ServiceResult.buildSuccessResult(currentPriceRespDto);
         } catch (ExecutionException e) {
             logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         } catch (TimeoutException e) {
             logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
         }
-        return serviceResult;
     }
 
     private SpotDepthRespDto.DataBean convertDepthToDto(List<QuanDepthDetail> depthSpot) {

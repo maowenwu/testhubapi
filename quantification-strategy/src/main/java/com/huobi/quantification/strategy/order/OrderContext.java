@@ -61,13 +61,13 @@ public class OrderContext {
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
         this.futureLever = future.getLever();
-        this.futureContractCode = Objects.requireNonNull(future.getContractCode());
+        this.futureContractCode = future.getContractCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
 
         futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {
-            throw new RuntimeException("获取期货交易所配置失败，这里需要使用到面值");
+            throw new RuntimeException("获取交易所配置失败，futureExchangeId=" + futureExchangeId + "，futureBaseCoin=" + futureBaseCoin + "，futureQuoteCoin=" + futureQuoteCoin);
         }
     }
 
@@ -391,22 +391,16 @@ public class OrderContext {
 
 
     public boolean updateOrderInfo() {
-        ServiceResult result = null;
-        try {
-            FutureUpdateOrderReqDto reqDto = new FutureUpdateOrderReqDto();
-            reqDto.setExchangeId(futureExchangeId);
-            reqDto.setAccountId(futureAccountId);
-            reqDto.setContractCode(futureContractCode);
-            result = futureOrderService.updateOrderInfo(reqDto);
-        } catch (Exception e) {
-            logger.error("更新订单信息，dubbo调用失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
-            return false;
-        }
+        FutureUpdateOrderReqDto reqDto = new FutureUpdateOrderReqDto();
+        reqDto.setExchangeId(futureExchangeId);
+        reqDto.setAccountId(futureAccountId);
+        reqDto.setContractCode(futureContractCode);
+        ServiceResult result = futureOrderService.updateOrderInfo(reqDto);
         if (result.isSuccess()) {
             logger.info("更新订单信息成功，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
             return true;
         } else {
-            logger.error("更新订单信息失败，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
+            logger.error("更新订单信息失败，exchangeId={}，futureAccountId={},失败原因：{}", this.futureExchangeId, this.futureAccountId, result.getMessage());
             return false;
         }
     }

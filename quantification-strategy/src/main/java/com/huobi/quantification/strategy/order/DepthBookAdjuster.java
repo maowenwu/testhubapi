@@ -43,7 +43,7 @@ public class DepthBookAdjuster {
 
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {
-            throw new RuntimeException("获取期货交易所配置失败，这里需要使用到面值");
+            throw new RuntimeException("获取交易所配置失败，futureExchangeId=" + futureExchangeId + "，futureBaseCoin=" + futureBaseCoin + "，futureQuoteCoin=" + futureQuoteCoin);
         }
     }
 
@@ -52,6 +52,8 @@ public class DepthBookAdjuster {
             DepthBook depthBook = commContext.getSpotDepth();
             // 如果币币现货是以非USD计价，则所有买卖价格，需要乘以汇率，转化为USD计价
             adjPriceByExchangeRate(exchangeRate, depthBook);
+            // 将比特币转为张
+            calcVolume(depthBook);
             // 考虑手续费和收益率，买卖单调整后价格
             adjPriceByFee(depthBook);
             // 对买卖盘进行深度合并
@@ -62,8 +64,6 @@ public class DepthBookAdjuster {
             adjBasisPrice(depthBook);
             // 对买卖盘进行排序
             sortDepthBook(depthBook);
-            // 将比特币转为张
-            calcVolume(depthBook);
             // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
             adjMaxAmount(depthBook);
             logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());

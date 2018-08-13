@@ -105,7 +105,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     }
 
     @Override
-    public boolean updateHuobiOrderInfo(Long accountId, String contractCode) {
+    public List<Long> updateHuobiOrderInfo(Long accountId, String contractCode) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[HuobiOrder][symbol={},contractType={}]任务开始");
         // 查找出订单状态不为已完成、撤单的订单
@@ -113,29 +113,22 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         statusList.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
         statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
         statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
-        List<Long> orderIds = quanOrderFutureMapper.selectExOrderIdByStatus(ExchangeEnum.HUOBI_FUTURE.getExId(),
-                accountId, contractCode, statusList);
-        // 用于标记是否更新完成，当待更新订单量与实际更新订单量相同时才算更新完成
-        boolean updateSuccess;
+        List<Long> orderIds = quanOrderFutureMapper.selectExOrderIdByStatus(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, contractCode, statusList);
+
         List<Long> dealOrder = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(orderIds)) {
             List<List<Long>> lists = Lists.partition(orderIds, 20);
             lists.forEach(e -> {
                 List<QuanOrderFuture> orderFutures = queryHuobiOrderInfoByAPI(accountId, e);
-                dealOrder.addAll(orderFutures.stream().map(o -> o.getExOrderId()).collect(Collectors.toList()));
                 for (QuanOrderFuture orderFuture : orderFutures) {
                     quanOrderFutureMapper.updateByExIdAccountIdExOrderId(orderFuture);
                 }
+                dealOrder.addAll(orderFutures.stream().map(o -> o.getExOrderId()).collect(Collectors.toList()));
             });
         }
+        orderIds.removeAll(dealOrder);
         logger.info("[HuobiOrder][symbol={},contractType={}]任务结束，耗时：" + started);
-        updateSuccess = orderIds.size() == dealOrder.size();
-        if (!updateSuccess) {
-            int n = orderIds.size();
-            orderIds.removeAll(dealOrder);
-            logger.error("订单信息更新失败，待更新订单量：{}，实际更新订单量：{}，更新有问题的订单号：{}", n, dealOrder.size(), orderIds);
-        }
-        return updateSuccess;
+        return orderIds;
     }
 
     private List<QuanOrderFuture> queryHuobiOrderInfoByAPI(Long accountId, List<Long> orderIds) {
@@ -159,19 +152,11 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                 orderFuture.setAccountId(accountId);
                 // 交易所订单id
                 orderFuture.setExOrderId(e.getOrderId());
-                // 下单前已填充
-                // orderFuture.setLinkOrderId();
-                // 下单前已填充
-                // orderFuture.setCreateDate();
                 orderFuture.setUpdateDate(new Date());
                 orderFuture.setStatus(
                         OrderStatusTable.HuobiFutureOrderStatus.getOrderStatus(e.getStatus()).getOrderStatus());
                 orderFuture.setBaseCoin(e.getSymbol().toLowerCase());
                 orderFuture.setQuoteCoin("usd");
-                // 下单前已填充
-                // orderFuture.setContractType(null);
-                // 下单前已填充
-                // orderFuture.setContractCode();
                 if ("buy".equalsIgnoreCase(e.getDirection())) {
                     orderFuture.setSide(SideEnum.BUY.getSideType());
                 } else {
@@ -209,22 +194,17 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     }
 
     @Override
-    public boolean cancelAllOrder(String symbol) {
+    public void cancelAllOrder(String symbol) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         params.put("userId", "156138");
         String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER_CANCEL_ALL, params);
-        System.out.println(body);
         HuobiFutureOrderCancelAllResponse response = JSON.parseObject(body, HuobiFutureOrderCancelAllResponse.class);
-        if ("ok".equalsIgnoreCase(response.getStatus())) {
-            return true;
-        } else {
-            // 没有可撤订单可以算成功的
-            if (Integer.valueOf(1051).equals(response.getErrCode())) {
-                return true;
-            }
-            return false;
+        // 1051：没有可撤订单可以算成功的
+        if ("ok".equalsIgnoreCase(response.getStatus()) || Integer.valueOf(1051).equals(response.getErrCode())) {
+            return;
         }
+        throw new RuntimeException(body);
     }
 
     @Override

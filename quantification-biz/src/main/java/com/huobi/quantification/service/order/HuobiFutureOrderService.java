@@ -2,6 +2,8 @@ package com.huobi.quantification.service.order;
 
 import com.huobi.quantification.request.future.FutureHuobiOrderRequest;
 
+import java.util.List;
+
 /**
  * @author zhangl
  * @since 2018/6/26
@@ -20,9 +22,9 @@ public interface HuobiFutureOrderService {
     Long cancelOrder(Long orderId, Long clientOrderId);
 
 
-    boolean updateHuobiOrderInfo(Long accountId, String contractCode);
+    List<Long> updateHuobiOrderInfo(Long accountId, String contractCode);
 
-    boolean cancelAllOrder(String symbol);
+    void cancelAllOrder(String symbol);
 
     void replenishOrder(Long accountId, String symbol);
 }

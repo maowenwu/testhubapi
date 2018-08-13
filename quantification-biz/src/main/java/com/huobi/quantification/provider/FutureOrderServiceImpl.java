@@ -14,6 +14,7 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.request.future.FutureHuobiOrderRequest;
 import com.huobi.quantification.service.order.HuobiFutureOrderService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
@@ -508,31 +509,33 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     @Override
     public ServiceResult cancelAllOrder(FutureCancelAllOrderReqDto reqDto) {
         try {
-            boolean success = false;
             if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
-                success = huobiFutureOrderService.cancelAllOrder(reqDto.getSymbol());
-            }
-            if (success) {
+                huobiFutureOrderService.cancelAllOrder(reqDto.getSymbol());
                 return ServiceResult.buildSuccessResult(null);
-            } else {
-                return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
             }
-        } catch (HttpRequestException e) {
+            return null;
+        } catch (Throwable e) {
             logger.error("取消火币期货所有订单失败", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            return ServiceResult.buildAPIErrorResult(e.getMessage());
         }
     }
 
     @Override
     public ServiceResult updateOrderInfo(FutureUpdateOrderReqDto reqDto) {
-        if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
-            boolean success = huobiFutureOrderService.updateHuobiOrderInfo(reqDto.getAccountId(), reqDto.getContractCode());
-            if (success) {
-                return ServiceResult.buildSuccessResult(success);
-            } else {
-                return ServiceResult.buildErrorResult(ServiceErrorEnum.UPDATE_ORDERINFO_ERROR);
+        try {
+            if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
+                List<Long> failedOrderIds = huobiFutureOrderService.updateHuobiOrderInfo(reqDto.getAccountId(), reqDto.getContractCode());
+                if (CollectionUtils.isEmpty(failedOrderIds)) {
+                    return ServiceResult.buildSuccessResult(null);
+                } else {
+                    return ServiceResult.buildAPIErrorResult("更新失败的订单：" + failedOrderIds);
+                }
             }
+            return null;
+        } catch (Exception e) {
+            logger.error("updateOrderInfo失败", e);
+            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         }
-        return null;
     }
+
 }
