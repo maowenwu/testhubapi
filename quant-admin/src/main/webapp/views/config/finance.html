@@ -21,17 +21,21 @@
 					</div>
 					<div class="ibox-content">
 						<div class="form-group">
-						 	<label class="col-sm-2 control-label">交易所id：</label>
+						 	<label class="col-sm-1 control-label">交易所id：</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control"
-									ng-model='baseInfo.exchangeId'>
+								<select class="form-control" ng-model="baseInfo.exchangeId" name="exchangeId">
+									<option></option>
+									<option value="0" >huobi_future</option>
+									<option value="1" >houbi</option>
+									<option value="2" >okex</option>
+								</select>	
 							</div>
-							<label class="col-sm-2 control-label">用户id：</label>
+							<label class="col-sm-1 control-label">用户id：</label>
 							<div class="col-sm-2">
 								<input type="text" class="form-control"
 									ng-model='baseInfo.accountId'>
 							</div>
-							<label class="col-sm-2 control-label">币类：</label>
+							<label class="col-sm-1 control-label">币类：</label>
 							<div class="col-sm-2">
 								<input type="text" class="form-control"
 									ng-model='baseInfo.coinType'>
@@ -61,80 +65,6 @@
 			</div>
 		</div>
 	</form>
-	<!-- add role -->
-	<!-- 
-	<form class="form-horizontal" id="form2" name="horizontal" novalidate>
-		<div id="addModal" class="modal fade"  role="dialog">
-			<div class="modal-dialog" style="width: 900px">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">
-							&times;</button>
-						<h3 class="modal-title">新增任务</h3>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysKey' name="sysKey" required/>
-								<div class="req_mesg" ng-show="horizontal.sysKey.$dirty && horizontal.sysKey.$invalid">
-									<span ng-show="horizontal.sysKey.$error.required">字典Key不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典名称：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.sysName' name="sysName" required>
-								<div class="req_mesg" ng-show="horizontal.sysName.$dirty && horizontal.sysName.$invalid">
-									<span ng-show="horizontal.sysName.$error.required">字典名称不能为空</span>
-								</div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req">*</i>字典值：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" name="sysValue" required ng-model='newInfo.sysValue'>
-								<div class="req_mesg" ng-show="horizontal.sysValue.$dirty && horizontal.sysValue.$invalid">
-									<span ng-show="horizontal.sysValue.$error.required">字典值不能为空</span>
-								</div>
-							</div>
-							<label class="col-sm-2 control-label">上级字典Key：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.parentId'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">排序：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control" ng-model='newInfo.orderNo'>
-							</div>
-							<label class="col-sm-2 control-label">状态：</label>
-							<div class="col-sm-3">
-								<switch class="switch" ng-model="newInfo.status" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label">备注：</label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model='newInfo.remark'>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label"></label>
-							<div class="col-sm-6">
-								<button class="btn btn-primary btn-mr20" type="button" ng-click='submit()'
-									id="btnSubmit" ng-disabled="horizontal.$invalid || submitting">提交</button>
-									<button class="btn btn-primary8" type="button" ng-click='cancel()'
-									>取消</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</form> -->
-	<!-- add role -->
 	<!-- edit role -->
 	<form class="form-horizontal" id="form3" name="horizontalEdit" novalidate>
 		<div id="editRoleModal" class="modal fade" role="dialog">
@@ -147,28 +77,41 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交易所id：</label>
+							<label class="col-sm-2 control-label">交易所id：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.exchangeId' name="exchangeId" required/>
+								<select ng-model="newInfo.exchangeId" name="exchangeId">
+									<option value="0" >huobi_future</option>
+									<option value="1" >houbi</option>
+									<option value="2" >okex</option>
+								</select>	
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>用户id：</label>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>用户id：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.accountId' name="accountId"required>
 							</div>
-							
+							<div class="req_mesg" ng-show="horizontalEdit.accountId.$dirty" >
+									<span ng-show="horizontalEdit.accountId.$error.required">id不能为空</span>
+									<span ng-show="horizontalEdit.accountId.$error.number">非法的id</span>
+							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>币类：</label>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>币类：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.coinType' name="coinType"required>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>金额：</label>
+							<div class="req_mesg" ng-show="horizontalEdit.coinType.$dirty" >
+									<span ng-show="horizontalEdit.coinType.$error.required">币类不能为空</span>
+							</div>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>金额：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.transferAmount' name="transferAmount" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.transferAmount.$dirty" >
+									<span ng-show="horizontalEdit.transferAmount.$error.required">金额不能为空</span>
+									<span ng-show="horizontalEdit.transferAmount.$error.number">非法的金额</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -184,7 +127,7 @@
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontalEdit.$invalid || submitting">提交</button>
 								<button class="btn btn-primary8" type="button" ng-click='cancel()'>取消</button>
 							</div>
 						</div>

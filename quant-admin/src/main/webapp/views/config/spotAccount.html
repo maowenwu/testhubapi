@@ -23,8 +23,12 @@
 						<div class="form-group">
 						 	<label class="col-sm-2 control-label">交易所id：</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control"
-									ng-model='baseInfo.exchangeId'>
+								<select class="form-control" ng-model="baseInfo.exchangeId" name="exchangeId">
+									<option></option>
+									<option value="0" >huobi_future</option>
+									<option value="1" >houbi</option>
+									<option value="2" >okex</option>
+								</select>	
 							</div>
 							<label class="col-sm-2 control-label">帐户名：</label>
 							<div class="col-sm-2">
@@ -69,15 +73,22 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>交易所id：</label>
+							<label class="col-sm-2 control-label"><i class="red_req">*</i>交易所id：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='addInfo.exchangeId' name="exchangeId" required/>
+								<select ng-model="addInfo.exchangeId" name="exchangeId">
+									<option value="0" >huobi_future</option>
+									<option value="1" >houbi</option>
+									<option value="2" >okex</option>
+								</select>	
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>用户id：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='addInfo.accountSourceId' name="accountSourceId" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontal.accountSourceId.$dirty" >
+									<span ng-show="horizontal.accountSourceId.$error.required">id不能为空</span>
+									<span ng-show="horizontal.accountSourceId.$error.number">非法的id</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -121,15 +132,21 @@
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>交易所id：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.exchangeId' name="exchangeId" required/>
+								<select ng-model="newInfo.exchangeId" name="exchangeId">
+									<option value="0" >huobi_future</option>
+									<option value="1" >houbi</option>
+									<option value="2" >okex</option>
+								</select>	
 							</div>
 							<label class="col-sm-2 control-label"><i class="red_req"></i>用户id：</label>
 							<div class="col-sm-3">
 								<input type="text" class="form-control"
 									ng-model='newInfo.accountSourceId' name="accountSourceId" required>
 							</div>
-							
+							<div class="req_mesg" ng-show="horizontalEdit.accountSourceId.$dirty" >
+									<span ng-show="horizontalEdit.accountSourceId.$error.required">id不能为空</span>
+									<span ng-show="horizontalEdit.accountSourceId.$error.number">非法的id</span>
+							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"><i class="red_req"></i>账户类型：</label>

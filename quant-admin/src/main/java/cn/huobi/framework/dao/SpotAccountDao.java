@@ -12,29 +12,30 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.jdbc.SQL;
 
 import cn.huobi.framework.db.pagination.Page;
+import cn.huobi.framework.model.QuanSpotAccount;
 import cn.huobi.framework.model.SpotAccount;
 import cn.huobi.framework.util.StringUtil;
 
 public interface SpotAccountDao {
 	@SelectProvider(type=SqlProvider.class, method="selectByCondition")
-	@ResultType(SpotAccount.class)
-	List<SpotAccount> selectByCondition(@Param("account")SpotAccount config, Page<SpotAccount> page);
+	@ResultType(QuanSpotAccount.class)
+	List<QuanSpotAccount> selectByCondition(@Param("account")QuanSpotAccount config, Page<SpotAccount> page);
 	
 	@Delete("delete from quan_account where id=#{id}")
 	int delete(@Param("id")Integer id);
 	
 	@Insert("insert into quan_account(exchange_id,account_source_id,accounts_type,accounts_name,state) values(#{account.exchangeId}, #{account.accountSourceId}, #{account.accountsType},"
 			+ " #{account.accountsName}, #{account.state})")
-	int insert(@Param("account")SpotAccount account);
+	int insert(@Param("account")QuanSpotAccount account);
 	
 	@Update("update quan_account set exchange_id = #{account.exchangeId}, account_source_id = #{account.accountSourceId}, "
 			+ "accounts_type = #{account.accountsType}, accounts_name = #{account.accountsName} where id = #{account.id}")
-	int update(@Param("account")SpotAccount account);
+	int update(@Param("account")QuanSpotAccount account);
 	
 	public class SqlProvider{
 		
 		public String selectByCondition(Map<String, Object> param){
-			final SpotAccount account = (SpotAccount) param.get("account");
+			final QuanSpotAccount account = (QuanSpotAccount) param.get("account");
 			return new SQL(){
 				{
 					SELECT("*");

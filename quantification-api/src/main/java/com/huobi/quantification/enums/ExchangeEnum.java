@@ -19,4 +19,12 @@ public enum ExchangeEnum {
     public String getExName() {
         return exName;
     }
+    public static ExchangeEnum valueOf(int exId) {
+        for (ExchangeEnum exchangeEnum : values()) {
+            if (exchangeEnum.getExId() == exId) {
+                return exchangeEnum;
+            }
+        }
+        throw new IllegalArgumentException("输入ExchangeEnum异常，exId=" + exId);
+    }
 }

@@ -11,7 +11,7 @@ public class SpotJob {
 	 * 
 	 * @mbg.generated 2018-07-27 14:41:01
 	 */
-	private Integer exchangeId;
+	private String exchangeId;
 
 	/**
 	 * 任务类型
@@ -77,11 +77,11 @@ public class SpotJob {
 		this.id = id;
 	}
 
-	public Integer getExchangeId() {
+	public String getExchangeId() {
 		return exchangeId;
 	}
 
-	public void setExchangeId(Integer exchangeId) {
+	public void setExchangeId(String exchangeId) {
 		this.exchangeId = exchangeId;
 	}
 

@@ -66,29 +66,43 @@
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
-							<label class="col-sm-2 control-label"><i class="red_req"></i>币币交易手续费率：</label>
+							<label class="col-sm-3 control-label">币币交易手续费率：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
 									ng-model='newInfo.spotFee' name="spotFee" required>
 							</div>
-							<label class="col-sm-2 control-label"><i class="red_req"></i>合约交易手续费率：</label>
-							<div class="col-sm-3">
-								<input type="text" class="form-control"
-									ng-model='newInfo.contractFee' name="contractFee" required>
+							<div class="req_mesg" ng-show="horizontalEdit.spotFee.$dirty" >
+									<span ng-show="horizontalEdit.spotFee.$error.required">费率不能为空</span>
+									<span ng-show="horizontalEdit.spotFee.$error.number">非法的费率</span>
 							</div>
 						</div>
 						<div class="form-group">
-							 <label class="col-sm-2 control-label"><i class="red_req"></i>合约交割手续费率：</label>
+							<label class="col-sm-3 control-label">合约交易手续费率：</label>
 							<div class="col-sm-3">
-								<input type="text" class="form-control"
+								<input type="number" class="form-control"
+									ng-model='newInfo.contractFee' name="contractFee" required>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.contractFee.$dirty" >
+									<span ng-show="horizontalEdit.contractFee.$error.required">费率不能为空</span>
+									<span ng-show="horizontalEdit.contractFee.$error.number">非法的费率</span>
+							</div>
+						</div>
+						<div class="form-group">
+							 <label class="col-sm-3 control-label">合约交割手续费率：</label>
+							<div class="col-sm-3">
+								<input type="number" class="form-control"
 									ng-model='newInfo.deliveryFee' name="deliveryFee" required/>
+							</div>
+							<div class="req_mesg" ng-show="horizontalEdit.deliveryFee.$dirty" >
+									<span ng-show="horizontalEdit.deliveryFee.$error.required">费率不能为空</span>
+									<span ng-show="horizontalEdit.deliveryFee.$error.number">非法的费率</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label"></label>
 							<div class="col-sm-6">
 								<button class="btn btn-primary btn-mr20" type="button" ng-click='submitNewInfo()'
-									id="btnSubmit" ng-disabled="submitting">提交</button>
+									id="btnSubmit" ng-disabled="horizontalEdit.$invalid || submitting">提交</button>
 								<button class="btn btn-primary8" type="button" ng-click='cancel()'>取消</button>
 							</div>
 						</div>

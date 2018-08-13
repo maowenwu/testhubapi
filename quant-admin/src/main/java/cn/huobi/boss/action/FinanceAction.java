@@ -59,7 +59,7 @@ public class FinanceAction {
 		config.setInit(0);
 		config.setCreateTime(new Date());
 		config.setUpdateTime(new Date());
-		if (config.getMoneyType() == null) {
+		if (config.getMoneyType() == null || config.getExchangeId() == null) {
 			msg.put("status", false);
 			msg.put("msg", "更新失败");
 			return msg;

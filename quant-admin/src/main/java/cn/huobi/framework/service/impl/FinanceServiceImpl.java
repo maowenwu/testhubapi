@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.huobi.quantification.entity.StrategyFinanceHistory;
+import com.huobi.quantification.enums.ExchangeEnum;
 
 import cn.huobi.framework.dao.FinanceDao;
 import cn.huobi.framework.db.pagination.Page;
@@ -39,7 +41,7 @@ public class FinanceServiceImpl implements FinanceService {
 		FinanceHistory financeHistory = new FinanceHistory();
 		financeHistory.setAccountId(strategyFinanceHistory.getAccountId());
 		financeHistory.setCoinType(strategyFinanceHistory.getCoinType());
-		financeHistory.setExchangeId(strategyFinanceHistory.getExchangeId());
+		financeHistory.setExchangeId(ExchangeEnum.valueOf(strategyFinanceHistory.getExchangeId()).getExName());
 		if (strategyFinanceHistory.getMoneyType() == 1) {
 			financeHistory.setMoneyType("充值");
 		}else if (strategyFinanceHistory.getMoneyType() == 2) {
@@ -55,8 +57,10 @@ public class FinanceServiceImpl implements FinanceService {
 	private StrategyFinanceHistory convertFinanceHistory(FinanceHistory history) {
 		StrategyFinanceHistory Fhistory = new StrategyFinanceHistory();
 		Fhistory.setAccountId(history.getAccountId());
-		Fhistory.setExchangeId(history.getExchangeId());
 		Fhistory.setCoinType(history.getCoinType());
+		if (StringUtils.isNotBlank(history.getExchangeId())) {
+			Fhistory.setExchangeId(Integer.parseInt(history.getExchangeId()));
+		}
 		return Fhistory;
 	}
 
