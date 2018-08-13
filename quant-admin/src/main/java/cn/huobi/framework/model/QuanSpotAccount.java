@@ -1,8 +1,8 @@
 package cn.huobi.framework.model;
 
-public class FutureAccount {
+public class QuanSpotAccount {
 	private Long id;
-	private String exchangeId;
+	private Integer exchangeId;
 	private Long accountSourceId;
 	private String accountsType;
 	private String accountsName;
@@ -13,10 +13,10 @@ public class FutureAccount {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getExchangeId() {
+	public Integer getExchangeId() {
 		return exchangeId;
 	}
-	public void setExchangeId(String exchangeId) {
+	public void setExchangeId(Integer exchangeId) {
 		this.exchangeId = exchangeId;
 	}
 	public Long getAccountSourceId() {

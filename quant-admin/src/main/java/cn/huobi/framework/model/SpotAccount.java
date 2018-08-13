@@ -2,7 +2,7 @@ package cn.huobi.framework.model;
 
 public class SpotAccount {
 	private Long id;
-	private Integer exchangeId;
+	private String exchangeId;
 	private Long accountSourceId;
 	private String accountsType;
 	private String accountsName;
@@ -13,10 +13,10 @@ public class SpotAccount {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Integer getExchangeId() {
+	public String getExchangeId() {
 		return exchangeId;
 	}
-	public void setExchangeId(Integer exchangeId) {
+	public void setExchangeId(String exchangeId) {
 		this.exchangeId = exchangeId;
 	}
 	public Long getAccountSourceId() {

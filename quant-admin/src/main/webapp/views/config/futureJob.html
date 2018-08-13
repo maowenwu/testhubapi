@@ -28,8 +28,12 @@
 							</div>
 							<label class="col-sm-2 control-label">交易所id：</label>
 							<div class="col-sm-2">
-								<input type="text" class="form-control"
-									ng-model='baseInfo.exchangeId'>
+								<select class="form-control" ng-model="baseInfo.exchangeId" name="exchangeId">
+									<option></option>
+									<option value="0" >huobi_future</option>
+									<option value="1" >houbi</option>
+									<option value="2" >okex</option>
+								</select>	
 							</div>
 						</div>
 						<div class="form-group">

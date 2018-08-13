@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.huobi.quantification.entity.QuanJob;
+import com.huobi.quantification.enums.ExchangeEnum;
 
 import cn.huobi.framework.dao.QuanJobDao;
 import cn.huobi.framework.db.pagination.Page;
@@ -37,15 +39,17 @@ public class QuanJobServiceImpl implements QuanJobService {
 
 	private QuanJob convertSpotJob(SpotJob job) {
 		QuanJob quanJob = new QuanJob();
-		quanJob.setExchangeId(job.getExchangeId());
 		quanJob.setJobDesc(job.getJobDesc());
+		if (StringUtils.isNotBlank(job.getExchangeId())) {
+			quanJob.setExchangeId(Integer.parseInt(job.getExchangeId()));
+		}
 		return quanJob;
 	}
 
 	private SpotJob convertQuanJob2SpotJob(QuanJob job) {
 		SpotJob spotJob = new SpotJob();
 		spotJob.setCron(job.getCron());
-		spotJob.setExchangeId(job.getExchangeId());
+		spotJob.setExchangeId(ExchangeEnum.valueOf(job.getExchangeId()).getExName());
 		spotJob.setId(job.getId());
 		spotJob.setJobDesc(job.getJobDesc());
 		spotJob.setJobName(job.getJobName());

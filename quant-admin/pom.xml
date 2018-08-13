@@ -49,6 +49,11 @@
 		<artifactId>quantification-dao</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</dependency>
+	<dependency>
+		<groupId>com.huobi.quantification</groupId>
+		 <artifactId>quantification-api</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
 	
 		<!-- spring-framework start -->
 		<dependency>

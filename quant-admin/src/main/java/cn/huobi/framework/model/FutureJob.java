@@ -1,7 +1,5 @@
 package cn.huobi.framework.model;
 
-import java.util.Date;
-
 public class FutureJob {
 	/**
 	 * @mbg.generated 2018-07-20 14:45:57
@@ -11,7 +9,7 @@ public class FutureJob {
 	/**
 	 * @mbg.generated 2018-07-20 14:45:57
 	 */
-	private Integer exchangeId;
+	private String exchangeId;
 
 	/**
 	 * @mbg.generated 2018-07-20 14:45:57
@@ -61,11 +59,11 @@ public class FutureJob {
 		this.id = id;
 	}
 
-	public Integer getExchangeId() {
+	public String getExchangeId() {
 		return exchangeId;
 	}
 
-	public void setExchangeId(Integer exchangeId) {
+	public void setExchangeId(String exchangeId) {
 		this.exchangeId = exchangeId;
 	}
 

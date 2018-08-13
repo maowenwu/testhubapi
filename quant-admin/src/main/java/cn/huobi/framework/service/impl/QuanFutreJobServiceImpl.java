@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.huobi.quantification.entity.QuanJobFuture;
+import com.huobi.quantification.enums.ExchangeEnum;
 
 import cn.huobi.framework.dao.QuanFutureJobDao;
 import cn.huobi.framework.db.pagination.Page;
@@ -37,7 +39,9 @@ public class QuanFutreJobServiceImpl implements QuanFutureJobService{
 
 	private QuanJobFuture convertFutureJob(FutureJob job) {
 		QuanJobFuture quanJobFuture = new QuanJobFuture();
-		quanJobFuture.setExchangeId(job.getExchangeId());
+		if (StringUtils.isNotBlank(job.getExchangeId())) {
+			quanJobFuture.setExchangeId(Integer.parseInt(job.getExchangeId()));
+		}
 		quanJobFuture.setJobDesc(job.getJobDesc());
 		return quanJobFuture;
 	}
@@ -45,7 +49,7 @@ public class QuanFutreJobServiceImpl implements QuanFutureJobService{
 	private FutureJob convertQuanJobFuture2FutureJob(QuanJobFuture quanJobFuture) {
 		FutureJob futureJob = new FutureJob();
 		futureJob.setCron(quanJobFuture.getCron());
-		futureJob.setExchangeId(quanJobFuture.getExchangeId());
+		futureJob.setExchangeId(ExchangeEnum.valueOf(quanJobFuture.getExchangeId()).getExName());
 		futureJob.setId(quanJobFuture.getId());
 		futureJob.setJobDesc(quanJobFuture.getJobDesc());
 		futureJob.setJobName(quanJobFuture.getJobName());

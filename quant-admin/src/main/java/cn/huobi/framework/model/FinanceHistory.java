@@ -12,7 +12,7 @@ public class FinanceHistory {
      * 交易所id
      * @mbg.generated 2018-08-03 15:13:17
      */
-    private Integer exchangeId;
+    private String exchangeId;
 
     /**
      * 账号ID
@@ -62,15 +62,15 @@ public class FinanceHistory {
         this.id = id;
     }
 
-    public Integer getExchangeId() {
-        return exchangeId;
-    }
+    public String getExchangeId() {
+		return exchangeId;
+	}
 
-    public void setExchangeId(Integer exchangeId) {
-        this.exchangeId = exchangeId;
-    }
+	public void setExchangeId(String exchangeId) {
+		this.exchangeId = exchangeId;
+	}
 
-    public Long getAccountId() {
+	public Long getAccountId() {
         return accountId;
     }
 
