@@ -101,7 +101,7 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doGet(String url, Map<String, String> params) throws HttpRequestException {
-        if (url.startsWith("http://www.huobiapps.com")) {
+        if (url.startsWith("http://www.huobiapps.com")||url.startsWith("http://172.18.6.16:8882")) {
             return OkHttpClientUtils.getInstance(null).doGet(url, params);
         } else {
             return getHttpClientUtils().doGet(url, params);

@@ -1,5 +1,6 @@
 package com.huobi.quantification.service.market.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.huobi.quantification.enums.ExchangeEnum;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +77,15 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
     @Override
     public HuobiFutureDepthResponse queryDepthByAPI(String symbol, String contractType, String type) {
         Map<String, String> params = new HashMap<>();
-        params.put("symbol", symbol + "_" + contractType);
+        String baseCoin = symbol.split("_")[0].toUpperCase();
+        if ("this_week".equalsIgnoreCase(contractType)) {
+            contractType = "CW";
+        } else if ("next_week".equalsIgnoreCase(contractType)) {
+            contractType = "NW";
+        } else {
+            contractType = "CQ";
+        }
+        params.put("symbol", baseCoin + "_" + contractType);
         params.put("type", type);
         String body = httpService.doGet(HttpConstant.HUOBI_FUTURE_DEPTH, params);
         return JSON.parseObject(body, HuobiFutureDepthResponse.class);
@@ -121,56 +131,65 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
     }
 
     @Override
-    public void updateHuobiDepth(String symbol, String contractType) {
+    public void updateHuobiDepth(String symbol, String contractType, String klineType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[Huobi深度][symbol={},contractType={}]任务开始", symbol, contractType);
-        HuobiFutureDepthResponse response = queryDepthByAPI(symbol, contractType, "step0");
-        //parseAndSaveDepth(body, OkSymbolEnum.valueSymbolOf(symbol), contractType);
+        HuobiFutureDepthResponse response = queryDepthByAPI(symbol, contractType, klineType);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            parseAndSaveDepth(response, symbol, contractType);
+        } else {
+            logger.error("获取火币深度异常，api返回为：{}", JSON.toJSONString(response));
+        }
         logger.info("[Huobi深度][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
     }
 
 
     private void parseAndSaveDepth(HuobiFutureDepthResponse response, String symbol, String contractType) {
-      /*  QuanDepthFuture quanDepthFuture = new QuanDepthFuture();
+        QuanDepthFuture quanDepthFuture = new QuanDepthFuture();
         quanDepthFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         quanDepthFuture.setDepthTs(new Date());
         String[] split = symbol.split("_");
         quanDepthFuture.setBaseCoin(split[0]);
         quanDepthFuture.setQuoteCoin(split[1]);
-        quanDepthFuture.setSymbol(symbolEnum.getSymbol());
+        quanDepthFuture.setSymbol(symbol);
         quanDepthFuture.setContractType(contractType);
-        quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
+        //quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
 
-        JSONObject jsonObject = JSON.parseObject(body);
-        List<QuanDepthFutureDetail> list = new ArrayList<>();
-        JSONObject tick = jsonObject.getJSONObject("tick");
-        JSONArray asks = tick.getJSONArray("asks");
-        for (int i = 0; i < asks.size(); i++) {
-            JSONArray item = asks.getJSONArray(i);
-            QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
-            depthDetail.setDepthFutureId(quanDepthFuture.getId());
-            depthDetail.setDetailType(DepthEnum.ASKS.getIntType());
-            depthDetail.setDetailPrice(item.getBigDecimal(0));
-            depthDetail.setDetailAmount(item.getBigDecimal(1));
-            depthDetail.setDateUpdate(new Date());
-            list.add(depthDetail);
+
+        List<QuanDepthFutureDetail> depthFutureDetails = new ArrayList<>();
+        HuobiFutureDepthResponse.TickBean tickBean = response.getTick();
+        List<List<BigDecimal>> asks = tickBean.getAsks();
+        List<List<BigDecimal>> bids = tickBean.getBids();
+
+        if (CollectionUtils.isNotEmpty(asks)) {
+            for (int i = 0; i < asks.size(); i++) {
+                List<BigDecimal> askItem = asks.get(i);
+                QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
+                depthDetail.setDepthFutureId(quanDepthFuture.getId());
+                depthDetail.setDetailType(DepthEnum.ASKS.getIntType());
+                depthDetail.setDetailPrice(askItem.get(0));
+                depthDetail.setDetailAmount(askItem.get(1));
+                depthDetail.setDateUpdate(new Date());
+                depthFutureDetails.add(depthDetail);
+            }
         }
-        JSONArray bids = tick.getJSONArray("bids");
-        for (int i = 0; i < bids.size(); i++) {
-            JSONArray item = bids.getJSONArray(i);
-            QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
-            depthDetail.setDepthFutureId(quanDepthFuture.getId());
-            depthDetail.setDetailType(DepthEnum.BIDS.getIntType());
-            depthDetail.setDetailPrice(item.getBigDecimal(0));
-            depthDetail.setDetailAmount(item.getBigDecimal(1));
-            depthDetail.setDateUpdate(new Date());
-            list.add(depthDetail);
+
+        if (CollectionUtils.isNotEmpty(bids)) {
+            for (int i = 0; i < bids.size(); i++) {
+                List<BigDecimal> bidItem = bids.get(i);
+                QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
+                depthDetail.setDepthFutureId(quanDepthFuture.getId());
+                depthDetail.setDetailType(DepthEnum.BIDS.getIntType());
+                depthDetail.setDetailPrice(bidItem.get(0));
+                depthDetail.setDetailAmount(bidItem.get(1));
+                depthDetail.setDateUpdate(new Date());
+                depthFutureDetails.add(depthDetail);
+            }
         }
-        for (QuanDepthFutureDetail detail : list) {
-            quanDepthFutureDetailMapper.insert(detail);
-        }
-        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbolEnum.getSymbol(), contractType, list);*/
+
+        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, depthFutureDetails);
     }
+
 
     @Override
     public void updateHuobiKline(String symbol, String contractType, String period) {

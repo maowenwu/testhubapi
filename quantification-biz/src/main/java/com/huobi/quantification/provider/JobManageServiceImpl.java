@@ -394,4 +394,25 @@ public class JobManageServiceImpl implements JobManageService {
         }
         return addFutureJob(jobReqDto);
     }
+
+    @Override
+    public ServiceResult addHuobiFutureDepthJob(String symbol, String contractType, String type, String cron, boolean enable) {
+        FutureJobReqDto jobReqDto = new FutureJobReqDto();
+        jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        jobReqDto.setJobType(JobTypeEnum.Depth.getJobType());
+        jobReqDto.setJobDesc(JobTypeEnum.Depth.toString());
+        JobParamDto paramDto = new JobParamDto();
+        paramDto.setSymbol(symbol);
+        paramDto.setContractType(contractType);
+        paramDto.setKlineType(type);
+
+        jobReqDto.setJobParamDto(paramDto);
+        jobReqDto.setCron(cron);
+        if (enable) {
+            jobReqDto.setState(1);
+        } else {
+            jobReqDto.setState(0);
+        }
+        return addFutureJob(jobReqDto);
+    }
 }

@@ -4,6 +4,7 @@ package com.huobi.quantification.strategy;
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureContractService;
+import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
@@ -12,6 +13,7 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dao.*;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.*;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
@@ -58,12 +60,15 @@ public class CommContext {
     private StrategyTradeFeeMapper strategyTradeFeeMapper;
     @Autowired
     private StrategyFinanceHistoryMapper financeHistoryMapper;
+    @Autowired
+    private FutureMarketService futureMarketService;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
     private String futureBaseCoin;
     private String futureQuoteCoin;
     private String futureContractCode;
+    private Integer futureLever;
 
     private Integer spotExchangeId;
     private Long spotAccountId;
@@ -88,6 +93,7 @@ public class CommContext {
         this.futureContractCode = future.getContractCode();
         this.futureBaseCoin = future.getBaseCoin();
         this.futureQuoteCoin = future.getQuotCoin();
+        this.futureLever = future.getLever();
 
         this.spotExchangeId = spot.getExchangeId();
         this.spotAccountId = spot.getAccountId();
@@ -129,9 +135,9 @@ public class CommContext {
 
     public boolean cancelAllFutureOrder() {
         FutureCancelAllOrderReqDto reqDto = new FutureCancelAllOrderReqDto();
-        reqDto.setExchangeId(spotExchangeId);
-        reqDto.setAccountId(spotAccountId);
-        reqDto.setSymbol(spotBaseCoin.toUpperCase());
+        reqDto.setExchangeId(futureExchangeId);
+        reqDto.setAccountId(futureAccountId);
+        reqDto.setSymbol(futureBaseCoin.toUpperCase());
         ServiceResult result = futureOrderService.cancelAllOrder(reqDto);
         if (result.isSuccess()) {
             return true;
@@ -218,11 +224,29 @@ public class CommContext {
         }
     }
 
+
+
     public DepthBook getFutureDepth() {
-
-        // todo
-
-        return new DepthBook();
+        String contractType = getContractTypeFromCode();
+        FutureDepthReqDto reqDto = new FutureDepthReqDto();
+        reqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        reqDto.setBaseCoin(this.futureBaseCoin);
+        reqDto.setQuoteCoin(this.futureQuoteCoin);
+        reqDto.setContractType(contractType);
+        ServiceResult<FutureDepthRespDto> result = futureMarketService.getDepth(reqDto);
+        if (result.isSuccess()) {
+            FutureDepthRespDto.DataBean data = result.getData().getData();
+            DepthBook depthBook = new DepthBook();
+            data.getAsks().forEach(e -> {
+                depthBook.getAsks().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
+            });
+            data.getBids().forEach(e -> {
+                depthBook.getBids().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
+            });
+            return depthBook;
+        } else {
+            throw new RuntimeException("获取火币现货深度异常");
+        }
     }
 
     public BigDecimal getExchangeRateOfUSDT2USD() {
@@ -409,5 +433,30 @@ public class CommContext {
         return HedgerActionEnum.valueOf(action);
     }
 
+    public Long placeOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
+        FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
+        reqDto.setExchangeId(this.futureExchangeId);
+        reqDto.setAccountId(this.futureAccountId);
+        reqDto.setContractCode(this.futureContractCode);
+        reqDto.setSide(side);
+        reqDto.setOffset(offset);
+        reqDto.setOrderType("limit");
+        reqDto.setPrice(price);
+        reqDto.setQuantity(orderAmount);
+        reqDto.setLever(this.futureLever);
+        reqDto.setSync(true);
+        try {
+            ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
+            if (result.isSuccess()) {
+                return result.getData().getExOrderId();
+            } else {
+                logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
+                return null;
+            }
+        } catch (Throwable e) {
+            logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
+            return null;
+        }
+    }
 
 }

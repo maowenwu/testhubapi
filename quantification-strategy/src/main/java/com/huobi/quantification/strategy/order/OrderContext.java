@@ -8,6 +8,7 @@ import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
+import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.*;
@@ -29,6 +30,9 @@ public class OrderContext {
 
     @Autowired
     private FutureOrderService futureOrderService;
+
+    @Autowired
+    private CommContext commContext;
 
     private StrategyMetric strategyMetric = new StrategyMetric();
 
@@ -214,7 +218,7 @@ public class OrderContext {
         }
         BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.LONG, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successBuyOpenOrderAdd(orderId);
             } else {
@@ -238,7 +242,7 @@ public class OrderContext {
         }
         BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.LONG, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successSellOpenOrderAdd(orderId);
             } else {
@@ -253,7 +257,7 @@ public class OrderContext {
     private boolean placeBuyCloseOrder(BigDecimal price, BigDecimal orderAmount) {
         BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.SHORT, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successBuyCloseOrderAdd(orderId);
                 return true;
@@ -271,7 +275,7 @@ public class OrderContext {
     public boolean placeSellCloseOrder(BigDecimal price, BigDecimal orderAmount) {
         BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.SHORT, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successSellCloseOrderAdd(orderId);
                 return true;
@@ -300,7 +304,7 @@ public class OrderContext {
             BigDecimal marginBalance = futureBalance.getMarginAvailable().subtract(config.getContractMarginReserve());
             // 期货可开张数=余额*杠杆*价格*汇率/面值
             BigDecimal amount = marginBalance.multiply(BigDecimal.valueOf(this.futureLever)).multiply(price).divide(futureExchangeConfig.getFaceValue(), 18, BigDecimal.ROUND_DOWN);
-            minAmount = min(amount, orderAmount);
+            minAmount = BigDecimalUtils.min(amount, orderAmount);
         } else {
             // 如果是平仓，那么不需要关心账户余额
             minAmount = orderAmount;
@@ -308,27 +312,19 @@ public class OrderContext {
 
         if (sideEnum == SideEnum.BUY) {
             // 看下现货账户是否有足够的币卖出
-            BigDecimal minBalance = min(minAmount.multiply(futureExchangeConfig.getFaceValue()), spotBalance.getCoin().getAvailable().subtract(config.getSpotCoinReserve()).multiply(price));
+            BigDecimal minBalance = BigDecimalUtils.min(minAmount.multiply(futureExchangeConfig.getFaceValue()), spotBalance.getCoin().getAvailable().subtract(config.getSpotCoinReserve()).multiply(price));
             BigDecimal contractAmount = minBalance.divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
             return contractAmount;
         } else {
             // 看下现货账户是否有足够的usdt买币
             BigDecimal usdBalance = minAmount.multiply(futureExchangeConfig.getFaceValue());
             // 查看现货账户可用usdt
-            BigDecimal minBalance = min(usdBalance, spotBalance.getUsdt().getAvailable().subtract(config.getSpotBalanceReserve()).multiply(exchangeRate));
+            BigDecimal minBalance = BigDecimalUtils.min(usdBalance, spotBalance.getUsdt().getAvailable().subtract(config.getSpotBalanceReserve()).multiply(exchangeRate));
             BigDecimal contractAmount = minBalance.divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
             return contractAmount;
         }
     }
 
-
-    private BigDecimal min(BigDecimal a, BigDecimal b) {
-        if (BigDecimalUtils.lessThan(a, b)) {
-            return a;
-        } else {
-            return b;
-        }
-    }
 
     public boolean cancelOrder(List<Long> orderIds) {
         List<Long> successOrderId = new ArrayList<>();
@@ -371,30 +367,12 @@ public class OrderContext {
     }
 
 
-    public Long placeOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
-        FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
-        reqDto.setExchangeId(this.futureExchangeId);
-        reqDto.setAccountId(this.futureAccountId);
-        reqDto.setContractCode(this.futureContractCode);
-        reqDto.setSide(side);
-        reqDto.setOffset(offset);
-        reqDto.setOrderType("limit");
-        reqDto.setPrice(price);
-        reqDto.setQuantity(orderAmount);
-        reqDto.setLever(this.futureLever);
-        reqDto.setSync(true);
-        try {
-            ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
-            if (result.isSuccess()) {
-                Long exOrderId = result.getData().getExOrderId();
-                postPlaceOrder(exOrderId, side, offset, price, orderAmount);
-                return exOrderId;
-            } else {
-                logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
-                return null;
-            }
-        } catch (Throwable e) {
-            logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
+    public Long placeInternalOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
+        Long exOrderId = commContext.placeOrder(side, offset, price, orderAmount);
+        if (exOrderId != null) {
+            postPlaceOrder(exOrderId, side, offset, price, orderAmount);
+            return exOrderId;
+        } else {
             return null;
         }
     }

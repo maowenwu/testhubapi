@@ -1,7 +1,6 @@
 package com.huobi.quantification.strategy.entity;
 
 
-import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.StrategyApplication;
 import com.huobi.quantification.strategy.order.OrderContext;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @SpringBootTest(classes = StrategyApplication.class)
 @RunWith(SpringRunner.class)
@@ -20,13 +18,6 @@ public class OrderContextTest {
 
     @Autowired
     private OrderContext orderContext;
-
-
-
-    @Test
-    public void placeOrder() {
-        orderContext.placeOrder(1,1,BigDecimal.valueOf(152.24),BigDecimal.valueOf(10));
-    }
 
 
     @Test

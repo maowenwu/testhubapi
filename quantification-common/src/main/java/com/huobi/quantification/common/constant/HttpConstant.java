@@ -48,10 +48,10 @@ public class HttpConstant {
 
     /********HUOBI 期货********/
     // market 相关
-    public static final String HUOBI_FUTURE_TICKER = "http://127.0.0.1:8882/market/detail/merged";
-    public static final String HUOBI_FUTURE_DEPTH = "http://127.0.0.1:8882/market/depth";
-    public static final String HUOBI_FUTURE_KLINE = "http://127.0.0.1:8882/market/history/kline";
-    public static final String HUOBI_FUTURE_TRADE = "http://127.0.0.1:8882/market/history/trade";
+    public static final String HUOBI_FUTURE_TICKER = "http://172.18.6.16:8882/market/detail/merged";
+    public static final String HUOBI_FUTURE_DEPTH = "http://172.18.6.16:8882/market/depth";
+    public static final String HUOBI_FUTURE_KLINE = "http://172.18.6.16:8882/market/history/kline";
+    public static final String HUOBI_FUTURE_TRADE = "http://172.18.6.16:8882/market/history/trade";
 
     // account相关
     public static final String HUOBI_FUTURE_ACCOUNT_INFO = "http://www.huobiapps.com/contract-query/v1/contract_account_info";

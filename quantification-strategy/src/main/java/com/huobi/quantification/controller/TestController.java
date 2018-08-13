@@ -9,6 +9,7 @@ import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -209,5 +210,16 @@ public class TestController {
         ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
         System.out.println(position);
         return JSON.toJSONString(position);
+    }
+
+    @RequestMapping("/getDepth")
+    public String getDepth(){
+        FutureDepthReqDto reqDto = new FutureDepthReqDto();
+        reqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        reqDto.setBaseCoin("btc");
+        reqDto.setQuoteCoin("usdt");
+        reqDto.setContractType("this_week");
+        ServiceResult<FutureDepthRespDto> depth = futureMarketService.getDepth(reqDto);
+        return JSON.toJSONString(depth);
     }
 }

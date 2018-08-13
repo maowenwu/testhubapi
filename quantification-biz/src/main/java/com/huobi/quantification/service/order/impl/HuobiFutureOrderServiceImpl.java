@@ -214,10 +214,15 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         params.put("symbol", symbol);
         params.put("userId", "156138");
         String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER_CANCEL_ALL, params);
+        System.out.println(body);
         HuobiFutureOrderCancelAllResponse response = JSON.parseObject(body, HuobiFutureOrderCancelAllResponse.class);
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             return true;
         } else {
+            // 没有可撤订单可以算成功的
+            if (Integer.valueOf(1051).equals(response.getErrCode())) {
+                return true;
+            }
             return false;
         }
     }
@@ -254,10 +259,10 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             e.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         });
         // 2  改用批量插入并且数据库过滤  根据exchangeId  exOrderId判断
-        Stopwatch start=Stopwatch.createStarted();
-        int success=quanOrderFutureMapper.insertBatch(allList);
-        logger.info("批量插入耗时:{},total:{},success:{}",start,allList.size(),success);
-        
+        Stopwatch start = Stopwatch.createStarted();
+        int success = quanOrderFutureMapper.insertBatch(allList);
+        logger.info("批量插入耗时:{},total:{},success:{}", start, allList.size(), success);
+
     }
 
 

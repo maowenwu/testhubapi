@@ -43,14 +43,8 @@ public class FutureMarketServiceImpl implements FutureMarketService {
             FutureCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新价格
-                    QuanTradeFuture tradeFuture = null;
-                    if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
-                        QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
-                        tradeFuture = redisService.getCurrentPriceFuture(reqDto.getExchangeId(), contractCode.getSymbol(), contractCode.getContractType());
-                    } else {
-                        tradeFuture = redisService.getCurrentPriceFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
-                                , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
-                    }
+                    QuanTradeFuture tradeFuture = redisService.getCurrentPriceFuture(reqDto.getExchangeId(),
+                            getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()), reqDto.getContractType());
                     if (tradeFuture == null) {
                         ThreadUtils.sleep10();
                         continue;
@@ -85,15 +79,8 @@ public class FutureMarketServiceImpl implements FutureMarketService {
         try {
             FutureDepthRespDto depthRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
-                    // 从redis读取最新K线
-                    List<QuanDepthFutureDetail> depthFuture;
-                    if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
-                        QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
-                        depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(), contractCode.getSymbol(), contractCode.getContractType());
-                    } else {
-                        depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId()
-                                , reqDto.getBaseCoin(), reqDto.getQuoteCoin()), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
-                    }
+                    List<QuanDepthFutureDetail> depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(),
+                            getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()), reqDto.getContractType());
                     if (CollectionUtils.isEmpty(depthFuture)) {
                         ThreadUtils.sleep10();
                         continue;
@@ -151,16 +138,8 @@ public class FutureMarketServiceImpl implements FutureMarketService {
             FutureKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新K线
-                    List<QuanKlineFuture> klineFutures = null;
-                    if (StringUtils.isNotEmpty(reqDto.getContractCode())) {
-                        QuanContractCode contractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
-                        klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(),
-                                contractCode.getSymbol(), reqDto.getPeriod(), contractCode.getContractType());
-                    } else {
-                        klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(),
-                                getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()),
-                                reqDto.getPeriod(), getContractType(reqDto.getExchangeId(), reqDto.getContractType()));
-                    }
+                    List<QuanKlineFuture> klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(), getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()),
+                            reqDto.getPeriod(),reqDto.getContractType());
                     if (CollectionUtils.isEmpty(klineFutures)) {
                         ThreadUtils.sleep10();
                         continue;
@@ -214,7 +193,7 @@ public class FutureMarketServiceImpl implements FutureMarketService {
         try {
             FutureCurrentIndexRespDto indexRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
-                    QuanIndexFuture futureIndex = redisService.getIndexFuture(reqDto.getExchangeId(), getSymbol(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getQuoteCoin()));
+                    QuanIndexFuture futureIndex = redisService.getIndexFuture(reqDto.getExchangeId(), getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()));
                     if (futureIndex == null) {
                         ThreadUtils.sleep10();
                         continue;
@@ -240,19 +219,9 @@ public class FutureMarketServiceImpl implements FutureMarketService {
         return serviceResult;
     }
 
-    private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
-        if (exchangeId == ExchangeEnum.OKEX.getExId()) {
-            return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
-        } else {
-            throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
-        }
+    private String getSymbol(String baseCoin, String quoteCoin) {
+        return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
     }
 
-    private String getContractType(int exchangeId, String contractType) {
-        if (exchangeId == ExchangeEnum.OKEX.getExId()) {
-            return contractType;
-        } else {
-            throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
-        }
-    }
+
 }

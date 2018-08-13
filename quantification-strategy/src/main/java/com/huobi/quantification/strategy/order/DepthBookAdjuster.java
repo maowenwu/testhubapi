@@ -99,18 +99,20 @@ public class DepthBookAdjuster {
     private void adjPriceByFee(DepthBook depthBook) {
         List<DepthBook.Depth> asks = depthBook.getAsks();
         asks.forEach(e -> {
-            BigDecimal newPrice = e.getPrice().multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getContractFee()))
-                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()))
-                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getDeliveryFee()))
-                    .multiply(BigDecimal.ONE.subtract(orderConfig.getExpectYields()));
+            BigDecimal newPrice = e.getPrice()
+                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getContractFee()))
+                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getSpotFee()))
+                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getDeliveryFee()))
+                    .multiply(BigDecimal.ONE.add(orderConfig.getExpectYields()));
             e.setPrice(newPrice);
         });
         List<DepthBook.Depth> bids = depthBook.getBids();
         bids.forEach(e -> {
-            BigDecimal newPrice = e.getPrice().multiply(BigDecimal.ONE.add(tradeFeeConfig.getContractFee()))
-                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getSpotFee()))
-                    .multiply(BigDecimal.ONE.add(tradeFeeConfig.getDeliveryFee()))
-                    .multiply(BigDecimal.ONE.add(orderConfig.getExpectYields()));
+            BigDecimal newPrice = e.getPrice()
+                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getContractFee()))
+                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()))
+                    .multiply(BigDecimal.ONE.subtract(tradeFeeConfig.getDeliveryFee()))
+                    .multiply(BigDecimal.ONE.subtract(orderConfig.getExpectYields()));
             e.setPrice(newPrice);
         });
     }

@@ -13,11 +13,19 @@ public class DepthBook {
     private List<Depth> bids = new ArrayList<>();
 
     public BigDecimal getAsk1() {
-        return asks.get(0).getPrice();
+        if (asks.size() > 0) {
+            return asks.get(0).getPrice();
+        } else {
+            return null;
+        }
     }
 
     public BigDecimal getBid1() {
-        return bids.get(0).getPrice();
+        if (bids.size() > 0) {
+            return bids.get(0).getPrice();
+        } else {
+            return null;
+        }
     }
 
     public List<Depth> getAsks() {

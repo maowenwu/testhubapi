@@ -28,6 +28,8 @@ public interface JobManageService {
 
     ServiceResult addHuobiFutureContractCodeJob(String cron, boolean enable);
 
+    ServiceResult addHuobiFutureDepthJob(String symbol, String contractType, String type, String cron, boolean enable);
+
     /******************Huobi 现货 **********************/
     ServiceResult addHuobiSpotAccountJob(Long accountId, String cron, boolean enable);
 

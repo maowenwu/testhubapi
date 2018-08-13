@@ -273,15 +273,6 @@
             <if test="riskRateLevel3 != null">
                 risk_rate_level3 = #{riskRateLevel3,jdbcType=DECIMAL},
             </if>
-            <if test="buyCloseSlippage != null">
-                buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
-            </if>
-            <if test="sellCloseSlippage != null">
-                sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
-            </if>
-            <if test="maxCloseAmount != null">
-                max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
-            </if>
             <if test="netPositionLevel1 != null">
                 net_position_level1 = #{netPositionLevel1,jdbcType=DECIMAL},
             </if>

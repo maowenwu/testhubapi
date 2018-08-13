@@ -4,155 +4,155 @@ import java.math.BigDecimal;
 
 public class StrategyOrderConfig {
     /**
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private String symbol;
 
     /**
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private String contractType;
 
     /**
      * 摆单间隔时间(每次摆单后，sleep多少秒进入下一轮)
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private Integer placeOrderInterval;
 
     /**
      * 期望收益率
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal expectYields;
 
     /**
      * 合并深度价格step
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal priceStep;
 
     /**
      * 拷贝系数-下限(用于设置depthbook数量)
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal minCopyFactor;
 
     /**
      * 拷贝系数-上限(用于设置depthbook数量)
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal maxCopyFactor;
 
     /**
      * 单价格最大委托数量(张)
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private Integer maxAmountPerPrice;
 
     /**
      * 买单价格向下调整数值
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal bidsBasisPrice;
 
     /**
      * 卖单价格向上调整数值
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal asksBasisPrice;
 
     /**
      * 买单挂单数量上限(个)
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private Integer bidsMaxAmount;
 
     /**
      * 卖单挂单数量上限(个)
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private Integer asksMaxAmount;
 
     /**
      * 多仓数量上限(张)，包括持仓和未成交的开仓单
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal longMaxAmount;
 
     /**
      * 空仓数量上限(张)，包括持仓和未成交的开仓单
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal shortMaxAmount;
 
     /**
      * 多仓持仓总量上限(张)，用于开平控制
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal maxLongPosition;
 
     /**
      * 空仓持仓总量上限(张)，用于开平控制
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal maxShortPosition;
 
     /**
      * 合约账户保留保证金
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal contractMarginReserve;
 
     /**
      * 币币账户保留币量
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal spotCoinReserve;
 
     /**
      * 币币账户保留资金
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal spotBalanceReserve;
 
     /**
      * 临近交割停止下开仓单时间
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private String stopTime1;
 
     /**
      * 停止摆盘开始时间
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private String stopTime2;
 
     /**
      * 强平买单滑点
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal buyCloseSlippage;
 
     /**
      * 强平卖单滑点
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private BigDecimal sellCloseSlippage;
 
     /**
      * 强平单单笔最大数量（张）
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
-    private Integer maxCloseAmount;
+    private BigDecimal maxCloseAmount;
 
     /**
      * 强平下单间隔
-     * @mbg.generated 2018-08-11 14:08:36
+     * @mbg.generated 2018-08-11 15:41:23
      */
     private Integer closeOrderInterval;
 
@@ -348,11 +348,11 @@ public class StrategyOrderConfig {
         this.sellCloseSlippage = sellCloseSlippage;
     }
 
-    public Integer getMaxCloseAmount() {
+    public BigDecimal getMaxCloseAmount() {
         return maxCloseAmount;
     }
 
-    public void setMaxCloseAmount(Integer maxCloseAmount) {
+    public void setMaxCloseAmount(BigDecimal maxCloseAmount) {
         this.maxCloseAmount = maxCloseAmount;
     }
 

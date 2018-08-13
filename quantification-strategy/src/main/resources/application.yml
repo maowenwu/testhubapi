@@ -46,7 +46,7 @@ strategy:
       accountId: 101
       baseCoin: btc
       quotCoin: usd
-      contractCode: BTC180928
+      contractCode: BTC180817
       lever: 10
     spot:
       exchangeId: 1

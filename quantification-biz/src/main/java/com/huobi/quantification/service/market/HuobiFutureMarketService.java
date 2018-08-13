@@ -36,7 +36,7 @@ public interface HuobiFutureMarketService {
 
     void updateHuobiCurrentPrice(String symbol, String contractType);
 
-    void updateHuobiDepth(String symbol, String contractType);
+    void updateHuobiDepth(String symbol, String contractType, String klineType);
 
     void updateHuobiKline(String symbol, String contractType, String period);
 

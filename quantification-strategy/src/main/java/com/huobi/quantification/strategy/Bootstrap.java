@@ -4,6 +4,7 @@ package com.huobi.quantification.strategy;
 import com.alibaba.fastjson.JSON;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.common.context.ApplicationContextHolder;
+import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.hedge.Hedger;
 import com.huobi.quantification.strategy.order.OrderCopier;
@@ -38,12 +39,14 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "percent10", "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotCurrentPriceJob(spot.getBaseCoin() + spot.getQuotCoin(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotAccountJob(spot.getAccountId(), "0/1 * * * * ?", true);
+
                 jobManageService.addHuobiFuturePositionJob(future.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFutureUserInfoJob(future.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFutureContractCodeJob("0/10 * * * * ?", true);
+                jobManageService.addHuobiFutureDepthJob(future.getBaseCoin() + "_" + future.getQuotCoin(), "this_week", "step0", "0/1 * * * * ?", true);
                 logger.info("注册job完成");
                 // 等待3秒，保证job已经完全运行
-                //sleep(3000);
+                ThreadUtils.sleep(3000);
                 contextInit(group);
                 startOrderCopierWithConfig(group);
                 startHedgerWithConfig(group);

@@ -8,9 +8,8 @@ public class FutureDepthReqDto implements Serializable {
     private String baseCoin;
     private String quoteCoin;
     private String contractType;
-    private String contractCode;
-    private long timeout;
-    private long maxDelay;
+    private long timeout = 100;
+    private long maxDelay = 1000;
 
     public int getExchangeId() {
         return exchangeId;
@@ -42,14 +41,6 @@ public class FutureDepthReqDto implements Serializable {
 
     public void setContractType(String contractType) {
         this.contractType = contractType;
-    }
-
-    public String getContractCode() {
-        return contractCode;
-    }
-
-    public void setContractCode(String contractCode) {
-        this.contractCode = contractCode;
     }
 
     public long getTimeout() {

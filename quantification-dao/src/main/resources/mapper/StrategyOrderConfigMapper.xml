@@ -26,7 +26,7 @@
         <result column="stop_time2" jdbcType="VARCHAR" property="stopTime2"/>
         <result column="buy_close_slippage" jdbcType="DECIMAL" property="buyCloseSlippage"/>
         <result column="sell_close_slippage" jdbcType="DECIMAL" property="sellCloseSlippage"/>
-        <result column="max_close_amount" jdbcType="INTEGER" property="maxCloseAmount"/>
+        <result column="max_close_amount" jdbcType="DECIMAL" property="maxCloseAmount"/>
         <result column="close_order_interval" jdbcType="INTEGER" property="closeOrderInterval"/>
     </resultMap>
     <sql id="Base_Column_List">
@@ -64,7 +64,7 @@
       #{maxLongPosition,jdbcType=DECIMAL}, #{maxShortPosition,jdbcType=DECIMAL}, #{contractMarginReserve,jdbcType=DECIMAL},
       #{spotCoinReserve,jdbcType=DECIMAL}, #{spotBalanceReserve,jdbcType=DECIMAL}, #{stopTime1,jdbcType=VARCHAR},
       #{stopTime2,jdbcType=VARCHAR}, #{buyCloseSlippage,jdbcType=DECIMAL}, #{sellCloseSlippage,jdbcType=DECIMAL},
-      #{maxCloseAmount,jdbcType=INTEGER}, #{closeOrderInterval,jdbcType=INTEGER})
+      #{maxCloseAmount,jdbcType=DECIMAL}, #{closeOrderInterval,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
         insert into strategy_order_config
@@ -222,7 +222,7 @@
                 #{sellCloseSlippage,jdbcType=DECIMAL},
             </if>
             <if test="maxCloseAmount != null">
-                #{maxCloseAmount,jdbcType=INTEGER},
+                #{maxCloseAmount,jdbcType=DECIMAL},
             </if>
             <if test="closeOrderInterval != null">
                 #{closeOrderInterval,jdbcType=INTEGER},
@@ -302,7 +302,7 @@
                 sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
             </if>
             <if test="maxCloseAmount != null">
-                max_close_amount = #{maxCloseAmount,jdbcType=INTEGER},
+                max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
             </if>
             <if test="closeOrderInterval != null">
                 close_order_interval = #{closeOrderInterval,jdbcType=INTEGER},
@@ -335,7 +335,7 @@
       stop_time2 = #{stopTime2,jdbcType=VARCHAR},
       buy_close_slippage = #{buyCloseSlippage,jdbcType=DECIMAL},
       sell_close_slippage = #{sellCloseSlippage,jdbcType=DECIMAL},
-      max_close_amount = #{maxCloseAmount,jdbcType=INTEGER},
+      max_close_amount = #{maxCloseAmount,jdbcType=DECIMAL},
       close_order_interval = #{closeOrderInterval,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
