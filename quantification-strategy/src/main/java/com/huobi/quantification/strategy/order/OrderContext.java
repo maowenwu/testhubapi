@@ -103,19 +103,26 @@ public class OrderContext {
      * @param depthBook
      */
     public List<FutureOrder> cancelOrderNotInDepthBook(DepthBook depthBook) {
-        List<DepthBook.Depth> allDepth = new ArrayList<>();
-        allDepth.addAll(depthBook.getAsks());
-        allDepth.addAll(depthBook.getBids());
-        List<BigDecimal> allPrice = allDepth.stream().map(e -> e.getPrice()).collect(Collectors.toList());
+        List<BigDecimal> bidPrice = depthBook.getBids().stream().map(e -> e.getPrice()).collect(Collectors.toList());
+        List<BigDecimal> askPrice = depthBook.getAsks().stream().map(e -> e.getPrice()).collect(Collectors.toList());
 
         List<FutureOrder> preCancelOrders = new ArrayList<>();
         // 所有已经下的单有哪些价格
         Map<BigDecimal, List<FutureOrder>> orderMap = getActiveOrderMap();
         orderMap.forEach((k, v) -> {
-            if (!allPrice.contains(k)) {
-                // 已下订单价格不在depthBook中，那么收集起来准备取消
-                preCancelOrders.addAll(v);
-            }
+            // 已下订单价格不在depthBook中，那么收集起来准备取消
+            v.stream().forEach(e -> {
+                SideEnum sideEnum = SideEnum.valueOf(e.getSide());
+                if (sideEnum == SideEnum.BUY) {
+                    if (!bidPrice.contains(k)) {
+                        preCancelOrders.add(e);
+                    }
+                } else {
+                    if (!askPrice.contains(k)) {
+                        preCancelOrders.add(e);
+                    }
+                }
+            });
         });
 
         List<Long> canceledOrderIds = new ArrayList<>();

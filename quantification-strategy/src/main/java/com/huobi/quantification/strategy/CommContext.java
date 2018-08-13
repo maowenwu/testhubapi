@@ -293,7 +293,7 @@ public class CommContext {
                 return futurePosition;
             }
         } else {
-            throw new RuntimeException("获取期货持仓信息失败，exchangeId=" + futureExchangeId + "，futureAccountId=" + futureAccountId + "，futureCoinType=" + futureBaseCoin + ",失败原因={}" + result.getMessage());
+            return null;
         }
     }
 
@@ -457,4 +457,23 @@ public class CommContext {
         }
     }
 
+    /**
+     * 根据contractCode获取对应coin的保证金率
+     *
+     * @param contractCode
+     * @return
+     */
+    public BigDecimal getRiskRate() {
+        FutureBalanceReqDto balanceReqDto = new FutureBalanceReqDto();
+        balanceReqDto.setExchangeId(futureExchangeId);
+        balanceReqDto.setAccountId(futureAccountId);
+        balanceReqDto.setCoinType(futureBaseCoin);
+        ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(balanceReqDto);
+        if (result.isSuccess()) {
+            return result.getData().getData().get(futureBaseCoin).getRiskRate();
+        } else {
+            logger.error("取不到期货账户余额，错误信息：{}", result.getMessage());
+            throw new RuntimeException("取不到期货账户余额，错误信息：" + result.getMessage());
+        }
+    }
 }

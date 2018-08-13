@@ -4,6 +4,7 @@ package com.huobi.quantification.strategy.order;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyOrderConfig;
+import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.CommContext;
@@ -61,6 +62,11 @@ public class OrderCloser {
                     logger.error("获取期货订单参数配置异常");
                     return false;
                 }
+                StrategyRiskConfig riskConfig = commContext.getStrategyRiskConfig();
+                if (riskConfig == null) {
+                    logger.error("获取风控参数配置异常");
+                    return false;
+                }
                 FuturePosition position = commContext.getFuturePosition();
                 if (position == null) {
                     logger.error("获取期货持仓异常");
@@ -76,7 +82,14 @@ public class OrderCloser {
                 BigDecimal ask1 = depthBook.getAsk1();
                 BigDecimal bid1 = depthBook.getBid1();
                 boolean b = commContext.cancelAllFutureOrder();
-                if (!b) {
+                if (b) {
+                    // 如果撤单后保证金率恢复正常直接退出强平逻辑
+                    BigDecimal riskRate = commContext.getRiskRate();
+                    if (BigDecimalUtils.moreThan(riskRate, riskConfig.getRiskRateLevel3())) {
+                        forceCloseOrderEnable.set(false);
+                        return false;
+                    }
+                } else {
                     logger.error("获取期货所有订单异常");
                     return false;
                 }
