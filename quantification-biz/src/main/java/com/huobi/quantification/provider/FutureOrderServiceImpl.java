@@ -93,6 +93,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             FuturePlaceOrderRespDto respDto = new FuturePlaceOrderRespDto();
             respDto.setInnerOrderId(orderFuture.getInnerOrderId());
             respDto.setLinkOrderId(reqDto.getLinkOrderId());
+            reqDto.setClientOrderId(orderFuture.getInnerOrderId());
             Long exOrderId = doPlaceHuobiOrder(reqDto);
             // 下单完成后更新exOrderId到order表
             if (exOrderId != null) {
@@ -137,7 +138,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         }
         request.setLeverRate(reqDto.getLever() + "");
         request.setOrderPriceType("limit");
-        request.setClientOrderId(System.currentTimeMillis() + "");
+        request.setClientOrderId(reqDto.getClientOrderId() + "");
         Long exOrderId = huobiFutureOrderService.placeOrder(request);
         return exOrderId;
     }

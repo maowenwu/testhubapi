@@ -394,6 +394,12 @@ public class OrderContext {
         futureOrder.setOrderQty(orderAmount);
         futureOrder.setDealQty(BigDecimal.ZERO);
         orderReader.addOrder(futureOrder);
+
+        //todo 减期货资产保证金 张数*面值/价格/杠杆
+
+        // todo 减去期货持仓
+
+        //
     }
 
 

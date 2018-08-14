@@ -25,6 +25,7 @@ public class FuturePlaceOrderReqDto implements Serializable {
     private Long linkOrderId;
     // 是否同步调用
     private boolean sync;
+    private Long clientOrderId;
 
 
     public int getExchangeId() {
@@ -137,6 +138,14 @@ public class FuturePlaceOrderReqDto implements Serializable {
 
     public void setSync(boolean sync) {
         this.sync = sync;
+    }
+
+    public Long getClientOrderId() {
+        return clientOrderId;
+    }
+
+    public void setClientOrderId(Long clientOrderId) {
+        this.clientOrderId = clientOrderId;
     }
 
     @Override

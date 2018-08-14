@@ -52,7 +52,7 @@ public class DepthBookAdjuster {
             DepthBook depthBook = commContext.getSpotDepth();
             // 如果币币现货是以非USD计价，则所有买卖价格，需要乘以汇率，转化为USD计价
             adjPriceByExchangeRate(exchangeRate, depthBook);
-            // 将比特币转为张
+            // 将比特币转为张，值为小数
             calcVolume(depthBook);
             // 考虑手续费和收益率，买卖单调整后价格
             adjPriceByFee(depthBook);
@@ -66,6 +66,8 @@ public class DepthBookAdjuster {
             sortDepthBook(depthBook);
             // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
             adjMaxAmount(depthBook);
+            // 下单量调整为整数
+            roundDownVolume(depthBook);
             logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());
             return depthBook;
         } catch (Exception e) {
@@ -74,6 +76,16 @@ public class DepthBookAdjuster {
         }
     }
 
+    private void roundDownVolume(DepthBook depthBook) {
+        List<DepthBook.Depth> asks = depthBook.getAsks();
+        List<DepthBook.Depth> bids = depthBook.getBids();
+        asks.forEach(e -> {
+            e.setAmount(e.getAmount().divide(BigDecimal.ONE, 0, BigDecimal.ROUND_DOWN));
+        });
+        bids.forEach(e -> {
+            e.setAmount(e.getAmount().divide(BigDecimal.ONE, 0, BigDecimal.ROUND_DOWN));
+        });
+    }
 
     /**
      * 使用汇率修正价格
@@ -233,12 +245,12 @@ public class DepthBookAdjuster {
      */
     private void calcVolume(DepthBook depthBook) {
         depthBook.getAsks().forEach(e -> {
-            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(futureExchangeConfig.getFaceValue(), 18, BigDecimal.ROUND_FLOOR);
             e.setAmount(volume);
         });
 
         depthBook.getBids().forEach(e -> {
-            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_FLOOR);
+            BigDecimal volume = e.getPrice().multiply(e.getAmount()).divide(futureExchangeConfig.getFaceValue(), 18, BigDecimal.ROUND_FLOOR);
             e.setAmount(volume);
         });
     }

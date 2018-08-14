@@ -73,7 +73,7 @@ public class RiskMonitor {
             checkNetPosition();
             checkProfit();
             logger.info("========>合约监控第{}轮 结束，耗时：{}", counter.get(), started);
-            ThreadUtils.sleep(3000);
+            ThreadUtils.sleep(riskConfig.getRiskInterval() * 1000);
             return true;
         } catch (Exception e) {
             logger.error("监控保证金率期间出现异常", e);

@@ -2,34 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.StrategyRiskConfigMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyRiskConfig">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
-        <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
-        <result column="risk_rate_level1" jdbcType="DECIMAL" property="riskRateLevel1"/>
-        <result column="risk_rate_level2" jdbcType="DECIMAL" property="riskRateLevel2"/>
-        <result column="risk_rate_level3" jdbcType="DECIMAL" property="riskRateLevel3"/>
-        <result column="net_position_level1" jdbcType="DECIMAL" property="netPositionLevel1"/>
-        <result column="net_position_level2" jdbcType="DECIMAL" property="netPositionLevel2"/>
-        <result column="curr_profit_level1" jdbcType="DECIMAL" property="currProfitLevel1"/>
-        <result column="curr_profit_level2" jdbcType="DECIMAL" property="currProfitLevel2"/>
-        <result column="total_profit_level1" jdbcType="DECIMAL" property="totalProfitLevel1"/>
-        <result column="total_profit_level2" jdbcType="DECIMAL" property="totalProfitLevel2"/>
-        <result column="risk_order_ctrl" jdbcType="INTEGER" property="riskOrderCtrl"/>
-        <result column="risk_hedge_ctrl" jdbcType="INTEGER" property="riskHedgeCtrl"/>
-        <result column="net_order_ctrl" jdbcType="INTEGER" property="netOrderCtrl"/>
-        <result column="net_hedge_ctrl" jdbcType="INTEGER" property="netHedgeCtrl"/>
-        <result column="profit_order_ctrl" jdbcType="INTEGER" property="profitOrderCtrl"/>
-        <result column="profit_hedge_ctrl" jdbcType="INTEGER" property="profitHedgeCtrl"/>
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+        <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+        <result column="risk_rate_level1" jdbcType="DECIMAL" property="riskRateLevel1" />
+        <result column="risk_rate_level2" jdbcType="DECIMAL" property="riskRateLevel2" />
+        <result column="risk_rate_level3" jdbcType="DECIMAL" property="riskRateLevel3" />
+        <result column="net_position_level1" jdbcType="DECIMAL" property="netPositionLevel1" />
+        <result column="net_position_level2" jdbcType="DECIMAL" property="netPositionLevel2" />
+        <result column="curr_profit_level1" jdbcType="DECIMAL" property="currProfitLevel1" />
+        <result column="curr_profit_level2" jdbcType="DECIMAL" property="currProfitLevel2" />
+        <result column="total_profit_level1" jdbcType="DECIMAL" property="totalProfitLevel1" />
+        <result column="total_profit_level2" jdbcType="DECIMAL" property="totalProfitLevel2" />
+        <result column="risk_order_ctrl" jdbcType="INTEGER" property="riskOrderCtrl" />
+        <result column="risk_hedge_ctrl" jdbcType="INTEGER" property="riskHedgeCtrl" />
+        <result column="net_order_ctrl" jdbcType="INTEGER" property="netOrderCtrl" />
+        <result column="net_hedge_ctrl" jdbcType="INTEGER" property="netHedgeCtrl" />
+        <result column="profit_order_ctrl" jdbcType="INTEGER" property="profitOrderCtrl" />
+        <result column="profit_hedge_ctrl" jdbcType="INTEGER" property="profitHedgeCtrl" />
+        <result column="risk_interval" jdbcType="INTEGER" property="riskInterval" />
     </resultMap>
     <sql id="Base_Column_List">
     id, symbol, contract_type, risk_rate_level1, risk_rate_level2, risk_rate_level3,
     net_position_level1, net_position_level2, curr_profit_level1, curr_profit_level2,
     total_profit_level1, total_profit_level2, risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl,
-    net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl
+    net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl, risk_interval
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from strategy_risk_config
         where id = #{id,jdbcType=INTEGER}
     </select>
@@ -43,15 +44,15 @@
       net_position_level1, net_position_level2, curr_profit_level1,
       curr_profit_level2, total_profit_level1, total_profit_level2,
       risk_order_ctrl, risk_hedge_ctrl, net_order_ctrl,
-      net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl
-      )
+      net_hedge_ctrl, profit_order_ctrl, profit_hedge_ctrl,
+      risk_interval)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR},
       #{riskRateLevel1,jdbcType=DECIMAL}, #{riskRateLevel2,jdbcType=DECIMAL}, #{riskRateLevel3,jdbcType=DECIMAL},
       #{netPositionLevel1,jdbcType=DECIMAL}, #{netPositionLevel2,jdbcType=DECIMAL}, #{currProfitLevel1,jdbcType=DECIMAL},
       #{currProfitLevel2,jdbcType=DECIMAL}, #{totalProfitLevel1,jdbcType=DECIMAL}, #{totalProfitLevel2,jdbcType=DECIMAL},
       #{riskOrderCtrl,jdbcType=INTEGER}, #{riskHedgeCtrl,jdbcType=INTEGER}, #{netOrderCtrl,jdbcType=INTEGER},
-      #{netHedgeCtrl,jdbcType=INTEGER}, #{profitOrderCtrl,jdbcType=INTEGER}, #{profitHedgeCtrl,jdbcType=INTEGER}
-      )
+      #{netHedgeCtrl,jdbcType=INTEGER}, #{profitOrderCtrl,jdbcType=INTEGER}, #{profitHedgeCtrl,jdbcType=INTEGER},
+      #{riskInterval,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyRiskConfig">
         insert into strategy_risk_config
@@ -110,6 +111,9 @@
             <if test="profitHedgeCtrl != null">
                 profit_hedge_ctrl,
             </if>
+            <if test="riskInterval != null">
+                risk_interval,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -165,6 +169,9 @@
             </if>
             <if test="profitHedgeCtrl != null">
                 #{profitHedgeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="riskInterval != null">
+                #{riskInterval,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -222,6 +229,9 @@
             <if test="profitHedgeCtrl != null">
                 profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER},
             </if>
+            <if test="riskInterval != null">
+                risk_interval = #{riskInterval,jdbcType=INTEGER},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -243,7 +253,8 @@
       net_order_ctrl = #{netOrderCtrl,jdbcType=INTEGER},
       net_hedge_ctrl = #{netHedgeCtrl,jdbcType=INTEGER},
       profit_order_ctrl = #{profitOrderCtrl,jdbcType=INTEGER},
-      profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER}
+      profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER},
+      risk_interval = #{riskInterval,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 
@@ -308,6 +319,9 @@
             </if>
             <if test="profitHedgeCtrl != null">
                 profit_hedge_ctrl = #{profitHedgeCtrl,jdbcType=INTEGER},
+            </if>
+            <if test="riskInterval != null">
+                risk_interval = #{riskInterval,jdbcType=INTEGER},
             </if>
         </set>
         where symbol=#{symbol} and contract_type=#{contractType}

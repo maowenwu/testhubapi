@@ -4,105 +4,110 @@ import java.math.BigDecimal;
 
 public class StrategyRiskConfig {
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer id;
 
     /**
      * 币对
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private String symbol;
 
     /**
      * 合约类型
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private String contractType;
 
     /**
      * 保证金率限制1
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal riskRateLevel1;
 
     /**
      * 保证金率限制2
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal riskRateLevel2;
 
     /**
      * 保证金率限制3
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal riskRateLevel3;
 
     /**
      * 净头寸阈值1
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal netPositionLevel1;
 
     /**
      * 净头寸阈值2
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal netPositionLevel2;
 
     /**
      * 单次盈亏阈值
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal currProfitLevel1;
 
     /**
      * 单次盈亏阈值2
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal currProfitLevel2;
 
     /**
      * 总盈亏阈值1
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal totalProfitLevel1;
 
     /**
      * 总盈亏阈值2
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private BigDecimal totalProfitLevel2;
 
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer riskOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer riskHedgeCtrl;
 
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer netOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer netHedgeCtrl;
 
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer profitOrderCtrl;
 
     /**
-     * @mbg.generated 2018-08-11 14:03:34
+     * @mbg.generated 2018-08-14 13:47:32
      */
     private Integer profitHedgeCtrl;
+
+    /**
+     * @mbg.generated 2018-08-14 13:47:32
+     */
+    private Integer riskInterval;
 
     public Integer getId() {
         return id;
@@ -246,5 +251,13 @@ public class StrategyRiskConfig {
 
     public void setProfitHedgeCtrl(Integer profitHedgeCtrl) {
         this.profitHedgeCtrl = profitHedgeCtrl;
+    }
+
+    public Integer getRiskInterval() {
+        return riskInterval;
+    }
+
+    public void setRiskInterval(Integer riskInterval) {
+        this.riskInterval = riskInterval;
     }
 }
