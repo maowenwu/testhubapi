@@ -442,6 +442,17 @@ public class OrderContext {
 
     // 撤销所有开仓订单
     public void cancelAllOpenOrder() {
-        // todo
+        List<FutureOrder> preCancelOrder = new ArrayList<>();
+        Map<BigDecimal, List<FutureOrder>> orderMap = getActiveOrderMap();
+        orderMap.forEach((k, v) -> {
+            v.stream().forEach(e -> {
+                if (OffsetEnum.valueOf(e.getOffset()) == OffsetEnum.LONG) {
+                    preCancelOrder.add(e);
+                }
+            });
+        });
+        if (CollectionUtils.isNotEmpty(preCancelOrder)) {
+            cancelOrder(preCancelOrder.stream().map(e -> e.getExOrderId()).collect(Collectors.toList()));
+        }
     }
 }

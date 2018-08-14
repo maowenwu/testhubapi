@@ -49,8 +49,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 ThreadUtils.sleep(3000);
                 contextInit(group);
                 startOrderCopierWithConfig(group);
-                startHedgerWithConfig(group);
-                startRiskMonitorWithConfig(group);
+                //startHedgerWithConfig(group);
+                //startRiskMonitorWithConfig(group);
             }
         }
     }
