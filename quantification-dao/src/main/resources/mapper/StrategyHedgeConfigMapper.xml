@@ -6,6 +6,7 @@
         <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
         <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
         <result column="hedge_interval" jdbcType="INTEGER" property="hedgeInterval"/>
+        <result column="min_net_position" jdbcType="DECIMAL" property="minNetPosition"/>
         <result column="buy_slippage" jdbcType="DECIMAL" property="buySlippage"/>
         <result column="sell_slippage" jdbcType="DECIMAL" property="sellSlippage"/>
         <result column="stop_time1" jdbcType="VARCHAR" property="stopTime1"/>
@@ -17,9 +18,9 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, symbol, contract_type, hedge_interval, buy_slippage, sell_slippage, stop_time1,
-    stop_time2, delivery_interval, delivery_buy_slippage, delivery_sell_slippage, create_time,
-    update_time
+    id, symbol, contract_type, hedge_interval, min_net_position, buy_slippage, sell_slippage,
+    stop_time1, stop_time2, delivery_interval, delivery_buy_slippage, delivery_sell_slippage,
+    create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -33,15 +34,17 @@
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
     insert into strategy_hedge_config (id, symbol, contract_type,
-      hedge_interval, buy_slippage, sell_slippage,
-      stop_time1, stop_time2, delivery_interval,
-      delivery_buy_slippage, delivery_sell_slippage,
-      create_time, update_time)
+      hedge_interval, min_net_position, buy_slippage,
+      sell_slippage, stop_time1, stop_time2,
+      delivery_interval, delivery_buy_slippage,
+      delivery_sell_slippage, create_time, update_time
+      )
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR},
-      #{hedgeInterval,jdbcType=INTEGER}, #{buySlippage,jdbcType=DECIMAL}, #{sellSlippage,jdbcType=DECIMAL},
-      #{stopTime1,jdbcType=VARCHAR}, #{stopTime2,jdbcType=VARCHAR}, #{deliveryInterval,jdbcType=INTEGER},
-      #{deliveryBuySlippage,jdbcType=DECIMAL}, #{deliverySellSlippage,jdbcType=DECIMAL},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+      #{hedgeInterval,jdbcType=INTEGER}, #{minNetPosition,jdbcType=DECIMAL}, #{buySlippage,jdbcType=DECIMAL},
+      #{sellSlippage,jdbcType=DECIMAL}, #{stopTime1,jdbcType=VARCHAR}, #{stopTime2,jdbcType=VARCHAR},
+      #{deliveryInterval,jdbcType=INTEGER}, #{deliveryBuySlippage,jdbcType=DECIMAL},
+      #{deliverySellSlippage,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig">
         insert into strategy_hedge_config
@@ -57,6 +60,9 @@
             </if>
             <if test="hedgeInterval != null">
                 hedge_interval,
+            </if>
+            <if test="minNetPosition != null">
+                min_net_position,
             </if>
             <if test="buySlippage != null">
                 buy_slippage,
@@ -99,6 +105,9 @@
             <if test="hedgeInterval != null">
                 #{hedgeInterval,jdbcType=INTEGER},
             </if>
+            <if test="minNetPosition != null">
+                #{minNetPosition,jdbcType=DECIMAL},
+            </if>
             <if test="buySlippage != null">
                 #{buySlippage,jdbcType=DECIMAL},
             </if>
@@ -140,6 +149,9 @@
             <if test="hedgeInterval != null">
                 hedge_interval = #{hedgeInterval,jdbcType=INTEGER},
             </if>
+            <if test="minNetPosition != null">
+                min_net_position = #{minNetPosition,jdbcType=DECIMAL},
+            </if>
             <if test="buySlippage != null">
                 buy_slippage = #{buySlippage,jdbcType=DECIMAL},
             </if>
@@ -175,6 +187,7 @@
     set symbol = #{symbol,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
       hedge_interval = #{hedgeInterval,jdbcType=INTEGER},
+      min_net_position = #{minNetPosition,jdbcType=DECIMAL},
       buy_slippage = #{buySlippage,jdbcType=DECIMAL},
       sell_slippage = #{sellSlippage,jdbcType=DECIMAL},
       stop_time1 = #{stopTime1,jdbcType=VARCHAR},

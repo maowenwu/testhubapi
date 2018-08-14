@@ -5,77 +5,83 @@ import java.util.Date;
 
 public class StrategyHedgeConfig {
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private Integer id;
 
     /**
      * 币种
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private String symbol;
 
     /**
      * 合约类型
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private String contractType;
 
     /**
      * 对冲间隔时间
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private Integer hedgeInterval;
 
     /**
+     * 最小的对冲净头寸
+     * @mbg.generated 2018-08-14 16:49:14
+     */
+    private BigDecimal minNetPosition;
+
+    /**
      * 对冲买单滑点
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private BigDecimal buySlippage;
 
     /**
      * 对冲卖单滑点
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private BigDecimal sellSlippage;
 
     /**
      * 开始交割对冲时间
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private String stopTime1;
 
     /**
      * 结束交割对冲时间
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private String stopTime2;
 
     /**
      * 交割对冲单时间间隔
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private Integer deliveryInterval;
 
     /**
      * 交割买单滑点
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private BigDecimal deliveryBuySlippage;
 
     /**
      * 交割卖单滑点
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private BigDecimal deliverySellSlippage;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-08 16:28:34
+     * @mbg.generated 2018-08-14 16:49:14
      */
     private Date updateTime;
 
@@ -109,6 +115,14 @@ public class StrategyHedgeConfig {
 
     public void setHedgeInterval(Integer hedgeInterval) {
         this.hedgeInterval = hedgeInterval;
+    }
+
+    public BigDecimal getMinNetPosition() {
+        return minNetPosition;
+    }
+
+    public void setMinNetPosition(BigDecimal minNetPosition) {
+        this.minNetPosition = minNetPosition;
     }
 
     public BigDecimal getBuySlippage() {

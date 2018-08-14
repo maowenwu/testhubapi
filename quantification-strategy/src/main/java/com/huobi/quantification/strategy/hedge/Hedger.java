@@ -1,6 +1,7 @@
 package com.huobi.quantification.strategy.hedge;
 
 import com.google.common.base.Stopwatch;
+import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
@@ -95,7 +96,7 @@ public class Hedger {
         // 2.计算当前的两个账户总的净头寸USDT
         BigDecimal netPosition = commContext.getNetPositionUsdt();
         // 3. 下单
-        hedgerContext.placeHedgeOrder(netPosition);
+        hedgerContext.placeHedgeOrder(netPosition, false);
         logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
         ThreadUtils.sleep(startTime, hedgeConfig.getHedgeInterval());
         return true;
@@ -144,7 +145,7 @@ public class Hedger {
         BigDecimal m = m2.subtract(m1);
 
         BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
-        hedgerContext.placeDeliveryHedgeOrder(netPosition);
+        hedgerContext.placeHedgeOrder(netPosition, true);
 
         ThreadUtils.sleep(startTime, deliveryInterval);
         return true;
