@@ -168,18 +168,10 @@ public class OrderContext {
             // 如果有持仓，那么下平仓单
             // 如果预期量大于可平量，那么就按可平量下单，剩余部分忽略
             if (BigDecimalUtils.moreThan(orderAmount, shortAvailable)) {
-                boolean success = placeBuyCloseOrder(price, shortAvailable);
-                if (success) {
-                    // 下平仓单后减去可平量
-                    shortPosi.setAvailable(shortPosi.getAvailable().subtract(shortAvailable));
-                }
+                placeBuyCloseOrder(price, shortAvailable);
             } else {
                 // 如果预期量小于等于可平量，那么按预期量下单
-                boolean success = placeBuyCloseOrder(price, orderAmount);
-                if (success) {
-                    // 下平仓单后减去可平量
-                    shortPosi.setAvailable(shortPosi.getAvailable().subtract(orderAmount));
-                }
+                placeBuyCloseOrder(price, orderAmount);
             }
         } else if (!closeOrderOnly()) {
             placeBuyOpenOrder(price, orderAmount);
@@ -196,18 +188,10 @@ public class OrderContext {
             // 如果有持仓，那么下平仓单
             // 如果预期量大于可平量，那么就按可平量下单，剩余部分忽略
             if (BigDecimalUtils.moreThan(orderAmount, longAvailable)) {
-                boolean success = placeSellCloseOrder(price, longAvailable);
-                if (success) {
-                    // 下平仓单后减去可平量
-                    longPosi.setAvailable(longPosi.getAvailable().subtract(longAvailable));
-                }
+                placeSellCloseOrder(price, longAvailable);
             } else {
                 // 如果预期量小于等于可平量，那么按预期量下单
-                boolean success = placeSellCloseOrder(price, orderAmount);
-                if (success) {
-                    // 下平仓单后减去可平量
-                    longPosi.setAvailable(longPosi.getAvailable().subtract(orderAmount));
-                }
+                placeSellCloseOrder(price, orderAmount);
             }
         } else if (!closeOrderOnly()) {
             placeSellOpenOrder(price, orderAmount);
@@ -376,30 +360,46 @@ public class OrderContext {
 
     public Long placeInternalOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
         Long exOrderId = commContext.placeOrder(side, offset, price, orderAmount);
-        if (exOrderId != null) {
-            postPlaceOrder(exOrderId, side, offset, price, orderAmount);
-            return exOrderId;
-        } else {
-            return null;
-        }
+        postPlaceOrder(exOrderId, side, offset, price, orderAmount);
+        return exOrderId;
     }
 
     // 下单后需要将订单添加到orderReader中
     private void postPlaceOrder(Long exOrderId, int side, int offset, BigDecimal price, BigDecimal orderAmount) {
-        FutureOrder futureOrder = new FutureOrder();
-        futureOrder.setExOrderId(exOrderId);
-        futureOrder.setSide(side);
-        futureOrder.setOffset(offset);
-        futureOrder.setOrderPrice(price);
-        futureOrder.setOrderQty(orderAmount);
-        futureOrder.setDealQty(BigDecimal.ZERO);
-        orderReader.addOrder(futureOrder);
-
-        //todo 减期货资产保证金 张数*面值/价格/杠杆
-
-        // todo 减去期货持仓
-
-        //
+        SideEnum sideEnum = SideEnum.valueOf(side);
+        OffsetEnum offsetEnum = OffsetEnum.valueOf(offset);
+        // 处理下单
+        if (exOrderId != null) {
+            FutureOrder futureOrder = new FutureOrder();
+            futureOrder.setExOrderId(exOrderId);
+            futureOrder.setSide(side);
+            futureOrder.setOffset(offset);
+            futureOrder.setOrderPrice(price);
+            futureOrder.setOrderQty(orderAmount);
+            futureOrder.setDealQty(BigDecimal.ZERO);
+            orderReader.addOrder(futureOrder);
+        }
+        // 处理期货账户资产，如果是开仓单，需要减去期货资产保证金 张数*面值/价格/杠杆
+        if (offsetEnum == OffsetEnum.LONG) {
+            BigDecimal marginAvailable = futureBalance.getMarginAvailable()
+                    .subtract(orderAmount.multiply(futureExchangeConfig.getFaceValue())
+                            .divide(price)
+                            .divide(BigDecimal.valueOf(futureLever)));
+            futureBalance.setMarginAvailable(marginAvailable);
+        }
+        // 处理持仓，如果是平仓，需要减去期货持仓
+        if (sideEnum == SideEnum.BUY && offsetEnum == OffsetEnum.SHORT) {
+            FuturePosition.Position shortPosi = futurePosition.getShortPosi();
+            if (shortPosi != null) {
+                shortPosi.setAvailable(shortPosi.getAvailable().subtract(orderAmount));
+            }
+        }
+        if (sideEnum == SideEnum.SELL && offsetEnum == OffsetEnum.SHORT) {
+            FuturePosition.Position longPosi = futurePosition.getLongPosi();
+            if (longPosi != null) {
+                longPosi.setAvailable(longPosi.getAvailable().subtract(orderAmount));
+            }
+        }
     }
 
 
