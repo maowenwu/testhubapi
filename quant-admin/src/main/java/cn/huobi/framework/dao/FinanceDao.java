@@ -3,6 +3,7 @@ package cn.huobi.framework.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
@@ -14,7 +15,6 @@ import com.huobi.quantification.entity.StrategyFinanceHistory;
 
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.FinanceHistory;
-import cn.huobi.framework.util.StringUtil;
 
 public interface FinanceDao {
 	@SelectProvider(type=SqlProvider.class, method="selectDicByCondition")
@@ -43,7 +43,7 @@ public interface FinanceDao {
 					if(config!=null && config.getAccountId() != null){
 						WHERE("account_id = #{config.accountId}");
 					}
-					if (config!=null && !StringUtil.isBlank(config.getCoinType())) {
+					if (config!=null && !StringUtils.isBlank(config.getCoinType())) {
 						config.setCoinType(config.getCoinType() + "%");
 						WHERE("coin_type like #{config.coinType}");
 					}

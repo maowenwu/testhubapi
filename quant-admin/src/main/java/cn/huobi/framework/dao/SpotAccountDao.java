@@ -3,6 +3,7 @@ package cn.huobi.framework.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,6 @@ import org.apache.ibatis.jdbc.SQL;
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.QuanSpotAccount;
 import cn.huobi.framework.model.SpotAccount;
-import cn.huobi.framework.util.StringUtil;
 
 public interface SpotAccountDao {
 	@SelectProvider(type=SqlProvider.class, method="selectByCondition")
@@ -43,7 +43,7 @@ public interface SpotAccountDao {
 					if(account!=null && account.getExchangeId() != null){
 						WHERE("exchange_id = #{account.exchangeId}");
 					}
-					if (account!=null && !StringUtil.isBlank(account.getAccountsName())) {
+					if (account!=null && !StringUtils.isBlank(account.getAccountsName())) {
 						account.setAccountsName(account.getAccountsName() + "%");
 						WHERE("accounts_name like #{account.accountsName}");
 					}
