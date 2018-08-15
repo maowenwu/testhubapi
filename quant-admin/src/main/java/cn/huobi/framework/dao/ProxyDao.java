@@ -3,6 +3,7 @@ package cn.huobi.framework.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -15,7 +16,6 @@ import com.huobi.quantification.entity.QuanProxyIp;
 
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.ProxyIp;
-import cn.huobi.framework.util.StringUtil;
 
 public interface ProxyDao {
 	@SelectProvider(type=SqlProvider.class, method="selectByCondition")
@@ -45,7 +45,7 @@ public interface ProxyDao {
 //					if(account!=null && account.getExchangeId() != null){
 //						WHERE("exchange_id = #{account.exchangeId}");
 //					}
-					if (proxy!=null && !StringUtil.isBlank(proxy.getHost())) {
+					if (proxy!=null && !StringUtils.isBlank(proxy.getHost())) {
 						proxy.setHost("%" + proxy.getHost() + "%");
 						WHERE("host like #{proxy.host}");
 					}

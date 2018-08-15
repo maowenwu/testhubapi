@@ -3,6 +3,7 @@ package cn.huobi.framework.dao;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.ResultType;
@@ -14,7 +15,6 @@ import com.huobi.quantification.entity.QuanJob;
 
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.SpotJob;
-import cn.huobi.framework.util.StringUtil;
 
 public interface QuanJobDao {
 
@@ -39,7 +39,7 @@ public interface QuanJobDao {
 					if(quanJob!=null && quanJob.getExchangeId() != null){
 						WHERE("exchange_id = #{quanJob.exchangeId}");
 					}
-					if(quanJob!=null && !StringUtil.isBlank(quanJob.getJobDesc())){
+					if(quanJob!=null && !StringUtils.isBlank(quanJob.getJobDesc())){
 						quanJob.setJobDesc(quanJob.getJobDesc()+"%");
 						WHERE("job_desc like #{quanJob.jobDesc}");
 					}
