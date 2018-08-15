@@ -249,7 +249,9 @@ public class CommContext {
     }
 
     public BigDecimal getExchangeRateOfUSDT2USD() {
-        for (int i = 0; i < 3; i++) {
+        return BigDecimal.ONE;
+        // todo
+        /*for (int i = 0; i < 3; i++) {
             ServiceResult<BigDecimal> result = futureContractService.getExchangeRateOfUSDT2USD();
             if (result.isSuccess()) {
                 logger.info("获取USDT2USD汇率成功");
@@ -258,7 +260,7 @@ public class CommContext {
                 continue;
             }
         }
-        throw new RuntimeException("获取USDT2USD汇率失败");
+        throw new RuntimeException("获取USDT2USD汇率失败");*/
     }
 
     public FuturePosition getFuturePosition() {
@@ -274,13 +276,13 @@ public class CommContext {
             if (dataMap != null && CollectionUtils.isNotEmpty(dataMap.get(this.futureBaseCoin))) {
                 List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureBaseCoin);
                 positionList.stream().forEach(e -> {
-                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.LONG.getOffset()) {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.OPEN.getOffset()) {
                         FuturePosition.Position longPosi = new FuturePosition.Position();
                         BeanUtils.copyProperties(e, longPosi);
                         futurePosition.setLongPosi(longPosi);
                     }
 
-                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.SHORT.getOffset()) {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.CLOSE.getOffset()) {
                         FuturePosition.Position shortPosi = new FuturePosition.Position();
                         BeanUtils.copyProperties(e, shortPosi);
                         futurePosition.setShortPosi(shortPosi);

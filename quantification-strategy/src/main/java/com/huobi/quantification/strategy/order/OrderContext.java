@@ -207,9 +207,9 @@ public class OrderContext {
             strategyMetric.ignoreBuyOpenOrderIncrement();
             return;
         }
-        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.LONG, price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.OPEN, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeInternalOrder(SideEnum.BUY.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.BUY.getSideType(), OffsetEnum.OPEN.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successBuyOpenOrderAdd(orderId);
             } else {
@@ -231,9 +231,9 @@ public class OrderContext {
             logger.warn("卖出开仓单数量已经超过限制，忽略该笔下单，当前总持仓：{}，配置的最大下单量：{}", positionTotal, config.getShortMaxAmount());
             return;
         }
-        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.LONG, price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.OPEN, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeInternalOrder(SideEnum.SELL.getSideType(), OffsetEnum.LONG.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.SELL.getSideType(), OffsetEnum.OPEN.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successSellOpenOrderAdd(orderId);
             } else {
@@ -246,9 +246,9 @@ public class OrderContext {
 
     // 下平仓买单
     private boolean placeBuyCloseOrder(BigDecimal price, BigDecimal orderAmount) {
-        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.SHORT, price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.BUY, OffsetEnum.CLOSE, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeInternalOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.BUY.getSideType(), OffsetEnum.CLOSE.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successBuyCloseOrderAdd(orderId);
                 return true;
@@ -264,9 +264,9 @@ public class OrderContext {
 
     // 下平仓卖单
     public boolean placeSellCloseOrder(BigDecimal price, BigDecimal orderAmount) {
-        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.SHORT, price, orderAmount);
+        BigDecimal targetAmount = calcAvailableAmount(SideEnum.SELL, OffsetEnum.CLOSE, price, orderAmount);
         if (BigDecimalUtils.moreThan(targetAmount, BigDecimal.ZERO)) {
-            Long orderId = placeInternalOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), price, targetAmount);
+            Long orderId = placeInternalOrder(SideEnum.SELL.getSideType(), OffsetEnum.CLOSE.getOffset(), price, targetAmount);
             if (orderId != null) {
                 strategyMetric.successSellCloseOrderAdd(orderId);
                 return true;
@@ -289,7 +289,7 @@ public class OrderContext {
     private BigDecimal calcAvailableAmount(SideEnum sideEnum, OffsetEnum offsetEnum, BigDecimal price, BigDecimal orderAmount) {
         // 根据期货账户计算出最多可开仓的数量
         BigDecimal minAmount;
-        if (offsetEnum == OffsetEnum.LONG) {
+        if (offsetEnum == OffsetEnum.OPEN) {
             // 如果是开仓，那么需要判断账户余额是否能开这么多张
             // 可用余额单位为btc币
             BigDecimal marginBalance = futureBalance.getMarginAvailable().subtract(config.getContractMarginReserve());
@@ -380,21 +380,21 @@ public class OrderContext {
             orderReader.addOrder(futureOrder);
         }
         // 处理期货账户资产，如果是开仓单，需要减去期货资产保证金 张数*面值/价格/杠杆
-        if (offsetEnum == OffsetEnum.LONG) {
+        if (offsetEnum == OffsetEnum.OPEN) {
             BigDecimal marginAvailable = futureBalance.getMarginAvailable()
                     .subtract(orderAmount.multiply(futureExchangeConfig.getFaceValue())
-                            .divide(price)
-                            .divide(BigDecimal.valueOf(futureLever)));
+                            .divide(price, 18, BigDecimal.ROUND_DOWN)
+                            .divide(BigDecimal.valueOf(futureLever), 18, BigDecimal.ROUND_DOWN));
             futureBalance.setMarginAvailable(marginAvailable);
         }
         // 处理持仓，如果是平仓，需要减去期货持仓
-        if (sideEnum == SideEnum.BUY && offsetEnum == OffsetEnum.SHORT) {
+        if (sideEnum == SideEnum.BUY && offsetEnum == OffsetEnum.CLOSE) {
             FuturePosition.Position shortPosi = futurePosition.getShortPosi();
             if (shortPosi != null) {
                 shortPosi.setAvailable(shortPosi.getAvailable().subtract(orderAmount));
             }
         }
-        if (sideEnum == SideEnum.SELL && offsetEnum == OffsetEnum.SHORT) {
+        if (sideEnum == SideEnum.SELL && offsetEnum == OffsetEnum.CLOSE) {
             FuturePosition.Position longPosi = futurePosition.getLongPosi();
             if (longPosi != null) {
                 longPosi.setAvailable(longPosi.getAvailable().subtract(orderAmount));
@@ -452,7 +452,7 @@ public class OrderContext {
         Map<BigDecimal, List<FutureOrder>> orderMap = getActiveOrderMap();
         orderMap.forEach((k, v) -> {
             v.stream().forEach(e -> {
-                if (OffsetEnum.valueOf(e.getOffset()) == OffsetEnum.LONG) {
+                if (OffsetEnum.valueOf(e.getOffset()) == OffsetEnum.OPEN) {
                     preCancelOrder.add(e);
                 }
             });

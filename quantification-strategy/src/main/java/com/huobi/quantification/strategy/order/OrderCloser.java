@@ -151,11 +151,11 @@ public class OrderCloser {
 
 
     private void placeCloseLongOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
-        commContext.placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.SHORT.getOffset(), orderPrice, orderAmount);
+        commContext.placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.CLOSE.getOffset(), orderPrice, orderAmount);
     }
 
 
     private void placeCloseShortOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
-        commContext.placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.SHORT.getOffset(), orderPrice, orderAmount);
+        commContext.placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.CLOSE.getOffset(), orderPrice, orderAmount);
     }
 }

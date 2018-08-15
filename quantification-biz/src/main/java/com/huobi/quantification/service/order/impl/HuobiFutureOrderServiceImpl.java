@@ -163,9 +163,9 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                     orderFuture.setSide(SideEnum.SELL.getSideType());
                 }
                 if ("open".equalsIgnoreCase(e.getOffset())) {
-                    orderFuture.setOffset(OffsetEnum.LONG.getOffset());
+                    orderFuture.setOffset(OffsetEnum.OPEN.getOffset());
                 } else {
-                    orderFuture.setOffset(OffsetEnum.SHORT.getOffset());
+                    orderFuture.setOffset(OffsetEnum.CLOSE.getOffset());
                 }
                 // 杠杆率
                 orderFuture.setLever(e.getLeverRate());
@@ -275,9 +275,9 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
                     orderFuture.setSide(SideEnum.SELL.getSideType());
                 }
                 if ("open".equalsIgnoreCase(e.getOffset())) {
-                    orderFuture.setOffset(OffsetEnum.LONG.getOffset());
+                    orderFuture.setOffset(OffsetEnum.OPEN.getOffset());
                 } else {
-                    orderFuture.setOffset(OffsetEnum.SHORT.getOffset());
+                    orderFuture.setOffset(OffsetEnum.CLOSE.getOffset());
                 }
                 // 杠杆率
                 orderFuture.setLever(e.getLeverRate());

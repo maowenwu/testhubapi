@@ -155,9 +155,9 @@ public class OkOrderServiceImpl implements OkOrderService {
 
     private OffsetEnum getOkOffset(int type) {
         if (type == 1 || type == 2) {
-            return OffsetEnum.LONG;
+            return OffsetEnum.OPEN;
         } else {
-            return OffsetEnum.SHORT;
+            return OffsetEnum.CLOSE;
         }
     }
 

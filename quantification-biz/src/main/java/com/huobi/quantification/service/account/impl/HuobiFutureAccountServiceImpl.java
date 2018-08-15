@@ -147,7 +147,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
             futurePosition.setQuoteCoin("usdt");
             futurePosition.setContractType(e.getContractType());
             if ("buy".equalsIgnoreCase(e.getDirection())) {
-                futurePosition.setOffset(OffsetEnum.LONG.getOffset());
+                futurePosition.setOffset(OffsetEnum.OPEN.getOffset());
                 futurePosition.setAmount(e.getVolume());
                 futurePosition.setAvailable(e.getAvailable());
                 // 多仓冻结张数
@@ -156,7 +156,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
                 // 多仓持仓均价
                 futurePosition.setCostHold(e.getCostHold());
             } else {
-                futurePosition.setOffset(OffsetEnum.SHORT.getOffset());
+                futurePosition.setOffset(OffsetEnum.CLOSE.getOffset());
                 futurePosition.setAmount(e.getVolume());
                 futurePosition.setAvailable(e.getAvailable());
                 // 多仓冻结张数

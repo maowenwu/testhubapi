@@ -75,6 +75,12 @@ public class Hedger {
                 logger.error("风控已经发出停止摆单指令，本轮对冲结束并撤销所有订单");
                 return true;
         }
+        // 撤掉币币账户所有未成交订单
+        boolean b = commContext.cancelAllSpotOrder();
+        if (!b) {
+            logger.error("取消现货所有订单失败，方法退出");
+            return false;
+        }
         StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
         if (tradeFeeConfig == null) {
             logger.error("交易手续费配置获取失败，方法退出");
@@ -87,12 +93,7 @@ public class Hedger {
         }
         hedgerContext.setHedgeConfig(hedgeConfig);
         hedgerContext.setTradeFeeConfig(tradeFeeConfig);
-        // 撤掉币币账户所有未成交订单
-        boolean b = commContext.cancelAllSpotOrder();
-        if (!b) {
-            logger.error("取消现货所有订单失败，方法退出");
-            return false;
-        }
+
         // 2.计算当前的两个账户总的净头寸USDT
         BigDecimal netPosition = commContext.getNetPositionUsdt();
         // 3. 下单

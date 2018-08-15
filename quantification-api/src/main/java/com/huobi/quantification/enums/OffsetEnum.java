@@ -3,13 +3,13 @@ package com.huobi.quantification.enums;
 public enum OffsetEnum {
 
     /**
-     * 多仓
+     * 开仓
      */
-    LONG(1),
+    OPEN(1),
     /**
-     * 空仓
+     * 平仓
      */
-    SHORT(2);
+    CLOSE(2);
 
     private int offset;
 

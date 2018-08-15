@@ -122,7 +122,7 @@ public class OrderReader {
         List<FutureOrder> orders = new ArrayList<>();
         priceOffsetBuyOrderMap.forEach((k, v) -> {
             v.forEach((k2, v2) -> {
-                if (k2 == OffsetEnum.LONG) {
+                if (k2 == OffsetEnum.OPEN) {
                     orders.addAll(v2);
                 }
             });
@@ -147,7 +147,7 @@ public class OrderReader {
         List<FutureOrder> orders = new ArrayList<>();
         priceOffsetSellOrderMap.forEach((k, v) -> {
             v.forEach((k2, v2) -> {
-                if (k2 == OffsetEnum.SHORT) {
+                if (k2 == OffsetEnum.CLOSE) {
                     orders.addAll(v2);
                 }
             });
