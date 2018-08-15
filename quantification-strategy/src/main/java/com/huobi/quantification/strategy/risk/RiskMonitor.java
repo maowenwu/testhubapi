@@ -69,9 +69,10 @@ public class RiskMonitor {
             }
             riskContext.setCurrPrice(currentPrice);
 
-            checkRiskRate();
-            checkNetPosition();
-            checkProfit();
+            BigDecimal riskRate = checkRiskRate();
+            BigDecimal netPosition = checkNetPosition();
+            RiskProfit riskProfit = checkProfit();
+            riskContext.saveRiskResult(riskRate, netPosition, riskProfit);
             logger.info("========>合约监控第{}轮 结束，耗时：{}", counter.get(), started);
             ThreadUtils.sleep(riskConfig.getRiskInterval() * 1000);
             return true;
@@ -85,7 +86,7 @@ public class RiskMonitor {
     /**
      * 用于监控合约账户的保证金率
      */
-    public void checkRiskRate() {
+    public BigDecimal checkRiskRate() {
         //获取该合约账户的对应币种的保证金率
         BigDecimal level1 = riskConfig.getRiskRateLevel1();
         BigDecimal level2 = riskConfig.getRiskRateLevel2();
@@ -108,6 +109,7 @@ public class RiskMonitor {
             // 修改为正常状态
             riskContext.updateRiskCtrl(0);
         }
+        return riskRate;
     }
 
     /**
@@ -115,7 +117,7 @@ public class RiskMonitor {
      * 1，如果净头寸的绝对值大于阈值1，会停止合约摆盘，撤销合约账户所有未成交订单，对冲程序继续执行，直至低于阈值，重新恢复合约摆盘；
      * 2，如果净头寸的绝对值大于阈值2，会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报。
      */
-    public void checkNetPosition() {
+    public BigDecimal checkNetPosition() {
         BigDecimal level1 = riskConfig.getNetPositionLevel1();
         BigDecimal level2 = riskConfig.getNetPositionLevel2();
 
@@ -132,6 +134,7 @@ public class RiskMonitor {
             // 正常
             riskContext.updateNetCtrl(0, 0);
         }
+        return netPosition;
     }
 
     /**
@@ -139,12 +142,13 @@ public class RiskMonitor {
      * 本次盈亏（和流动性项目策略开始启动时比较）
      * 总盈亏（和最初的持有量比较）
      */
-    public void checkProfit() {
-        checkCurrProfit();
-        checkTotalProfit();
+    public RiskProfit checkProfit() {
+        BigDecimal currProfit = checkCurrProfit();
+        BigDecimal totalProfit = checkTotalProfit();
+        return new RiskProfit(currProfit, totalProfit);
     }
 
-    private void checkCurrProfit() {
+    private BigDecimal checkCurrProfit() {
         BigDecimal level1 = riskConfig.getCurrProfitLevel1();
         BigDecimal level2 = riskConfig.getCurrProfitLevel2();
 
@@ -161,10 +165,11 @@ public class RiskMonitor {
             // 正常，忽略
             riskContext.updateProfitCtrl(0, 0);
         }
+        return currProfit;
     }
 
 
-    private void checkTotalProfit() {
+    private BigDecimal checkTotalProfit() {
         BigDecimal level1 = riskConfig.getTotalProfitLevel1();
         BigDecimal level2 = riskConfig.getTotalProfitLevel2();
 
@@ -181,10 +186,38 @@ public class RiskMonitor {
             // 正常，忽略
             riskContext.updateProfitCtrl(0, 0);
         }
+        return totalProfit;
     }
 
 
     private void warn() {
 
+    }
+
+    static class RiskProfit {
+
+        private BigDecimal currProfit;
+        private BigDecimal totalProfit;
+
+        public RiskProfit(BigDecimal currProfit, BigDecimal totalProfit) {
+            this.currProfit = currProfit;
+            this.totalProfit = totalProfit;
+        }
+
+        public BigDecimal getCurrProfit() {
+            return currProfit;
+        }
+
+        public void setCurrProfit(BigDecimal currProfit) {
+            this.currProfit = currProfit;
+        }
+
+        public BigDecimal getTotalProfit() {
+            return totalProfit;
+        }
+
+        public void setTotalProfit(BigDecimal totalProfit) {
+            this.totalProfit = totalProfit;
+        }
     }
 }

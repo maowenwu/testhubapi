@@ -75,7 +75,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         long queryId = System.currentTimeMillis();
         String body = queryUserInfoByAPI(accountId);
         Map<String, QuanAccountFutureAsset> assetMap = parseHuobiFutureBalance(body);
-        boolean isSave = StorageSupport.checkSavepoint("updateHuobiUserInfo");
+        boolean isSave = StorageSupport.getInstance("updateHuobiUserInfo").checkSavepoint();
         assetMap.forEach((k, v) -> {
             v.setCoinType(k);
             v.setQueryId(queryId);
@@ -125,7 +125,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI.getExId(), accountSourceId);
         String body = queryPositionByAPI(accountSourceId);
         List<QuanAccountFuturePosition> futurePositions = parseHuobiFuturePosition(body);
-        boolean isSave = StorageSupport.checkSavepoint("updateHuobiPosition");
+        boolean isSave = StorageSupport.getInstance("updateHuobiPosition").checkSavepoint();
         futurePositions.forEach(e -> {
             e.setAccountFutureId(accountFutureId);
             e.setQueryId(queryId);

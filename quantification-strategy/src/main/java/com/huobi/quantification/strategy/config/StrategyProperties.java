@@ -8,8 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "strategy")
 public class StrategyProperties {
 
-    private ConfigGroup group = new ConfigGroup();
 
+
+    private ConfigGroup group = new ConfigGroup();
 
     public ConfigGroup getGroup() {
         return group;
@@ -20,6 +21,8 @@ public class StrategyProperties {
     }
 
     public static class ConfigGroup {
+        private String name;
+        private Long version = System.currentTimeMillis();
         private Boolean enable;
         private Config future = new Config();
         private Config spot = new Config();
@@ -46,6 +49,21 @@ public class StrategyProperties {
 
         public void setSpot(Config spot) {
             this.spot = spot;
+        }
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Long getVersion() {
+            return version;
+        }
+
+        public void setVersion(Long version) {
+            this.version = version;
         }
     }
 
@@ -106,5 +124,6 @@ public class StrategyProperties {
             this.lever = lever;
         }
     }
+
 
 }

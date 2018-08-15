@@ -63,6 +63,9 @@ public class CommContext {
     @Autowired
     private FutureMarketService futureMarketService;
 
+    private String strategyName;
+    private Long strategyVersion;
+
     private Integer futureExchangeId;
     private Long futureAccountId;
     private String futureBaseCoin;
@@ -87,6 +90,8 @@ public class CommContext {
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config spot = group.getSpot();
         StrategyProperties.Config future = group.getFuture();
+        this.strategyName = group.getName();
+        this.strategyVersion = group.getVersion();
 
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
@@ -435,6 +440,8 @@ public class CommContext {
 
     public Long placeOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
         FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
+        reqDto.setStrategyName(strategyName);
+        reqDto.setStrategyVersion(strategyVersion);
         reqDto.setExchangeId(this.futureExchangeId);
         reqDto.setAccountId(this.futureAccountId);
         reqDto.setContractCode(this.futureContractCode);

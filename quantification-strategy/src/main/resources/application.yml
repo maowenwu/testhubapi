@@ -40,16 +40,17 @@ zookeeper:
 
 strategy:
   group:
+    name: 火币借深度策略
     enable: true
     future:
       exchangeId: 0
       accountId: 101
-      baseCoin: btc
+      baseCoin: eos
       quotCoin: usd
-      contractCode: BTC180817
+      contractCode: EOS180817
       lever: 10
     spot:
       exchangeId: 1
       accountId: 4295363
-      baseCoin: btc
+      baseCoin: eos
       quotCoin: usdt

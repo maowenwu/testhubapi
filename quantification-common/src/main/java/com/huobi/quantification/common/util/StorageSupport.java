@@ -6,22 +6,45 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class StorageSupport {
 
-    private static Map<String, LocalDateTime> map = new ConcurrentHashMap<>();
+    private static Map<String, StorageSupport> storageMap = new ConcurrentHashMap<>();
 
-    private static final int saveInterval = 60;
+    private LocalDateTime currDateTime = null;
 
-    public synchronized static boolean checkSavepoint(String key) {
-        LocalDateTime dateTime = map.get(key);
-        if (dateTime == null) {
-            map.put(key, LocalDateTime.now());
+    private int saveInterval;
+
+    public StorageSupport(int interval) {
+        this.saveInterval = interval;
+    }
+
+    public boolean checkSavepoint() {
+        if (currDateTime == null) {
+            currDateTime = LocalDateTime.now();
             return true;
         }
         LocalDateTime now = LocalDateTime.now();
-        if (dateTime.plusSeconds(saveInterval).isBefore(now)) {
-            map.put(key, now);
+        if (currDateTime.plusSeconds(saveInterval).isBefore(now)) {
+            currDateTime = now;
             return true;
         } else {
             return false;
         }
+    }
+
+    public static StorageSupport getInstance(String key, int interval) {
+        StorageSupport storageSupport = storageMap.get(key);
+        if (storageSupport == null) {
+            StorageSupport support = new StorageSupport(interval);
+            storageMap.put(key, support);
+        }
+        return storageMap.get(key);
+    }
+
+    public static StorageSupport getInstance(String key) {
+        StorageSupport storageSupport = storageMap.get(key);
+        if (storageSupport == null) {
+            StorageSupport support = new StorageSupport(60);
+            storageMap.put(key, support);
+        }
+        return storageMap.get(key);
     }
 }

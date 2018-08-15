@@ -3,10 +3,7 @@ package com.huobi.quantification.strategy.risk;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.dao.QuanAccountAssetMapper;
-import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
-import com.huobi.quantification.dao.StrategyFinanceHistoryMapper;
-import com.huobi.quantification.dao.StrategyRiskConfigMapper;
+import com.huobi.quantification.dao.*;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
@@ -14,6 +11,7 @@ import com.huobi.quantification.dto.SpotBalanceRespDto;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.StrategyRiskConfig;
+import com.huobi.quantification.entity.StrategyRiskHistory;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.FutureBalance;
@@ -25,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Component
 public class RiskContext {
@@ -43,6 +42,9 @@ public class RiskContext {
     private StrategyRiskConfigMapper strategyRiskMapper;
     @Autowired
     private CommContext commContext;
+
+    private String strategyName;
+    private Long strategyVersion;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -68,6 +70,9 @@ public class RiskContext {
     public void init(StrategyProperties.ConfigGroup group) {
         StrategyProperties.Config future = group.getFuture();
         StrategyProperties.Config spot = group.getSpot();
+
+        this.strategyName = group.getName();
+        this.strategyVersion = group.getVersion();
 
         this.futureExchangeId = future.getExchangeId();
         this.futureAccountId = future.getAccountId();
@@ -172,9 +177,6 @@ public class RiskContext {
     }
 
 
-
-
-
     /**
      * 获得本次运行盈亏，返回单位为币
      *
@@ -211,6 +213,26 @@ public class RiskContext {
         BigDecimal futureProfit = futureRight.getNetBalance().subtract(initialFutureRight.getNetBalance());
 
         return coinProfit.add(usdtProfit).add(futureProfit);
+    }
+
+    @Autowired
+    private StrategyRiskHistoryMapper riskHistoryMapper;
+
+    public void saveRiskResult(BigDecimal riskRate, BigDecimal netPosition, RiskMonitor.RiskProfit riskProfit) {
+        StrategyRiskHistory strategyRiskHistory = new StrategyRiskHistory();
+        strategyRiskHistory.setStrategyName(strategyName);
+        strategyRiskHistory.setStrategyVersion(strategyVersion);
+        strategyRiskHistory.setExchangeId(futureExchangeId);
+        strategyRiskHistory.setAccountId(futureAccountId);
+        strategyRiskHistory.setBaseCoin(futureBaseCoin);
+        strategyRiskHistory.setRiskRate(riskRate);
+        strategyRiskHistory.setNetPosition(netPosition);
+        strategyRiskHistory.setCurrProfit(riskProfit.getCurrProfit());
+        strategyRiskHistory.setTotalProfit(riskProfit.getTotalProfit());
+        strategyRiskHistory.setCreateTime(new Date());
+        strategyRiskHistory.setUpdateTime(new Date());
+        // todo 每隔一段时间打点
+        riskHistoryMapper.insert(strategyRiskHistory);
     }
 
     public static class FutureRight {
@@ -254,9 +276,6 @@ public class RiskContext {
             return usdt.getTotal().subtract(usdtNetBorrow);
         }
     }
-
-
-
 
 
     /**

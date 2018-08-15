@@ -64,7 +64,7 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
         }
         String body = queryAccountByAPI(accountSourceId);
         List<QuanAccountAsset> accountAssets = parseAccount(body);
-        boolean isSave = StorageSupport.checkSavepoint("updateAccountSpot");
+        boolean isSave = StorageSupport.getInstance("updateSpotAccount").checkSavepoint();
         accountAssets.stream().forEach(e -> {
             e.setAccountId(accountId);
             if (isSave) {
