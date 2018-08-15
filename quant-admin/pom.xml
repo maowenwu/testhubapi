@@ -404,7 +404,21 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-	</build>
+
+
+		<resources>
+		<resource>
+			<directory>../quantification-dao/src/main/resources</directory>
+			<includes>
+				<include>**/*.properties</include>
+				<include>**/*.xml</include>
+			</includes>
+			<filtering>false</filtering>
+		</resource>
+		</resources>
+
+
+		</build>
 
 
 </project>
