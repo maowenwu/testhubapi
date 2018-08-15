@@ -19,8 +19,7 @@
 		  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<!-- <value>file:/opt/conf/zheng_constants.properties</value> -->
-				<value>classpath:zheng_constants.properties</value>
+				<value>classpath:constants.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -33,7 +32,7 @@
 	<context:annotation-config/>
 
 	<import resource="classpath*:security.xml"/>
-	<import resource="classpath*:applicationContext-jdbc-zheng.xml"/>
+	<import resource="classpath*:applicationContext-jdbc.xml"/>
 
 	<!-- redis 配置 -->
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -47,7 +46,7 @@
 		  class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
 		<property name="hostName" value="${redis.ip}" />
 		<property name="port" value="${redis.port}" />
-		<!-- <property name="password" value="${redis.pass}" /> -->
+		<property name="password" value="${redis.pass}" />
 		<property name="poolConfig" ref="jedisPoolConfig" />
 	</bean>
 

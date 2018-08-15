@@ -10,9 +10,9 @@
 
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
-		<property name="url" value="${zheng.url}"/>
-		<property name="username" value="${zheng.userName}"/>
-		<property name="password" value="${zheng.password}"/>
+		<property name="url" value="${url}"/>
+		<property name="username" value="${userName}"/>
+		<property name="password" value="${password}"/>
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
 
 		<property name="filters" value="stat" />
