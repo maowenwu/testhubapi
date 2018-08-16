@@ -492,7 +492,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     @Override
     public ServiceResult<Long> cancelSingleOrder(FutureCancelSingleOrderReqDto reqDto) {
         if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
-            Long exOrderId = huobiFutureOrderService.cancelOrder(reqDto.getExOrderId(), null);
+            Long exOrderId = huobiFutureOrderService.cancelOrder(reqDto.getAccountId(), reqDto.getExOrderId(), null);
             if (exOrderId != null) {
                 return ServiceResult.buildSuccessResult(exOrderId);
             } else {
@@ -506,7 +506,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     public ServiceResult cancelAllOrder(FutureCancelAllOrderReqDto reqDto) {
         try {
             if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
-                huobiFutureOrderService.cancelAllOrder(reqDto.getSymbol());
+                huobiFutureOrderService.cancelAllOrder(reqDto.getAccountId(), reqDto.getSymbol());
                 return ServiceResult.buildSuccessResult(null);
             }
             return null;

@@ -76,7 +76,7 @@ public class OkOrderServiceImpl implements OkOrderService {
         }
         String orderId = Joiner.on(",").join(orderIds);
         params.put("order_id", orderId);
-        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_ORDERS_INFO, params);
+        String body = httpService.doOkFuturePost(accountId, HttpConstant.OK_ORDERS_INFO, params);
         return parseAndSaveOrderInfo(accountId, body);
     }
 
@@ -182,7 +182,7 @@ public class OkOrderServiceImpl implements OkOrderService {
         if (order.getLeverRate() != null) {
             params.put("lever_rate", String.valueOf(order.getLeverRate()));
         }
-        String body = httpService.doOkSignedPost(order.getAccountId(), HttpConstant.OK_TRADE, params);
+        String body = httpService.doOkFuturePost(order.getAccountId(), HttpConstant.OK_TRADE, params);
         return JSON.parseObject(body, OKFuturePlaceOrderResponse.class);
     }
 
@@ -193,7 +193,7 @@ public class OkOrderServiceImpl implements OkOrderService {
         params.put("symbol", cancelOrderDto.getSymbol());
         params.put("contract_type", cancelOrderDto.getContractType());
         params.put("order_id", cancelOrderDto.getOrderId());
-        String body = httpService.doOkSignedPost(cancelOrderDto.getAccountId(), HttpConstant.OK_CANCEL, params);
+        String body = httpService.doOkFuturePost(cancelOrderDto.getAccountId(), HttpConstant.OK_CANCEL, params);
         return JSON.parseObject(body, OKFutureCancelOrderResponse.class);
     }
 

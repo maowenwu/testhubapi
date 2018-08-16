@@ -69,8 +69,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if (StringUtils.isNotEmpty(order.getClientOrderId())) {
             params.put("client_order_id", order.getClientOrderId());
         }
-        params.put("userId", "156138");
-        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER, params);
+        String body = httpService.doHuobiFuturePostJson(order.getAccountId(), HttpConstant.HUOBI_FUTURE_ORDER, params);
         FutureHuobiOrderResponse response = JSON.parseObject(body, FutureHuobiOrderResponse.class);
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             return response.getData().getOrderId();
@@ -80,7 +79,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     }
 
     @Override
-    public Long cancelOrder(Long orderId, Long clientOrderId) {
+    public Long cancelOrder(Long accountId, Long orderId, Long clientOrderId) {
         Map<String, String> params = new HashMap<>();
         if (orderId != null) {
             params.put("order_id", orderId.toString());
@@ -88,10 +87,9 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if (clientOrderId != null) {
             params.put("client_order_id", clientOrderId.toString());
         }
-        params.put("userId", "156138");
         String body = null;
         try {
-            body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER_CANCEL, params);
+            body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ORDER_CANCEL, params);
         } catch (HttpRequestException e) {
             logger.error("取消订单http执行异常", e);
             return null;
@@ -135,10 +133,9 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         Map<String, String> params = new HashMap<>();
         String orderId = String.join(",", orderIds.stream().map(e -> e.toString()).collect(Collectors.toList()));
         params.put("order_id", orderId);
-        params.put("userId", "156138");
         String body = null;
         try {
-            body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER_INFO, params);
+            body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ORDER_INFO, params);
         } catch (HttpRequestException e) {
             logger.error("批量查询订单信息失败，订单id：{}", orderId, e);
             throw new RuntimeException("批量查询订单信息失败");
@@ -194,11 +191,10 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     }
 
     @Override
-    public void cancelAllOrder(String symbol) {
+    public void cancelAllOrder(Long accountId, String symbol) {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
-        params.put("userId", "156138");
-        String body = httpService.doPostJson(HttpConstant.HUOBI_FUTURE_ORDER_CANCEL_ALL, params);
+        String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ORDER_CANCEL_ALL, params);
         HuobiFutureOrderCancelAllResponse response = JSON.parseObject(body, HuobiFutureOrderCancelAllResponse.class);
         // 1051：没有可撤订单可以算成功的
         if ("ok".equalsIgnoreCase(response.getStatus()) || Integer.valueOf(1051).equals(response.getErrCode())) {
@@ -221,7 +217,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             params.put("page_index", String.valueOf(pageIndex++));
             String body = null;
             try {
-                body = httpService.doPostJson(HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
+                body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
             } catch (HttpRequestException e) {
                 logger.error("根据用户id查询订单信息失败，用户id：{}", accountId, e);
                 throw new RuntimeException("根据用户id查询订单信息失败");

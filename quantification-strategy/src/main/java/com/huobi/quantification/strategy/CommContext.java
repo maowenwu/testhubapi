@@ -112,6 +112,9 @@ public class CommContext {
         loadInitialUsdt();
     }
 
+    /**
+     * 加载合约币币账户期初余额
+     */
     private void loadInitialUsdt() {
         initialSpotUsdt = getCurrSpotUsdt();
         logger.info("币币账户期初余额：{}Usdt", initialSpotUsdt);

@@ -122,7 +122,7 @@ public class SpotOrderServiceImplTest {
 		Map<String, Object> param = new HashMap<>();
 		param.put("account-id", 4295363l);
 		param.put("symbol", "btcusdt");
-		String body = httpService.doHuobiPost(4295363l, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
+		String body = httpService.doHuobiSpotPost(4295363l, HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
 		System.err.println("=============" + body);
 	}
 

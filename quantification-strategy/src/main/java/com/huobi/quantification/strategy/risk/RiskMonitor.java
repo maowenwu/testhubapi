@@ -78,13 +78,14 @@ public class RiskMonitor {
             return true;
         } catch (Exception e) {
             logger.error("监控保证金率期间出现异常", e);
-            ThreadUtils.sleep(10 * 1000);
+            ThreadUtils.sleep(1000);
             return false;
         }
     }
 
     /**
      * 用于监控合约账户的保证金率
+     * 保证金率=账户权益 / （持仓保证金 + 冻结保证金） - 调整系数
      */
     public BigDecimal checkRiskRate() {
         //获取该合约账户的对应币种的保证金率
@@ -94,6 +95,12 @@ public class RiskMonitor {
 
         BigDecimal riskRate = commContext.getRiskRate();
         logger.info("当前保证金率：{}", riskRate);
+        // 如果保证金率为null，说明没有持仓
+        if (riskRate == null) {
+            // 修改为正常状态
+            riskContext.updateRiskCtrl(0);
+            return null;
+        }
         if (BigDecimalUtils.lessThanOrEquals(riskRate, level3)) {
             // 停止摆盘，发出警报，撤销所有订单，强平，直至保证金率恢复正常
             riskContext.updateRiskCtrl(3);

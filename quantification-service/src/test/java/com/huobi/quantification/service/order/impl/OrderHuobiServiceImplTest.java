@@ -41,7 +41,7 @@ public class OrderHuobiServiceImplTest {
 		createOrderReq.symbol = "eosusdt";
 		createOrderReq.type = CreateOrderRequest.OrderType.BUY_LIMIT;
 		createOrderReq.source = "api";
-		String result = httpService.doHuobiPost(4295363L,HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
+		String result = httpService.doHuobiSpotPost(4295363L,HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
 //		HuobiSpotOrderResponse parseObject = JSON.parseObject(result, HuobiSpotOrderResponse.class);
 //		if (parseObject.getStatus().equals("ok")) {
 //			System.err.println(parseObject.getStatus());
@@ -56,7 +56,7 @@ public class OrderHuobiServiceImplTest {
 			Map<String, String> params = new HashMap<>();
 			String data = parseObject.getString("data");
 			params.put("order-id", data);
-			String body = httpService.doHuobiGet(4232061L,HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", data),params);
+			String body = httpService.doHuobiSpotGet(4232061L,HttpConstant.HUOBI_ORDERDETAIL.replaceAll("\\{order-id\\}", data),params);
 			System.err.println(body);
 //			JSONObject jsonObject = JSON.parseObject(body);
 //			JSONObject jsonObjectdata = jsonObject.getJSONObject("data");
@@ -82,7 +82,7 @@ public class OrderHuobiServiceImplTest {
 	
 	@Test
 	public void cancelOrder() {
-		String doHuobiPost = httpService.doHuobiPost(4232061L,HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "7609870737"), null);
+		String doHuobiPost = httpService.doHuobiSpotPost(4232061L,HttpConstant.HUOBI_SUBMITCANCEL.replaceAll("\\{order-id\\}", "7609870737"), null);
 		JSONObject parseObject = JSON.parseObject(doHuobiPost);
 		System.err.println("取消订单，" + parseObject.getString("status"));
 	}
@@ -139,7 +139,7 @@ public class OrderHuobiServiceImplTest {
 		huobiOpenOrderRequest.symbol = "";
 		huobiOpenOrderRequest.side ="buy";
 		huobiOpenOrderRequest.size = "100";
-		String doHuobiPost = httpService.doHuobiPost(4232061L,HttpConstant.HUOBI_OPENORDERS, huobiOpenOrderRequest);
+		String doHuobiPost = httpService.doHuobiSpotPost(4232061L,HttpConstant.HUOBI_OPENORDERS, huobiOpenOrderRequest);
 		JSONObject parseObject = JSON.parseObject(doHuobiPost);
 		JSONArray jsonArray = parseObject.getJSONArray("data");
 		JSONObject dataObject = jsonArray.getJSONObject(0);
@@ -161,7 +161,7 @@ public class OrderHuobiServiceImplTest {
 	public void testParseMatchResult() {
 		Map<String, String> params = new HashMap<>();
 		params.put("order-id", "7610858684");
-		String body = httpService.doHuobiGet(4232061L,HttpConstant.HUOBI_MATCHRESULTS.replaceAll("\\{order-id\\}", ""), params);
+		String body = httpService.doHuobiSpotGet(4232061L,HttpConstant.HUOBI_MATCHRESULTS.replaceAll("\\{order-id\\}", ""), params);
 		System.err.println(body);
 //		JSONObject parseObject = JSON.parseObject(body);
 //		JSONArray jsonArray = parseObject.getJSONArray("data");

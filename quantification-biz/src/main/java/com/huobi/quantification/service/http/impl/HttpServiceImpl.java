@@ -40,10 +40,10 @@ public class HttpServiceImpl implements HttpService {
     private QuanProxyIpMapper quanProxyIpMapper;
 
     @Autowired
-    private OkSecretHolder okSecretHolder;
+    private OkFutureSecretHolder okFutureSecretHolder;
 
     @Autowired
-    private HuobiSecretHolder huobiSecretHolder;
+    private HuobiSpotSecretHolder huobiSpotSecretHolder;
 
     private Timer timer = new Timer();
 
@@ -101,7 +101,7 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doGet(String url, Map<String, String> params) throws HttpRequestException {
-        if (url.startsWith("http://www.huobiapps.com")||url.startsWith("http://172.18.6.16:8882")) {
+        if (url.startsWith("http://www.huobiapps.com") || url.startsWith("http://172.18.6.16:8882")) {
             return OkHttpClientUtils.getInstance(null).doGet(url, params);
         } else {
             return getHttpClientUtils().doGet(url, params);
@@ -123,25 +123,31 @@ public class HttpServiceImpl implements HttpService {
     }
 
     @Override
-    public String doOkSignedPost(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
-        OkSignature signature = okSecretHolder.getOkSignatureById(accountId);
+    public String doHuobiFuturePostJson(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
+        params.put("userId", "156233");
+        return doPostJson(url, params);
+    }
+
+    @Override
+    public String doOkFuturePost(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
+        OkSignature signature = okFutureSecretHolder.getOkSignatureById(accountId);
         params = signature.sign(params);
         return getHttpClientUtils().doPost(url, params);
     }
 
     @Override
-    public String doHuobiGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException {
+    public String doHuobiSpotGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException {
         if (params == null) {
             params = new HashMap<>();
         }
-        HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
+        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSignatureById(accountId);
         return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
                 "GET", uri, null, params);
     }
 
     @Override
-    public String doHuobiPost(Long accountId, String uri, Object object) throws HttpRequestException {
-        HuobiSignature huobiSignature = huobiSecretHolder.getHuobiSignatureById(accountId);
+    public String doHuobiSpotPost(Long accountId, String uri, Object object) throws HttpRequestException {
+        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSignatureById(accountId);
         return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
                 "POST", uri, object, new HashMap<>());
     }

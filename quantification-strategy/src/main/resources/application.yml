@@ -47,7 +47,7 @@ strategy:
       accountId: 101
       baseCoin: eos
       quotCoin: usd
-      contractCode: EOS180817
+      contractCode: EOS180826
       lever: 10
     spot:
       exchangeId: 1

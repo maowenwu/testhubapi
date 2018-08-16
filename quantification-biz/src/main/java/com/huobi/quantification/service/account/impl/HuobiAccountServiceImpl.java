@@ -80,7 +80,7 @@ public class HuobiAccountServiceImpl implements HuobiAccountService {
     private String queryAccountByAPI(Long accountId) {
         Map<String, String> params = new HashMap<>();
         params.put("account-id", accountId + "");
-        String body = httpService.doHuobiGet(accountId,
+        String body = httpService.doHuobiSpotGet(accountId,
                 HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
         return body;
     }

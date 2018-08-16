@@ -26,7 +26,7 @@ public class OkFutureFutureAccountServiceImplTest {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", "btc_usd");
         params.put("contract_type", "this_week");
-        String body = httpService.doOkSignedPost(1L, HttpConstant.OK_POSITION, params);
+        String body = httpService.doOkFuturePost(1L, HttpConstant.OK_POSITION, params);
         System.out.println(body);
     }
 }

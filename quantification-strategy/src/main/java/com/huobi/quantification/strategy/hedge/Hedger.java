@@ -51,11 +51,11 @@ public class Hedger {
                 try {
                     boolean b = hedgePhase1();
                     if (!b) {
-                        ThreadUtils.sleep(10 * 1000);
+                        ThreadUtils.sleep(1000);
                     }
                 } catch (Throwable e) {
                     logger.error("对冲1阶段出现异常,", e);
-                    ThreadUtils.sleep(10 * 1000);
+                    ThreadUtils.sleep(1000);
                 }
             }
         });

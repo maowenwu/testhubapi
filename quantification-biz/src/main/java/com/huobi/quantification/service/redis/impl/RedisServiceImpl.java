@@ -18,13 +18,13 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void saveUserInfoFuture(int exchangeId, Long accountId, Map<String, QuanAccountFutureAsset> assetMap) {
-        RMap<Long, Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.userinfo." + exchangeId);
+        RMap<Long, Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.account." + exchangeId);
         map.put(accountId, assetMap);
     }
 
     @Override
     public  Map<String, QuanAccountFutureAsset> getUserInfoFuture(int exchangeId, Long accountId) {
-        RMap<Long,  Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.userinfo." + exchangeId);
+        RMap<Long,  Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.account." + exchangeId);
         return map.get(accountId);
     }
 
@@ -74,11 +74,16 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void saveAccountSpot(List<QuanAccountAsset> quanAssetList, int exchangId, long accountId) {
-        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.accountasset." + exchangId);
+        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.account." + exchangId);
         map.put(accountId, quanAssetList);
     }
 
 
+    @Override
+    public List<QuanAccountAsset> getAccountSpot(long accountId, int exchangeId) {
+        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.account." + exchangeId);
+        return map.get(accountId);
+    }
 
     @Override
     public void saveIndexFuture(QuanIndexFuture quanIndexFuture) {
@@ -146,11 +151,6 @@ public class RedisServiceImpl implements RedisService {
         return map.get(symbol);
     }
 
-    @Override
-    public List<QuanAccountAsset> getAccountSpot(long accountId, int exchangeId) {
-        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.accountasset." + exchangeId);
-        return map.get(accountId);
-    }
 
 
 

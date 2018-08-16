@@ -352,7 +352,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
         for (Long tempOrderId : orderIds) {
             String body = "";
             try {
-                body = httpService.doHuobiPost(accountID, HttpConstant.HUOBI_SUBMITCANCEL
+                body = httpService.doHuobiSpotPost(accountID, HttpConstant.HUOBI_SUBMITCANCEL
                         .replaceAll("\\{order-id\\}", String.valueOf(tempOrderId)), null);
                 Thread.sleep(timeInterval == null ? 100L : timeInterval);
                 logger.info("订单号:{}取消订单返回的结果为:{}", String.valueOf(tempOrderId), body);
@@ -403,7 +403,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
             paramMap.put("order-ids", list.subList(50 * i, 50));
             logger.info("批量取消订单的请求orderIds为:{}", list.subList(50 * i, 50));
             try {
-                String body = httpService.doHuobiPost(accountID, HttpConstant.HUOBI_BATCHCANCEL,
+                String body = httpService.doHuobiSpotPost(accountID, HttpConstant.HUOBI_BATCHCANCEL,
                         paramMap);
                 logger.info("批量取消订单返回的结果为:{}", body);
                 map = parseData(body);
@@ -527,12 +527,11 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
     @Override
     public ServiceResult cancelAllOrder(SpotCancleAllOrderReqDto reqDto) {
-        String body = null;
         try {
             Map<String, Object> param = new HashMap<>();
             param.put("account-id", reqDto.getAccountId());
             param.put("symbol", reqDto.getBaseCoin() + reqDto.getQuoteCoin());
-            body = httpService.doHuobiPost(reqDto.getAccountId(), HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
+            String body = httpService.doHuobiSpotPost(reqDto.getAccountId(), HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
             HuobiBatchCancelOpenOrdersResponse response = JSON.parseObject(body, HuobiBatchCancelOpenOrdersResponse.class);
             String status = response.getStatus();
             if ("ok".equalsIgnoreCase(status)) {

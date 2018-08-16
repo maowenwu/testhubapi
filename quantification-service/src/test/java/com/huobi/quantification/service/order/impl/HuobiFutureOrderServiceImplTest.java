@@ -32,11 +32,7 @@ public class HuobiFutureOrderServiceImplTest {
 		System.out.println(aLong);
 	}
 
-	@Test
-	public void cancelOrder() {
-		Long aLong = huobiFutureOrderService.cancelOrder(8L, 8L);
-		System.out.println(aLong);
-	}
+
 
 	@Test
 	public void replenishOrder() {

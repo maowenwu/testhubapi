@@ -19,12 +19,12 @@ public interface HuobiFutureOrderService {
     Long placeOrder(FutureHuobiOrderRequest order);
 
 
-    Long cancelOrder(Long orderId, Long clientOrderId);
+    Long cancelOrder(Long accountId,Long orderId, Long clientOrderId);
 
 
     List<Long> updateHuobiOrderInfo(Long accountId, String contractCode);
 
-    void cancelAllOrder(String symbol);
+    void cancelAllOrder(Long accountId,String symbol);
 
     void replenishOrder(Long accountId, String symbol);
 }

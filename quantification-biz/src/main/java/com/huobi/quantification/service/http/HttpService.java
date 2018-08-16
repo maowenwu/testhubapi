@@ -18,9 +18,11 @@ public interface HttpService {
 
     String doPostJson(String url, Map<String, String> params) throws HttpRequestException;
 
-    String doOkSignedPost(Long accountId, String url, Map<String, String> params) throws HttpRequestException;
+    String doHuobiFuturePostJson(Long accountId, String url, Map<String, String> params) throws HttpRequestException;
 
-    String doHuobiGet(Long accountId,String uri, Map<String, String> params) throws HttpRequestException;
+    String doOkFuturePost(Long accountId, String url, Map<String, String> params) throws HttpRequestException;
+
+    String doHuobiSpotGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException;
     
-    String doHuobiPost(Long accountId,String uri ,Object object) throws HttpRequestException;
+    String doHuobiSpotPost(Long accountId, String uri , Object object) throws HttpRequestException;
 }

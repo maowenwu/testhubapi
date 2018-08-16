@@ -36,7 +36,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 logger.info("注册job开始");
                 StrategyProperties.Config future = group.getFuture();
                 StrategyProperties.Config spot = group.getSpot();
-                jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "percent10", "0/1 * * * * ?", true);
+                // percent10
+                jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "step0", "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotCurrentPriceJob(spot.getBaseCoin() + spot.getQuotCoin(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotAccountJob(spot.getAccountId(), "0/1 * * * * ?", true);
 

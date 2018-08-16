@@ -5,18 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.Resource;
-
-import com.huobi.quantification.dto.FutureBalanceRespDto;
-import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +19,6 @@ import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
 import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
 import com.huobi.quantification.response.future.OKFuturePositionResponse;
 import com.huobi.quantification.service.account.OkFutureAccountService;
@@ -94,7 +84,7 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
 
     private String queryOkUserInfoByAPI(Long accountId) {
         Map<String, String> params = new HashMap<>();
-        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_USER_INFO, params);
+        String body = httpService.doOkFuturePost(accountId, HttpConstant.OK_USER_INFO, params);
         return body;
     }
 
@@ -152,7 +142,7 @@ public class OkFutureAccountServiceImpl implements OkFutureAccountService {
         Map<String, String> params = new HashMap<>();
         params.put("symbol", symbol);
         //params.put("contract_type", contractType);
-        String body = httpService.doOkSignedPost(accountId, HttpConstant.OK_POSITION, params);
+        String body = httpService.doOkFuturePost(accountId, HttpConstant.OK_POSITION, params);
         return JSON.parseObject(body, OKFuturePositionResponse.class);
     }
 

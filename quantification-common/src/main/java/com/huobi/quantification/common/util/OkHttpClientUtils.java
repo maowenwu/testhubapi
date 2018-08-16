@@ -155,17 +155,14 @@ public class OkHttpClientUtils {
             }
             Request request = builder.build();
             Response response = httpClient.newCall(request).execute();
-            String s = response.body().string();
-            return s;
+            return response.body().string();
         } catch (IOException e) {
             throw new RuntimeException("IOException 目标url：" + uri, e);
         }
     }
 
     private String toQueryString(Map<String, String> params) {
-        return String.join("&", params.entrySet().stream().map((entry) -> {
-            return entry.getKey() + "=" + ApiSignature.urlEncode(entry.getValue());
-        }).collect(Collectors.toList()));
+        return String.join("&", params.entrySet().stream().map((entry) -> entry.getKey() + "=" + ApiSignature.urlEncode(entry.getValue())).collect(Collectors.toList()));
     }
 
     private void reset() {

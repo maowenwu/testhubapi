@@ -3,6 +3,7 @@ package com.huobi.quantification.strategy.risk;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.dao.*;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
@@ -124,7 +125,9 @@ public class RiskContext {
         initialFutureRight = new FutureRight(futureBalance, futureNetBorrow);
     }
 
-
+    /**
+     * 加载本次启动盈亏
+     */
     private void loadCurrProfit() {
         currSpotCoin = getCurrSpotCoin();
         currSpotUsdt = getCurrSpotUsdt();
@@ -231,8 +234,11 @@ public class RiskContext {
         strategyRiskHistory.setTotalProfit(riskProfit.getTotalProfit());
         strategyRiskHistory.setCreateTime(new Date());
         strategyRiskHistory.setUpdateTime(new Date());
-        // todo 每隔一段时间打点
         riskHistoryMapper.insert(strategyRiskHistory);
+        /*boolean isSave = StorageSupport.getInstance("saveRiskResult").checkSavepoint();
+        if (isSave) {
+            riskHistoryMapper.insert(strategyRiskHistory);
+        }*/
     }
 
     public static class FutureRight {
