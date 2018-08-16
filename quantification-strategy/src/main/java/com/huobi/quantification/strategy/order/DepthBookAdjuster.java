@@ -65,7 +65,7 @@ public class DepthBookAdjuster {
             // 对买卖盘进行排序
             sortDepthBook(depthBook);
             // 每个价格对应的数量不能超过阈值，超过则取数量=阈值
-            adjMaxAmount(depthBook);
+            adjAmount(depthBook);
             // 下单量调整为整数
             roundDownVolume(depthBook);
             logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());
@@ -186,23 +186,34 @@ public class DepthBookAdjuster {
      * @param depthBook
      * @param config
      */
-    private void adjMaxAmount(DepthBook depthBook) {
-        Integer maxAmountPerPrice = orderConfig.getMaxAmountPerPrice();
+    private void adjAmount(DepthBook depthBook) {
+        BigDecimal maxAmountPerPrice = orderConfig.getMaxAmountPerPrice();
+        BigDecimal minAmountPerPrice = orderConfig.getMinAmountPerPrice();
         List<DepthBook.Depth> asks = depthBook.getAsks();
+        List<DepthBook.Depth> newAsks = new ArrayList<>();
         asks.forEach(e -> {
             BigDecimal amount = e.getAmount();
-            if (BigDecimalUtils.moreThanOrEquals(amount, BigDecimal.valueOf(maxAmountPerPrice))) {
-                e.setAmount(BigDecimal.valueOf(maxAmountPerPrice));
+            if (BigDecimalUtils.moreThanOrEquals(amount, maxAmountPerPrice)) {
+                e.setAmount(maxAmountPerPrice);
+            }
+            if (BigDecimalUtils.moreThanOrEquals(amount, minAmountPerPrice)) {
+                newAsks.add(e);
             }
         });
+        depthBook.setAsks(newAsks);
 
         List<DepthBook.Depth> bids = depthBook.getBids();
+        List<DepthBook.Depth> newBids = new ArrayList<>();
         bids.forEach(e -> {
             BigDecimal amount = e.getAmount();
-            if (BigDecimalUtils.moreThanOrEquals(amount, BigDecimal.valueOf(maxAmountPerPrice))) {
-                e.setAmount(BigDecimal.valueOf(maxAmountPerPrice));
+            if (BigDecimalUtils.moreThanOrEquals(amount, maxAmountPerPrice)) {
+                e.setAmount(maxAmountPerPrice);
+            }
+            if (BigDecimalUtils.moreThanOrEquals(amount, minAmountPerPrice)) {
+                newBids.add(e);
             }
         });
+        depthBook.setBids(newBids);
     }
 
     private void adjCopyFactor(DepthBook depthBook) {

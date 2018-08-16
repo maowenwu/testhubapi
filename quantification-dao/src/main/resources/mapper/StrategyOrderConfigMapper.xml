@@ -2,43 +2,45 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.StrategyOrderConfigMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyOrderConfig">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="symbol" jdbcType="VARCHAR" property="symbol"/>
-        <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
-        <result column="place_order_interval" jdbcType="INTEGER" property="placeOrderInterval"/>
-        <result column="expect_yields" jdbcType="DECIMAL" property="expectYields"/>
-        <result column="price_step" jdbcType="DECIMAL" property="priceStep"/>
-        <result column="min_copy_factor" jdbcType="DECIMAL" property="minCopyFactor"/>
-        <result column="max_copy_factor" jdbcType="DECIMAL" property="maxCopyFactor"/>
-        <result column="max_amount_per_price" jdbcType="INTEGER" property="maxAmountPerPrice"/>
-        <result column="bids_basis_price" jdbcType="DECIMAL" property="bidsBasisPrice"/>
-        <result column="asks_basis_price" jdbcType="DECIMAL" property="asksBasisPrice"/>
-        <result column="bids_max_amount" jdbcType="INTEGER" property="bidsMaxAmount"/>
-        <result column="asks_max_amount" jdbcType="INTEGER" property="asksMaxAmount"/>
-        <result column="long_max_amount" jdbcType="DECIMAL" property="longMaxAmount"/>
-        <result column="short_max_amount" jdbcType="DECIMAL" property="shortMaxAmount"/>
-        <result column="max_long_position" jdbcType="DECIMAL" property="maxLongPosition"/>
-        <result column="max_short_position" jdbcType="DECIMAL" property="maxShortPosition"/>
-        <result column="contract_margin_reserve" jdbcType="DECIMAL" property="contractMarginReserve"/>
-        <result column="spot_coin_reserve" jdbcType="DECIMAL" property="spotCoinReserve"/>
-        <result column="spot_balance_reserve" jdbcType="DECIMAL" property="spotBalanceReserve"/>
-        <result column="stop_time1" jdbcType="VARCHAR" property="stopTime1"/>
-        <result column="stop_time2" jdbcType="VARCHAR" property="stopTime2"/>
-        <result column="buy_close_slippage" jdbcType="DECIMAL" property="buyCloseSlippage"/>
-        <result column="sell_close_slippage" jdbcType="DECIMAL" property="sellCloseSlippage"/>
-        <result column="max_close_amount" jdbcType="DECIMAL" property="maxCloseAmount"/>
-        <result column="close_order_interval" jdbcType="INTEGER" property="closeOrderInterval"/>
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="symbol" jdbcType="VARCHAR" property="symbol" />
+        <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+        <result column="place_order_interval" jdbcType="INTEGER" property="placeOrderInterval" />
+        <result column="expect_yields" jdbcType="DECIMAL" property="expectYields" />
+        <result column="price_step" jdbcType="DECIMAL" property="priceStep" />
+        <result column="min_copy_factor" jdbcType="DECIMAL" property="minCopyFactor" />
+        <result column="max_copy_factor" jdbcType="DECIMAL" property="maxCopyFactor" />
+        <result column="min_amount_per_price" jdbcType="DECIMAL" property="minAmountPerPrice" />
+        <result column="max_amount_per_price" jdbcType="DECIMAL" property="maxAmountPerPrice" />
+        <result column="bids_basis_price" jdbcType="DECIMAL" property="bidsBasisPrice" />
+        <result column="asks_basis_price" jdbcType="DECIMAL" property="asksBasisPrice" />
+        <result column="bids_max_amount" jdbcType="INTEGER" property="bidsMaxAmount" />
+        <result column="asks_max_amount" jdbcType="INTEGER" property="asksMaxAmount" />
+        <result column="long_max_amount" jdbcType="DECIMAL" property="longMaxAmount" />
+        <result column="short_max_amount" jdbcType="DECIMAL" property="shortMaxAmount" />
+        <result column="max_long_position" jdbcType="DECIMAL" property="maxLongPosition" />
+        <result column="max_short_position" jdbcType="DECIMAL" property="maxShortPosition" />
+        <result column="contract_margin_reserve" jdbcType="DECIMAL" property="contractMarginReserve" />
+        <result column="spot_coin_reserve" jdbcType="DECIMAL" property="spotCoinReserve" />
+        <result column="spot_balance_reserve" jdbcType="DECIMAL" property="spotBalanceReserve" />
+        <result column="stop_time1" jdbcType="VARCHAR" property="stopTime1" />
+        <result column="stop_time2" jdbcType="VARCHAR" property="stopTime2" />
+        <result column="buy_close_slippage" jdbcType="DECIMAL" property="buyCloseSlippage" />
+        <result column="sell_close_slippage" jdbcType="DECIMAL" property="sellCloseSlippage" />
+        <result column="max_close_amount" jdbcType="DECIMAL" property="maxCloseAmount" />
+        <result column="close_order_interval" jdbcType="INTEGER" property="closeOrderInterval" />
     </resultMap>
     <sql id="Base_Column_List">
     id, symbol, contract_type, place_order_interval, expect_yields, price_step, min_copy_factor,
-    max_copy_factor, max_amount_per_price, bids_basis_price, asks_basis_price, bids_max_amount,
-    asks_max_amount, long_max_amount, short_max_amount, max_long_position, max_short_position,
-    contract_margin_reserve, spot_coin_reserve, spot_balance_reserve, stop_time1, stop_time2,
-    buy_close_slippage, sell_close_slippage, max_close_amount, close_order_interval
+    max_copy_factor, min_amount_per_price, max_amount_per_price, bids_basis_price, asks_basis_price,
+    bids_max_amount, asks_max_amount, long_max_amount, short_max_amount, max_long_position,
+    max_short_position, contract_margin_reserve, spot_coin_reserve, spot_balance_reserve,
+    stop_time1, stop_time2, buy_close_slippage, sell_close_slippage, max_close_amount,
+    close_order_interval
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from strategy_order_config
         where id = #{id,jdbcType=INTEGER}
     </select>
@@ -49,22 +51,24 @@
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
     insert into strategy_order_config (id, symbol, contract_type,
       place_order_interval, expect_yields, price_step,
-      min_copy_factor, max_copy_factor, max_amount_per_price,
-      bids_basis_price, asks_basis_price, bids_max_amount,
-      asks_max_amount, long_max_amount, short_max_amount,
-      max_long_position, max_short_position, contract_margin_reserve,
-      spot_coin_reserve, spot_balance_reserve, stop_time1,
-      stop_time2, buy_close_slippage, sell_close_slippage,
-      max_close_amount, close_order_interval)
+      min_copy_factor, max_copy_factor, min_amount_per_price,
+      max_amount_per_price, bids_basis_price, asks_basis_price,
+      bids_max_amount, asks_max_amount, long_max_amount,
+      short_max_amount, max_long_position, max_short_position,
+      contract_margin_reserve, spot_coin_reserve,
+      spot_balance_reserve, stop_time1, stop_time2,
+      buy_close_slippage, sell_close_slippage, max_close_amount,
+      close_order_interval)
     values (#{id,jdbcType=INTEGER}, #{symbol,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR},
       #{placeOrderInterval,jdbcType=INTEGER}, #{expectYields,jdbcType=DECIMAL}, #{priceStep,jdbcType=DECIMAL},
-      #{minCopyFactor,jdbcType=DECIMAL}, #{maxCopyFactor,jdbcType=DECIMAL}, #{maxAmountPerPrice,jdbcType=INTEGER},
-      #{bidsBasisPrice,jdbcType=DECIMAL}, #{asksBasisPrice,jdbcType=DECIMAL}, #{bidsMaxAmount,jdbcType=INTEGER},
-      #{asksMaxAmount,jdbcType=INTEGER}, #{longMaxAmount,jdbcType=DECIMAL}, #{shortMaxAmount,jdbcType=DECIMAL},
-      #{maxLongPosition,jdbcType=DECIMAL}, #{maxShortPosition,jdbcType=DECIMAL}, #{contractMarginReserve,jdbcType=DECIMAL},
-      #{spotCoinReserve,jdbcType=DECIMAL}, #{spotBalanceReserve,jdbcType=DECIMAL}, #{stopTime1,jdbcType=VARCHAR},
-      #{stopTime2,jdbcType=VARCHAR}, #{buyCloseSlippage,jdbcType=DECIMAL}, #{sellCloseSlippage,jdbcType=DECIMAL},
-      #{maxCloseAmount,jdbcType=DECIMAL}, #{closeOrderInterval,jdbcType=INTEGER})
+      #{minCopyFactor,jdbcType=DECIMAL}, #{maxCopyFactor,jdbcType=DECIMAL}, #{minAmountPerPrice,jdbcType=DECIMAL},
+      #{maxAmountPerPrice,jdbcType=DECIMAL}, #{bidsBasisPrice,jdbcType=DECIMAL}, #{asksBasisPrice,jdbcType=DECIMAL},
+      #{bidsMaxAmount,jdbcType=INTEGER}, #{asksMaxAmount,jdbcType=INTEGER}, #{longMaxAmount,jdbcType=DECIMAL},
+      #{shortMaxAmount,jdbcType=DECIMAL}, #{maxLongPosition,jdbcType=DECIMAL}, #{maxShortPosition,jdbcType=DECIMAL},
+      #{contractMarginReserve,jdbcType=DECIMAL}, #{spotCoinReserve,jdbcType=DECIMAL},
+      #{spotBalanceReserve,jdbcType=DECIMAL}, #{stopTime1,jdbcType=VARCHAR}, #{stopTime2,jdbcType=VARCHAR},
+      #{buyCloseSlippage,jdbcType=DECIMAL}, #{sellCloseSlippage,jdbcType=DECIMAL}, #{maxCloseAmount,jdbcType=DECIMAL},
+      #{closeOrderInterval,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyOrderConfig">
         insert into strategy_order_config
@@ -92,6 +96,9 @@
             </if>
             <if test="maxCopyFactor != null">
                 max_copy_factor,
+            </if>
+            <if test="minAmountPerPrice != null">
+                min_amount_per_price,
             </if>
             <if test="maxAmountPerPrice != null">
                 max_amount_per_price,
@@ -173,8 +180,11 @@
             <if test="maxCopyFactor != null">
                 #{maxCopyFactor,jdbcType=DECIMAL},
             </if>
+            <if test="minAmountPerPrice != null">
+                #{minAmountPerPrice,jdbcType=DECIMAL},
+            </if>
             <if test="maxAmountPerPrice != null">
-                #{maxAmountPerPrice,jdbcType=INTEGER},
+                #{maxAmountPerPrice,jdbcType=DECIMAL},
             </if>
             <if test="bidsBasisPrice != null">
                 #{bidsBasisPrice,jdbcType=DECIMAL},
@@ -253,8 +263,11 @@
             <if test="maxCopyFactor != null">
                 max_copy_factor = #{maxCopyFactor,jdbcType=DECIMAL},
             </if>
+            <if test="minAmountPerPrice != null">
+                min_amount_per_price = #{minAmountPerPrice,jdbcType=DECIMAL},
+            </if>
             <if test="maxAmountPerPrice != null">
-                max_amount_per_price = #{maxAmountPerPrice,jdbcType=INTEGER},
+                max_amount_per_price = #{maxAmountPerPrice,jdbcType=DECIMAL},
             </if>
             <if test="bidsBasisPrice != null">
                 bids_basis_price = #{bidsBasisPrice,jdbcType=DECIMAL},
@@ -319,7 +332,8 @@
       price_step = #{priceStep,jdbcType=DECIMAL},
       min_copy_factor = #{minCopyFactor,jdbcType=DECIMAL},
       max_copy_factor = #{maxCopyFactor,jdbcType=DECIMAL},
-      max_amount_per_price = #{maxAmountPerPrice,jdbcType=INTEGER},
+      min_amount_per_price = #{minAmountPerPrice,jdbcType=DECIMAL},
+      max_amount_per_price = #{maxAmountPerPrice,jdbcType=DECIMAL},
       bids_basis_price = #{bidsBasisPrice,jdbcType=DECIMAL},
       asks_basis_price = #{asksBasisPrice,jdbcType=DECIMAL},
       bids_max_amount = #{bidsMaxAmount,jdbcType=INTEGER},

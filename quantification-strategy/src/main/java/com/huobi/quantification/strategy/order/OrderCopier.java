@@ -162,9 +162,9 @@ public class OrderCopier {
             orderContext.resetMetric();
 
             // 先处理买单
-            Integer bidCountTotal = orderReader.getBidOrderCountTotal();
-            if (bidCountTotal < orderConfig.getBidsMaxAmount()) {
-                for (DepthBook.Depth bid : bids) {
+            for (DepthBook.Depth bid : bids) {
+                // 检查当前已下买单订单数量是否小于配置
+                if (orderReader.getBidOrderCountTotal() < orderConfig.getBidsMaxAmount()) {
                     BigDecimal amountTotal = orderReader.getBidAmountTotalByPrice(bid.getPrice());
                     // 如果预期下单数量大于目前已下单数量，那么补充一些订单
                     if (BigDecimalUtils.moreThan(bid.getAmount(), amountTotal)) {
@@ -179,16 +179,16 @@ public class OrderCopier {
                         // 下单
                         orderContext.placeBuyOrder(bid.getPrice(), bid.getAmount());
                     }
+                } else {
+                    logger.warn("当前买单的下单总量已经超过限制");
                 }
-                orderContext.metricBuyOrder();
-            } else {
-                logger.warn("当前买单的下单总量已经超过限制");
             }
+            orderContext.metricBuyOrder();
 
             // 处理卖单，逻辑与买单一致
-            Integer askCountTotal = orderReader.getAskOrderCountTotal();
-            if (askCountTotal < orderConfig.getAsksMaxAmount()) {
-                for (DepthBook.Depth ask : asks) {
+            for (DepthBook.Depth ask : asks) {
+                // 检查当前已下卖单订单数量是否小于配置
+                if (orderReader.getAskOrderCountTotal() < orderConfig.getAsksMaxAmount()) {
                     BigDecimal amountTotal = orderReader.getAskAmountTotalByPrice(ask.getPrice());
                     if (BigDecimalUtils.moreThan(ask.getAmount(), amountTotal)) {
                         BigDecimal orderAmount = ask.getAmount().subtract(amountTotal);
@@ -201,11 +201,11 @@ public class OrderCopier {
                         // 下单
                         orderContext.placeSellOrder(ask.getPrice(), ask.getAmount());
                     }
+                } else {
+                    logger.warn("当前卖单的下单总量已经超过限制");
                 }
-                orderContext.metricSellOrder();
-            } else {
-                logger.warn("当前卖单的下单总量已经超过限制");
             }
+            orderContext.metricSellOrder();
             logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
             ThreadUtils.sleep(orderConfig.getPlaceOrderInterval() * 1000);
             return true;
