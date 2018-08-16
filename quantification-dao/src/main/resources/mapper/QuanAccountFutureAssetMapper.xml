@@ -2,47 +2,50 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanAccountFutureAssetMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFutureAsset">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="account_future_id" jdbcType="BIGINT" property="accountFutureId"/>
-        <result column="query_id" jdbcType="BIGINT" property="queryId"/>
-        <result column="coin_type" jdbcType="VARCHAR" property="coinType"/>
-        <result column="margin_balance" jdbcType="DECIMAL" property="marginBalance"/>
-        <result column="margin_position" jdbcType="DECIMAL" property="marginPosition"/>
-        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen"/>
-        <result column="margin_available" jdbcType="DECIMAL" property="marginAvailable"/>
-        <result column="profit_real" jdbcType="DECIMAL" property="profitReal"/>
-        <result column="profit_unreal" jdbcType="DECIMAL" property="profitUnreal"/>
-        <result column="risk_rate" jdbcType="DECIMAL" property="riskRate"/>
-        <result column="init" jdbcType="INTEGER" property="init"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="account_future_id" jdbcType="BIGINT" property="accountFutureId" />
+        <result column="query_id" jdbcType="BIGINT" property="queryId" />
+        <result column="coin_type" jdbcType="VARCHAR" property="coinType" />
+        <result column="margin_balance" jdbcType="DECIMAL" property="marginBalance" />
+        <result column="margin_position" jdbcType="DECIMAL" property="marginPosition" />
+        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen" />
+        <result column="margin_available" jdbcType="DECIMAL" property="marginAvailable" />
+        <result column="profit_real" jdbcType="DECIMAL" property="profitReal" />
+        <result column="profit_unreal" jdbcType="DECIMAL" property="profitUnreal" />
+        <result column="risk_rate" jdbcType="DECIMAL" property="riskRate" />
+        <result column="liquidation_price" jdbcType="DECIMAL" property="liquidationPrice" />
+        <result column="init" jdbcType="INTEGER" property="init" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
     <sql id="Base_Column_List">
-    id, account_future_id, query_id, coin_type, margin_balance, margin_position, margin_frozen, 
-    margin_available, profit_real, profit_unreal, risk_rate, init, create_time, update_time
+    id, account_future_id, query_id, coin_type, margin_balance, margin_position, margin_frozen,
+    margin_available, profit_real, profit_unreal, risk_rate, liquidation_price, init,
+    create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from quan_account_future_asset
         where id = #{id,jdbcType=BIGINT}
     </select>
-
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_account_future_asset
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFutureAsset">
-    insert into quan_account_future_asset (id, account_future_id, query_id, 
-      coin_type, margin_balance, margin_position, 
-      margin_frozen, margin_available, profit_real, 
-      profit_unreal, risk_rate, init, 
-      create_time, update_time)
-    values (#{id,jdbcType=BIGINT}, #{accountFutureId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT}, 
-      #{coinType,jdbcType=VARCHAR}, #{marginBalance,jdbcType=DECIMAL}, #{marginPosition,jdbcType=DECIMAL}, 
-      #{marginFrozen,jdbcType=DECIMAL}, #{marginAvailable,jdbcType=DECIMAL}, #{profitReal,jdbcType=DECIMAL}, 
-      #{profitUnreal,jdbcType=DECIMAL}, #{riskRate,jdbcType=DECIMAL}, #{init,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into quan_account_future_asset (id, account_future_id, query_id,
+      coin_type, margin_balance, margin_position,
+      margin_frozen, margin_available, profit_real,
+      profit_unreal, risk_rate, liquidation_price,
+      init, create_time, update_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{accountFutureId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT},
+      #{coinType,jdbcType=VARCHAR}, #{marginBalance,jdbcType=DECIMAL}, #{marginPosition,jdbcType=DECIMAL},
+      #{marginFrozen,jdbcType=DECIMAL}, #{marginAvailable,jdbcType=DECIMAL}, #{profitReal,jdbcType=DECIMAL},
+      #{profitUnreal,jdbcType=DECIMAL}, #{riskRate,jdbcType=DECIMAL}, #{liquidationPrice,jdbcType=DECIMAL},
+      #{init,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanAccountFutureAsset">
         insert into quan_account_future_asset
@@ -79,6 +82,9 @@
             </if>
             <if test="riskRate != null">
                 risk_rate,
+            </if>
+            <if test="liquidationPrice != null">
+                liquidation_price,
             </if>
             <if test="init != null">
                 init,
@@ -124,6 +130,9 @@
             <if test="riskRate != null">
                 #{riskRate,jdbcType=DECIMAL},
             </if>
+            <if test="liquidationPrice != null">
+                #{liquidationPrice,jdbcType=DECIMAL},
+            </if>
             <if test="init != null">
                 #{init,jdbcType=INTEGER},
             </if>
@@ -168,6 +177,9 @@
             <if test="riskRate != null">
                 risk_rate = #{riskRate,jdbcType=DECIMAL},
             </if>
+            <if test="liquidationPrice != null">
+                liquidation_price = #{liquidationPrice,jdbcType=DECIMAL},
+            </if>
             <if test="init != null">
                 init = #{init,jdbcType=INTEGER},
             </if>
@@ -192,6 +204,7 @@
       profit_real = #{profitReal,jdbcType=DECIMAL},
       profit_unreal = #{profitUnreal,jdbcType=DECIMAL},
       risk_rate = #{riskRate,jdbcType=DECIMAL},
+      liquidation_price = #{liquidationPrice,jdbcType=DECIMAL},
       init = #{init,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

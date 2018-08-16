@@ -25,6 +25,8 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private StrategyProperties strategyProperties;
     @Autowired
     private JobManageService jobManageService;
+    @Autowired
+    private CommContext commContext;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
@@ -36,6 +38,7 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 logger.info("注册job开始");
                 StrategyProperties.Config future = group.getFuture();
                 StrategyProperties.Config spot = group.getSpot();
+                commContext.init(group);
                 // percent10
                 jobManageService.addHuobiSpotDepthJob(spot.getBaseCoin() + spot.getQuotCoin(), "step0", "0/1 * * * * ?", true);
                 jobManageService.addHuobiSpotCurrentPriceJob(spot.getBaseCoin() + spot.getQuotCoin(), "0/1 * * * * ?", true);
@@ -44,21 +47,15 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
                 jobManageService.addHuobiFuturePositionJob(future.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFutureUserInfoJob(future.getAccountId(), "0/1 * * * * ?", true);
                 jobManageService.addHuobiFutureContractCodeJob("0/10 * * * * ?", true);
-                jobManageService.addHuobiFutureDepthJob(future.getBaseCoin() + "_" + future.getQuotCoin(), "this_week", "step0", "0/1 * * * * ?", true);
+                jobManageService.addHuobiFutureDepthJob(future.getBaseCoin() + "_" + future.getQuotCoin(), commContext.getContractTypeFromCode(), "step0", "0/1 * * * * ?", true);
                 logger.info("注册job完成");
                 // 等待3秒，保证job已经完全运行
                 ThreadUtils.sleep(3000);
-                contextInit(group);
                 //startOrderCopierWithConfig(group);
-                //startHedgerWithConfig(group);
-                startRiskMonitorWithConfig(group);
+                startHedgerWithConfig(group);
+                //startRiskMonitorWithConfig(group);
             }
         }
-    }
-
-    private void contextInit(StrategyProperties.ConfigGroup group) {
-        CommContext commContext = ApplicationContextHolder.getContext().getBean(CommContext.class);
-        commContext.init(group);
     }
 
     private void startOrderCopierWithConfig(StrategyProperties.ConfigGroup group) {

@@ -105,6 +105,7 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         futureAsset.setProfitReal(dataBean.getProfitReal());
         futureAsset.setProfitUnreal(dataBean.getProfitUnreal());
         futureAsset.setRiskRate(dataBean.getRiskRate());
+        futureAsset.setLiquidationPrice(dataBean.getLiquidationPrice());
         futureAsset.setInit(0);
         futureAsset.setCreateTime(new Date());
         futureAsset.setUpdateTime(new Date());

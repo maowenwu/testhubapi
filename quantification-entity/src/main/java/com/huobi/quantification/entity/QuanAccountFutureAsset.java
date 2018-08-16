@@ -5,74 +5,86 @@ import java.util.Date;
 
 public class QuanAccountFutureAsset {
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private Long accountFutureId;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private Long queryId;
 
     /**
      * 币种
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private String coinType;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 账户权益
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal marginBalance;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 持仓保证金
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal marginPosition;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 冻结保证金
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal marginFrozen;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 可用保证金
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal marginAvailable;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 已实现盈亏
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal profitReal;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 未实现盈亏
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal profitUnreal;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * 保证金率
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private BigDecimal riskRate;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
+     */
+    private BigDecimal liquidationPrice;
+
+    /**
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private Integer init;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-04 10:24:20
+     * @mbg.generated 2018-08-16 15:46:11
      */
     private Date updateTime;
 
@@ -162,6 +174,14 @@ public class QuanAccountFutureAsset {
 
     public void setRiskRate(BigDecimal riskRate) {
         this.riskRate = riskRate;
+    }
+
+    public BigDecimal getLiquidationPrice() {
+        return liquidationPrice;
+    }
+
+    public void setLiquidationPrice(BigDecimal liquidationPrice) {
+        this.liquidationPrice = liquidationPrice;
     }
 
     public Integer getInit() {
