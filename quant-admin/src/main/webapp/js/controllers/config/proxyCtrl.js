@@ -14,7 +14,7 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'host', displayName: '主机地址'},
+            {field: 'host', displayName: '主机地址1'},
             {field: 'port', displayName: '端口号'},
             {field: 'userName', displayName: '用户名'},
             {field: 'password', displayName: '用户密码'},
@@ -38,14 +38,16 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 	
 	//查询
 	$scope.query = function(){
-		$http.post('proxy/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('proxy/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
+					debugger;
 					if(!page){
 						return;
 					}
-					$scope.proxyData = page.result;
-					$scope.proxyGrid.totalItems = page.totalCount;
+
+					$scope.proxyData = page.list;
+					$scope.proxyGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

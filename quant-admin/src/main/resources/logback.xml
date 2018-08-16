@@ -22,10 +22,10 @@
 		</encoder>
 	</appender>
 	
-	<logger name="jdbc.sqltiming" level="error" />
-	<logger name="jdbc.audit" level="error" />
-	<logger name="jdbc.connection" level="error" />
-	<logger name="jdbc.resultset" level="error" />
+	<logger name="jdbc.sqltiming" level="debug" />
+	<logger name="jdbc.audit" level="debug" />
+	<logger name="jdbc.connection" level="debug" />
+	<logger name="jdbc.resultset" level="debug" />
 	<root level="info">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />

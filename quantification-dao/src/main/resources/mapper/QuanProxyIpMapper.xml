@@ -11,6 +11,11 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
+
+  <sql id="Base_Column_List">
+  id, host, port, user_name, password, state, update_time, create_time
+  </sql>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_proxy_ip
     where id = #{id,jdbcType=BIGINT}
@@ -42,5 +47,16 @@
   <select id="selectAll" resultMap="BaseResultMap">
     select id, host, port, user_name, password, state, update_time, create_time
     from quan_proxy_ip
+  </select>
+
+  <select id="selectList" parameterType="com.huobi.quantification.entity.QuanProxyIp" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from quan_proxy_ip
+    <where>
+      <if test="host != null">
+        and host = #{host,jdbcType=VARCHAR}
+      </if>
+    </where>
   </select>
 </mapper>

@@ -577,51 +577,6 @@ public class DateUtils {
 	    return result;
 	  }
 	
-  public static void main(String[] args) {
-	  System.out.println(getDateFormatTime(new Date(),-1));
-   /* String dateStr = "1899-12-30 16:30:32";
-    System.out.println(DateUtils.parseDateTime(dateStr));
-    
-    System.out.println(DateUtils.format("1109", "MMyy", "MM/yy"));
-    System.out.println(format(getMonFirstDay(), "yyyy-MM-dd"));*/
-    //System.out.println(getDateStrFormat("1982-8-5"));
-    //System.out.println(calcDays("2010-08-01","2010-08-02"));
-    
-    
-   /* Date d = parseDate("2010-10-10");
-    int i = getChinaWeek(d);
-    System.out.println(i);*/
-   /* String period = "2010-10-08,2010-10-31|2010-10-03,2010-10-06|2010-09-01,2010-09-29";
-    String[] startEndDateArr  = period.split("\\|");
-    
-    for(int i=0;i<startEndDateArr.length;i++){
-      System.out.println(i+"==="+startEndDateArr[i]);
-    }*/
-/*    String[] firstSecondDateStr =  "2010-10-08,".split(",");
-    
-    for(int i=0;i<firstSecondDateStr.length;i++){
-      System.out.println(i+"==="+firstSecondDateStr[i]);
-    }*/
-    
-//    System.out.println(getDateStrFormat("1899-12-30"));
-  }
 
-  /**
-   * 判断传入的时间，是否大于今天
-   * @param date
-   * @return 大于今天返回true
-   */
-  public static boolean compareTo(String date){
-    Date date1 = parseDate(date);
-    Date now;
-    Calendar c = Calendar.getInstance();
-    now = new Date(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
-
-    if(date1.after(now)) {
-      return true;
-    }
-
-    return false;
-  }
 
 }
