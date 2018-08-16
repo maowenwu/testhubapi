@@ -13,4 +13,6 @@ public interface QuanProxyIpMapper {
     List<QuanProxyIp> selectAll();
 
     int updateByPrimaryKey(QuanProxyIp record);
+
+    List<QuanProxyIp> selectList(QuanProxyIp entity);
 }
