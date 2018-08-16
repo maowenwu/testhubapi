@@ -11,7 +11,7 @@
 	<name>quant-admin</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.build.jdk>1.7</project.build.jdk>
+		<project.build.jdk>1.8</project.build.jdk>
 		
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<spring-security.version>4.1.0.RELEASE</spring-security.version>
@@ -378,8 +378,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.1</version>
 					<configuration>
-						<source>1.7</source>
-						<target>1.7</target>
+						<source>1.8</source>
+						<target>1.8</target>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
