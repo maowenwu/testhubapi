@@ -38,14 +38,14 @@ angular.module('inspinia',['uiSwitch']).controller('jobCtrl',function($scope,$ht
 	
 	//查询
 	$scope.query = function(){
-		$http.post('spotJob/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('spotJob/selectJobByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.jobData = page.result;
-					$scope.jobGrid.totalItems = page.totalCount;
+					$scope.jobData = page.list;
+					$scope.jobGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

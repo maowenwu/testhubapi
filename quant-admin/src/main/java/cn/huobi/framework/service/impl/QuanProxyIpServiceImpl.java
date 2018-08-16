@@ -90,8 +90,8 @@ public class QuanProxyIpServiceImpl implements QuanProxyIpService {
 
     @Override
     public PageInfo<QuanProxyIp> selectPage(QuanProxyIp entity,PageInfo<QuanProxyIp> pageInfo) {
-        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         List<QuanProxyIp> list = quanProxyIpMapper.selectList(entity);
+        PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
         pageInfo = new PageInfo<>(list);
         return pageInfo;
     };

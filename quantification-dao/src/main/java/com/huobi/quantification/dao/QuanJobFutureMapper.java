@@ -21,4 +21,6 @@ public interface QuanJobFutureMapper {
 
     List<QuanJobFuture> selectAll();
 
+    List<QuanJobFuture> selectList(QuanJobFuture quanJob);
+
 }

@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.QuanJobFutureMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,19 +26,7 @@ import cn.huobi.framework.service.QuanFutureJobService;
 public class QuanFutreJobServiceImpl implements QuanFutureJobService{
 	
 	@Autowired
-	private QuanFutureJobDao quanFutureJobDao;
-
-	@Override
-	public List<FutureJob> selectDicByCondition(FutureJob job, Page<FutureJob> page) {
-		QuanJobFuture quanJobFuture = convertFutureJob(job);
-		List<QuanJobFuture> quanJobFutures = quanFutureJobDao.selectDicByCondition(quanJobFuture, page);
-		List<FutureJob> futureJobs = new ArrayList<>();
-		for (QuanJobFuture quanJobFuture2 : quanJobFutures) {
-			FutureJob futureJob = convertQuanJobFuture2FutureJob(quanJobFuture2);
-			futureJobs.add(futureJob);
-		}
-		return futureJobs;
-	}
+	private QuanJobFutureMapper quanJobFutureMapper;
 
 	private QuanJobFuture convertFutureJob(FutureJob job) {
 		QuanJobFuture quanJobFuture = new QuanJobFuture();
@@ -77,7 +68,21 @@ public class QuanFutreJobServiceImpl implements QuanFutureJobService{
 		}else {
 			quanJobFuture.setState(1);
 		}
-		return quanFutureJobDao.update(quanJobFuture);
+		return quanJobFutureMapper.updateByPrimaryKeySelective(quanJobFuture);
+	}
+
+	@Override
+	public PageInfo<FutureJob> selectJobByCondition(FutureJob job, PageInfo<FutureJob> page) {
+		PageHelper.startPage(page.getPageNum(), page.getPageSize());
+		QuanJobFuture quanJobFuture = convertFutureJob(job);
+		List<QuanJobFuture> quanJobFutures = quanJobFutureMapper.selectList(quanJobFuture);
+		List<FutureJob> futureJobs = new ArrayList<>();
+        quanJobFutures.stream().forEach( e -> {
+            FutureJob futureJob = convertQuanJobFuture2FutureJob(e);
+            futureJobs.add(futureJob);
+        });
+        page = new PageInfo<>(futureJobs);
+        return page;
 	}
 
 }

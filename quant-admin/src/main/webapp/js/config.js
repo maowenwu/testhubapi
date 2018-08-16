@@ -582,7 +582,24 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })        
-        
+        .state('config.futureAccountDetail', {
+        	url: "/config/futureAccountDetail/:accountId",
+        	templateUrl: "views/config/futureAccountDetail.html",
+        	data: {pageTitle: '期货账户详情'},
+        	controller: "futureAccountDetailCtrl",
+        	resolve: {
+        		loadPlugin: function ($ocLazyLoad) {
+        			$ocLazyLoad.load('ui-switch');
+        			$ocLazyLoad.load('oitozero.ngSweetAlert');
+        		},
+        		deps: ["$ocLazyLoad",function($ocLazyLoad){
+        			return $ocLazyLoad.load({
+        				name: "inspinia",
+        				files: ["js/controllers/config/futureAccountDetailCtrl.js?ver="+verNo]
+        			});
+        		}]
+        	}
+        })
 }
 
 

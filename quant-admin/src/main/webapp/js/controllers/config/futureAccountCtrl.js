@@ -20,8 +20,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
             {field: 'accountsName', displayName: '账号名'},
             {field: 'state', displayName: '账号状态'},
             {field: 'id', displayName: '操作', cellTemplate: 
-           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.editModal(row.entity)">修改</a> | '
-               +'<a ng-show="grid.appScope.hasPermit(\'futureAccount.delete\')"  ng-click="grid.appScope.deleteInfo(row.entity)">删除</a></div>'
+           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.toDetail(row.entity)">详情</a></div> '
             }
         ],
         onRegisterApi: function(gridApi){
@@ -53,9 +52,8 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 		$("#addModal").modal("show");
 	}
 	//修改任务
-	$scope.editModal = function(entity){
-		$scope.newInfo = angular.copy(entity);
-		$("#editRoleModal").modal("show");
+	$scope.toDetail = function(entity){
+        $state.go('config.futureAccountDetail', {accountId: entity.id});
 	}
 	
 	$scope.submit = function(){

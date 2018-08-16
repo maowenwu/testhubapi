@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,12 +38,11 @@ public class FutureJobAction {
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value="/selectJobByCondition.do")
 	@ResponseBody
-	public Page<FutureJob> selectJobByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<FutureJob> page) throws Exception {
+	public PageInfo<FutureJob> selectJobByCondition(@RequestParam("baseInfo") String baseInfo ,
+													@Param("page") PageInfo<FutureJob> page) throws Exception {
 		FutureJob job = JSONObject.parseObject(baseInfo, FutureJob.class);
 		try {
-			List<FutureJob> futureJobs = quanFutureJobService.selectDicByCondition(job, page);
-			page.setResult(futureJobs);
+			page = quanFutureJobService.selectJobByCondition(job, page);
 		} catch (Exception e) {
 			log.error("条件查询现货任务失败");
 			e.printStackTrace();
@@ -70,63 +70,5 @@ public class FutureJobAction {
 			e.printStackTrace();
 		}
 		return msg;
-	}
-	
-	/**
-	 * 保存任务
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/saveSpotJob.do")
-	@ResponseBody
-	@SystemLog(description = "新增|修改任务",operCode="spotJob.insert")
-	public Map<String, Object> saveJob(@RequestBody String param) throws Exception {
-		return null;
-	}
-	
-	@RequestMapping(value="/deleteSpotJob.do")
-	@ResponseBody
-	@SystemLog(description = "删除任务",operCode="spotJob.delete")
-	public Map<String, Object> deleteJob(@RequestParam("id")Integer id) throws Exception {
-		try {
-		} catch (Exception e) {
-			log.error("现货任务数据删除失败");
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@DataSource(Constants.DATA_SOURCE_SLAVE)
-	@RequestMapping(value="selectDictAndChildren.do")
-	@ResponseBody
-	public Object selectDictAndChildren() throws Exception {
-		return null;
-	}
-	
-	/**
-	 * 
-	 * @author tans
-	 * @date 2017年6月21日 下午3:13:08
-	 * @return
-	 * @throws Exception
-	 */
-	@DataSource(Constants.DATA_SOURCE_SLAVE)
-	@RequestMapping(value="getByKey.do")
-	@ResponseBody
-	public Map<String, Object> getByKey(@Param("sysKey")String sysKey) {
-		return null;
-	}
-	
-	/**
-	 * 修改字典sysValue
-	 * @author tans
-	 * @date 2017年6月21日 下午3:50:21
-	 * @param sysDict
-	 * @return
-	 */
-	@RequestMapping(value="updateSysValue.do")
-	@ResponseBody
-	public Map<String, Object> updateSysValue(@RequestBody SysDict sysDict) {
-		return null;
 	}
 }

@@ -59,7 +59,7 @@ angular.module('inspinia',['uiSwitch']).controller('feeCtrl',function($scope,$ht
 		$scope.newInfo = angular.copy(entity);
 		$("#editRoleModal").modal("show");
 	}
-	
+
 	//提交新的任务
 	$scope.submitNewInfo = function(){
 		$scope.submitting = true;

@@ -16,4 +16,9 @@ public interface QuanJobMapper {
     int updateByPrimaryKey(QuanJob record);
     
     void insertOrUpdate(QuanJob job);
+
+    List<QuanJob> selectList(QuanJob quanJob);
+
+    int updateByPrimaryKeySelective(QuanJob quanJob);
+
 }
