@@ -130,6 +130,8 @@ public class OrderContext {
         if (CollectionUtils.isNotEmpty(preCancelOrders)) {
             cancelBySide(preCancelOrders);
             canceledOrderIds.addAll(preCancelOrders.stream().map(e -> e.getExOrderId()).collect(Collectors.toList()));
+            // 撤单后需要更新余额信息
+            futureBalance = commContext.getFutureBalance();
         }
 
         // 价格在depthBook中的所有订单
@@ -241,6 +243,7 @@ public class OrderContext {
             }
         } else {
             strategyMetric.ignoreSellOpenOrderIncrement();
+            logger.warn("可用卖出开仓数量为0，忽略该笔下单");
         }
     }
 
@@ -294,7 +297,7 @@ public class OrderContext {
             // 可用余额单位为btc币
             BigDecimal marginBalance = futureBalance.getMarginAvailable().subtract(config.getContractMarginReserve());
             // 期货可开张数=余额*杠杆*价格*汇率/面值
-            BigDecimal amount = marginBalance.multiply(BigDecimal.valueOf(this.futureLever)).multiply(price).divide(futureExchangeConfig.getFaceValue(), 18, BigDecimal.ROUND_DOWN);
+            BigDecimal amount = marginBalance.multiply(BigDecimal.valueOf(this.futureLever)).multiply(price).divide(futureExchangeConfig.getFaceValue(), 0, BigDecimal.ROUND_DOWN);
             minAmount = BigDecimalUtils.min(amount, orderAmount);
         } else {
             // 如果是平仓，那么不需要关心账户余额
@@ -359,9 +362,14 @@ public class OrderContext {
 
 
     public Long placeInternalOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
+        price = checkPrice(price);
         Long exOrderId = commContext.placeOrder(side, offset, price, orderAmount);
         postPlaceOrder(exOrderId, side, offset, price, orderAmount);
         return exOrderId;
+    }
+
+    private BigDecimal checkPrice(BigDecimal price) {
+        return price.divide(BigDecimal.ONE, futureExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
     }
 
     // 下单后需要将订单添加到orderReader中
