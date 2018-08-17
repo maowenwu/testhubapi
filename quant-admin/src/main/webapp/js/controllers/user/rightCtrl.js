@@ -12,12 +12,8 @@ angular.module('inspinia').controller('rightCtrl',function($scope,$http,$state,$
 		paginationPageSizes: [10, 20, 50, 100],
 		useExternalPagination: true,
 		columnDefs: [
-//            {field: 'id', displayName: '角色ID',width:150},
             {field: 'rightName', displayName: '角色名称'},
             {field: 'rightCode',displayName: '角色编码'},
-//            {field: 'rightType', displayName: '角色类型',width:150},
-//            {field: 'rightComment', displayName: '角色内容',width:400},
-//          {field: 'status', displayName: '状态', cellFilter:"formatDropping:"+ angular.toJson($scope.status)},
             {field: 'options', displayName: '操作', cellTemplate:
             	 '<a  class="lh30"  ng-show="grid.appScope.hasPermit(\'right.update\')" ng-click="grid.appScope.editRightModal(row.entity)">修改</a>'
                 +'<a class="lh30"  ng-show="grid.appScope.hasPermit(\'right.menu\')" ui-sref="user.rightAddMenu({id:row.entity.id,rightName:row.entity.rightName})"> | 菜单</a>'
@@ -109,14 +105,14 @@ angular.module('inspinia').controller('rightCtrl',function($scope,$http,$state,$
 	
 	//查询
 	$scope.query = function(){
-		$http.post('right/selectRightByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('right/selectRightByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.rightData = page.result;
-					$scope.rightGrid.totalItems = page.totalCount;
+					$scope.rightData = page.list;
+					$scope.rightGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

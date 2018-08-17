@@ -8,6 +8,8 @@ import cn.huobi.framework.service.*;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.entity.BossShiroUser;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,16 +52,12 @@ public class UserAction {
 	 * @param page
 	 * @return
 	 */
-	@RequestMapping(value="/selectUserByCondition.do")
+	@RequestMapping(value = "/selectUserByCondition.do")
 	@ResponseBody
-	public Page<UserInfo> selectUserByCondition(@RequestParam("baseInfo")String baseInfo,
-                                                @Param("page")Page<UserInfo> page){
-		UserInfo user = JSON.parseObject(baseInfo, UserInfo.class);
-		try {
-			userService.selectUserByCondition(user, page);
-		} catch (Exception e) {
-			log.error("用户条件查询失败");
-		}
+	public PageInfo<BossShiroUser> selectUserByCondition(@RequestParam("baseInfo") String baseInfo,
+														 @Param("page") PageInfo<BossShiroUser> page) {
+		BossShiroUser bossShiroUser = JSON.parseObject(baseInfo, BossShiroUser.class);
+		page=userService.selectPage(bossShiroUser, page);
 		return page;
 	}
 	
