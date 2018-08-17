@@ -46,10 +46,6 @@ public class SysDictServiceImpl implements SysDictService {
     @Autowired
     SysDictMapper sysDictMapper;
 
-    @Override
-    public List<SysDict> selectDicByCondition(SysDict dict, Page<SysDict> page) {
-        return sysDictDao.selectDicByCondition(dict, page);
-    }
 
     @Override
     public Map<String, Object> insert(SysDict info) {
@@ -123,33 +119,6 @@ public class SysDictServiceImpl implements SysDictService {
         return sysDictDao.getByKey(string);
     }
 
-    @Override
-    public SysDict selectRestPwd() {
-        return sysDictDao.selectRestPwd();
-    }
-
-    @Override
-    public SysDict selectExistServiceLink(String serviceType, String string) {
-        return sysDictDao.selectExistServiceLink(serviceType, string);
-    }
-
-    @Override
-    public List<SysDict> selectByKey(String string) {
-        return sysDictDao.selectListByKey(string);
-    }
-
-    @Override
-    public Map<String, String> selectMapByKey(String key) {
-        Map<String, String> sysDictMap = new HashMap<>();
-        List<SysDict> sysDictList = sysDictDao.selectListByKey(key);
-        if (sysDictList != null && sysDictList.size() > 0) {
-            for (SysDict sysDict : sysDictList) {
-                sysDictMap.put(sysDict.getSysValue(), sysDict.getSysName());
-            }
-        }
-        return sysDictMap;
-    }
-
 
     @Override
     public int updateSysValue(SysDict sysDict) {
@@ -159,25 +128,6 @@ public class SysDictServiceImpl implements SysDictService {
         }
         return num;
     }
-
-    @Override
-    public String getValues(String parentId) {
-        List<String> values = sysDictDao.getValueByparent(parentId);
-        if (values != null && values.size() > 0) {
-            StringBuffer result = new StringBuffer();
-            for (String value : values) {
-                result.append("'" + value + "',");
-            }
-            return result.substring(0, result.length() - 1);
-        } else
-            return "''";
-    }
-
-    @Override
-    public List<SysDict> getAcqMerchantList(String str) {
-        return sysDictDao.getAcqMerchantList(str);
-    }
-
 
 
     @Override

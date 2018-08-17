@@ -11,7 +11,6 @@ import java.util.Map;
 
 public interface SysDictService {
 
-    List<SysDict> selectDicByCondition(SysDict dict, Page<SysDict> page);
 
     Map<String, Object> insert(SysDict info);
 
@@ -23,19 +22,9 @@ public interface SysDictService {
 
     SysDict getByKey(String string);
 
-    SysDict selectExistServiceLink(String serviceType, String string);
-
-    SysDict selectRestPwd();
-
-    List<SysDict> selectByKey(String string);
 
     int updateSysValue(SysDict sysDict);
 
-    Map<String, String> selectMapByKey(String string);
-
-    String getValues(String parentId);
-
-    List<SysDict> getAcqMerchantList(String str);
 
     PageInfo<SysDict> selectPage(SysDict entity, PageInfo<SysDict> pageInfo);
 }
