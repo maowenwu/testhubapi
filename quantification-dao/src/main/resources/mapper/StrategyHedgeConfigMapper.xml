@@ -205,4 +205,17 @@
         from strategy_hedge_config
         where symbol = #{symbol} and contract_type=#{contractType}
     </select>
+    <select id="selectList" parameterType="com.huobi.quantification.entity.StrategyHedgeConfig" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from strategy_hedge_config
+        <where>
+            <if test="symbol != null">
+                and symbol like concat(concat('%',#{symbol,jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="contractType != null">
+                and contract_type like concat(concat('%',#{contractType,jdbcType=VARCHAR}),'%')
+            </if>
+        </where>
+    </select>
 </mapper>

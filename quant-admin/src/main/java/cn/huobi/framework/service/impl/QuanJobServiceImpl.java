@@ -78,11 +78,12 @@ public class QuanJobServiceImpl implements QuanJobService {
 		QuanJob quanJob = convertSpotJob(job);
 		List<QuanJob> jobs = quanJobMapper.selectList(quanJob);
 		List<SpotJob> spotJobs = new ArrayList<>();
-		for (QuanJob quanJobObject: jobs) {
-			SpotJob spotJob = convertQuanJob2SpotJob(quanJobObject);
-			spotJobs.add(spotJob);
-		}
+		jobs.stream().forEach(e -> {
+			spotJobs.add(convertQuanJob2SpotJob(e));
+		});
 		page = new PageInfo<>(spotJobs);
+		com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) jobs;
+		page.setTotal(totalPage.getTotal());
 		return page;
 	}
 }

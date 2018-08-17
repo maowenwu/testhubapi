@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.huobi.quantification.dao.QuanJobFutureMapper;
+import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
+import com.huobi.quantification.entity.QuanJobFuture;
+import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.enums.ExchangeEnum;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +46,9 @@ public class SpotOrderServiceImplTest {
 
 	@Autowired
 	private QuanOrderMapper quanOrderMapper;
+
+	@Autowired
+	private StrategyHedgeConfigMapper strategyHedgeConfigMapper;
 
 	@Test
 	public void testUpdateOrderMapper() {
@@ -142,4 +149,11 @@ public class SpotOrderServiceImplTest {
 		ServiceResult<SpotPlaceOrderRespDto> placeOrder = spotOrderServiceImpl.placeOrder(reqDto);
 		System.err.println(JSON.toJSONString(placeOrder));
 	}
+
+	@Test
+	public void test1(){
+        StrategyHedgeConfig strategyHedgeConfig = new StrategyHedgeConfig();
+        List<StrategyHedgeConfig> strategyHedgeConfigs = strategyHedgeConfigMapper.selectList(strategyHedgeConfig);
+        System.err.println(strategyHedgeConfigs.size());
+    }
 }

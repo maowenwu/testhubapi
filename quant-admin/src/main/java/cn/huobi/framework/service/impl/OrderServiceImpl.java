@@ -4,6 +4,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.StrategyOrderConfigMapper;
+import com.huobi.quantification.entity.StrategyRiskConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +22,19 @@ import cn.huobi.framework.service.OrderService;
 public class OrderServiceImpl implements OrderService {
 	
 	@Resource
-	private OrderDao orderDao;
-
-	@Override
-	public List<StrategyOrderConfig> selectByCondition(StrategyOrderConfig config, Page<StrategyOrderConfig> page) {
-		return orderDao.selectByCondition(config, page);
-	}
+	private StrategyOrderConfigMapper strategyOrderConfigMapper;
 
 	@Override
 	public int updateOrder(StrategyOrderConfig config) {
-		return orderDao.update(config);
+		return strategyOrderConfigMapper.updateByPrimaryKeySelective(config);
+	}
+
+	@Override
+	public PageInfo<StrategyOrderConfig> selectByCondition(StrategyOrderConfig config, PageInfo<StrategyOrderConfig> page) {
+		PageHelper.startPage(page.getPageNum(), page.getPageSize());
+		List<StrategyOrderConfig> strategyOrderConfigs = strategyOrderConfigMapper.selectList(config);
+		page = new PageInfo<>(strategyOrderConfigs);
+		return page;
 	}
 
 }

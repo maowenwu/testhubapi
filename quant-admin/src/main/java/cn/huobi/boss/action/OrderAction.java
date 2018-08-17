@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +36,10 @@ public class OrderAction {
 	@DataSource(Constants.DATA_SOURCE_SLAVE)
 	@RequestMapping(value="/selectByCondition.do")
 	@ResponseBody
-	public Page<StrategyOrderConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<StrategyOrderConfig> page) throws Exception {
+	public PageInfo<StrategyOrderConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
+														   @Param("page") PageInfo<StrategyOrderConfig> page) throws Exception {
 		StrategyOrderConfig config = JSONObject.parseObject(baseInfo, StrategyOrderConfig.class);
-		try {
-			List<StrategyOrderConfig> configs = orderService.selectByCondition(config, page);
-			page.setResult(configs);
-		} catch (Exception e) {
-			log.error("条件查询摆单配置失败");
-			e.printStackTrace();
-		}
+		page = orderService.selectByCondition(config, page);
 		return page;
 	}
 	

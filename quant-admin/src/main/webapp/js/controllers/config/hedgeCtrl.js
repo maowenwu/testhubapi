@@ -42,14 +42,14 @@ angular.module('inspinia',['uiSwitch']).controller('hedgeCtrl',function($scope,$
 	
 	//查询
 	$scope.query = function(){
-		$http.post('hedge/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('hedge/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.hedgeData = page.result;
-					$scope.hedgeGrid.totalItems = page.totalCount;
+					$scope.hedgeData = page.list;
+					$scope.hedgeGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

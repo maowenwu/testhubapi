@@ -51,14 +51,14 @@ angular.module('inspinia',['uiSwitch']).controller('orderCtrl',function($scope,$
 	
 	//查询
 	$scope.query = function(){
-		$http.post('order/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('order/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.orderData = page.result;
-					$scope.orderGrid.totalItems = page.totalCount;
+					$scope.orderData = page.list;
+					$scope.orderGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}
