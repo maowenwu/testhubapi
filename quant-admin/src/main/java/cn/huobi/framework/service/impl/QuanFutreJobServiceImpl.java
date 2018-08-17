@@ -82,6 +82,8 @@ public class QuanFutreJobServiceImpl implements QuanFutureJobService{
             futureJobs.add(futureJob);
         });
         page = new PageInfo<>(futureJobs);
+		com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) quanJobFutures;
+		page.setTotal(totalPage.getTotal());
         return page;
 	}
 
