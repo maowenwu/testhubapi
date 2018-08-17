@@ -1,10 +1,11 @@
 /**
- * 配置中心-期货用户管理 
+ * 配置中心-期货用户详情
 */
-angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
+angular.module('inspinia',['uiSwitch']).controller('futureAccountDetailCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
 	$scope.baseInfo = {status:2};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
+    var accountId = $stateParams.accountId;
 	$scope.futureAccountGrid = {
 		data: 'futureAccountData',
 		enableSorting: true,
@@ -14,13 +15,12 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'exchangeId', displayName: '交易所id'},
-            {field: 'accountSourceId', displayName: '用户id'},
-            {field: 'accountsType', displayName: '账号类型'},
-            {field: 'accountsName', displayName: '账号名'},
+            {field: 'exchangeId', displayName: '交易所'},
+            {field: 'accountSourceId', displayName: '账户ID'},
+            {field: 'accountsType', displayName: '账户名'},
             {field: 'state', displayName: '账号状态'},
             {field: 'id', displayName: '操作', cellTemplate: 
-           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.toDetail(row.entity)">详情</a></div> '
+           	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.editModal(row.entity)">查看私钥</a> </div> '
             }
         ],
         onRegisterApi: function(gridApi){
@@ -28,14 +28,41 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
         	$scope.gridApi.pagination.on.paginationChanged($scope, function(newPage, pageSize){
         		$scope.paginationOptions.pageNo = newPage;
         		$scope.paginationOptions.pageSize = pageSize;
-        		$scope.query();
         	});
         }
 	};
-	
+	$scope.futureAccountDetailGrid = {
+		data: 'futureAccountDetailData',
+		enableSorting: true,
+		paginationPageSize: 10,
+		paginationPageSizes: [10, 20, 50, 100],
+		useExternalPagination: true,
+		enableHorizontalScrollbar: 0,
+		enableVerticalScrollbar: 0,
+		columnDefs: [
+            {field: 'coinType', displayName: '品种'},
+            {field: 'marginBalance', displayName: '账户权益'},
+            {field: 'marginAvailable', displayName: '可用保证金'},
+            {field: 'marginPosition', displayName: '持仓保证金'},
+            {field: 'marginFrozen', displayName: '冻结保证金'},
+            {field: 'profitUnreal', displayName: '未实现盈亏'},
+            {field: 'profitReal', displayName: '已实现盈亏'},
+            {field: 'riskRate', displayName: '保证金率'},
+            {field: 'liquidationPrice', displayName: '预估爆仓价'},
+            {field: 'state', displayName: '更新时间'},
+        ],
+        onRegisterApi: function(gridApi){
+        	$scope.gridApi = gridApi;
+        	$scope.gridApi.pagination.on.paginationChanged($scope, function(newPage, pageSize){
+        		$scope.paginationOptions.pageNo = newPage;
+        		$scope.paginationOptions.pageSize = pageSize;
+        	});
+        }
+	};
+
 	//查询
-	$scope.query = function(){
-		$http.post('futureAccount/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+	$scope.queryAccountInfo = function(){
+		$http.post('futureAccountDetail/selectAccount.do',"accountId="+angular.toJson(accountId)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
@@ -46,14 +73,28 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 				}).error(function(){
 				});
 	}
-	$scope.query();
+	$scope.queryAccountDetail = function(){
+		$http.post('futureAccount/selectAccountDetail.do',"accountId="+angular.toJson(accountId)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+				.success(function(page){
+					if(!page){
+						return;
+					}
+					$scope.futureAccountDetailData = page.result;
+					$scope.futureAccountDetailGrid.totalItems = page.totalCount;
+				}).error(function(){
+				});
+	}
+	$scope.queryAccountInfo();
+	$scope.queryAccountDetail();
 	//增加新的任务
 	$scope.addModal = function(){
 		$("#addModal").modal("show");
 	}
 	//修改任务
-	$scope.toDetail = function(entity){
-        $state.go('config.futureAccountDetail', {accountId: entity.id});
+	$scope.editModal = function(entity){
+		$scope.newInfo = angular.copy(entity);
+		$("#editRoleModal").modal("show");
 	}
 	
 	$scope.submit = function(){

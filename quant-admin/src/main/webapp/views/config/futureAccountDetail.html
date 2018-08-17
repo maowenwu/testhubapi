@@ -1,0 +1,40 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a>主页</a></li>
+			<li><a>用户中心</a></li>
+			<li class="active"><strong>火币期货账号-详情</strong></li>
+		</ol>
+	</div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+	ng-controller="futureAccountDetailCtrl">
+	<form class="form-horizontal" id="form1">
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>账号信息</h5>
+						<div ibox-tools></div>
+					</div>
+					<div class="ibox-content">
+						<div class="gridStyle" ui-grid="futureAccountGrid" ui-grid-pagination ui-grid-resize-columns></div>
+					</div>
+				</div>
+			
+				<div class="panel-body ibox float-e-margins">
+					<div class="ibox-title">
+						<h5>记录</h5>
+						<!--<div ibox-tools="" class="ng-scope"></div>-->
+					</div>
+					<div class="ibox-content">
+						<div class="gridStyle" ui-grid="futureAccountDetailGrid" ui-grid-pagination ui-grid-resize-columns></div>
+					</div>
+				</div>
+				<div style="height: 50px"></div>
+			</div>
+		</div>
+	</form>
+</div>

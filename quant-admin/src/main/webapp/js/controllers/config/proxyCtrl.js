@@ -14,7 +14,7 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
 		enableHorizontalScrollbar: 0,
 		enableVerticalScrollbar: 0,
 		columnDefs: [
-            {field: 'host', displayName: '主机地址1'},
+            {field: 'host', displayName: '主机地址'},
             {field: 'port', displayName: '端口号'},
             {field: 'userName', displayName: '用户名'},
             {field: 'password', displayName: '用户密码'},
@@ -35,18 +35,29 @@ angular.module('inspinia',['uiSwitch']).controller('proxyCtrl',function($scope,$
         	});
         }
 	};
-	
-	//查询
+
+
+
+    //查询
 	$scope.query = function(){
 		$http.post('proxy/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
-					debugger;
 					if(!page){
 						return;
 					}
 
 					$scope.proxyData = page.list;
+                    $scope.proxyData.forEach(function(item){
+                        item.updateTime=new Date(item.updateTime).format('yyyy-MM-dd HH:mm:ss');
+                        item.createTime=new Date(item.createTime).format('yyyy-MM-dd HH:mm:ss');
+                        if ("1"==item.state) {
+                            item.state='开启';
+						}else {
+                            item.state='关闭';
+						}
+
+					})
 					$scope.proxyGrid.totalItems = page.total;
 				}).error(function(){
 				});

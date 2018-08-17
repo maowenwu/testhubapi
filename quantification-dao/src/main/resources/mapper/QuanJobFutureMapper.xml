@@ -163,4 +163,17 @@
     ON DUPLICATE KEY UPDATE `exchange_id`=#{exchangeId},`job_type`=#{jobType},`job_name`=#{jobName},`job_param`=#{jobParam},
     `job_desc`=#{jobDesc},`cron`=#{cron},`state`=#{state},`update_date`=#{updateDate}
   </insert>
+  <select id="selectList" parameterType="com.huobi.quantification.entity.QuanJobFuture" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List"/>
+      from quan_job_future
+      <where>
+            <if test="exchangeId != null">
+                and exchange_id = #{exchangeId,jdbcType=INTEGER}
+            </if>
+            <if test="jobDesc != null">
+                and job_desc like concat(concat('%',#{jobDesc,jdbcType=VARCHAR}),'%')
+            </if>
+      </where>
+  </select>
 </mapper>

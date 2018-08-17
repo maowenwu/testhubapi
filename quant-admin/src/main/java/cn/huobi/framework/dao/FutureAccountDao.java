@@ -3,13 +3,9 @@ package cn.huobi.framework.dao;
 import java.util.List;
 import java.util.Map;
 
+import com.huobi.quantification.entity.QuanAccountFuture;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.ResultType;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.jdbc.SQL;
 
 import cn.huobi.framework.db.pagination.Page;
@@ -30,6 +26,9 @@ public interface FutureAccountDao {
 	@Update("update quan_account_future set exchange_id = #{account.exchangeId}, account_source_id = #{account.accountSourceId}, "
 			+ "accounts_type = #{account.accountsType}, accounts_name = #{account.accountsName} where id = #{account.id}")
 	int update(@Param("account")FutureAccount account);
+
+	@Select("select * from quan_account_future where account_source_id = #{accountId}")
+	QuanAccountFuture selectByAccountId(@Param("accountId")int accountId);
 	
 	public class SqlProvider{
 		

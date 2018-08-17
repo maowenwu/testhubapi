@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.QuanJobMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,19 +26,7 @@ import cn.huobi.framework.service.QuanJobService;
 public class QuanJobServiceImpl implements QuanJobService {
 	
 	@Autowired
-	private QuanJobDao quanJobDao;
-
-	@Override
-	public List<SpotJob> selectByCondition(SpotJob job, Page<SpotJob> page) {
-		QuanJob quanJob = convertSpotJob(job);
-		List<QuanJob> jobs = quanJobDao.selectByCondition(quanJob, page);
-		List<SpotJob> spotJobs = new ArrayList<>();
-		for (QuanJob job2 : jobs) {
-			SpotJob spotJob = convertQuanJob2SpotJob(job2);
-			spotJobs.add(spotJob);
-		}
-		return spotJobs;
-	}
+	private QuanJobMapper quanJobMapper;
 
 	private QuanJob convertSpotJob(SpotJob job) {
 		QuanJob quanJob = new QuanJob();
@@ -67,10 +58,6 @@ public class QuanJobServiceImpl implements QuanJobService {
 		return spotJob;
 	}
 
-	@Override
-	public int deleteById(Integer id) {
-		return quanJobDao.delete(id);
-	}
 
 	@Override
 	public int updateSpotJob(Boolean status, Integer id) {
@@ -82,6 +69,20 @@ public class QuanJobServiceImpl implements QuanJobService {
 		}else {
 			quanJob.setState(1);
 		}
-		return quanJobDao.update(quanJob);
+		return quanJobMapper.updateByPrimaryKeySelective(quanJob);
+	}
+
+	@Override
+	public PageInfo<SpotJob> selectByCondition(SpotJob job, PageInfo<SpotJob> page) {
+		PageHelper.startPage(page.getPageNum(), page.getPageSize());
+		QuanJob quanJob = convertSpotJob(job);
+		List<QuanJob> jobs = quanJobMapper.selectList(quanJob);
+		List<SpotJob> spotJobs = new ArrayList<>();
+		for (QuanJob quanJobObject: jobs) {
+			SpotJob spotJob = convertQuanJob2SpotJob(quanJobObject);
+			spotJobs.add(spotJob);
+		}
+		page = new PageInfo<>(spotJobs);
+		return page;
 	}
 }
