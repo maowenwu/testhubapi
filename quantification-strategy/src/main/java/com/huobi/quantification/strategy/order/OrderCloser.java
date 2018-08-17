@@ -87,10 +87,11 @@ public class OrderCloser {
                     BigDecimal riskRate = commContext.getRiskRate();
                     if (BigDecimalUtils.moreThan(riskRate, riskConfig.getRiskRateLevel3())) {
                         forceCloseOrderEnable.set(false);
+                        logger.info("强平时撤销订单后保证金率");
                         return false;
                     }
                 } else {
-                    logger.error("获取期货所有订单异常");
+                    logger.error("取消期货所有订单异常");
                     return false;
                 }
                 if (longPosi == null && shortPosi == null) {
@@ -151,11 +152,11 @@ public class OrderCloser {
 
 
     private void placeCloseLongOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
-        commContext.placeOrder(SideEnum.SELL.getSideType(), OffsetEnum.CLOSE.getOffset(), orderPrice, orderAmount);
+        commContext.placeFutureOrder(SideEnum.SELL.getSideType(), OffsetEnum.CLOSE.getOffset(), orderPrice, orderAmount);
     }
 
 
     private void placeCloseShortOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
-        commContext.placeOrder(SideEnum.BUY.getSideType(), OffsetEnum.CLOSE.getOffset(), orderPrice, orderAmount);
+        commContext.placeFutureOrder(SideEnum.BUY.getSideType(), OffsetEnum.CLOSE.getOffset(), orderPrice, orderAmount);
     }
 }

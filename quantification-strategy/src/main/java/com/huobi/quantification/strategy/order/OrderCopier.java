@@ -76,6 +76,12 @@ public class OrderCopier {
         try {
             Stopwatch started = Stopwatch.createStarted();
             logger.info("========>合约借深度第{}轮 开始", counter.incrementAndGet());
+            // 更新订单信息
+            boolean success = orderContext.updateOrderInfo();
+            if (!success) {
+                logger.error("更新订单信息失败，方法退出");
+                return false;
+            }
             OrderActionEnum orderAction = commContext.getOrderAction();
             switch (orderAction) {
                 case NORMAL:
@@ -93,12 +99,6 @@ public class OrderCopier {
                     orderCloser.startForceCloseOrder();
                     logger.error("风控已经发出强平指令，停止本轮摆单并强平部分仓位");
                     return false;
-            }
-            // 更新订单信息
-            boolean success = orderContext.updateOrderInfo();
-            if (!success) {
-                logger.error("更新订单信息失败，方法退出");
-                return false;
             }
             FuturePosition position = commContext.getFuturePosition();
             if (position == null) {

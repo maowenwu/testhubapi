@@ -362,15 +362,12 @@ public class OrderContext {
 
 
     public Long placeInternalOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
-        price = checkPrice(price);
-        Long exOrderId = commContext.placeOrder(side, offset, price, orderAmount);
+        Long exOrderId = commContext.placeFutureOrder(side, offset, price, orderAmount);
         postPlaceOrder(exOrderId, side, offset, price, orderAmount);
         return exOrderId;
     }
 
-    private BigDecimal checkPrice(BigDecimal price) {
-        return price.divide(BigDecimal.ONE, futureExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
-    }
+
 
     // 下单后需要将订单添加到orderReader中
     private void postPlaceOrder(Long exOrderId, int side, int offset, BigDecimal price, BigDecimal orderAmount) {
