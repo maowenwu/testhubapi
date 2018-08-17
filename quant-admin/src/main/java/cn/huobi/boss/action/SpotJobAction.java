@@ -1,18 +1,15 @@
 package cn.huobi.boss.action;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import com.github.pagehelper.PageInfo;
-import com.huobi.quantification.entity.QuanProxyIp;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -22,9 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.huobi.boss.system.DataSource;
 import cn.huobi.boss.system.SystemLog;
-import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.SpotJob;
-import cn.huobi.framework.model.SysDict;
 import cn.huobi.framework.service.QuanJobService;
 import cn.huobi.framework.util.Constants;
 

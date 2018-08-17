@@ -1,9 +1,9 @@
 package cn.huobi.framework.service;
 
 import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.model.SysDict;
-
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.entity.SysDict;
 import org.quartz.SchedulerException;
 
 import java.util.List;
@@ -11,29 +11,31 @@ import java.util.Map;
 
 public interface SysDictService {
 
-	List<SysDict> selectDicByCondition(SysDict dict, Page<SysDict> page);
+    List<SysDict> selectDicByCondition(SysDict dict, Page<SysDict> page);
 
-	Map<String, Object> insert(SysDict info);
+    Map<String, Object> insert(SysDict info);
 
-	Map<String, Object> update(SysDict info) throws SchedulerException;
+    Map<String, Object> update(SysDict info) throws SchedulerException;
 
-	int delete(Integer id);
+    int delete(Integer id);
 
-	JSONObject selectDictAndChildren();
+    JSONObject selectDictAndChildren();
 
-	SysDict getByKey(String string);
-	
-	SysDict selectExistServiceLink(String serviceType, String string);
+    SysDict getByKey(String string);
 
-	SysDict selectRestPwd();
+    SysDict selectExistServiceLink(String serviceType, String string);
 
-	List<SysDict> selectByKey(String string);
+    SysDict selectRestPwd();
 
-	int updateSysValue(SysDict sysDict);
+    List<SysDict> selectByKey(String string);
 
-	Map<String, String> selectMapByKey(String string);
-	
-	String getValues(String parentId);
+    int updateSysValue(SysDict sysDict);
 
-	List<SysDict> getAcqMerchantList(String str);
+    Map<String, String> selectMapByKey(String string);
+
+    String getValues(String parentId);
+
+    List<SysDict> getAcqMerchantList(String str);
+
+    PageInfo<SysDict> selectPage(SysDict entity, PageInfo<SysDict> pageInfo);
 }

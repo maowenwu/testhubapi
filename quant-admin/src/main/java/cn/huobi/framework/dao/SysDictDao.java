@@ -1,20 +1,13 @@
 package cn.huobi.framework.dao;
 
-import java.util.List;
-import java.util.Map;
-
+import cn.huobi.framework.db.pagination.Page;
+import com.huobi.quantification.entity.SysDict;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.ResultType;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.jdbc.SQL;
 
-import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.model.SysDict;
+import java.util.List;
+import java.util.Map;
 
 public interface SysDictDao {
 
