@@ -37,14 +37,14 @@ angular.module('inspinia',['uiSwitch']).controller('roleCtrl',function($scope,$h
 	
 	//查询
 	$scope.query = function(){
-		$http.post('role/selectRoleByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('role/selectRoleByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.roleData = page.result;
-					$scope.roleGrid.totalItems = page.totalCount;
+					$scope.roleData = page.list;
+					$scope.roleGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

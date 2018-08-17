@@ -5,52 +5,56 @@ import cn.huobi.framework.model.MenuInfo;
 import cn.huobi.framework.model.RightInfo;
 import cn.huobi.framework.model.RoleInfo;
 import cn.huobi.framework.model.UserInfo;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.entity.BossShiroUser;
 
 import java.util.List;
 import java.util.Map;
 
 public interface UserService {
-	// 查询用户
-	void selectUserByCondition(UserInfo user, Page<UserInfo> page);
+    // 查询用户
+    void selectUserByCondition(UserInfo user, Page<UserInfo> page);
 
-	// 新增用户
-	int insertUser(UserInfo user);
+    // 新增用户
+    int insertUser(UserInfo user);
 
-	// 修改用户
-	int updateUser(UserInfo user);
-	
-	//重置密码
-	int restPwd(Integer id);
+    // 修改用户
+    int updateUser(UserInfo user);
 
-	//修改密码
-	int updateUserPwd(Map<String, Object> param);
+    //重置密码
+    int restPwd(Integer id);
 
-	// 删除用户
-	int deleteUser(Integer userId);
+    //修改密码
+    int updateUserPwd(Map<String, Object> param);
 
-	Map<String, Object> checkNameUnique(String userName);
+    // 删除用户
+    int deleteUser(Integer userId);
 
-	// 用户已授权的角色
-	List<RoleInfo> getRolesByUser(Integer id);
+    Map<String, Object> checkNameUnique(String userName);
 
-	// 用户已授权的权限
-	List<RightInfo> getRightsByUser(Integer id);
+    // 用户已授权的角色
+    List<RoleInfo> getRolesByUser(Integer id);
 
-	List<UserInfo> getAllUsers();
+    // 用户已授权的权限
+    List<RightInfo> getRightsByUser(Integer id);
 
-	List<MenuInfo> getMenuByUser(Integer id);
+    List<UserInfo> getAllUsers();
 
-	List<UserInfo> selectUserByMenuCode(String menuCode);
+    List<MenuInfo> getMenuByUser(Integer id);
 
-	List<UserInfo> findUserBox();
+    List<UserInfo> selectUserByMenuCode(String menuCode);
 
-	UserInfo selectUserByUserName(String userName);
+    List<UserInfo> findUserBox();
 
-	UserInfo selectInfoByTelNo(String telNo, String teamId);
+    UserInfo selectUserByUserName(String userName);
 
-	int updateInfoByMp(String telNo, String newTelNo, String teamId);
+    UserInfo selectInfoByTelNo(String telNo, String teamId);
 
-	List<UserInfo> getUserlimit(UserInfo user);
+    int updateInfoByMp(String telNo, String newTelNo, String teamId);
 
-	UserInfo getUserInfoById(Integer id);
+    List<UserInfo> getUserlimit(UserInfo user);
+
+    UserInfo getUserInfoById(Integer id);
+
+    PageInfo<BossShiroUser> selectPage(BossShiroUser entity, PageInfo<BossShiroUser> pageInfo);
 }

@@ -10,6 +10,7 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.api.spot.SpotOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.dao.*;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.*;
@@ -242,15 +243,20 @@ public class CommContext {
         reqDto.setContractType(contractType);
         ServiceResult<FutureDepthRespDto> result = futureMarketService.getDepth(reqDto);
         if (result.isSuccess()) {
-            FutureDepthRespDto.DataBean data = result.getData().getData();
             DepthBook depthBook = new DepthBook();
-            data.getAsks().forEach(e -> {
-                depthBook.getAsks().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
-            });
-            data.getBids().forEach(e -> {
-                depthBook.getBids().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
-            });
-            return depthBook;
+            // 如果数据为null，代表盘面没有深度
+            if (result.getData().getData() == null) {
+                return depthBook;
+            } else {
+                FutureDepthRespDto.DataBean data = result.getData().getData();
+                data.getAsks().forEach(e -> {
+                    depthBook.getAsks().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
+                });
+                data.getBids().forEach(e -> {
+                    depthBook.getBids().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
+                });
+                return depthBook;
+            }
         } else {
             throw new RuntimeException("获取火币现货深度异常");
         }
@@ -441,32 +447,47 @@ public class CommContext {
         return HedgerActionEnum.valueOf(action);
     }
 
-    public Long placeOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
-        FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
-        reqDto.setStrategyName(strategyName);
-        reqDto.setStrategyVersion(strategyVersion);
-        reqDto.setExchangeId(this.futureExchangeId);
-        reqDto.setAccountId(this.futureAccountId);
-        reqDto.setContractCode(this.futureContractCode);
-        reqDto.setSide(side);
-        reqDto.setOffset(offset);
-        reqDto.setOrderType("limit");
-        reqDto.setPrice(price);
-        reqDto.setQuantity(orderAmount);
-        reqDto.setLever(this.futureLever);
-        reqDto.setSync(true);
-        try {
-            ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
-            if (result.isSuccess()) {
-                return result.getData().getExOrderId();
-            } else {
-                logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
+    public Long placeFutureOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
+        price = adjFuturePricePrecision(price);
+        orderAmount = checkFutureAmountPrecision(orderAmount);
+        if (BigDecimalUtils.moreThan(price, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
+            FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
+            reqDto.setStrategyName(strategyName);
+            reqDto.setStrategyVersion(strategyVersion);
+            reqDto.setExchangeId(this.futureExchangeId);
+            reqDto.setAccountId(this.futureAccountId);
+            reqDto.setContractCode(this.futureContractCode);
+            reqDto.setSide(side);
+            reqDto.setOffset(offset);
+            reqDto.setOrderType("limit");
+            reqDto.setPrice(price);
+            reqDto.setQuantity(orderAmount);
+            reqDto.setLever(this.futureLever);
+            reqDto.setSync(true);
+            try {
+                ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
+                if (result.isSuccess()) {
+                    return result.getData().getExOrderId();
+                } else {
+                    logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
+                    return null;
+                }
+            } catch (Throwable e) {
+                logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
                 return null;
             }
-        } catch (Throwable e) {
-            logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
+        } else {
+            logger.info("当前下单price：{}，orderAmount：{}，忽略本笔下单", price, orderAmount);
             return null;
         }
+    }
+
+    private BigDecimal adjFuturePricePrecision(BigDecimal price) {
+        return price.divide(BigDecimal.ONE, futureExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
+    }
+
+    private BigDecimal checkFutureAmountPrecision(BigDecimal orderAmount) {
+        return orderAmount.divide(BigDecimal.ONE, futureExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN);
     }
 
     /**

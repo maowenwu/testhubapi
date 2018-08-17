@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -81,19 +82,24 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                 while (!Thread.interrupted()) {
                     List<QuanDepthFutureDetail> depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(),
                             getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()), reqDto.getContractType());
-                    if (CollectionUtils.isEmpty(depthFuture)) {
+                    if (depthFuture == null) {
+                        // 任务没有启动
                         ThreadUtils.sleep10();
                         continue;
-                    }
-                    Date ts = depthFuture.get(0).getDateUpdate();
-                    if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
-                        FutureDepthRespDto respDto = new FutureDepthRespDto();
-                        respDto.setTs(ts);
-                        respDto.setData(convertDepthToDto(depthFuture));
-                        return respDto;
+                    } else if (depthFuture.isEmpty()) {
+                        // 代表没有深度
+                        return new FutureDepthRespDto();
                     } else {
-                        ThreadUtils.sleep10();
-                        continue;
+                        Date ts = depthFuture.get(0).getDateUpdate();
+                        if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
+                            FutureDepthRespDto respDto = new FutureDepthRespDto();
+                            respDto.setTs(ts);
+                            respDto.setData(convertDepthToDto(depthFuture));
+                            return respDto;
+                        } else {
+                            ThreadUtils.sleep10();
+                            continue;
+                        }
                     }
                 }
                 return null;
@@ -139,7 +145,7 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新K线
                     List<QuanKlineFuture> klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(), getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()),
-                            reqDto.getPeriod(),reqDto.getContractType());
+                            reqDto.getPeriod(), reqDto.getContractType());
                     if (CollectionUtils.isEmpty(klineFutures)) {
                         ThreadUtils.sleep10();
                         continue;
