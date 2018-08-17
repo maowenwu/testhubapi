@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.BossShiroRightMapper">
+    <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.BossShiroRight">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="right_code" jdbcType="VARCHAR" property="rightCode"/>
+        <result column="right_name" jdbcType="VARCHAR" property="rightName"/>
+        <result column="right_comment" jdbcType="VARCHAR" property="rightComment"/>
+        <result column="right_type" jdbcType="INTEGER" property="rightType"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+       id, right_code, right_name, right_comment, right_type
+  </sql>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from boss_shiro_right
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.huobi.quantification.entity.BossShiroRight">
+    insert into boss_shiro_right (id, right_code, right_name, 
+      right_comment, right_type)
+    values (#{id,jdbcType=INTEGER}, #{rightCode,jdbcType=VARCHAR}, #{rightName,jdbcType=VARCHAR}, 
+      #{rightComment,jdbcType=VARCHAR}, #{rightType,jdbcType=INTEGER})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.BossShiroRight">
+    update boss_shiro_right
+    set right_code = #{rightCode,jdbcType=VARCHAR},
+      right_name = #{rightName,jdbcType=VARCHAR},
+      right_comment = #{rightComment,jdbcType=VARCHAR},
+      right_type = #{rightType,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, right_code, right_name, right_comment, right_type
+    from boss_shiro_right
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+    <select id="selectList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from boss_shiro_right
+        <where>
+            <if test="rightCode != null">
+                and right_code = #{rightCode,jdbcType=VARCHAR}
+            </if>
+            <if test="rightName != null">
+                and right_name = #{rightName,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+</mapper>

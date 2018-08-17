@@ -7,7 +7,12 @@ import cn.huobi.framework.model.RightInfo;
 import cn.huobi.framework.model.RoleInfo;
 import cn.huobi.framework.model.UserInfo;
 import cn.huobi.framework.service.RightService;
-
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.BossShiroRightMapper;
+import com.huobi.quantification.entity.BossShiroRight;
+import com.huobi.quantification.entity.BossShiroUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +27,9 @@ public class RightServiceImpl implements RightService {
 
 	@Resource
 	private RightDao rightDao;
+
+	@Autowired
+	BossShiroRightMapper  bossShiroRightMapper;
 	
 	@Override
 	public Page<RightInfo> selectRightByCondition(RightInfo right, Page<RightInfo> page) {
@@ -81,6 +89,13 @@ public class RightServiceImpl implements RightService {
 	public List<MenuInfo> getMenuByRight(Integer id) {
 		return rightDao.getMenuByRight(id);
 	}
-	
-	
+
+
+	@Override
+	public PageInfo<BossShiroRight> selectPage(BossShiroRight entity, PageInfo<BossShiroRight> pageInfo) {
+		PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize());
+		List<BossShiroRight> list = bossShiroRightMapper.selectList(entity);
+		pageInfo = new PageInfo<>(list);
+		return pageInfo;
+	}
 }
