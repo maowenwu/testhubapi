@@ -3,10 +3,9 @@ package com.huobi.quantification.strategy.risk;
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.strategy.CommContext;
-import com.huobi.quantification.strategy.config.StrategyProperties;
-import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class RiskMonitor {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private AtomicLong counter = new AtomicLong(0);
+    private AtomicLong counter;
 
     @Autowired
     private RiskContext riskContext;
@@ -33,15 +32,16 @@ public class RiskMonitor {
 
     private StrategyRiskConfig riskConfig;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        riskContext.init(group);
+    public void init(StrategyInstanceConfig config) {
+        riskContext.init(config);
+        counter = new AtomicLong(0);
     }
 
     private Thread riskMonitorThread;
 
     public void start() {
         riskMonitorThread = new Thread(() -> {
-            while (true) {
+            while (!riskMonitorThread.isInterrupted()) {
                 boolean b = check();
                 if (!b) {
                     ThreadUtils.sleep(1000);
@@ -51,6 +51,12 @@ public class RiskMonitor {
         riskMonitorThread.setDaemon(true);
         riskMonitorThread.setName("风控线程");
         riskMonitorThread.start();
+    }
+
+    public void stop() {
+        if (riskMonitorThread != null) {
+            riskMonitorThread.interrupt();
+        }
     }
 
     public boolean check() {

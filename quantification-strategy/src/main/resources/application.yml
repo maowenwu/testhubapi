@@ -36,21 +36,3 @@ mybatis:
 
 zookeeper:
   address: 127.0.0.1:2181
-
-
-strategy:
-  group:
-    name: 火币借深度策略
-    enable: true
-    future:
-      exchangeId: 0
-      accountId: 101
-      baseCoin: eos
-      quotCoin: usd
-      contractCode: EOS180826
-      lever: 10
-    spot:
-      exchangeId: 1
-      accountId: 4295363
-      baseCoin: eos
-      quotCoin: usdt

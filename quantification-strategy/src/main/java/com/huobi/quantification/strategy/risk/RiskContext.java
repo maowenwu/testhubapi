@@ -3,18 +3,16 @@ package com.huobi.quantification.strategy.risk;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
-import com.huobi.quantification.common.util.StorageSupport;
-import com.huobi.quantification.dao.*;
+import com.huobi.quantification.dao.QuanAccountAssetMapper;
+import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
+import com.huobi.quantification.dao.StrategyRiskConfigMapper;
+import com.huobi.quantification.dao.StrategyRiskHistoryMapper;
 import com.huobi.quantification.dto.FutureBalanceReqDto;
 import com.huobi.quantification.dto.FutureBalanceRespDto;
 import com.huobi.quantification.dto.SpotBalanceReqDto;
 import com.huobi.quantification.dto.SpotBalanceRespDto;
-import com.huobi.quantification.entity.QuanAccountAsset;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.StrategyRiskConfig;
-import com.huobi.quantification.entity.StrategyRiskHistory;
+import com.huobi.quantification.entity.*;
 import com.huobi.quantification.strategy.CommContext;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.SpotBalance;
 import org.slf4j.Logger;
@@ -45,7 +43,7 @@ public class RiskContext {
     private CommContext commContext;
 
     private String strategyName;
-    private Long strategyVersion;
+    private Long instanceId;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -68,21 +66,18 @@ public class RiskContext {
 
     private BigDecimal currPrice;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        StrategyProperties.Config future = group.getFuture();
-        StrategyProperties.Config spot = group.getSpot();
+    public void init(StrategyInstanceConfig config) {
+        this.strategyName = config.getStrategyName();
+        this.instanceId = config.getInstanceId();
 
-        this.strategyName = group.getName();
-        this.strategyVersion = group.getVersion();
+        this.futureExchangeId = config.getFutureExchangeId();
+        this.futureAccountId = config.getFutureAccountId();
+        this.futureBaseCoin = config.getFutureBaseCoin();
 
-        this.futureExchangeId = future.getExchangeId();
-        this.futureAccountId = future.getAccountId();
-        this.futureBaseCoin = future.getBaseCoin();
-
-        this.spotExchangeId = spot.getExchangeId();
-        this.spotAccountId = spot.getAccountId();
-        this.spotBaseCoin = spot.getBaseCoin();
-        this.spotQuoteCoin = spot.getQuotCoin();
+        this.spotExchangeId = config.getSpotExchangeId();
+        this.spotAccountId = config.getSpotAccountId();
+        this.spotBaseCoin = config.getSpotBaseCoin();
+        this.spotQuoteCoin = config.getSpotQuotCoin();
 
         loadInitialProfit();
         loadCurrProfit();
@@ -224,7 +219,7 @@ public class RiskContext {
     public void saveRiskResult(BigDecimal riskRate, BigDecimal netPosition, RiskMonitor.RiskProfit riskProfit) {
         StrategyRiskHistory strategyRiskHistory = new StrategyRiskHistory();
         strategyRiskHistory.setStrategyName(strategyName);
-        strategyRiskHistory.setStrategyVersion(strategyVersion);
+        strategyRiskHistory.setStrategyVersion(instanceId);
         strategyRiskHistory.setExchangeId(futureExchangeId);
         strategyRiskHistory.setAccountId(futureAccountId);
         strategyRiskHistory.setBaseCoin(futureBaseCoin);

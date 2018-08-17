@@ -17,7 +17,6 @@ import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import com.huobi.quantification.strategy.entity.FutureBalance;
 import com.huobi.quantification.strategy.entity.FuturePosition;
@@ -65,7 +64,7 @@ public class CommContext {
     private FutureMarketService futureMarketService;
 
     private String strategyName;
-    private Long strategyVersion;
+    private Long instanceId;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -88,23 +87,22 @@ public class CommContext {
 
     private BigDecimal exchangeRate;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        StrategyProperties.Config spot = group.getSpot();
-        StrategyProperties.Config future = group.getFuture();
-        this.strategyName = group.getName();
-        this.strategyVersion = group.getVersion();
+    public void init(StrategyInstanceConfig config) {
 
-        this.futureExchangeId = future.getExchangeId();
-        this.futureAccountId = future.getAccountId();
-        this.futureContractCode = future.getContractCode();
-        this.futureBaseCoin = future.getBaseCoin();
-        this.futureQuoteCoin = future.getQuotCoin();
-        this.futureLever = future.getLever();
+        this.strategyName = config.getStrategyName();
+        this.instanceId = config.getInstanceId();
 
-        this.spotExchangeId = spot.getExchangeId();
-        this.spotAccountId = spot.getAccountId();
-        this.spotBaseCoin = spot.getBaseCoin();
-        this.spotQuoteCoin = spot.getQuotCoin();
+        this.futureExchangeId = config.getFutureExchangeId();
+        this.futureAccountId = config.getFutureAccountId();
+        this.futureContractCode = config.getFutureContractCode();
+        this.futureBaseCoin = config.getFutureBaseCoin();
+        this.futureQuoteCoin = config.getFutureQuotCoin();
+        this.futureLever = config.getFutureLever();
+
+        this.spotExchangeId = config.getSpotExchangeId();
+        this.spotAccountId = config.getSpotAccountId();
+        this.spotBaseCoin = config.getSpotBaseCoin();
+        this.spotQuoteCoin = config.getSpotQuotCoin();
 
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {
@@ -453,7 +451,7 @@ public class CommContext {
         if (BigDecimalUtils.moreThan(price, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
             FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
             reqDto.setStrategyName(strategyName);
-            reqDto.setStrategyVersion(strategyVersion);
+            reqDto.setStrategyVersion(instanceId);
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
             reqDto.setContractCode(this.futureContractCode);

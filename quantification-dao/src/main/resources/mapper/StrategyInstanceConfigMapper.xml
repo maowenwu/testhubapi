@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huobi.quantification.dao.StrategyInstanceConfigMapper">
+  <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyInstanceConfig">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
+    <result column="instance_id" jdbcType="BIGINT" property="instanceId" />
+    <result column="instance_enable" jdbcType="INTEGER" property="instanceEnable" />
+    <result column="instance_group" jdbcType="VARCHAR" property="instanceGroup" />
+    <result column="future_exchange_id" jdbcType="INTEGER" property="futureExchangeId" />
+    <result column="future_account_id" jdbcType="BIGINT" property="futureAccountId" />
+    <result column="future_base_coin" jdbcType="VARCHAR" property="futureBaseCoin" />
+    <result column="future_quot_coin" jdbcType="VARCHAR" property="futureQuotCoin" />
+    <result column="future_contract_code" jdbcType="VARCHAR" property="futureContractCode" />
+    <result column="future_lever" jdbcType="INTEGER" property="futureLever" />
+    <result column="spot_exchange_id" jdbcType="INTEGER" property="spotExchangeId" />
+    <result column="spot_account_id" jdbcType="BIGINT" property="spotAccountId" />
+    <result column="spot_base_coin" jdbcType="VARCHAR" property="spotBaseCoin" />
+    <result column="spot_quot_coin" jdbcType="VARCHAR" property="spotQuotCoin" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, strategy_name, instance_id, instance_enable, instance_group, future_exchange_id,
+    future_account_id, future_base_coin, future_quot_coin, future_contract_code, future_lever,
+    spot_exchange_id, spot_account_id, spot_base_coin, spot_quot_coin, create_time, update_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from strategy_instance_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from strategy_instance_config
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
+    insert into strategy_instance_config (id, strategy_name, instance_id,
+      instance_enable, instance_group, future_exchange_id,
+      future_account_id, future_base_coin, future_quot_coin,
+      future_contract_code, future_lever, spot_exchange_id,
+      spot_account_id, spot_base_coin, spot_quot_coin,
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{strategyName,jdbcType=VARCHAR}, #{instanceId,jdbcType=BIGINT},
+      #{instanceEnable,jdbcType=INTEGER}, #{instanceGroup,jdbcType=VARCHAR}, #{futureExchangeId,jdbcType=INTEGER},
+      #{futureAccountId,jdbcType=BIGINT}, #{futureBaseCoin,jdbcType=VARCHAR}, #{futureQuotCoin,jdbcType=VARCHAR},
+      #{futureContractCode,jdbcType=VARCHAR}, #{futureLever,jdbcType=INTEGER}, #{spotExchangeId,jdbcType=INTEGER},
+      #{spotAccountId,jdbcType=BIGINT}, #{spotBaseCoin,jdbcType=VARCHAR}, #{spotQuotCoin,jdbcType=VARCHAR},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
+    insert into strategy_instance_config
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="strategyName != null">
+        strategy_name,
+      </if>
+      <if test="instanceId != null">
+        instance_id,
+      </if>
+      <if test="instanceEnable != null">
+        instance_enable,
+      </if>
+      <if test="instanceGroup != null">
+        instance_group,
+      </if>
+      <if test="futureExchangeId != null">
+        future_exchange_id,
+      </if>
+      <if test="futureAccountId != null">
+        future_account_id,
+      </if>
+      <if test="futureBaseCoin != null">
+        future_base_coin,
+      </if>
+      <if test="futureQuotCoin != null">
+        future_quot_coin,
+      </if>
+      <if test="futureContractCode != null">
+        future_contract_code,
+      </if>
+      <if test="futureLever != null">
+        future_lever,
+      </if>
+      <if test="spotExchangeId != null">
+        spot_exchange_id,
+      </if>
+      <if test="spotAccountId != null">
+        spot_account_id,
+      </if>
+      <if test="spotBaseCoin != null">
+        spot_base_coin,
+      </if>
+      <if test="spotQuotCoin != null">
+        spot_quot_coin,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="strategyName != null">
+        #{strategyName,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceId != null">
+        #{instanceId,jdbcType=BIGINT},
+      </if>
+      <if test="instanceEnable != null">
+        #{instanceEnable,jdbcType=INTEGER},
+      </if>
+      <if test="instanceGroup != null">
+        #{instanceGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="futureExchangeId != null">
+        #{futureExchangeId,jdbcType=INTEGER},
+      </if>
+      <if test="futureAccountId != null">
+        #{futureAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="futureBaseCoin != null">
+        #{futureBaseCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="futureQuotCoin != null">
+        #{futureQuotCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="futureContractCode != null">
+        #{futureContractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="futureLever != null">
+        #{futureLever,jdbcType=INTEGER},
+      </if>
+      <if test="spotExchangeId != null">
+        #{spotExchangeId,jdbcType=INTEGER},
+      </if>
+      <if test="spotAccountId != null">
+        #{spotAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="spotBaseCoin != null">
+        #{spotBaseCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="spotQuotCoin != null">
+        #{spotQuotCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
+    update strategy_instance_config
+    <set>
+      <if test="strategyName != null">
+        strategy_name = #{strategyName,jdbcType=VARCHAR},
+      </if>
+      <if test="instanceId != null">
+        instance_id = #{instanceId,jdbcType=BIGINT},
+      </if>
+      <if test="instanceEnable != null">
+        instance_enable = #{instanceEnable,jdbcType=INTEGER},
+      </if>
+      <if test="instanceGroup != null">
+        instance_group = #{instanceGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="futureExchangeId != null">
+        future_exchange_id = #{futureExchangeId,jdbcType=INTEGER},
+      </if>
+      <if test="futureAccountId != null">
+        future_account_id = #{futureAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="futureBaseCoin != null">
+        future_base_coin = #{futureBaseCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="futureQuotCoin != null">
+        future_quot_coin = #{futureQuotCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="futureContractCode != null">
+        future_contract_code = #{futureContractCode,jdbcType=VARCHAR},
+      </if>
+      <if test="futureLever != null">
+        future_lever = #{futureLever,jdbcType=INTEGER},
+      </if>
+      <if test="spotExchangeId != null">
+        spot_exchange_id = #{spotExchangeId,jdbcType=INTEGER},
+      </if>
+      <if test="spotAccountId != null">
+        spot_account_id = #{spotAccountId,jdbcType=BIGINT},
+      </if>
+      <if test="spotBaseCoin != null">
+        spot_base_coin = #{spotBaseCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="spotQuotCoin != null">
+        spot_quot_coin = #{spotQuotCoin,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
+    update strategy_instance_config
+    set strategy_name = #{strategyName,jdbcType=VARCHAR},
+      instance_id = #{instanceId,jdbcType=BIGINT},
+      instance_enable = #{instanceEnable,jdbcType=INTEGER},
+      instance_group = #{instanceGroup,jdbcType=VARCHAR},
+      future_exchange_id = #{futureExchangeId,jdbcType=INTEGER},
+      future_account_id = #{futureAccountId,jdbcType=BIGINT},
+      future_base_coin = #{futureBaseCoin,jdbcType=VARCHAR},
+      future_quot_coin = #{futureQuotCoin,jdbcType=VARCHAR},
+      future_contract_code = #{futureContractCode,jdbcType=VARCHAR},
+      future_lever = #{futureLever,jdbcType=INTEGER},
+      spot_exchange_id = #{spotExchangeId,jdbcType=INTEGER},
+      spot_account_id = #{spotAccountId,jdbcType=BIGINT},
+      spot_base_coin = #{spotBaseCoin,jdbcType=VARCHAR},
+      spot_quot_coin = #{spotQuotCoin,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

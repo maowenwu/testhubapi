@@ -2,29 +2,29 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanAccountFutureMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFuture">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
-        <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId"/>
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
+        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
+        <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId" />
     </resultMap>
     <sql id="Base_Column_List">
-    id, exchange_id, account_source_id
+    id, exchange_id, account_name, account_source_id
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from quan_account_future
         where id = #{id,jdbcType=BIGINT}
     </select>
-
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from quan_account_future
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
-    insert into quan_account_future (id, exchange_id, account_source_id
-      )
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{accountSourceId,jdbcType=BIGINT}
-      )
+    insert into quan_account_future (id, exchange_id, account_name,
+      account_source_id)
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{accountName,jdbcType=VARCHAR},
+      #{accountSourceId,jdbcType=BIGINT})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
         insert into quan_account_future
@@ -34,6 +34,9 @@
             </if>
             <if test="exchangeId != null">
                 exchange_id,
+            </if>
+            <if test="accountName != null">
+                account_name,
             </if>
             <if test="accountSourceId != null">
                 account_source_id,
@@ -46,6 +49,9 @@
             <if test="exchangeId != null">
                 #{exchangeId,jdbcType=INTEGER},
             </if>
+            <if test="accountName != null">
+                #{accountName,jdbcType=VARCHAR},
+            </if>
             <if test="accountSourceId != null">
                 #{accountSourceId,jdbcType=BIGINT},
             </if>
@@ -57,6 +63,9 @@
             <if test="exchangeId != null">
                 exchange_id = #{exchangeId,jdbcType=INTEGER},
             </if>
+            <if test="accountName != null">
+                account_name = #{accountName,jdbcType=VARCHAR},
+            </if>
             <if test="accountSourceId != null">
                 account_source_id = #{accountSourceId,jdbcType=BIGINT},
             </if>
@@ -66,6 +75,7 @@
     <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanAccountFuture">
     update quan_account_future
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
+      account_name = #{accountName,jdbcType=VARCHAR},
       account_source_id = #{accountSourceId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>

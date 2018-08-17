@@ -1,15 +1,13 @@
 package com.huobi.quantification.strategy.hedge;
 
 import com.google.common.base.Stopwatch;
-import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.enums.HedgerActionEnum;
-import com.huobi.quantification.strategy.enums.OrderActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +30,33 @@ public class Hedger {
     @Autowired
     private HedgerContext hedgerContext;
 
-    private AtomicBoolean hedgePhase1Enable = new AtomicBoolean(true);
-    private AtomicBoolean hedgePhase2Enable = new AtomicBoolean(true);
+    private AtomicBoolean hedgePhase1Enable;
+    private AtomicBoolean hedgePhase2Enable;
 
     private Thread hedgePhase1Thread;
     private Thread hedgePhase2Thread;
+    private Thread hedgeCtrlThread;
 
-    private AtomicLong counter = new AtomicLong(0);
+    private AtomicLong counter;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        hedgerContext.init(group);
+    public void init(StrategyInstanceConfig config) {
+        hedgerContext.init(config);
+        counter = new AtomicLong(0);
+        hedgePhase1Enable = new AtomicBoolean(true);
+        hedgePhase2Enable = new AtomicBoolean(true);
         startHedgeCtrlThread();
+    }
+
+    public void stop() {
+        if (hedgePhase1Thread != null) {
+            hedgePhase1Thread.interrupt();
+        }
+        if (hedgePhase2Thread != null) {
+            hedgePhase2Thread.interrupt();
+        }
+        if (hedgeCtrlThread != null) {
+            hedgeCtrlThread.interrupt();
+        }
     }
 
     public void startHedgePhase1() {
@@ -164,8 +178,8 @@ public class Hedger {
     }
 
     private void startHedgeCtrlThread() {
-        Thread thread = new Thread(() -> {
-            while (true) {
+        hedgeCtrlThread = new Thread(() -> {
+            while (!hedgeCtrlThread.isInterrupted()) {
                 try {
                     StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
                     if (commContext.isThisWeek()) {
@@ -183,10 +197,11 @@ public class Hedger {
                     ThreadUtils.sleep(1000);
                 }
             }
+            logger.info("对冲控制线程退出");
         });
-        thread.setDaemon(true);
-        thread.setName("对冲控制线程");
-        thread.start();
+        hedgeCtrlThread.setDaemon(true);
+        hedgeCtrlThread.setName("对冲控制线程");
+        hedgeCtrlThread.start();
     }
 
 

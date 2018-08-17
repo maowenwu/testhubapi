@@ -2,11 +2,11 @@ package com.huobi.quantification.strategy.order;
 
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.entity.QuanExchangeConfig;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,11 +38,10 @@ public class DepthBookAdjuster {
     private StrategyTradeFee tradeFeeConfig;
     private BigDecimal exchangeRate;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        StrategyProperties.Config future = group.getFuture();
-        this.futureExchangeId = future.getExchangeId();
-        this.futureBaseCoin = future.getBaseCoin();
-        this.futureQuoteCoin = future.getQuotCoin();
+    public void init(StrategyInstanceConfig config) {
+        this.futureExchangeId = config.getFutureExchangeId();
+        this.futureBaseCoin = config.getFutureBaseCoin();
+        this.futureQuoteCoin = config.getFutureQuotCoin();
 
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {

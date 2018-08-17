@@ -7,12 +7,12 @@ import com.huobi.quantification.dto.SpotPlaceOrderReqDto;
 import com.huobi.quantification.dto.SpotPlaceOrderRespDto;
 import com.huobi.quantification.entity.QuanExchangeConfig;
 import com.huobi.quantification.entity.StrategyHedgeConfig;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.SpotBalanceMock;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +41,11 @@ public class HedgerContext {
     private StrategyTradeFee tradeFeeConfig;
 
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        StrategyProperties.Config spot = group.getSpot();
-
-        this.spotExchangeId = spot.getExchangeId();
-        this.spotAccountId = spot.getAccountId();
-        this.spotBaseCoin = spot.getBaseCoin();
-        this.spotQuoteCoin = spot.getQuotCoin();
+    public void init(StrategyInstanceConfig config) {
+        this.spotExchangeId = config.getSpotExchangeId();
+        this.spotAccountId = config.getSpotAccountId();
+        this.spotBaseCoin = config.getSpotBaseCoin();
+        this.spotQuoteCoin = config.getSpotQuotCoin();
 
         spotExchangeConfig = ExchangeConfig.getExchangeConfig(spotExchangeId, spotBaseCoin, spotQuoteCoin);
         if (spotExchangeConfig == null) {

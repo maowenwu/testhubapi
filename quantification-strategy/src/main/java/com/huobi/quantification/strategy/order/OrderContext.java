@@ -3,14 +3,17 @@ package com.huobi.quantification.strategy.order;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.BigDecimalUtils;
-import com.huobi.quantification.dto.*;
+import com.huobi.quantification.dto.FutureCancelSingleOrderReqDto;
+import com.huobi.quantification.dto.FuturePriceOrderReqDto;
+import com.huobi.quantification.dto.FuturePriceOrderRespDto;
+import com.huobi.quantification.dto.FutureUpdateOrderReqDto;
 import com.huobi.quantification.entity.QuanExchangeConfig;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -56,14 +59,13 @@ public class OrderContext {
     /*******该字段用于周五交割前只下平仓单*******/
     private boolean deliveryCloseOrderOnly = false;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        StrategyProperties.Config future = group.getFuture();
-        this.futureExchangeId = future.getExchangeId();
-        this.futureAccountId = future.getAccountId();
-        this.futureLever = future.getLever();
-        this.futureContractCode = future.getContractCode();
-        this.futureBaseCoin = future.getBaseCoin();
-        this.futureQuoteCoin = future.getQuotCoin();
+    public void init(StrategyInstanceConfig config) {
+        this.futureExchangeId = config.getFutureExchangeId();
+        this.futureAccountId = config.getFutureAccountId();
+        this.futureLever = config.getFutureLever();
+        this.futureContractCode = config.getFutureContractCode();
+        this.futureBaseCoin = config.getFutureBaseCoin();
+        this.futureQuoteCoin = config.getFutureQuotCoin();
 
         futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {

@@ -5,10 +5,10 @@ import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.common.util.DateUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import com.huobi.quantification.strategy.entity.*;
 import com.huobi.quantification.strategy.enums.OrderActionEnum;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class OrderCopier {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private AtomicLong counter = new AtomicLong(0);
+    private AtomicLong counter;
 
     @Autowired
     private OrderContext orderContext;
@@ -40,14 +40,58 @@ public class OrderCopier {
 
     private Thread copyOrderThread;
 
-    private AtomicBoolean orderPhase1Enable = new AtomicBoolean(true);
+    private Thread orderCtrlThread;
 
-    private AtomicBoolean orderPhase2Enable = new AtomicBoolean(true);
+    private AtomicBoolean orderPhase1Enable;
+    private AtomicBoolean orderPhase2Enable;
 
-    public void init(StrategyProperties.ConfigGroup group) {
-        depthBookAdjuster.init(group);
-        orderContext.init(group);
+    public void init(StrategyInstanceConfig config) {
+        depthBookAdjuster.init(config);
+        orderContext.init(config);
+        counter = new AtomicLong(0);
+        orderPhase1Enable = new AtomicBoolean(true);
+        orderPhase2Enable = new AtomicBoolean(true);
         startOrderCtrlThread();
+    }
+
+    private void startOrderCtrlThread() {
+        orderCtrlThread = new Thread(() -> {
+            while (!orderCtrlThread.isInterrupted()) {
+                try {
+                    StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
+                    if (commContext.isThisWeek()) {
+                        LocalDateTime now = LocalDateTime.now();
+                        if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime1())) && orderPhase1Enable.get()) {
+                            stopOrderPhase1();
+                        }
+                        if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime2())) && orderPhase2Enable.get()) {
+                            stopOrderPhase2();
+                        }
+                    }
+                    ThreadUtils.sleep(1000);
+                } catch (Exception e) {
+                    logger.error("订单监控线程出现异常", e);
+                    ThreadUtils.sleep(1000);
+                }
+            }
+            logger.info("摆单控制线程退出");
+        });
+        orderCtrlThread.setDaemon(true);
+        orderCtrlThread.setName("订单控制线程");
+        orderCtrlThread.start();
+        logger.info("摆单控制线程启动成功");
+    }
+
+    private void stopOrderPhase1() {
+        orderPhase1Enable.set(false);
+        orderContext.setDeliveryCloseOrderOnly(true);
+        logger.info("摆单第一阶段停止");
+    }
+
+    private void stopOrderPhase2() {
+        orderPhase2Enable.set(false);
+        copyOrderThread.interrupt();
+        logger.info("摆单第二阶段停止");
     }
 
     public void start() {
@@ -70,6 +114,15 @@ public class OrderCopier {
         copyOrderThread.setDaemon(true);
         copyOrderThread.setName("摆单线程");
         copyOrderThread.start();
+    }
+
+    public void stop() {
+        if (orderCtrlThread != null) {
+            orderCtrlThread.interrupt();
+        }
+        if (copyOrderThread != null) {
+            copyOrderThread.interrupt();
+        }
     }
 
     public boolean copyOrder() {
@@ -215,45 +268,4 @@ public class OrderCopier {
             return false;
         }
     }
-
-
-    private void stopOrderPhase1() {
-        orderPhase1Enable.set(false);
-        orderContext.setDeliveryCloseOrderOnly(true);
-        logger.info("摆单第一阶段停止");
-    }
-
-    private void stopOrderPhase2() {
-        orderPhase2Enable.set(false);
-        copyOrderThread.interrupt();
-        logger.info("摆单第二阶段停止");
-    }
-
-    private void startOrderCtrlThread() {
-        Thread thread = new Thread(() -> {
-            while (true) {
-                try {
-                    StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
-                    if (commContext.isThisWeek()) {
-                        LocalDateTime now = LocalDateTime.now();
-                        if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime1())) && orderPhase1Enable.get()) {
-                            stopOrderPhase1();
-                        }
-                        if (now.isAfter(DateUtils.getFriday(orderConfig.getStopTime2())) && orderPhase2Enable.get()) {
-                            stopOrderPhase2();
-                        }
-                    }
-                    ThreadUtils.sleep(1000);
-                } catch (Exception e) {
-                    logger.error("订单监控线程出现异常", e);
-                    ThreadUtils.sleep(1000);
-                }
-            }
-        });
-        thread.setDaemon(true);
-        thread.setName("订单控制线程");
-        thread.start();
-        logger.info("摆单控制线程启动成功");
-    }
-
 }

@@ -10,7 +10,6 @@ import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.strategy.config.StrategyProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +34,7 @@ public class TestController {
     @Autowired
     private FutureOrderService futureOrderService;
 
-    @Autowired
-    private StrategyProperties strategyProperties;
+
 
     @Autowired
     private SpotAccountService spotAccountService;
@@ -53,14 +51,14 @@ public class TestController {
     @RequestMapping("/addHuobiSpotAccountJob")
     public String addHuobiSpotAccountJob() {
         jobManageService.addHuobiSpotAccountJob(4232061L, "0/1 * * * * ?", true);
-        System.out.println(strategyProperties);
+
         return JSON.toJSONString("ok");
     }
 
     @RequestMapping("/testProperties")
     public String testProperties() {
 
-        System.out.println(strategyProperties);
+
         return JSON.toJSONString("ok");
     }
 
