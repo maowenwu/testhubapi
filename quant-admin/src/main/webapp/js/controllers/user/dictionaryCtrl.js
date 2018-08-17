@@ -3,7 +3,7 @@
 */
 angular.module('inspinia',['uiSwitch']).controller('dictionaryCtrl',function($scope,$http,$state,$stateParams,i18nService,SweetAlert,$document){
 	i18nService.setCurrentLang('zh-cn');
-	$scope.baseInfo = {status:2};
+	$scope.baseInfo = {};
 	$scope.paginationOptions=angular.copy($scope.paginationOptions);
 	$scope.dicGrid = {
 		data: 'dicData',
@@ -17,7 +17,6 @@ angular.module('inspinia',['uiSwitch']).controller('dictionaryCtrl',function($sc
             {field: 'sysKey', displayName: '字典键'},
             {field: 'sysName', displayName: '字典名称'},
             {field: 'sysValue', displayName: '字典值'},
-//            {field: 'parentName', displayName: '上一级'},
             {field: 'orderNo', displayName: '排序'},
             {field: 'status', displayName: '状态', cellFilter:"formatDropping:"+ angular.toJson($scope.status)},
             {field: 'remark', displayName: '备注'},
@@ -38,14 +37,14 @@ angular.module('inspinia',['uiSwitch']).controller('dictionaryCtrl',function($sc
 	
 	//查询
 	$scope.query = function(){
-		$http.post('sysDict/selectDicByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('sysDict/selectDicByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.dicData = page.result;
-					$scope.dicGrid.totalItems = page.totalCount;
+					$scope.dicData = page.list;
+					$scope.dicGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}
@@ -117,7 +116,7 @@ angular.module('inspinia',['uiSwitch']).controller('dictionaryCtrl',function($sc
 //	}
 	//清空查询条件
 	$scope.resetForm = function(){
-		$scope.baseInfo = {status:2};
+		$scope.baseInfo = {status:""};
 	}
 	//页面绑定回车事件
 	$document.bind("keypress", function(event) {

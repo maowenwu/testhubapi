@@ -335,4 +335,17 @@
         SELECT GREATEST(risk_hedge_ctrl,net_hedge_ctrl,profit_hedge_ctrl) FROM strategy_risk_config
         where symbol=#{symbol} and contract_type=#{contractType}
     </select>
+    <select id="selectList" parameterType="com.huobi.quantification.entity.StrategyRiskConfig" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from strategy_risk_config
+        <where>
+            <if test="symbol != null">
+                and symbol like concat(concat('%',#{symbol,jdbcType=VARCHAR}),'%')
+            </if>
+            <if test="contractType != null">
+                and contract_type like concat(concat('%',#{contractType,jdbcType=VARCHAR}),'%')
+            </if>
+        </where>
+    </select>
 </mapper>

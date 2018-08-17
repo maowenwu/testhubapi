@@ -1,7 +1,10 @@
 package com.huobi.quantification.dao;
 
+import com.huobi.quantification.entity.QuanJob;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface StrategyRiskConfigMapper {
     int deleteByPrimaryKey(Integer id);
@@ -23,4 +26,6 @@ public interface StrategyRiskConfigMapper {
     int selectOrderAction(@Param("symbol") String symbol,@Param("contractType") String contractType);
 
     int selectHedgeAction(@Param("symbol") String symbol,@Param("contractType") String contractType);
+
+    List<StrategyRiskConfig> selectList(StrategyRiskConfig quanJob);
 }

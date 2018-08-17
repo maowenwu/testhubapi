@@ -1,10 +1,15 @@
 package cn.huobi.framework.service.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,20 +26,7 @@ import cn.huobi.framework.service.HedgeService;
 public class HedgeServiceImpl implements HedgeService {
 	
 	@Autowired
-	private HadgeDao hedgeDao;
-
-	@Override
-	public List<HedgeConfig> selectByCondition(HedgeConfig config,
-			Page<HedgeConfig> page) {
-		StrategyHedgeConfig hedgeConfig = convertHedgeConfig(config);
-		List<StrategyHedgeConfig> sConfigs = hedgeDao.selectByCondition(hedgeConfig, page);
-		List<HedgeConfig> hedgeConfigs = new ArrayList<>();
-		for (StrategyHedgeConfig strategyHedgeConfig : sConfigs) {
-			HedgeConfig hConfig = convertStrategyHedgeConfig(strategyHedgeConfig);
-			hedgeConfigs.add(hConfig);
-		}
-		return hedgeConfigs;
-	}
+	private StrategyHedgeConfigMapper strategyHedgeConfigMapper;
 
 	private HedgeConfig convertStrategyHedgeConfig(StrategyHedgeConfig strategyHedgeConfig) {
 		HedgeConfig hedgeConfig = new HedgeConfig();
@@ -67,14 +59,40 @@ public class HedgeServiceImpl implements HedgeService {
 		hedgeConfig.setStopTime2(config.getStopTime2());
 		hedgeConfig.setDeliveryInterval(config.getDeliveryInterval());
 		hedgeConfig.setDeliveryBuySlippage(config.getDeliveryBuySlippage());
-		hedgeConfig.setDeliverySellSlippage(config.getDeliverySellSlippage());		
-		hedgeConfig.setUpdateTime(new Date());
+		hedgeConfig.setDeliverySellSlippage(config.getDeliverySellSlippage());
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			if (StringUtils.isNotBlank(config.getUpdateTime())){
+				hedgeConfig.setUpdateTime(formatter.parse(config.getUpdateTime()));
+			}
+			if (StringUtils.isNotBlank(config.getCreateTime())){
+				hedgeConfig.setCreateTime(formatter.parse(config.getCreateTime()));
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		return hedgeConfig;
 	}
 
 	@Override
 	public int updateHedge(HedgeConfig config) {
 		StrategyHedgeConfig hedgeConfig = convertHedgeConfig(config);
-		return hedgeDao.update(hedgeConfig);
+		hedgeConfig.setUpdateTime(new Date());
+		return strategyHedgeConfigMapper.updateByPrimaryKeySelective(hedgeConfig);
+	}
+
+	@Override
+	public PageInfo<HedgeConfig> selectByCondition(HedgeConfig config, PageInfo<HedgeConfig> page) {
+		PageHelper.startPage(page.getPageNum(), page.getPageSize());
+		StrategyHedgeConfig hedgeConfig = convertHedgeConfig(config);
+		List<StrategyHedgeConfig> strategyHedgeConfigs = strategyHedgeConfigMapper.selectList(hedgeConfig);
+		List<HedgeConfig> hedgeConfigs = new ArrayList<>();
+		strategyHedgeConfigs.stream().forEach(e ->{
+			hedgeConfigs.add(convertStrategyHedgeConfig(e));
+		});
+		page = new PageInfo<>(hedgeConfigs);
+		com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) strategyHedgeConfigs;
+		page.setTotal(totalPage.getTotal());
+		return page;
 	}
 }

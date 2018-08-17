@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,48 +27,37 @@ import cn.huobi.framework.service.HedgeService;
 import cn.huobi.framework.util.Constants;
 
 @Controller
-@RequestMapping(value="/hedge")
+@RequestMapping(value = "/hedge")
 public class HedgeAction {
-	private static final Logger log = LoggerFactory.getLogger(HedgeAction.class);
-	
-	@Resource
-	private HedgeService hedgeService;
-	
-	@DataSource(Constants.DATA_SOURCE_SLAVE)
-	@RequestMapping(value="/selectByCondition.do")
-	@ResponseBody
-	public Page<HedgeConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo ,
-                                              @Param("page") Page<HedgeConfig> page) throws Exception {
-		HedgeConfig config = JSONObject.parseObject(baseInfo, HedgeConfig.class);
-		try {
-			List<HedgeConfig> configs = hedgeService.selectByCondition(config, page);
-			page.setResult(configs);
-		} catch (Exception e) {
-			log.error("条件查询对冲配置失败");
-			e.printStackTrace();
-		}
-		return page;
-	}
-	
-	@RequestMapping(value="/updateHedge.do")
-	@ResponseBody
-	@SystemLog(description = "更新配置",operCode="hedge.update")
-	public Map<String, Object> update(@RequestParam("newInfo")String newInfo) throws Exception {
-		Map<String, Object> msg = new HashMap<>();
-		HedgeConfig riskConfig = JSON.parseObject(newInfo, HedgeConfig.class);
-		try {
-			int status = hedgeService.updateHedge(riskConfig);
-			if (status > 0) {
-				msg.put("status", true);
-				msg.put("msg", "更新成功！");
-			}else {
-				msg.put("status", false);
-				msg.put("msg", "更新失败");
-			}
-		} catch (Exception e) {
-			log.error("更新对冲配置失败");
-			e.printStackTrace();
-		}
-		return msg;
-	}
+    private static final Logger log = LoggerFactory.getLogger(HedgeAction.class);
+
+    @Resource
+    private HedgeService hedgeService;
+
+    @DataSource(Constants.DATA_SOURCE_SLAVE)
+    @RequestMapping(value = "/selectByCondition.do")
+    @ResponseBody
+    public PageInfo<HedgeConfig> selectByCondition(@RequestParam("baseInfo") String baseInfo,
+                                                   @Param("page") PageInfo<HedgeConfig> page) throws Exception {
+        HedgeConfig config = JSONObject.parseObject(baseInfo, HedgeConfig.class);
+        page = hedgeService.selectByCondition(config, page);
+        return page;
+    }
+
+    @RequestMapping(value = "/updateHedge.do")
+    @ResponseBody
+    @SystemLog(description = "更新配置", operCode = "hedge.update")
+    public Map<String, Object> update(@RequestParam("newInfo") String newInfo) throws Exception {
+        Map<String, Object> msg = new HashMap<>();
+        HedgeConfig riskConfig = JSON.parseObject(newInfo, HedgeConfig.class);
+        int status = hedgeService.updateHedge(riskConfig);
+        if (status > 0) {
+            msg.put("status", true);
+            msg.put("msg", "更新成功！");
+        } else {
+            msg.put("status", false);
+            msg.put("msg", "更新失败");
+        }
+        return msg;
+    }
 }

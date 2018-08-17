@@ -86,14 +86,14 @@ angular.module('inspinia',['uiSwitch']).controller('userCtrl',function($scope,$h
 	
 	//查询
 	$scope.query = function(){
-		$http.post('user/selectUserByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('user/selectUserByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.userData = page.result;
-					$scope.userGrid.totalItems = page.totalCount;
+					$scope.userData = page.list;
+					$scope.userGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

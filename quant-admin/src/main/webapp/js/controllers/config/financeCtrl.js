@@ -34,14 +34,14 @@ angular.module('inspinia',['uiSwitch']).controller('financeCtrl',function($scope
 	
 	//查询
 	$scope.query = function(){
-		$http.post('finance/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('finance/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.financeData = page.result;
-					$scope.financeGrid.totalItems = page.totalCount;
+					$scope.financeData = page.list;
+					$scope.financeGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}

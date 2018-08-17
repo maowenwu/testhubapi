@@ -19,9 +19,6 @@ angular.module('inspinia',['uiSwitch']).controller('riskCtrl',function($scope,$h
             {field: 'riskRateLevel1', displayName: '保证金率限制1'},
             {field: 'riskRateLevel2', displayName: '保证金率限制2'},
             {field: 'riskRateLevel3', displayName: '保证金率限制3'},
-            {field: 'buyCloseSlippage', displayName: '强平买单滑点'},
-            {field: 'sellCloseSlippage', displayName: '强平卖单滑点'},
-            {field: 'maxCloseAmount', displayName: '强平单单笔最大数量'},
             {field: 'netPositionLevel1', displayName: '净头寸阈值1'},
             {field: 'netPositionLevel2', displayName: '净头寸阈值2'},
             {field: 'currProfitLevel1', displayName: '单次盈亏阈值1'},
@@ -44,14 +41,14 @@ angular.module('inspinia',['uiSwitch']).controller('riskCtrl',function($scope,$h
 	
 	//查询
 	$scope.query = function(){
-		$http.post('risk/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('risk/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.riskData = page.result;
-					$scope.riskGrid.totalItems = page.totalCount;
+					$scope.riskData = page.list;
+					$scope.riskGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}
