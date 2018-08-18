@@ -2,25 +2,25 @@ package com.huobi.quantification.entity;
 
 public class QuanAccountSecret {
     /**
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-18 15:39:57
      */
     private Long id;
 
     /**
      * 用户id
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-18 15:39:57
      */
-    private Long accountSourceId;
+    private Long accountId;
 
     /**
      * access_key
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-18 15:39:57
      */
     private String accessKey;
 
     /**
      * secret_key
-     * @mbg.generated 2018-07-27 14:41:01
+     * @mbg.generated 2018-08-18 15:39:57
      */
     private String secretKey;
 
@@ -32,12 +32,12 @@ public class QuanAccountSecret {
         this.id = id;
     }
 
-    public Long getAccountSourceId() {
-        return accountSourceId;
+    public Long getAccountId() {
+        return accountId;
     }
 
-    public void setAccountSourceId(Long accountSourceId) {
-        this.accountSourceId = accountSourceId;
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
     }
 
     public String getAccessKey() {

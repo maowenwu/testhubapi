@@ -10,9 +10,11 @@ public interface QuanAccountFutureSecretMapper {
 
     int insert(QuanAccountFutureSecret record);
 
+    int insertSelective(QuanAccountFutureSecret record);
+
     QuanAccountFutureSecret selectByPrimaryKey(Long id);
 
-    List<QuanAccountFutureSecret> selectAll();
+    int updateByPrimaryKeySelective(QuanAccountFutureSecret record);
 
     int updateByPrimaryKey(QuanAccountFutureSecret record);
 

@@ -8,9 +8,11 @@ public interface QuanAccountSecretMapper {
 
     int insert(QuanAccountSecret record);
 
+    int insertSelective(QuanAccountSecret record);
+
     QuanAccountSecret selectByPrimaryKey(Long id);
 
-    List<QuanAccountSecret> selectAll();
+    int updateByPrimaryKeySelective(QuanAccountSecret record);
 
     int updateByPrimaryKey(QuanAccountSecret record);
 

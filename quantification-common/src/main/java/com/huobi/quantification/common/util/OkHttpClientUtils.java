@@ -1,6 +1,7 @@
 package com.huobi.quantification.common.util;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.exception.ApiException;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import okhttp3.*;
@@ -175,12 +176,12 @@ public class OkHttpClientUtils {
 
 
     public static void main(String[] args) {
-        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
         params.put("symbol", "BTC");
         params.put("userId", "156233");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_account_info", params);
-        System.out.println(s);
+        System.out.println(s);*/
 
         /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
@@ -215,5 +216,16 @@ public class OkHttpClientUtils {
         params.put("userId", "156138");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_openorders", params);
         System.out.println(s);*/
+
+        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        Map<String, String> params = new HashMap<>();
+        params.put("symbol", "BTC");
+        params.put("contract_type", "this_week");
+        Stopwatch started = Stopwatch.createStarted();
+        for (int i = 0; i < 6; i++) {
+            String s = clientUtils.doGet("http://www.huobiapps.com/contract-query/v1/contract_contract_info", params);
+            System.out.println(s);
+        }
+        System.out.println("==>"+started);
     }
 }
