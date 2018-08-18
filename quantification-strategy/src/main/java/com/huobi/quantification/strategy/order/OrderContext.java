@@ -94,7 +94,7 @@ public class OrderContext {
             });
             return result;
         } else {
-            throw new RuntimeException("获取活跃订单map失败，exchangeId=" + this.futureExchangeId + " futureAccountId=" + this.futureAccountId);
+            throw new RuntimeException(String.format("获取活跃订单OrderMap失败，exchangeId：%s，futureAccountId：%s", futureExchangeId, futureAccountId));
         }
     }
 
@@ -370,7 +370,6 @@ public class OrderContext {
     }
 
 
-
     // 下单后需要将订单添加到orderReader中
     private void postPlaceOrder(Long exOrderId, int side, int offset, BigDecimal price, BigDecimal orderAmount) {
         SideEnum sideEnum = SideEnum.valueOf(side);
@@ -410,18 +409,16 @@ public class OrderContext {
     }
 
 
-    public boolean updateOrderInfo() {
+    public void updateOrderInfo() {
         FutureUpdateOrderReqDto reqDto = new FutureUpdateOrderReqDto();
         reqDto.setExchangeId(futureExchangeId);
         reqDto.setAccountId(futureAccountId);
         reqDto.setContractCode(futureContractCode);
         ServiceResult result = futureOrderService.updateOrderInfo(reqDto);
         if (result.isSuccess()) {
-            logger.info("更新订单信息成功，exchangeId={}，futureAccountId={}", this.futureExchangeId, this.futureAccountId);
-            return true;
+            logger.info("更新订单信息成功，exchangeId：{}，futureAccountId：{}", this.futureExchangeId, this.futureAccountId);
         } else {
-            logger.error("更新订单信息失败，exchangeId={}，futureAccountId={},失败原因：{}", this.futureExchangeId, this.futureAccountId, result.getMessage());
-            return false;
+            throw new RuntimeException(String.format("更新订单信息失败，exchangeId：%s，futureAccountId：%s,失败原因：%s", this.futureExchangeId, this.futureAccountId, result.getMessage()));
         }
     }
 

@@ -23,7 +23,7 @@ public class StrategyBootstrap {
     @Autowired
     private OrderCopier orderCopier;
     @Autowired
-    private  Hedger hedger;
+    private Hedger hedger;
     @Autowired
     private RiskMonitor riskMonitor;
 
@@ -69,5 +69,6 @@ public class StrategyBootstrap {
         orderCopier.stop();
         hedger.stop();
         riskMonitor.stop();
+        logger.info("停止当前运行实例");
     }
 }

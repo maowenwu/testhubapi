@@ -140,7 +140,7 @@ public class CommContext {
         return false;
     }
 
-    public boolean cancelAllFutureOrder() {
+    public void cancelAllFutureOrder() {
         FutureCancelAllOrderReqDto reqDto = new FutureCancelAllOrderReqDto();
         reqDto.setExchangeId(futureExchangeId);
         reqDto.setAccountId(futureAccountId);
@@ -148,10 +148,8 @@ public class CommContext {
         ServiceResult result = futureOrderService.cancelAllOrder(reqDto);
         if (result.isSuccess()) {
             logger.info("取消所有期货订单成功");
-            return true;
         } else {
-            logger.info("取消所有期货订单失败，失败原因：{}", result.getMessage());
-            return false;
+            throw new RuntimeException(String.format("取消所有期货订单失败，失败原因：%s", result.getMessage()));
         }
     }
 
@@ -243,9 +241,7 @@ public class CommContext {
         if (result.isSuccess()) {
             DepthBook depthBook = new DepthBook();
             // 如果数据为null，代表盘面没有深度
-            if (result.getData().getData() == null) {
-                return depthBook;
-            } else {
+            if (result.getData().getData() != null) {
                 FutureDepthRespDto.DataBean data = result.getData().getData();
                 data.getAsks().forEach(e -> {
                     depthBook.getAsks().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
@@ -254,9 +250,11 @@ public class CommContext {
                     depthBook.getBids().add(new DepthBook.Depth(e.getPrice(), e.getAmount()));
                 });
                 return depthBook;
+            } else {
+                return depthBook;
             }
         } else {
-            throw new RuntimeException("获取火币现货深度异常");
+            throw new RuntimeException(String.format("获取火币现货深度失败，失败原因：%s", result.getMessage()));
         }
     }
 
@@ -307,36 +305,29 @@ public class CommContext {
                 return futurePosition;
             }
         } else {
-            return null;
+            throw new RuntimeException(String.format("获取期货持仓信息失败，exchangeId：%s，futureAccountId：%s，futureCoinType：%s", futureExchangeId, futureAccountId, futureBaseCoin));
         }
     }
 
     public FutureBalance getFutureBalance() {
-        try {
-            FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
-            reqDto.setExchangeId(this.futureExchangeId);
-            reqDto.setAccountId(this.futureAccountId);
-            reqDto.setCoinType(this.futureBaseCoin);
-            ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
-            if (result.isSuccess()) {
-                FutureBalance futureBalance = new FutureBalance();
-                Map<String, FutureBalanceRespDto.DataBean> dataMap = result.getData().getData();
-                if (dataMap != null && dataMap.get(futureBaseCoin) != null) {
-                    FutureBalanceRespDto.DataBean dataBean = dataMap.get(futureBaseCoin);
-                    BeanUtils.copyProperties(dataBean, futureBalance);
-                    logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
-                    return futureBalance;
-                } else {
-                    logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
-                    return null;
-                }
+        FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
+        reqDto.setExchangeId(this.futureExchangeId);
+        reqDto.setAccountId(this.futureAccountId);
+        reqDto.setCoinType(this.futureBaseCoin);
+        ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
+        if (result.isSuccess()) {
+            FutureBalance futureBalance = new FutureBalance();
+            Map<String, FutureBalanceRespDto.DataBean> dataMap = result.getData().getData();
+            if (dataMap != null && dataMap.get(futureBaseCoin) != null) {
+                FutureBalanceRespDto.DataBean dataBean = dataMap.get(futureBaseCoin);
+                BeanUtils.copyProperties(dataBean, futureBalance);
+                logger.info("获取期货资产信息成功，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin);
+                return futureBalance;
             } else {
-                logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}，失败原因={}", this.futureExchangeId, futureAccountId, futureBaseCoin, result.getMessage());
-                return null;
+                throw new RuntimeException(String.format("获取期货资产信息失败，exchangeId：%s，futureAccountId：%s，futureCoinType：%s", this.futureExchangeId, futureAccountId, futureBaseCoin));
             }
-        } catch (BeansException e) {
-            logger.error("获取期货资产信息失败，exchangeId={}，futureAccountId={}，futureCoinType={}", this.futureExchangeId, futureAccountId, futureBaseCoin, e);
-            return null;
+        } else {
+            throw new RuntimeException(String.format("获取期货资产信息失败，exchangeId：%s，futureAccountId：%s，futureCoinType：%s，失败原因：%s", this.futureExchangeId, futureAccountId, futureBaseCoin, result.getMessage()));
         }
     }
 
@@ -414,23 +405,27 @@ public class CommContext {
 
     public StrategyOrderConfig getStrategyOrderConfig() {
         String contractType = getContractTypeFromCode();
-        StrategyOrderConfig orderConfig = strategyOrderConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
-        return orderConfig;
+        StrategyOrderConfig config = strategyOrderConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (config != null) {
+            return config;
+        } else {
+            throw new RuntimeException(String.format("查找StrategyOrderConfig失败，futureBaseCoin：%s，contractType：%s", futureBaseCoin, contractType));
+        }
     }
 
     public StrategyHedgeConfig getStrategyHedgeConfig() {
         String contractType = getContractTypeFromCode();
-        StrategyHedgeConfig hedgeConfig = strategyHedgeConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
-        return hedgeConfig;
+        return strategyHedgeConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
     }
 
     public StrategyRiskConfig getStrategyRiskConfig() {
         String contractType = getContractTypeFromCode();
-        StrategyRiskConfig riskConfig = strategyRiskMapper.selectBySymbolContractType(futureBaseCoin, contractType);
-        if (riskConfig != null) {
-            logger.info("获取风控策略参数：" + JSON.toJSONString(riskConfig));
+        StrategyRiskConfig config = strategyRiskMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (config != null) {
+            return config;
+        } else {
+            throw new RuntimeException(String.format("查找StrategyRiskConfig失败，futureBaseCoin：%s，contractType：%s", futureBaseCoin, contractType));
         }
-        return riskConfig;
     }
 
     public OrderActionEnum getOrderAction() {
@@ -471,6 +466,10 @@ public class CommContext {
                     return null;
                 }
             } catch (Throwable e) {
+                if (e instanceof InterruptedException) {
+                    // 如果是中断异常直接抛出
+                    throw e;
+                }
                 logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
                 return null;
             }
@@ -503,8 +502,7 @@ public class CommContext {
         if (result.isSuccess()) {
             return result.getData().getData().get(futureBaseCoin).getRiskRate();
         } else {
-            logger.error("取不到期货账户余额，错误信息：{}", result.getMessage());
-            throw new RuntimeException("取不到期货账户余额，错误信息：" + result.getMessage());
+            throw new RuntimeException(String.format("获取期货账户保证金率失败，失败原因：", result.getMessage()));
         }
     }
 }

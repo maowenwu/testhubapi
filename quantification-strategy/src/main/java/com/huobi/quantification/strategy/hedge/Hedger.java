@@ -157,7 +157,7 @@ public class Hedger {
         BigDecimal m1 = commContext.getNetPositionUsdt();
         BigDecimal m2 = commContext.getCurrFutureUsdt();
         // 3.需要在币币账户对冲的金额
-        BigDecimal m = m2.subtract(m1);
+        BigDecimal m = m1.subtract(m2);
 
         BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
         hedgerContext.placeHedgeOrder(netPosition, true);

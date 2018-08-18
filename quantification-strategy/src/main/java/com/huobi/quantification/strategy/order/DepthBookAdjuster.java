@@ -72,9 +72,8 @@ public class DepthBookAdjuster {
             roundDownVolume(depthBook);
             logger.info("DepthBook, asks数量：{}，bids数量：{}", depthBook.getAsks().size(), depthBook.getBids().size());
             return depthBook;
-        } catch (Exception e) {
-            logger.error("获取深度信息失败", e);
-            return null;
+        } catch (Throwable e) {
+            throw new RuntimeException("获取调整后的DepthBook异常", e);
         }
     }
 
