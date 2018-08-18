@@ -70,6 +70,9 @@ public class OrderCopier {
                     }
                     ThreadUtils.sleep(1000);
                 } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        orderCtrlThread.interrupt();
+                    }
                     logger.error("订单监控线程出现异常", e);
                     ThreadUtils.sleep(1000);
                 }
@@ -102,6 +105,9 @@ public class OrderCopier {
                     copyOrder();
                     failedCount = 0;
                 } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        copyOrderThread.interrupt();
+                    }
                     logger.error("摆盘期间出现异常", e);
                     failedCount += 1;
                     if (failedCount > 3) {

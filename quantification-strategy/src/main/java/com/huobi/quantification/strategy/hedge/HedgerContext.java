@@ -55,32 +55,30 @@ public class HedgerContext {
 
 
     public void placeBuyOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
-        orderPrice = checkPrice(orderPrice);
-        orderAmount = checkAmount(orderAmount);
-        placeOrder(SideEnum.BUY, orderPrice, orderAmount);
+        placeSpotOrder(SideEnum.BUY, orderPrice, orderAmount);
         // todo 这里是用的mock对象
         SpotBalanceMock.setUsdt(SpotBalanceMock.getUsdt().subtract(orderPrice.multiply(orderAmount)));
         SpotBalanceMock.setCoin(SpotBalanceMock.getCoin().add(orderAmount));
     }
 
     public void placeSellOrder(BigDecimal orderPrice, BigDecimal orderAmount) {
-        orderPrice = checkPrice(orderPrice);
-        orderAmount = checkAmount(orderAmount);
-        placeOrder(SideEnum.SELL, orderPrice, orderAmount);
+        placeSpotOrder(SideEnum.SELL, orderPrice, orderAmount);
         // todo 这里是用的mock对象
         SpotBalanceMock.setUsdt(SpotBalanceMock.getUsdt().add(orderPrice.multiply(orderAmount)));
         SpotBalanceMock.setCoin(SpotBalanceMock.getCoin().subtract(orderPrice.multiply(orderAmount)));
     }
 
-    private BigDecimal checkPrice(BigDecimal price) {
+    private BigDecimal adjSpotPricePrecision(BigDecimal price) {
         return price.divide(BigDecimal.ONE, spotExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
     }
 
-    private BigDecimal checkAmount(BigDecimal amount) {
-        return amount.divide(BigDecimal.ONE, spotExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN).abs();
+    private BigDecimal adjSpotAmountPrecision(BigDecimal amount) {
+        return amount.divide(BigDecimal.ONE, spotExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN);
     }
 
-    private void placeOrder(SideEnum side, BigDecimal orderPrice, BigDecimal orderAmount) {
+    private void placeSpotOrder(SideEnum side, BigDecimal orderPrice, BigDecimal orderAmount) {
+        orderPrice = adjSpotPricePrecision(orderPrice);
+        orderAmount = adjSpotAmountPrecision(orderAmount);
         // 检查数量、价格
         if (BigDecimalUtils.moreThan(orderPrice, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
             SpotPlaceOrderReqDto spotPlaceOrderReqDto = new SpotPlaceOrderReqDto();
@@ -96,7 +94,6 @@ public class HedgerContext {
                 spotPlaceOrderReqDto.setSide("sell");
             }
             spotPlaceOrderReqDto.setOrderType("limit");
-
             ServiceResult<SpotPlaceOrderRespDto> result = spotOrderService.placeOrder(spotPlaceOrderReqDto);
             if (result.isSuccess()) {
                 logger.info("下单成功，方向：{}，价格：{}，数量：{}", side, orderPrice, orderAmount);
@@ -110,43 +107,44 @@ public class HedgerContext {
 
 
     public void placeHedgeOrder(BigDecimal netPosition, boolean isDelivery) {
-        // 如果当前净头寸小于配置，那么直接忽略
-        if (BigDecimalUtils.lessThan(netPosition.abs(), hedgeConfig.getMinNetPosition())) {
-            return;
-        }
-        // 获取买一卖一价格
-        DepthBook depthBook = commContext.getSpotDepth();
-        BigDecimal ask1 = depthBook.getAsk1();
-        BigDecimal bid1 = depthBook.getBid1();
-        // 净头寸大于0，下买单
-        if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
-            if (ask1 != null) {
-                BigDecimal orderPrice;
-                if (isDelivery) {
-                    orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getDeliveryBuySlippage()));
+        if (BigDecimalUtils.moreThanOrEquals(netPosition.abs(), hedgeConfig.getMinNetPosition())) {
+            // 获取买一卖一价格
+            DepthBook depthBook = commContext.getSpotDepth();
+            BigDecimal ask1 = depthBook.getAsk1();
+            BigDecimal bid1 = depthBook.getBid1();
+            // 净头寸大于0，下买单
+            if (BigDecimalUtils.moreThan(netPosition, BigDecimal.ZERO)) {
+                if (ask1 != null) {
+                    BigDecimal orderPrice;
+                    if (isDelivery) {
+                        orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getDeliveryBuySlippage()));
+                    } else {
+                        orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getBuySlippage()));
+                    }
+                    BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN);
+                    placeBuyOrder(orderPrice, orderAmount);
                 } else {
-                    orderPrice = ask1.multiply(BigDecimal.ONE.add(hedgeConfig.getBuySlippage()));
+                    logger.error("卖一价为空，忽略本笔对冲单");
                 }
-                BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN);
-                placeBuyOrder(orderPrice, orderAmount);
-            } else {
-                logger.error("卖一价为空，忽略本笔对冲单");
-            }
-        } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
-            // 净头寸小于0，下卖单
-            if (bid1 != null) {
-                BigDecimal orderPrice;
-                if (isDelivery) {
-                    orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getDeliverySellSlippage()));
+            } else if (BigDecimalUtils.lessThan(netPosition, BigDecimal.ZERO)) {
+                // 净头寸小于0，下卖单
+                if (bid1 != null) {
+                    BigDecimal orderPrice;
+                    if (isDelivery) {
+                        orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getDeliverySellSlippage()));
+                    } else {
+                        orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSellSlippage()));
+                    }
+                    BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN)
+                            .divide(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()), 18, BigDecimal.ROUND_DOWN);
+                    placeSellOrder(orderPrice, orderAmount.abs());
                 } else {
-                    orderPrice = bid1.multiply(BigDecimal.ONE.subtract(hedgeConfig.getSellSlippage()));
+                    logger.error("买一价为空，忽略本笔对冲单");
                 }
-                BigDecimal orderAmount = netPosition.divide(orderPrice, 18, BigDecimal.ROUND_DOWN)
-                        .divide(BigDecimal.ONE.subtract(tradeFeeConfig.getSpotFee()), 18, BigDecimal.ROUND_DOWN);
-                placeSellOrder(orderPrice, orderAmount);
-            } else {
-                logger.error("买一价为空，忽略本笔对冲单");
             }
+        } else {
+            // 如果当前净头寸小于配置，那么直接忽略
+            logger.debug("净头寸太小忽略本次对冲");
         }
     }
 

@@ -42,11 +42,17 @@ public class RiskMonitor {
     public void start() {
         riskMonitorThread = new Thread(() -> {
             while (!riskMonitorThread.isInterrupted()) {
-                boolean b = check();
-                if (!b) {
+                try {
+                    check();
+                } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        riskMonitorThread.interrupt();
+                    }
+                    logger.error("风控期间出现异常", e);
                     ThreadUtils.sleep(1000);
                 }
             }
+            logger.error("风控线程退出");
         });
         riskMonitorThread.setDaemon(true);
         riskMonitorThread.setName("风控线程");
@@ -59,34 +65,21 @@ public class RiskMonitor {
         }
     }
 
-    public boolean check() {
-        try {
-            Stopwatch started = Stopwatch.createStarted();
-            logger.info("========>合约监控第{}轮 开始", counter.incrementAndGet());
-            this.riskConfig = commContext.getStrategyRiskConfig();
-            if (riskConfig == null) {
-                logger.error("未获取到风控配置参数，方法退出");
-                return false;
-            }
-            BigDecimal currentPrice = commContext.getSpotCurrentPrice();
-            if (currentPrice == null) {
-                logger.error("未获取到现货当前价格，方法退出");
-                return false;
-            }
-            riskContext.setCurrPrice(currentPrice);
+    public void check() {
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("========>合约监控第{}轮 开始", counter.incrementAndGet());
+        this.riskConfig = commContext.getStrategyRiskConfig();
 
-            BigDecimal riskRate = checkRiskRate();
-            BigDecimal netPosition = checkNetPosition();
-            RiskProfit riskProfit = checkProfit();
-            riskContext.saveRiskResult(riskRate, netPosition, riskProfit);
-            logger.info("========>合约监控第{}轮 结束，耗时：{}", counter.get(), started);
-            ThreadUtils.sleep(riskConfig.getRiskInterval() * 1000);
-            return true;
-        } catch (Exception e) {
-            logger.error("监控保证金率期间出现异常", e);
-            ThreadUtils.sleep(1000);
-            return false;
-        }
+        BigDecimal currentPrice = commContext.getSpotCurrentPrice();
+
+        riskContext.setCurrPrice(currentPrice);
+
+        BigDecimal riskRate = checkRiskRate();
+        BigDecimal netPosition = checkNetPosition();
+        RiskProfit riskProfit = checkProfit();
+        riskContext.saveRiskResult(riskRate, netPosition, riskProfit);
+        logger.info("========>合约监控第{}轮 结束，耗时：{}", counter.get(), started);
+        ThreadUtils.sleep(riskConfig.getRiskInterval() * 1000);
     }
 
     /**

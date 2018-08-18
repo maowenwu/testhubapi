@@ -27,7 +27,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -121,23 +120,19 @@ public class CommContext {
         logger.info("合约账户期初净空仓金额：{}Usdt", initialFutureUsdt);
     }
 
-    public boolean cancelAllSpotOrder() {
+    public void cancelAllSpotOrder() {
         SpotCancleAllOrderReqDto req = new SpotCancleAllOrderReqDto();
         req.setExchangeId(spotExchangeId);
         req.setAccountId(spotAccountId);
         req.setBaseCoin(spotBaseCoin);
         req.setQuoteCoin(spotQuoteCoin);
-        try {
-            ServiceResult result = spotOrderService.cancelAllOrder(req);
-            if (result.isSuccess()) {
-                logger.info("对冲取消所有现货订单成功，spotExchangeId={}，spotAccountId={}，spotBaseCoin={}，spotQuoteCoin={}",
-                        spotExchangeId, spotAccountId, spotBaseCoin, spotQuoteCoin);
-                return true;
-            }
-        } catch (Exception e) {
-            logger.info("取消现货订单失败", e);
+        ServiceResult result = spotOrderService.cancelAllOrder(req);
+        if (result.isSuccess()) {
+            logger.info("对冲取消所有现货订单成功，spotExchangeId={}，spotAccountId={}，spotBaseCoin={}，spotQuoteCoin={}",
+                    spotExchangeId, spotAccountId, spotBaseCoin, spotQuoteCoin);
+        } else {
+            throw new RuntimeException(String.format("取消所有现货订单失败，spotExchangeId：%s，spotAccountId：%s，spotBaseCoin：%s，spotQuoteCoin：%s", spotExchangeId, spotAccountId, spotBaseCoin, spotQuoteCoin));
         }
-        return false;
     }
 
     public void cancelAllFutureOrder() {
@@ -363,17 +358,14 @@ public class CommContext {
         reqDto.setExchangeId(spotExchangeId);
         reqDto.setBaseCoin(spotBaseCoin);
         reqDto.setQuoteCoin(spotQuoteCoin);
-        try {
-            ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
-            if (currentPrice.isSuccess()) {
-                BigDecimal price = currentPrice.getData().getCurrentPrice();
-                logger.info("获取当前价格成功,price={}，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", price, futureExchangeId, futureBaseCoin, futureQuoteCoin);
-                return price;
-            }
-        } catch (Exception e) {
-            logger.error("获取当前价格失败，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", futureExchangeId, futureBaseCoin, futureQuoteCoin);
+        ServiceResult<SpotCurrentPriceRespDto> currentPrice = spotMarketService.getCurrentPrice(reqDto);
+        if (currentPrice.isSuccess()) {
+            BigDecimal price = currentPrice.getData().getCurrentPrice();
+            logger.info("获取现货当前价格成功,price={}，exchangeId={}，futureBaseCoin={}，futureQuoteCoin={}", price, futureExchangeId, futureBaseCoin, futureQuoteCoin);
+            return price;
+        } else {
+            throw new RuntimeException(String.format("获取现货当前价格失败，exchangeId：%s，futureBaseCoin：%s，futureQuoteCoin：%s", futureExchangeId, futureBaseCoin, futureQuoteCoin));
         }
-        return null;
     }
 
     public boolean isThisWeek() {
@@ -415,7 +407,12 @@ public class CommContext {
 
     public StrategyHedgeConfig getStrategyHedgeConfig() {
         String contractType = getContractTypeFromCode();
-        return strategyHedgeConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        StrategyHedgeConfig config = strategyHedgeConfigMapper.selectBySymbolContractType(futureBaseCoin, contractType);
+        if (config != null) {
+            return config;
+        } else {
+            throw new RuntimeException(String.format("查找StrategyHedgeConfig失败，futureBaseCoin：%s，contractType：%s", futureBaseCoin, contractType));
+        }
     }
 
     public StrategyRiskConfig getStrategyRiskConfig() {
@@ -442,7 +439,7 @@ public class CommContext {
 
     public Long placeFutureOrder(int side, int offset, BigDecimal price, BigDecimal orderAmount) {
         price = adjFuturePricePrecision(price);
-        orderAmount = checkFutureAmountPrecision(orderAmount);
+        orderAmount = adjFutureAmountPrecision(orderAmount);
         if (BigDecimalUtils.moreThan(price, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
             FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
             reqDto.setStrategyName(strategyName);
@@ -457,20 +454,11 @@ public class CommContext {
             reqDto.setQuantity(orderAmount);
             reqDto.setLever(this.futureLever);
             reqDto.setSync(true);
-            try {
-                ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
-                if (result.isSuccess()) {
-                    return result.getData().getExOrderId();
-                } else {
-                    logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
-                    return null;
-                }
-            } catch (Throwable e) {
-                if (e instanceof InterruptedException) {
-                    // 如果是中断异常直接抛出
-                    throw e;
-                }
-                logger.error("placeOrder失败：dubbo服务调用异常，订单：" + reqDto, e);
+            ServiceResult<FuturePlaceOrderRespDto> result = futureOrderService.placeOrder(reqDto);
+            if (result.isSuccess()) {
+                return result.getData().getExOrderId();
+            } else {
+                logger.error("placeOrder失败：{}，订单：{}", result.getMessage(), reqDto);
                 return null;
             }
         } else {
@@ -483,7 +471,7 @@ public class CommContext {
         return price.divide(BigDecimal.ONE, futureExchangeConfig.getPricePrecision(), BigDecimal.ROUND_DOWN);
     }
 
-    private BigDecimal checkFutureAmountPrecision(BigDecimal orderAmount) {
+    private BigDecimal adjFutureAmountPrecision(BigDecimal orderAmount) {
         return orderAmount.divide(BigDecimal.ONE, futureExchangeConfig.getAmountPrecision(), BigDecimal.ROUND_DOWN);
     }
 

@@ -35,6 +35,7 @@ public class Hedger {
 
     private Thread hedgePhase1Thread;
     private Thread hedgePhase2Thread;
+    private Thread hedgePhase3Thread;
     private Thread hedgeCtrlThread;
 
     private AtomicLong counter;
@@ -54,6 +55,9 @@ public class Hedger {
         if (hedgePhase2Thread != null) {
             hedgePhase2Thread.interrupt();
         }
+        if (hedgePhase3Thread != null) {
+            hedgePhase3Thread.interrupt();
+        }
         if (hedgeCtrlThread != null) {
             hedgeCtrlThread.interrupt();
         }
@@ -61,98 +65,100 @@ public class Hedger {
 
     public void startHedgePhase1() {
         hedgePhase1Thread = new Thread(() -> {
+            int failedCount = 0;
             while (!hedgePhase1Thread.isInterrupted() && hedgePhase1Enable.get()) {
                 try {
-                    boolean b = hedgePhase1();
-                    if (!b) {
-                        ThreadUtils.sleep(1000);
+                    hedgePhase1();
+                } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        hedgePhase1Thread.interrupt();
                     }
-                } catch (Throwable e) {
                     logger.error("对冲1阶段出现异常,", e);
+                    failedCount += 1;
+                    if (failedCount > 3) {
+                        try {
+                            commContext.cancelAllSpotOrder();
+                        } catch (Exception e1) {
+                            logger.error("对冲1阶段取消所有现货订单异常", e1);
+                        }
+                        failedCount = 0;
+                    }
                     ThreadUtils.sleep(1000);
                 }
             }
+            logger.info("对冲1阶段线程退出");
         });
         hedgePhase1Thread.setDaemon(true);
         hedgePhase1Thread.setName("1阶段对冲线程");
         hedgePhase1Thread.start();
     }
 
-    private boolean hedgePhase1() {
+    private void hedgePhase1() {
         Stopwatch started = Stopwatch.createStarted();
-        long startTime = System.currentTimeMillis();
         logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
         HedgerActionEnum hedgeAction = commContext.getHedgeAction();
         switch (hedgeAction) {
             case STOP_HEDGER:
                 commContext.cancelAllSpotOrder();
                 logger.error("风控已经发出停止摆单指令，本轮对冲结束并撤销所有订单");
-                return true;
+                ThreadUtils.sleep(1000);
+                return;
         }
         // 撤掉币币账户所有未成交订单
-        boolean b = commContext.cancelAllSpotOrder();
-        if (!b) {
-            logger.error("取消现货所有订单失败，方法退出");
-            return false;
-        }
+        commContext.cancelAllSpotOrder();
         StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
-        if (tradeFeeConfig == null) {
-            logger.error("交易手续费配置获取失败，方法退出");
-            return false;
-        }
         StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
-        if (hedgeConfig == null) {
-            logger.error("对冲参数配置获取失败，方法退出");
-            return false;
-        }
+
         hedgerContext.setHedgeConfig(hedgeConfig);
         hedgerContext.setTradeFeeConfig(tradeFeeConfig);
 
-        // 2.计算当前的两个账户总的净头寸USDT
+        // 计算当前的两个账户总的净头寸USDT
         BigDecimal netPosition = commContext.getNetPositionUsdt();
         // 3. 下单
         hedgerContext.placeHedgeOrder(netPosition, false);
         logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
-        ThreadUtils.sleep(startTime, hedgeConfig.getHedgeInterval());
-        return true;
+        ThreadUtils.sleep(hedgeConfig.getHedgeInterval() * 1000);
     }
 
 
     public void startHedgePhase2() {
         hedgePhase2Thread = new Thread(() -> {
-            while (!hedgePhase1Thread.isInterrupted() && hedgePhase2Enable.get()) {
+            int failedCount = 0;
+            while (!hedgePhase2Thread.isInterrupted() && hedgePhase2Enable.get()) {
                 try {
-                    boolean b = hedgePhase2();
-                    if (!b) {
-                        ThreadUtils.sleep(10 * 1000);
-                    }
+                    hedgePhase2();
                 } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        hedgePhase2Thread.interrupt();
+                    }
                     logger.error("对冲2阶段出现异常,", e);
-                    ThreadUtils.sleep(10 * 1000);
+                    failedCount += 1;
+                    if (failedCount > 3) {
+                        try {
+                            commContext.cancelAllSpotOrder();
+                        } catch (Exception e1) {
+                            logger.error("对冲2阶段取消所有现货订单异常", e1);
+                        }
+                        failedCount = 0;
+                    }
+                    ThreadUtils.sleep(1000);
                 }
             }
+            logger.info("对冲2阶段线程退出");
         });
         hedgePhase2Thread.setDaemon(true);
         hedgePhase2Thread.setName("2阶段对冲线程");
         hedgePhase2Thread.start();
     }
 
-    private boolean hedgePhase2() {
-        long startTime = System.currentTimeMillis();
+    private void hedgePhase2() {
         StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
-        if (hedgeConfig == null) {
-            logger.error("对冲参数配置获取失败，方法退出");
-            return false;
-        }
         String stopTime2 = hedgeConfig.getStopTime2();
         Integer deliveryInterval = hedgeConfig.getDeliveryInterval();
         long count = DateUtils.getSecond(LocalTime.now(), LocalTime.parse(stopTime2, DateTimeFormatter.ISO_LOCAL_TIME)) / deliveryInterval;
         // 撤掉币币账户所有未成交订单
-        boolean success = commContext.cancelAllSpotOrder();
-        if (!success) {
-            logger.error("取消现货所有订单失败，方法退出");
-            return false;
-        }
+        commContext.cancelAllSpotOrder();
+
         // 2.计算当前的两个账户总的净头寸USDT
         BigDecimal m1 = commContext.getNetPositionUsdt();
         BigDecimal m2 = commContext.getCurrFutureUsdt();
@@ -161,9 +167,41 @@ public class Hedger {
 
         BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
         hedgerContext.placeHedgeOrder(netPosition, true);
+        ThreadUtils.sleep(deliveryInterval * 1000);
+    }
 
-        ThreadUtils.sleep(startTime, deliveryInterval);
-        return true;
+    public void startHedgePhase3() {
+        hedgePhase3Thread = new Thread(() -> {
+            int failedCount = 0;
+            while (!hedgePhase3Thread.isInterrupted()) {
+                try {
+                    hedgePhase3();
+                } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        hedgePhase2Thread.interrupt();
+                    }
+                    logger.error("对冲3阶段出现异常,", e);
+                    failedCount += 1;
+                    if (failedCount > 3) {
+                        try {
+                            commContext.cancelAllSpotOrder();
+                        } catch (Exception e1) {
+                            logger.error("对冲3阶段取消所有现货订单异常", e1);
+                        }
+                        failedCount = 0;
+                    }
+                    ThreadUtils.sleep(1000);
+                }
+            }
+            logger.info("对冲3阶段线程退出");
+        });
+        hedgePhase3Thread.setDaemon(true);
+        hedgePhase3Thread.setName("3阶段对冲线程");
+        hedgePhase3Thread.start();
+    }
+
+    private void hedgePhase3() {
+        // todo
     }
 
     private void stopHedgePhase1() {
@@ -175,6 +213,7 @@ public class Hedger {
     private void stopHedgePhase2() {
         hedgePhase2Enable.set(false);
         hedgePhase2Thread.interrupt();
+        startHedgePhase3();
     }
 
     private void startHedgeCtrlThread() {
@@ -193,6 +232,9 @@ public class Hedger {
                     }
                     ThreadUtils.sleep(1000);
                 } catch (Exception e) {
+                    if (e instanceof RuntimeException && e.getCause() != null && e.getCause() instanceof InterruptedException) {
+                        hedgeCtrlThread.interrupt();
+                    }
                     logger.error("对冲监控线程出现异常", e);
                     ThreadUtils.sleep(1000);
                 }
