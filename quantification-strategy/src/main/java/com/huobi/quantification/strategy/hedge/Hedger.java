@@ -201,7 +201,30 @@ public class Hedger {
     }
 
     private void hedgePhase3() {
-        // todo
+        Stopwatch started = Stopwatch.createStarted();
+        logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
+        HedgerActionEnum hedgeAction = commContext.getHedgeAction();
+        switch (hedgeAction) {
+            case STOP_HEDGER:
+                commContext.cancelAllSpotOrder();
+                logger.error("风控已经发出停止摆单指令，本轮对冲结束并撤销所有订单");
+                ThreadUtils.sleep(1000);
+                return;
+        }
+        // 撤掉币币账户所有未成交订单
+        commContext.cancelAllSpotOrder();
+        StrategyTradeFee tradeFeeConfig = commContext.getStrategyTradeFeeConfig();
+        StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
+
+        hedgerContext.setHedgeConfig(hedgeConfig);
+        hedgerContext.setTradeFeeConfig(tradeFeeConfig);
+
+        // 只计算当前币币账户总的净头寸USDT
+        BigDecimal netPosition = commContext.getSpotNetPositionUsdt();
+        // 3. 下单
+        hedgerContext.placeHedgeOrder(netPosition, false);
+        logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
+        ThreadUtils.sleep(hedgeConfig.getHedgeInterval() * 1000);
     }
 
     private void stopHedgePhase1() {

@@ -158,6 +158,15 @@ public class CommContext {
         return netPosition;
     }
 
+
+    public BigDecimal getSpotNetPositionUsdt() {
+        // 币币账户期末余额USDT
+        BigDecimal currSpotUsdt = getCurrSpotUsdt();
+        BigDecimal netPosition = currSpotUsdt.subtract(initialSpotUsdt);
+        logger.info("币币账户当前净头寸：{}Usdt", netPosition);
+        return netPosition;
+    }
+
     private BigDecimal getCurrSpotUsdt() {
         SpotBalance spotBalance = getSpotBalance();
         // 火币现货会返回所有资产信息，所以不会存在null的情况
