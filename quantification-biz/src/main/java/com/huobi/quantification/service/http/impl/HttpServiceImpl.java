@@ -32,6 +32,8 @@ import com.huobi.quantification.service.http.HttpService;
 @Service
 public class HttpServiceImpl implements HttpService {
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     private List<OkHttpClientUtils> clients = null;
 
     private AtomicInteger nextId = new AtomicInteger();
@@ -45,9 +47,10 @@ public class HttpServiceImpl implements HttpService {
     @Autowired
     private HuobiSpotSecretHolder huobiSpotSecretHolder;
 
-    private Timer timer = new Timer();
+    @Autowired
+    private HuobiFutureSecretHolder huobiFutureSecretHolder;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Timer timer = new Timer();
 
     public HttpServiceImpl() {
         timer.schedule(new TimerTask() {
@@ -124,8 +127,9 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doHuobiFuturePostJson(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
-        params.put("userId", "156233");
-        return doPostJson(url, params);
+        HuobiSignature signature = huobiFutureSecretHolder.getHuobiFutureSignature(accountId);
+        return OkHttpClientUtils.getInstance(null).call(signature.getAccessKey(), signature.getSecretKey(),
+                "POST", url, params, new HashMap<>());
     }
 
     @Override
@@ -140,15 +144,15 @@ public class HttpServiceImpl implements HttpService {
         if (params == null) {
             params = new HashMap<>();
         }
-        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSpotSignature(accountId);
-        return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
+        HuobiSignature signature = huobiSpotSecretHolder.getHuobiSpotSignature(accountId);
+        return getHttpClientUtils().call(signature.getAccessKey(), signature.getSecretKey(),
                 "GET", uri, null, params);
     }
 
     @Override
     public String doHuobiSpotPost(Long accountId, String uri, Object object) throws HttpRequestException {
-        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSpotSignature(accountId);
-        return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
+        HuobiSignature signature = huobiSpotSecretHolder.getHuobiSpotSignature(accountId);
+        return getHttpClientUtils().call(signature.getAccessKey(), signature.getSecretKey(),
                 "POST", uri, object, new HashMap<>());
     }
 

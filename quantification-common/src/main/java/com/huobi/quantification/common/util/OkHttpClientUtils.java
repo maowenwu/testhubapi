@@ -176,12 +176,12 @@ public class OkHttpClientUtils {
 
 
     public static void main(String[] args) {
-        /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
-        params.put("symbol", "BTC");
+        //params.put("symbol", "BTC");
         params.put("userId", "156233");
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_account_info", params);
-        System.out.println(s);*/
+        System.out.println(s);
 
         /*OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
@@ -217,7 +217,7 @@ public class OkHttpClientUtils {
         String s = clientUtils.doPostJson("http://www.huobiapps.com/contract-query/v1/contract_openorders", params);
         System.out.println(s);*/
 
-        OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
+       /* OkHttpClientUtils clientUtils = OkHttpClientUtils.getInstance(null);
         Map<String, String> params = new HashMap<>();
         params.put("symbol", "BTC");
         params.put("contract_type", "this_week");
@@ -226,6 +226,6 @@ public class OkHttpClientUtils {
             String s = clientUtils.doGet("http://www.huobiapps.com/contract-query/v1/contract_contract_info", params);
             System.out.println(s);
         }
-        System.out.println("==>"+started);
+        System.out.println("==>"+started);*/
     }
 }
