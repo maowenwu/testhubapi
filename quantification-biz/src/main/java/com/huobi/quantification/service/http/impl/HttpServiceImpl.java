@@ -140,14 +140,14 @@ public class HttpServiceImpl implements HttpService {
         if (params == null) {
             params = new HashMap<>();
         }
-        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSignatureById(accountId);
+        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSpotSignature(accountId);
         return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
                 "GET", uri, null, params);
     }
 
     @Override
     public String doHuobiSpotPost(Long accountId, String uri, Object object) throws HttpRequestException {
-        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSignatureById(accountId);
+        HuobiSignature huobiSignature = huobiSpotSecretHolder.getHuobiSpotSignature(accountId);
         return getHttpClientUtils().call(huobiSignature.getAccessKey(), huobiSignature.getSecretKey(),
                 "POST", uri, object, new HashMap<>());
     }

@@ -2,17 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanAccountMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccount">
-        <id column="id" jdbcType="BIGINT" property="id" />
-        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
-        <result column="account_name" jdbcType="VARCHAR" property="accountName" />
-        <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId" />
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
+        <result column="account_name" jdbcType="VARCHAR" property="accountName"/>
+        <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, exchange_id, account_name, account_source_id
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from quan_account
         where id = #{id,jdbcType=BIGINT}
     </select>
@@ -80,8 +80,10 @@
     where id = #{id,jdbcType=BIGINT}
   </update>
 
-    <select id="selectAccountByExchangeId" resultType="java.lang.Long">
-        SELECT account_source_id FROM quan_account where exchange_id=#{exId}
+    <select id="selectByExId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM quan_account where exchange_id=#{exId}
     </select>
     <select id="selectAccountId" resultType="java.lang.Long">
         SELECT id FROM quan_account WHERE exchange_id=#{exchangeId} and account_source_id=#{accountSourceId}

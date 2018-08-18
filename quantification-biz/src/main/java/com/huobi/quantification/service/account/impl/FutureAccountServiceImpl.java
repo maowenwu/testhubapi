@@ -8,6 +8,8 @@ import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
+import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
+import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
@@ -21,22 +23,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.service.account.HuobiFutureAccountService;
+import com.huobi.quantification.service.account.FutureAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
 
-@DependsOn("httpServiceImpl")
-@Service
+@Service("futureAccountService")
 @Transactional
-public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService {
+public class FutureAccountServiceImpl implements FutureAccountService {
 
     @Autowired
     private HttpService httpService;
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private QuanAccountFutureSecretMapper quanAccountFutureSecretMapper;
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -61,16 +63,16 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
     private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
 
     @Override
-    public void updateHuobiUserInfo(Long accountId) {
+    public void updateHuobiUserInfo(Long accountSourceId) {
         Stopwatch started = Stopwatch.createStarted();
-        logger.info("[HuobiUserInfo][accountId={}]任务开始", accountId);
-        Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId);
+        logger.info("[HuobiUserInfo][accountSourceId={}]任务开始", accountSourceId);
+        Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId);
         if (accountFutureId == null) {
-            logger.error("更新火币期货账户信息失败，不存在该账户：accountSourceId={}", accountId);
+            logger.error("更新火币期货账户信息失败，不存在该账户：accountSourceId={}", accountSourceId);
             return;
         }
         long queryId = System.currentTimeMillis();
-        String body = queryUserInfoByAPI(accountId);
+        String body = queryUserInfoByAPI(accountSourceId);
         Map<String, QuanAccountFutureAsset> assetMap = parseHuobiFutureBalance(body);
         boolean isSave = StorageSupport.getInstance("updateHuobiUserInfo").checkSavepoint();
         assetMap.forEach((k, v) -> {
@@ -81,8 +83,8 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
                 quanAccountFutureAssetMapper.insert(v);
             }
         });
-        redisService.saveUserInfoFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountId, assetMap);
-        logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountId);
+        redisService.saveUserInfoFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, assetMap);
+        logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountSourceId);
     }
 
     private Map<String, QuanAccountFutureAsset> parseHuobiFutureBalance(String body) {
@@ -171,4 +173,14 @@ public class HuobiFutureAccountServiceImpl implements HuobiFutureAccountService 
         return beanList;
     }
 
+
+    @Override
+    public List<QuanAccountFuture> selectByExId(int exId) {
+        return quanAccountFutureMapper.selectByExId(exId);
+    }
+
+    @Override
+    public List<QuanAccountFutureSecret> selectSecretById(Long id) {
+        return quanAccountFutureSecretMapper.selectSecretById(id);
+    }
 }

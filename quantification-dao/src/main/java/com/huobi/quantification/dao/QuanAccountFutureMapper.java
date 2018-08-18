@@ -1,5 +1,6 @@
 package com.huobi.quantification.dao;
 
+import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountFuture;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,7 +19,7 @@ public interface QuanAccountFutureMapper {
 
     int updateByPrimaryKey(QuanAccountFuture record);
 
-    Long selectAccountFutureId(@Param("exchangeId") int exchangeId, @Param("accountSourceId") long accountSourceId);
+    List<QuanAccountFuture> selectByExId(@Param("exId") int exId);
 
-    List<Long> selectByExchangeId(@Param("exchangeId")int exchangeId);
+    Long selectAccountFutureId(@Param("exId")int exId, @Param("accountSourceId")Long accountSourceId);
 }
