@@ -446,7 +446,7 @@ public class CommContext {
         if (BigDecimalUtils.moreThan(price, BigDecimal.ZERO) && BigDecimalUtils.moreThan(orderAmount, BigDecimal.ZERO)) {
             FuturePlaceOrderReqDto reqDto = new FuturePlaceOrderReqDto();
             reqDto.setStrategyName(strategyName);
-            reqDto.setStrategyVersion(instanceId);
+            reqDto.setInstanceId(instanceId);
             reqDto.setExchangeId(this.futureExchangeId);
             reqDto.setAccountId(this.futureAccountId);
             reqDto.setContractCode(this.futureContractCode);

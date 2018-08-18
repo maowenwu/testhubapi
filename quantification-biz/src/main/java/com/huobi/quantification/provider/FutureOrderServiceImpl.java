@@ -60,7 +60,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             // 插入order表生成内部订单id
             QuanOrderFuture orderFuture = new QuanOrderFuture();
             orderFuture.setStrategyName(reqDto.getStrategyName());
-            orderFuture.setStrategyVersion(reqDto.getStrategyVersion());
+            orderFuture.setInstanceId(reqDto.getInstanceId());
             orderFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
             orderFuture.setAccountId(reqDto.getAccountId());
             orderFuture.setLinkOrderId(reqDto.getLinkOrderId());

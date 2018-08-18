@@ -4,47 +4,52 @@ import java.util.Date;
 
 public class StrategyInstanceHistory {
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
+     */
+    private Integer instanceConfigId;
+
+    /**
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Long instanceId;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private String baseCoin;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private String contractCode;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Date instanceStartupTime;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Date instanceStopTime;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-17 14:20:16
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Date updateTime;
 
@@ -62,6 +67,14 @@ public class StrategyInstanceHistory {
 
     public void setStrategyName(String strategyName) {
         this.strategyName = strategyName;
+    }
+
+    public Integer getInstanceConfigId() {
+        return instanceConfigId;
+    }
+
+    public void setInstanceConfigId(Integer instanceConfigId) {
+        this.instanceConfigId = instanceConfigId;
     }
 
     public Long getInstanceId() {

@@ -1,9 +1,6 @@
 package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.StrategyInstanceHistory;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.Date;
 
 public interface StrategyInstanceHistoryMapper {
     int deleteByPrimaryKey(Integer id);

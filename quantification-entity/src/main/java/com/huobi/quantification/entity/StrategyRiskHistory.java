@@ -5,62 +5,57 @@ import java.util.Date;
 
 public class StrategyRiskHistory {
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
-    private Long strategyVersion;
+    private Integer instanceConfigId;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
-    private Integer exchangeId;
+    private Long instanceId;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
-     */
-    private Long accountId;
-
-    /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private String baseCoin;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private BigDecimal riskRate;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private BigDecimal netPosition;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private BigDecimal currProfit;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private BigDecimal totalProfit;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-15 17:33:47
+     * @mbg.generated 2018-08-18 11:38:00
      */
     private Date updateTime;
 
@@ -80,28 +75,20 @@ public class StrategyRiskHistory {
         this.strategyName = strategyName;
     }
 
-    public Long getStrategyVersion() {
-        return strategyVersion;
+    public Integer getInstanceConfigId() {
+        return instanceConfigId;
     }
 
-    public void setStrategyVersion(Long strategyVersion) {
-        this.strategyVersion = strategyVersion;
+    public void setInstanceConfigId(Integer instanceConfigId) {
+        this.instanceConfigId = instanceConfigId;
     }
 
-    public Integer getExchangeId() {
-        return exchangeId;
+    public Long getInstanceId() {
+        return instanceId;
     }
 
-    public void setExchangeId(Integer exchangeId) {
-        this.exchangeId = exchangeId;
-    }
-
-    public Long getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
     }
 
     public String getBaseCoin() {

@@ -2,43 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanOrderFutureMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanOrderFuture">
-        <id column="inner_order_id" jdbcType="BIGINT" property="innerOrderId"/>
-        <result column="strategy_name" jdbcType="VARCHAR" property="strategyName"/>
-        <result column="strategy_version" jdbcType="BIGINT" property="strategyVersion"/>
-        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
-        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
-        <result column="ex_order_id" jdbcType="BIGINT" property="exOrderId"/>
-        <result column="link_order_id" jdbcType="BIGINT" property="linkOrderId"/>
-        <result column="base_coin" jdbcType="VARCHAR" property="baseCoin"/>
-        <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin"/>
-        <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
-        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-        <result column="status" jdbcType="INTEGER" property="status"/>
-        <result column="source_status" jdbcType="INTEGER" property="sourceStatus"/>
-        <result column="side" jdbcType="INTEGER" property="side"/>
-        <result column="offset" jdbcType="INTEGER" property="offset"/>
-        <result column="lever" jdbcType="INTEGER" property="lever"/>
-        <result column="order_type" jdbcType="VARCHAR" property="orderType"/>
-        <result column="order_price" jdbcType="DECIMAL" property="orderPrice"/>
-        <result column="deal_price" jdbcType="DECIMAL" property="dealPrice"/>
-        <result column="order_qty" jdbcType="DECIMAL" property="orderQty"/>
-        <result column="deal_qty" jdbcType="DECIMAL" property="dealQty"/>
-        <result column="remaining_qty" jdbcType="DECIMAL" property="remainingQty"/>
-        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen"/>
-        <result column="fees" jdbcType="DECIMAL" property="fees"/>
-        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
-        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
-        <result column="order_source" jdbcType="VARCHAR" property="orderSource"/>
+        <id column="inner_order_id" jdbcType="BIGINT" property="innerOrderId" />
+        <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
+        <result column="instance_id" jdbcType="BIGINT" property="instanceId" />
+        <result column="exchange_id" jdbcType="INTEGER" property="exchangeId" />
+        <result column="account_id" jdbcType="BIGINT" property="accountId" />
+        <result column="ex_order_id" jdbcType="BIGINT" property="exOrderId" />
+        <result column="link_order_id" jdbcType="BIGINT" property="linkOrderId" />
+        <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
+        <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin" />
+        <result column="contract_type" jdbcType="VARCHAR" property="contractType" />
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="source_status" jdbcType="INTEGER" property="sourceStatus" />
+        <result column="side" jdbcType="INTEGER" property="side" />
+        <result column="offset" jdbcType="INTEGER" property="offset" />
+        <result column="lever" jdbcType="INTEGER" property="lever" />
+        <result column="order_type" jdbcType="VARCHAR" property="orderType" />
+        <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+        <result column="deal_price" jdbcType="DECIMAL" property="dealPrice" />
+        <result column="order_qty" jdbcType="DECIMAL" property="orderQty" />
+        <result column="deal_qty" jdbcType="DECIMAL" property="dealQty" />
+        <result column="remaining_qty" jdbcType="DECIMAL" property="remainingQty" />
+        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen" />
+        <result column="fees" jdbcType="DECIMAL" property="fees" />
+        <result column="order_source" jdbcType="VARCHAR" property="orderSource" />
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     </resultMap>
     <sql id="Base_Column_List">
-    inner_order_id, strategy_name, strategy_version, exchange_id, account_id, ex_order_id, 
-    link_order_id, base_coin, quote_coin, contract_type, contract_code, status, source_status, 
-    side, offset, lever, order_type, order_price, deal_price, order_qty, deal_qty, remaining_qty, 
-    margin_frozen, fees, create_date, update_date,order_source
+    inner_order_id, strategy_name, instance_id, exchange_id, account_id, ex_order_id,
+    link_order_id, base_coin, quote_coin, contract_type, contract_code, status, source_status,
+    side, offset, lever, order_type, order_price, deal_price, order_qty, deal_qty, remaining_qty,
+    margin_frozen, fees, order_source, create_date, update_date
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from quan_order_future
         where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
     </select>
@@ -46,26 +46,27 @@
     delete from quan_order_future
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}
   </delete>
-    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture" useGeneratedKeys="true"
-            keyProperty="innerOrderId">
-    insert into quan_order_future (inner_order_id, strategy_name, strategy_version, 
-      exchange_id, account_id, ex_order_id, 
-      link_order_id, base_coin, quote_coin, 
-      contract_type, contract_code, status, 
-      source_status, side, offset, 
-      lever, order_type, order_price, 
-      deal_price, order_qty, deal_qty, 
-      remaining_qty, margin_frozen, fees, 
-      create_date, update_date,order_source)
-    values (#{innerOrderId,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{strategyVersion,jdbcType=BIGINT}, 
-      #{exchangeId,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, #{exOrderId,jdbcType=BIGINT}, 
-      #{linkOrderId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR}, 
-      #{contractType,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{sourceStatus,jdbcType=INTEGER}, #{side,jdbcType=INTEGER}, #{offset,jdbcType=INTEGER}, 
-      #{lever,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL}, 
-      #{dealPrice,jdbcType=DECIMAL}, #{orderQty,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL}, 
-      #{remainingQty,jdbcType=DECIMAL}, #{marginFrozen,jdbcType=DECIMAL}, #{fees,jdbcType=DECIMAL}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}, #{orderSource,jdbcType=VARCHAR})
+    <insert id="insert" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+    insert into quan_order_future (inner_order_id, strategy_name, instance_id,
+      exchange_id, account_id, ex_order_id,
+      link_order_id, base_coin, quote_coin,
+      contract_type, contract_code, status,
+      source_status, side, offset,
+      lever, order_type, order_price,
+      deal_price, order_qty, deal_qty,
+      remaining_qty, margin_frozen, fees,
+      order_source, create_date, update_date
+      )
+    values (#{innerOrderId,jdbcType=BIGINT}, #{strategyName,jdbcType=VARCHAR}, #{instanceId,jdbcType=BIGINT},
+      #{exchangeId,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, #{exOrderId,jdbcType=BIGINT},
+      #{linkOrderId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR},
+      #{contractType,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+      #{sourceStatus,jdbcType=INTEGER}, #{side,jdbcType=INTEGER}, #{offset,jdbcType=INTEGER},
+      #{lever,jdbcType=INTEGER}, #{orderType,jdbcType=VARCHAR}, #{orderPrice,jdbcType=DECIMAL},
+      #{dealPrice,jdbcType=DECIMAL}, #{orderQty,jdbcType=DECIMAL}, #{dealQty,jdbcType=DECIMAL},
+      #{remainingQty,jdbcType=DECIMAL}, #{marginFrozen,jdbcType=DECIMAL}, #{fees,jdbcType=DECIMAL},
+      #{orderSource,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
+      )
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
         insert into quan_order_future
@@ -76,8 +77,8 @@
             <if test="strategyName != null">
                 strategy_name,
             </if>
-            <if test="strategyVersion != null">
-                strategy_version,
+            <if test="instanceId != null">
+                instance_id,
             </if>
             <if test="exchangeId != null">
                 exchange_id,
@@ -142,6 +143,9 @@
             <if test="fees != null">
                 fees,
             </if>
+            <if test="orderSource != null">
+                order_source,
+            </if>
             <if test="createDate != null">
                 create_date,
             </if>
@@ -156,8 +160,8 @@
             <if test="strategyName != null">
                 #{strategyName,jdbcType=VARCHAR},
             </if>
-            <if test="strategyVersion != null">
-                #{strategyVersion,jdbcType=BIGINT},
+            <if test="instanceId != null">
+                #{instanceId,jdbcType=BIGINT},
             </if>
             <if test="exchangeId != null">
                 #{exchangeId,jdbcType=INTEGER},
@@ -222,6 +226,9 @@
             <if test="fees != null">
                 #{fees,jdbcType=DECIMAL},
             </if>
+            <if test="orderSource != null">
+                #{orderSource,jdbcType=VARCHAR},
+            </if>
             <if test="createDate != null">
                 #{createDate,jdbcType=TIMESTAMP},
             </if>
@@ -236,8 +243,8 @@
             <if test="strategyName != null">
                 strategy_name = #{strategyName,jdbcType=VARCHAR},
             </if>
-            <if test="strategyVersion != null">
-                strategy_version = #{strategyVersion,jdbcType=BIGINT},
+            <if test="instanceId != null">
+                instance_id = #{instanceId,jdbcType=BIGINT},
             </if>
             <if test="exchangeId != null">
                 exchange_id = #{exchangeId,jdbcType=INTEGER},
@@ -302,6 +309,9 @@
             <if test="fees != null">
                 fees = #{fees,jdbcType=DECIMAL},
             </if>
+            <if test="orderSource != null">
+                order_source = #{orderSource,jdbcType=VARCHAR},
+            </if>
             <if test="createDate != null">
                 create_date = #{createDate,jdbcType=TIMESTAMP},
             </if>
@@ -314,7 +324,7 @@
     <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
     update quan_order_future
     set strategy_name = #{strategyName,jdbcType=VARCHAR},
-      strategy_version = #{strategyVersion,jdbcType=BIGINT},
+      instance_id = #{instanceId,jdbcType=BIGINT},
       exchange_id = #{exchangeId,jdbcType=INTEGER},
       account_id = #{accountId,jdbcType=BIGINT},
       ex_order_id = #{exOrderId,jdbcType=BIGINT},
@@ -336,6 +346,7 @@
       remaining_qty = #{remainingQty,jdbcType=DECIMAL},
       margin_frozen = #{marginFrozen,jdbcType=DECIMAL},
       fees = #{fees,jdbcType=DECIMAL},
+      order_source = #{orderSource,jdbcType=VARCHAR},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       update_date = #{updateDate,jdbcType=TIMESTAMP}
     where inner_order_id = #{innerOrderId,jdbcType=BIGINT}

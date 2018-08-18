@@ -2,23 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.StrategyInstanceHistoryMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyInstanceHistory">
-        <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="strategy_name" jdbcType="VARCHAR" property="strategyName"/>
-        <result column="instance_id" jdbcType="BIGINT" property="instanceId"/>
-        <result column="base_coin" jdbcType="VARCHAR" property="baseCoin"/>
-        <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-        <result column="instance_startup_time" jdbcType="TIMESTAMP" property="instanceStartupTime"/>
-        <result column="instance_stop_time" jdbcType="TIMESTAMP" property="instanceStopTime"/>
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
+        <result column="instance_config_id" jdbcType="INTEGER" property="instanceConfigId" />
+        <result column="instance_id" jdbcType="BIGINT" property="instanceId" />
+        <result column="base_coin" jdbcType="VARCHAR" property="baseCoin" />
+        <result column="contract_code" jdbcType="VARCHAR" property="contractCode" />
+        <result column="instance_startup_time" jdbcType="TIMESTAMP" property="instanceStartupTime" />
+        <result column="instance_stop_time" jdbcType="TIMESTAMP" property="instanceStopTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     </resultMap>
     <sql id="Base_Column_List">
-    id, strategy_name, instance_id, base_coin, contract_code, instance_startup_time, 
+    id, strategy_name, instance_config_id, instance_id, base_coin, contract_code, instance_startup_time,
     instance_stop_time, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List"/>
+        <include refid="Base_Column_List" />
         from strategy_instance_history
         where id = #{id,jdbcType=INTEGER}
     </select>
@@ -27,14 +28,14 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyInstanceHistory">
-    insert into strategy_instance_history (id, strategy_name, instance_id, 
-      base_coin, contract_code, instance_startup_time, 
-      instance_stop_time, create_time, update_time
-      )
-    values (#{id,jdbcType=INTEGER}, #{strategyName,jdbcType=VARCHAR}, #{instanceId,jdbcType=BIGINT}, 
-      #{baseCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR}, #{instanceStartupTime,jdbcType=TIMESTAMP}, 
-      #{instanceStopTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into strategy_instance_history (id, strategy_name, instance_config_id,
+      instance_id, base_coin, contract_code,
+      instance_startup_time, instance_stop_time,
+      create_time, update_time)
+    values (#{id,jdbcType=INTEGER}, #{strategyName,jdbcType=VARCHAR}, #{instanceConfigId,jdbcType=INTEGER},
+      #{instanceId,jdbcType=BIGINT}, #{baseCoin,jdbcType=VARCHAR}, #{contractCode,jdbcType=VARCHAR},
+      #{instanceStartupTime,jdbcType=TIMESTAMP}, #{instanceStopTime,jdbcType=TIMESTAMP},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
     <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyInstanceHistory">
         insert into strategy_instance_history
@@ -44,6 +45,9 @@
             </if>
             <if test="strategyName != null">
                 strategy_name,
+            </if>
+            <if test="instanceConfigId != null">
+                instance_config_id,
             </if>
             <if test="instanceId != null">
                 instance_id,
@@ -74,6 +78,9 @@
             <if test="strategyName != null">
                 #{strategyName,jdbcType=VARCHAR},
             </if>
+            <if test="instanceConfigId != null">
+                #{instanceConfigId,jdbcType=INTEGER},
+            </if>
             <if test="instanceId != null">
                 #{instanceId,jdbcType=BIGINT},
             </if>
@@ -103,6 +110,9 @@
             <if test="strategyName != null">
                 strategy_name = #{strategyName,jdbcType=VARCHAR},
             </if>
+            <if test="instanceConfigId != null">
+                instance_config_id = #{instanceConfigId,jdbcType=INTEGER},
+            </if>
             <if test="instanceId != null">
                 instance_id = #{instanceId,jdbcType=BIGINT},
             </if>
@@ -130,6 +140,7 @@
     <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyInstanceHistory">
     update strategy_instance_history
     set strategy_name = #{strategyName,jdbcType=VARCHAR},
+      instance_config_id = #{instanceConfigId,jdbcType=INTEGER},
       instance_id = #{instanceId,jdbcType=BIGINT},
       base_coin = #{baseCoin,jdbcType=VARCHAR},
       contract_code = #{contractCode,jdbcType=VARCHAR},

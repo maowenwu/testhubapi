@@ -44,6 +44,7 @@ public class RiskContext {
 
     private String strategyName;
     private Long instanceId;
+    private Integer instanceConfigId;
 
     private Integer futureExchangeId;
     private Long futureAccountId;
@@ -69,6 +70,7 @@ public class RiskContext {
     public void init(StrategyInstanceConfig config) {
         this.strategyName = config.getStrategyName();
         this.instanceId = config.getInstanceId();
+        this.instanceConfigId = config.getId();
 
         this.futureExchangeId = config.getFutureExchangeId();
         this.futureAccountId = config.getFutureAccountId();
@@ -219,9 +221,8 @@ public class RiskContext {
     public void saveRiskResult(BigDecimal riskRate, BigDecimal netPosition, RiskMonitor.RiskProfit riskProfit) {
         StrategyRiskHistory strategyRiskHistory = new StrategyRiskHistory();
         strategyRiskHistory.setStrategyName(strategyName);
-        strategyRiskHistory.setStrategyVersion(instanceId);
-        strategyRiskHistory.setExchangeId(futureExchangeId);
-        strategyRiskHistory.setAccountId(futureAccountId);
+        strategyRiskHistory.setInstanceConfigId(instanceConfigId);
+        strategyRiskHistory.setInstanceId(instanceId);
         strategyRiskHistory.setBaseCoin(futureBaseCoin);
         strategyRiskHistory.setRiskRate(riskRate);
         strategyRiskHistory.setNetPosition(netPosition);

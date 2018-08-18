@@ -5,158 +5,156 @@ import java.util.Date;
 
 public class QuanOrderFuture {
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Long innerOrderId;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
-    private Long strategyVersion;
+    private Long instanceId;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * 交易所id
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Integer exchangeId;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * 账户 ID
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Long accountId;
 
     /**
-     * 交易所id
-     * @mbg.generated 2018-07-24 14:21:12
+     * 交易所订单id
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Long exOrderId;
 
     /**
-     * 账户 ID
-     * @mbg.generated 2018-07-24 14:21:12
+     * 关联id
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Long linkOrderId;
 
     /**
      * 火币或ok返回的订单id
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private String baseCoin;
 
     /**
      * 合约名称
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private String quoteCoin;
 
     /**
      * btc_usd   ltc_usd    eth_usd    etc_usd    bch_usd
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private String contractType;
 
     /**
      * 订单类型 1：开多 2：开空 3：平多 4： 平空
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private String contractCode;
 
     /**
      * 订单状态(0等待成交 1部分成交 2全部成交 -1撤单 4撤单处理中 5撤单中)
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Integer status;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Integer sourceStatus;
 
     /**
      * 委托数量
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Integer side;
 
     /**
      * 成交数量
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Integer offset;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Integer lever;
 
     /**
      * 手续费
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private String orderType;
 
     /**
      * 订单价格
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal orderPrice;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal dealPrice;
 
     /**
      * 平均价格
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal orderQty;
 
     /**
      * 杠杆倍数  value:10\20  默认10 
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal dealQty;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal remainingQty;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal marginFrozen;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private BigDecimal fees;
 
     /**
+     * 订单来源
+     * @mbg.generated 2018-08-18 11:51:49
+     */
+    private String orderSource;
+
+    /**
      * 委托时间
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Date createDate;
 
     /**
-     * @mbg.generated 2018-07-24 14:21:12
+     * @mbg.generated 2018-08-18 11:51:49
      */
     private Date updateDate;
-
-    private String orderSource;//订单来源
-
-    public String getOrderSource() {
-        return orderSource;
-    }
-
-    public void setOrderSource(String orderSource) {
-        this.orderSource = orderSource;
-    }
 
     public Long getInnerOrderId() {
         return innerOrderId;
@@ -174,12 +172,12 @@ public class QuanOrderFuture {
         this.strategyName = strategyName;
     }
 
-    public Long getStrategyVersion() {
-        return strategyVersion;
+    public Long getInstanceId() {
+        return instanceId;
     }
 
-    public void setStrategyVersion(Long strategyVersion) {
-        this.strategyVersion = strategyVersion;
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
     }
 
     public Integer getExchangeId() {
@@ -348,6 +346,14 @@ public class QuanOrderFuture {
 
     public void setFees(BigDecimal fees) {
         this.fees = fees;
+    }
+
+    public String getOrderSource() {
+        return orderSource;
+    }
+
+    public void setOrderSource(String orderSource) {
+        this.orderSource = orderSource;
     }
 
     public Date getCreateDate() {

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 public class FuturePlaceOrderReqDto implements Serializable {
     private String strategyName;
-    private Long strategyVersion;
+    private Long instanceId;
     private int exchangeId;
     private long accountId;
     private String baseCoin;
@@ -158,31 +158,13 @@ public class FuturePlaceOrderReqDto implements Serializable {
         this.strategyName = strategyName;
     }
 
-    public Long getStrategyVersion() {
-        return strategyVersion;
+    public Long getInstanceId() {
+        return instanceId;
     }
 
-    public void setStrategyVersion(Long strategyVersion) {
-        this.strategyVersion = strategyVersion;
+    public void setInstanceId(Long instanceId) {
+        this.instanceId = instanceId;
     }
 
-    @Override
-    public String toString() {
-        return "FuturePlaceOrderReqDto{" +
-                "exchangeId=" + exchangeId +
-                ", accountId=" + accountId +
-                ", baseCoin='" + baseCoin + '\'' +
-                ", quoteCoin='" + quoteCoin + '\'' +
-                ", contractType='" + contractType + '\'' +
-                ", contractCode='" + contractCode + '\'' +
-                ", side=" + side +
-                ", offset=" + offset +
-                ", orderType='" + orderType + '\'' +
-                ", price=" + price +
-                ", quantity=" + quantity +
-                ", lever=" + lever +
-                ", linkOrderId=" + linkOrderId +
-                ", sync=" + sync +
-                '}';
-    }
+
 }

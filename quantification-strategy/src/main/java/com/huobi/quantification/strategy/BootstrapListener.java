@@ -74,6 +74,7 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
     private void saveInstanceStatus(StrategyInstanceConfig config) {
         StrategyInstanceHistory history = new StrategyInstanceHistory();
         history.setStrategyName(config.getStrategyName());
+        history.setInstanceConfigId(config.getId());
         history.setInstanceId(config.getInstanceId());
         history.setBaseCoin(config.getFutureBaseCoin());
         history.setContractCode(config.getFutureContractCode());
