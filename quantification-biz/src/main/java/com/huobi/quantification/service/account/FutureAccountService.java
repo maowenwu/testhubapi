@@ -11,7 +11,7 @@ public interface FutureAccountService {
 
     String queryPositionByAPI(Long accountId);
 
-    void updateHuobiUserInfo(Long accountId);
+    void updateHuobiAccount(Long accountId);
 
     void updateHuobiPosition(Long accountId);
 

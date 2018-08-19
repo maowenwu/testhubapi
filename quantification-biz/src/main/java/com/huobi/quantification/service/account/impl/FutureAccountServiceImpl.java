@@ -63,7 +63,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     private QuanAccountFutureAssetMapper quanAccountFutureAssetMapper;
 
     @Override
-    public void updateHuobiUserInfo(Long accountSourceId) {
+    public void updateHuobiAccount(Long accountSourceId) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[HuobiUserInfo][accountSourceId={}]任务开始", accountSourceId);
         Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId);
@@ -74,7 +74,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         long queryId = System.currentTimeMillis();
         String body = queryUserInfoByAPI(accountSourceId);
         Map<String, QuanAccountFutureAsset> assetMap = parseHuobiFutureBalance(body);
-        boolean isSave = StorageSupport.getInstance("updateHuobiUserInfo").checkSavepoint();
+        boolean isSave = StorageSupport.getInstance("updateHuobiAccount").checkSavepoint();
         assetMap.forEach((k, v) -> {
             v.setCoinType(k);
             v.setQueryId(queryId);
@@ -122,7 +122,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[HuobiPosition][accountId={}]任务开始", accountSourceId);
         long queryId = System.currentTimeMillis();
-        Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI.getExId(), accountSourceId);
+        Long accountFutureId = quanAccountFutureMapper.selectAccountFutureId(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId);
         String body = queryPositionByAPI(accountSourceId);
         List<QuanAccountFuturePosition> futurePositions = parseHuobiFuturePosition(body);
         boolean isSave = StorageSupport.getInstance("updateHuobiPosition").checkSavepoint();
@@ -165,6 +165,8 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 // 多仓持仓均价
                 futurePosition.setCostHold(e.getCostHold());
             }
+            futurePosition.setProfitUnreal(e.getProfitUnreal());
+            futurePosition.setProfitRate(e.getProfitRate());
             futurePosition.setLeverRate(e.getLeverRate());
             futurePosition.setCreateTime(new Date());
             futurePosition.setUpdateTime(new Date());

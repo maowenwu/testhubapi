@@ -126,10 +126,12 @@ public class HttpServiceImpl implements HttpService {
     }
 
     @Override
-    public String doHuobiFuturePostJson(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
-        HuobiSignature signature = huobiFutureSecretHolder.getHuobiFutureSignature(accountId);
+    public String doHuobiFuturePostJson(Long accountSourceId, String url, Map<String, String> params) throws HttpRequestException {
+        params.put("userId","156233");
+        return doPostJson(url,params);
+        /*HuobiSignature signature = huobiFutureSecretHolder.getHuobiFutureSignature(accountSourceId);
         return OkHttpClientUtils.getInstance(null).call(signature.getAccessKey(), signature.getSecretKey(),
-                "POST", url, params, new HashMap<>());
+                "POST", url, params, new HashMap<>());*/
     }
 
     @Override

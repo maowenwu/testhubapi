@@ -5,104 +5,93 @@ import java.util.Date;
 
 public class QuanAccountFuturePosition {
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private Long accountFutureId;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private Long queryId;
 
     /**
-     * 币种
-     * @mbg.generated 2018-08-04 15:37:47
-     */
-    private String coinType;
-
-    /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private String baseCoin;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private String quoteCoin;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
-     */
-    private String symbol;
-
-    /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private String contractType;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private String contractCode;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private Integer offset;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal available;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal frozen;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal costOpen;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal costHold;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal profitUnreal;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal profitRate;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private BigDecimal leverRate;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-04 15:37:47
+     * @mbg.generated 2018-08-19 11:14:17
      */
     private Date updateTime;
 
@@ -130,14 +119,6 @@ public class QuanAccountFuturePosition {
         this.queryId = queryId;
     }
 
-    public String getCoinType() {
-        return coinType;
-    }
-
-    public void setCoinType(String coinType) {
-        this.coinType = coinType;
-    }
-
     public String getBaseCoin() {
         return baseCoin;
     }
@@ -152,14 +133,6 @@ public class QuanAccountFuturePosition {
 
     public void setQuoteCoin(String quoteCoin) {
         this.quoteCoin = quoteCoin;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
-    public void setSymbol(String symbol) {
-        this.symbol = symbol;
     }
 
     public String getContractType() {
