@@ -24,7 +24,7 @@ public interface JobManageService {
     /******************Huobi 期货 **********************/
     ServiceResult addHuobiFuturePositionJob(Long accountId, String cron, boolean enable);
 
-    ServiceResult addHuobiFutureUserInfoJob(Long accountId, String cron, boolean enable);
+    ServiceResult addHuobiFutureAccountJob(Long accountId, String cron, boolean enable);
 
     ServiceResult addHuobiFutureContractCodeJob(String cron, boolean enable);
 

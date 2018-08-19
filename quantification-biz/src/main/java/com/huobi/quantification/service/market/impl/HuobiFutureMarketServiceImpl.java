@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.enums.ExchangeEnum;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -131,10 +132,10 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
     }
 
     @Override
-    public void updateHuobiDepth(String symbol, String contractType, String klineType) {
+    public void updateHuobiDepth(String symbol, String contractType, String depthType) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[Huobi深度][symbol={},contractType={}]任务开始", symbol, contractType);
-        HuobiFutureDepthResponse response = queryDepthByAPI(symbol, contractType, klineType);
+        HuobiFutureDepthResponse response = queryDepthByAPI(symbol, contractType, depthType);
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             parseAndSaveDepth(response, symbol, contractType);
         } else {
@@ -153,10 +154,12 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         quanDepthFuture.setQuoteCoin(split[1]);
         quanDepthFuture.setSymbol(symbol);
         quanDepthFuture.setContractType(contractType);
-        //quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
+        boolean isSave = StorageSupport.getInstance("SaveFutureDepth").checkSavepoint();
+        if (isSave) {
+            quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
+        }
 
-
-        List<QuanDepthFutureDetail> depthFutureDetails = new ArrayList<>();
+        List<QuanDepthFutureDetail> list = new ArrayList<>();
         HuobiFutureDepthResponse.TickBean tickBean = response.getTick();
         List<List<BigDecimal>> asks = tickBean.getAsks();
         List<List<BigDecimal>> bids = tickBean.getBids();
@@ -170,7 +173,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
                 depthDetail.setDetailPrice(askItem.get(0));
                 depthDetail.setDetailAmount(askItem.get(1));
                 depthDetail.setDateUpdate(new Date());
-                depthFutureDetails.add(depthDetail);
+                list.add(depthDetail);
             }
         }
 
@@ -183,11 +186,15 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
                 depthDetail.setDetailPrice(bidItem.get(0));
                 depthDetail.setDetailAmount(bidItem.get(1));
                 depthDetail.setDateUpdate(new Date());
-                depthFutureDetails.add(depthDetail);
+                list.add(depthDetail);
             }
         }
-
-        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, depthFutureDetails);
+        if (isSave) {
+            for (QuanDepthFutureDetail detail : list) {
+                quanDepthFutureDetailMapper.insert(detail);
+            }
+        }
+        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, list);
     }
 
 

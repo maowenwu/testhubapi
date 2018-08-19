@@ -1,5 +1,7 @@
 package com.huobi.quantification.service.market;
 
+import com.huobi.quantification.response.spot.HuobiSpotDepthResponse;
+
 /**
  * @author shaoxiaofeng
  * @since 2018/6/26
@@ -13,7 +15,7 @@ public interface HuobiMarketService {
 	 * @param type
 	 * @return
 	 */
-	Object getDepth(String symbol, String type);
+	HuobiSpotDepthResponse queryDepthByAPI(String symbol, String type);
 
 	/**
 	 * GET /market/history/kline 获取K线数据

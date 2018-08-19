@@ -38,7 +38,7 @@ public class StrategyBootstrap {
         jobManageService.addHuobiSpotAccountJob(config.getSpotAccountId(), "0/1 * * * * ?", true);
 
         jobManageService.addHuobiFuturePositionJob(config.getFutureAccountId(), "0/1 * * * * ?", true);
-        jobManageService.addHuobiFutureUserInfoJob(config.getFutureAccountId(), "0/1 * * * * ?", true);
+        jobManageService.addHuobiFutureAccountJob(config.getFutureAccountId(), "0/1 * * * * ?", true);
         jobManageService.addHuobiFutureContractCodeJob("0/10 * * * * ?", true);
         jobManageService.addHuobiFutureDepthJob(config.getFutureBaseCoin() + "_" + config.getFutureQuotCoin(), commContext.getContractTypeFromCode(), "step0", "0/1 * * * * ?", true);
         logger.info("注册job完成");

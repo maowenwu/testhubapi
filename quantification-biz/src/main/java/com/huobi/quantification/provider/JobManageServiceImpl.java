@@ -359,7 +359,7 @@ public class JobManageServiceImpl implements JobManageService {
     }
 
     @Override
-    public ServiceResult addHuobiFutureUserInfoJob(Long accountId, String cron, boolean enable) {
+    public ServiceResult addHuobiFutureAccountJob(Long accountId, String cron, boolean enable) {
         FutureJobReqDto jobReqDto = new FutureJobReqDto();
         jobReqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         jobReqDto.setJobType(JobTypeEnum.Account.getJobType());
@@ -404,7 +404,7 @@ public class JobManageServiceImpl implements JobManageService {
         JobParamDto paramDto = new JobParamDto();
         paramDto.setSymbol(symbol);
         paramDto.setContractType(contractType);
-        paramDto.setKlineType(type);
+        paramDto.setDepthType(type);
 
         jobReqDto.setJobParamDto(paramDto);
         jobReqDto.setCron(cron);
