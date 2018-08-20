@@ -29,6 +29,19 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
+  mail:
+    host: smtp.office365.com
+    port: 587
+    protocol: smtp
+    username: hytest01@huobi.com
+    password: HB0523hb17940
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          timeout: 25000
 
 mybatis:
   mapperLocations: classpath:mapper/*.xml
