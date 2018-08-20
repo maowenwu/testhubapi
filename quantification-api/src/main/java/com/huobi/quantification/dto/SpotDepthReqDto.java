@@ -15,6 +15,7 @@ public class SpotDepthReqDto implements Serializable{
 	private int exchangeId;//交易所id
 	private String baseCoin;//基础货币
 	private String quoteCoin;//定价货币
+	private String depthType;
 	private long timeout = 100;//失效时间
 	private long maxDelay = 1000;//最大延时
 	
@@ -47,5 +48,13 @@ public class SpotDepthReqDto implements Serializable{
 	}
 	public void setMaxDelay(long maxDelay) {
 		this.maxDelay = maxDelay;
+	}
+
+	public String getDepthType() {
+		return depthType;
+	}
+
+	public void setDepthType(String depthType) {
+		this.depthType = depthType;
 	}
 }

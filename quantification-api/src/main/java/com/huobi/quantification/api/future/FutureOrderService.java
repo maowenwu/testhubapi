@@ -17,5 +17,6 @@ public interface FutureOrderService {
 
     ServiceResult cancelAllOrder(FutureCancelAllOrderReqDto reqDto);
 
+    ServiceResult replenishOrder(FutureReplenishOrderReqDto reqDto);
 
 }

@@ -199,42 +199,29 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
 
     @Override
     public void replenishOrder(Long accountId, String symbol) {
-        // 1 查未完结订单 ---接口查询
         Integer pageSize = 50;
         Integer pageIndex = 1;
-        List<QuanOrderFuture> allList = new ArrayList<>();
+        List<QuanOrderFuture> orderList = new ArrayList<>();
         while (true) {
             Map<String, String> params = new HashMap<>();
-            params.put("symbol", symbol);
-            params.put("userId", String.valueOf(accountId));
+            params.put("symbol", symbol.toUpperCase());
             params.put("page_size", String.valueOf(pageSize));
             params.put("page_index", String.valueOf(pageIndex++));
-            String body = null;
-            try {
-                body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
-            } catch (HttpRequestException e) {
-                logger.error("根据用户id查询订单信息失败，用户id：{}", accountId, e);
-                throw new RuntimeException("根据用户id查询订单信息失败");
-            }
+            String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
             FutureHuobiOrderPageInfoResponse response = JSON.parseObject(body, FutureHuobiOrderPageInfoResponse.class);
             List<QuanOrderFuture> list = parseRespToList(response);
-            allList.addAll(list);
+            orderList.addAll(list);
             if (response.getData().getOrders().isEmpty() || response.getData().getOrders().size() < pageSize) {
                 break;
             }
         }
-
-        allList.stream().forEach(e -> {
+        orderList.stream().forEach(e -> {
             e.setAccountId(accountId);
             e.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         });
-        // 2  改用批量插入并且数据库过滤  根据exchangeId  exOrderId判断
-        Stopwatch start = Stopwatch.createStarted();
-        int success = quanOrderFutureMapper.insertBatch(allList);
-        logger.info("批量插入耗时:{},total:{},success:{}", start, allList.size(), success);
-
+        int count = quanOrderFutureMapper.insertBatch(orderList);
+        logger.info("本次补单量：{}", count);
     }
-
 
     /**
      * 将分页查询的返回值解析为对应的实体

@@ -14,9 +14,9 @@ public interface HuobiFutureOrderService {
 
     Long placeOrder(HuobiFutureOrderBO order);
 
-    Long cancelOrder(Long accountId,Long orderId, Long clientOrderId);
+    Long cancelOrder(Long accountId, Long orderId, Long clientOrderId);
 
-    void cancelAllOrder(Long accountId,String symbol);
+    void cancelAllOrder(Long accountId, String symbol);
 
     void replenishOrder(Long accountId, String symbol);
 }

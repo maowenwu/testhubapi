@@ -65,7 +65,17 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         throw new APIException(body);
     }
 
-    private void saveSpotDepth(HuobiSpotDepthResponse response, String symbol) {
+    @Override
+    public void updateHuobiDepth(String symbol, String depthType) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        logger.info("[HuobiSpotDepth][symbol={},type={}]任务开始", symbol, depthType);
+        HuobiSpotDepthResponse response = queryDepthByAPI(symbol, depthType);
+        saveSpotDepth(response, symbol,depthType);
+        logger.info("[HuobiSpotDepth][symbol={},type={}]任务结束，耗时：" + stopwatch, symbol, depthType);
+    }
+
+
+    private void saveSpotDepth(HuobiSpotDepthResponse response, String symbol, String depthType) {
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             QuanDepth quanDepth = new QuanDepth();
             quanDepth.setExchangeId(ExchangeEnum.HUOBI.getExId());
@@ -107,20 +117,11 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
                     quanDepthDetailMapper.insert(detail);
                 }
             }
-            redisService.saveDepthSpot(ExchangeEnum.HUOBI.getExId(), symbol, list);
+            redisService.saveDepthSpot(ExchangeEnum.HUOBI.getExId(), symbol, depthType, list);
         }
 
     }
 
-
-    @Override
-    public void updateHuobiDepth(String symbol, String type) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        logger.info("[HuobiSpotDepth][symbol={},type={}]任务开始", symbol, type);
-        HuobiSpotDepthResponse response = queryDepthByAPI(symbol, type);
-        saveSpotDepth(response, symbol);
-        logger.info("[HuobiSpotDepth][symbol={},type={}]任务结束，耗时：" + stopwatch, symbol, type);
-    }
 
     @Override
     public void updateCurrentPrice(String symbol) {

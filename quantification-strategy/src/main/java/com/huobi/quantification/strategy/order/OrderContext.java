@@ -1,17 +1,22 @@
 package com.huobi.quantification.strategy.order;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Stopwatch;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.common.util.BigDecimalUtils;
-import com.huobi.quantification.dto.FutureCancelSingleOrderReqDto;
-import com.huobi.quantification.dto.FuturePriceOrderReqDto;
-import com.huobi.quantification.dto.FuturePriceOrderRespDto;
-import com.huobi.quantification.dto.FutureUpdateOrderReqDto;
+import com.huobi.quantification.common.util.StorageSupport;
+import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.QuanExchangeConfig;
+import com.huobi.quantification.entity.QuanOrderFuture;
 import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
+import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
+import com.huobi.quantification.response.future.FutureHuobiOrderPageInfoResponse;
 import com.huobi.quantification.strategy.CommContext;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.entity.*;
@@ -465,4 +470,13 @@ public class OrderContext {
             cancelOrder(preCancelOrder.stream().map(e -> e.getExOrderId()).collect(Collectors.toList()));
         }
     }
+
+    public void replenishOrder() {
+        boolean b = StorageSupport.getInstance("replenishOrder", 120).checkSavepoint();
+        if (b) {
+            FutureReplenishOrderReqDto reqDto = new FutureReplenishOrderReqDto();
+            futureOrderService.replenishOrder(reqDto);
+        }
+    }
+
 }

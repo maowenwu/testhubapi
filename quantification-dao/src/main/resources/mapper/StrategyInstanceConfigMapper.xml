@@ -17,16 +17,19 @@
     <result column="spot_account_id" jdbcType="BIGINT" property="spotAccountId" />
     <result column="spot_base_coin" jdbcType="VARCHAR" property="spotBaseCoin" />
     <result column="spot_quot_coin" jdbcType="VARCHAR" property="spotQuotCoin" />
+    <result column="spot_depth_type" jdbcType="VARCHAR" property="spotDepthType" />
+    <result column="future_depth_type" jdbcType="VARCHAR" property="futureDepthType" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, strategy_name, instance_id, instance_enable, instance_group, future_exchange_id,
-    future_account_id, future_base_coin, future_quot_coin, future_contract_code, future_lever,
-    spot_exchange_id, spot_account_id, spot_base_coin, spot_quot_coin, create_time, update_time
+    id, strategy_name, instance_id, instance_enable, instance_group, future_exchange_id, 
+    future_account_id, future_base_coin, future_quot_coin, future_contract_code, future_lever, 
+    spot_exchange_id, spot_account_id, spot_base_coin, spot_quot_coin, spot_depth_type, 
+    future_depth_type, create_time, update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select
+    select 
     <include refid="Base_Column_List" />
     from strategy_instance_config
     where id = #{id,jdbcType=INTEGER}
@@ -36,18 +39,20 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
-    insert into strategy_instance_config (id, strategy_name, instance_id,
-      instance_enable, instance_group, future_exchange_id,
-      future_account_id, future_base_coin, future_quot_coin,
-      future_contract_code, future_lever, spot_exchange_id,
-      spot_account_id, spot_base_coin, spot_quot_coin,
-      create_time, update_time)
-    values (#{id,jdbcType=INTEGER}, #{strategyName,jdbcType=VARCHAR}, #{instanceId,jdbcType=BIGINT},
-      #{instanceEnable,jdbcType=INTEGER}, #{instanceGroup,jdbcType=VARCHAR}, #{futureExchangeId,jdbcType=INTEGER},
-      #{futureAccountId,jdbcType=BIGINT}, #{futureBaseCoin,jdbcType=VARCHAR}, #{futureQuotCoin,jdbcType=VARCHAR},
-      #{futureContractCode,jdbcType=VARCHAR}, #{futureLever,jdbcType=INTEGER}, #{spotExchangeId,jdbcType=INTEGER},
-      #{spotAccountId,jdbcType=BIGINT}, #{spotBaseCoin,jdbcType=VARCHAR}, #{spotQuotCoin,jdbcType=VARCHAR},
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into strategy_instance_config (id, strategy_name, instance_id, 
+      instance_enable, instance_group, future_exchange_id, 
+      future_account_id, future_base_coin, future_quot_coin, 
+      future_contract_code, future_lever, spot_exchange_id, 
+      spot_account_id, spot_base_coin, spot_quot_coin, 
+      spot_depth_type, future_depth_type, create_time, 
+      update_time)
+    values (#{id,jdbcType=INTEGER}, #{strategyName,jdbcType=VARCHAR}, #{instanceId,jdbcType=BIGINT}, 
+      #{instanceEnable,jdbcType=INTEGER}, #{instanceGroup,jdbcType=VARCHAR}, #{futureExchangeId,jdbcType=INTEGER}, 
+      #{futureAccountId,jdbcType=BIGINT}, #{futureBaseCoin,jdbcType=VARCHAR}, #{futureQuotCoin,jdbcType=VARCHAR}, 
+      #{futureContractCode,jdbcType=VARCHAR}, #{futureLever,jdbcType=INTEGER}, #{spotExchangeId,jdbcType=INTEGER}, 
+      #{spotAccountId,jdbcType=BIGINT}, #{spotBaseCoin,jdbcType=VARCHAR}, #{spotQuotCoin,jdbcType=VARCHAR}, 
+      #{spotDepthType,jdbcType=VARCHAR}, #{futureDepthType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
     insert into strategy_instance_config
@@ -96,6 +101,12 @@
       </if>
       <if test="spotQuotCoin != null">
         spot_quot_coin,
+      </if>
+      <if test="spotDepthType != null">
+        spot_depth_type,
+      </if>
+      <if test="futureDepthType != null">
+        future_depth_type,
       </if>
       <if test="createTime != null">
         create_time,
@@ -150,6 +161,12 @@
       <if test="spotQuotCoin != null">
         #{spotQuotCoin,jdbcType=VARCHAR},
       </if>
+      <if test="spotDepthType != null">
+        #{spotDepthType,jdbcType=VARCHAR},
+      </if>
+      <if test="futureDepthType != null">
+        #{futureDepthType,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -203,6 +220,12 @@
       <if test="spotQuotCoin != null">
         spot_quot_coin = #{spotQuotCoin,jdbcType=VARCHAR},
       </if>
+      <if test="spotDepthType != null">
+        spot_depth_type = #{spotDepthType,jdbcType=VARCHAR},
+      </if>
+      <if test="futureDepthType != null">
+        future_depth_type = #{futureDepthType,jdbcType=VARCHAR},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -228,6 +251,8 @@
       spot_account_id = #{spotAccountId,jdbcType=BIGINT},
       spot_base_coin = #{spotBaseCoin,jdbcType=VARCHAR},
       spot_quot_coin = #{spotQuotCoin,jdbcType=VARCHAR},
+      spot_depth_type = #{spotDepthType,jdbcType=VARCHAR},
+      future_depth_type = #{futureDepthType,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

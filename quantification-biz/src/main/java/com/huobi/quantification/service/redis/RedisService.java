@@ -25,8 +25,8 @@ public interface RedisService {
     QuanTradeFuture getCurrentPriceFuture(int exId, String symbol, String contractType);
 
     /***************现货*********************/
-    void saveDepthSpot(int exchangeId, String symbol, List<QuanDepthDetail> list);
-    List<QuanDepthDetail> getDepthSpot(int exchangeId, String symbol);
+    void saveDepthSpot(int exchangeId, String symbol,String depthType, List<QuanDepthDetail> list);
+    List<QuanDepthDetail> getDepthSpot(int exchangeId, String symbol,String depthType);
 
     void saveAccountSpot(List<QuanAccountAsset> quanAssetList, int exchangId, long accountId);
     List<QuanAccountAsset> getAccountSpot(long accountId, int exchangeId);

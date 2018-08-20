@@ -88,7 +88,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新深度
                     List<QuanDepthDetail> huobiDepths = redisService.getDepthSpot(depthReqDto.getExchangeId(),
-                            getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()));
+                            getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()), depthReqDto.getDepthType());
 
                     if (CollectionUtils.isEmpty(huobiDepths)) {
                         ThreadUtils.sleep10();

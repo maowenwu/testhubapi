@@ -1,18 +1,21 @@
 package com.huobi.quantification.provider;
 
+import com.alibaba.fastjson.JSON;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.exception.ApiException;
+import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.entity.QuanOrderFuture;
-import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OrderStatusEnum;
-import com.huobi.quantification.enums.ServiceErrorEnum;
+import com.huobi.quantification.enums.*;
 import com.huobi.quantification.bo.HuobiFutureOrderBO;
 import com.huobi.quantification.execeptions.APIException;
+import com.huobi.quantification.response.future.FutureHuobiOrderPageInfoResponse;
 import com.huobi.quantification.service.contract.ContractService;
 import com.huobi.quantification.service.order.HuobiFutureOrderService;
 import org.apache.commons.collections.CollectionUtils;
@@ -214,5 +217,22 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             }
         }
     }
+
+    @Override
+    public ServiceResult replenishOrder(FutureReplenishOrderReqDto reqDto) {
+        try {
+            if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
+                huobiFutureOrderService.replenishOrder(reqDto.getAccountId(), reqDto.getBaseCoin());
+            }
+            throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
+        } catch (Exception e) {
+            if (e instanceof ApiException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
+            } else {
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
+            }
+        }
+    }
+
 
 }

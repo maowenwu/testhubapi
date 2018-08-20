@@ -141,6 +141,7 @@ public class OrderCopier {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约借深度第{}轮 开始", counter.incrementAndGet());
         // 更新订单信息
+        orderContext.replenishOrder();
         orderContext.updateOrderInfo();
         OrderActionEnum orderAction = commContext.getOrderAction();
         switch (orderAction) {

@@ -21,9 +21,9 @@ public interface HuobiMarketService {
 	 * 获取所提供的所有Depth数据，保存到数据库
 	 * 
 	 * @param symbol
-	 * @param type
+	 * @param depthType
 	 */
-	void updateHuobiDepth(String symbol,String type);
+	void updateHuobiDepth(String symbol,String depthType);
 	
 	void updateCurrentPrice(String symbol);
 

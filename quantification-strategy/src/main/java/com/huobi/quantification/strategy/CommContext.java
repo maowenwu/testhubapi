@@ -77,6 +77,8 @@ public class CommContext {
     private String spotBaseCoin;
     private String spotQuoteCoin;
 
+    private String spotDepthType;
+    private String futureDepthType;
 
     private QuanExchangeConfig futureExchangeConfig;
 
@@ -102,6 +104,9 @@ public class CommContext {
         this.spotAccountId = config.getSpotAccountId();
         this.spotBaseCoin = config.getSpotBaseCoin();
         this.spotQuoteCoin = config.getSpotQuotCoin();
+
+        this.spotDepthType = config.getSpotDepthType();
+        this.futureDepthType = config.getFutureDepthType();
 
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {
@@ -217,6 +222,7 @@ public class CommContext {
         reqDto.setExchangeId(spotExchangeId);
         reqDto.setBaseCoin(spotBaseCoin);
         reqDto.setQuoteCoin(spotQuoteCoin);
+        reqDto.setDepthType(spotDepthType);
         ServiceResult<SpotDepthRespDto> result = spotMarketService.getDepth(reqDto);
         if (result.isSuccess()) {
             SpotDepthRespDto.DataBean data = result.getData().getData();
@@ -241,6 +247,7 @@ public class CommContext {
         reqDto.setBaseCoin(this.futureBaseCoin);
         reqDto.setQuoteCoin(this.futureQuoteCoin);
         reqDto.setContractType(contractType);
+        reqDto.setDepthType(futureDepthType);
         ServiceResult<FutureDepthRespDto> result = futureMarketService.getDepth(reqDto);
         if (result.isSuccess()) {
             DepthBook depthBook = new DepthBook();

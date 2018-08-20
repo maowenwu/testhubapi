@@ -4,87 +4,97 @@ import java.util.Date;
 
 public class StrategyInstanceConfig {
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Integer id;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String strategyName;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Long instanceId;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Integer instanceEnable;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String instanceGroup;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Integer futureExchangeId;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Long futureAccountId;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String futureBaseCoin;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String futureQuotCoin;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String futureContractCode;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Integer futureLever;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Integer spotExchangeId;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Long spotAccountId;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String spotBaseCoin;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private String spotQuotCoin;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
+     */
+    private String spotDepthType;
+
+    /**
+     * @mbg.generated 2018-08-20 16:31:09
+     */
+    private String futureDepthType;
+
+    /**
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-17 15:16:21
+     * @mbg.generated 2018-08-20 16:31:09
      */
     private Date updateTime;
 
@@ -206,6 +216,22 @@ public class StrategyInstanceConfig {
 
     public void setSpotQuotCoin(String spotQuotCoin) {
         this.spotQuotCoin = spotQuotCoin;
+    }
+
+    public String getSpotDepthType() {
+        return spotDepthType;
+    }
+
+    public void setSpotDepthType(String spotDepthType) {
+        this.spotDepthType = spotDepthType;
+    }
+
+    public String getFutureDepthType() {
+        return futureDepthType;
+    }
+
+    public void setFutureDepthType(String futureDepthType) {
+        this.futureDepthType = futureDepthType;
     }
 
     public Date getCreateTime() {
