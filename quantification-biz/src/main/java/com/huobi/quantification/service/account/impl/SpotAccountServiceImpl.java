@@ -56,31 +56,12 @@ public class SpotAccountServiceImpl implements SpotAccountService {
             logger.error("更新火币现货账户信息失败，账户不存在：accountSourceId={}", accountSourceId);
             return;
         }
-        String body = queryAccountByAPI(accountSourceId);
-        List<QuanAccountAsset> accountAssets = parseAccount(body);
-        boolean isSave = StorageSupport.getInstance("updateSpotAccount").checkSavepoint();
-        accountAssets.stream().forEach(e -> {
-            e.setAccountId(accountId);
-            if (isSave) {
-                quanAccountAssetMapper.insert(e);
-            }
-        });
-        if (CollectionUtils.isNotEmpty(accountAssets)) {
-            redisService.saveAccountSpot(accountAssets, ExchangeEnum.HUOBI.getExId(), accountSourceId);
-        }
+        HuobiSpotAccountResponse response = queryAccountByAPI(accountSourceId);
+        saveSpotAccount(response, accountId, accountSourceId);
         logger.info("[HuobiUserInfo]任务结束，耗时：" + started);
     }
 
-    private String queryAccountByAPI(Long accountId) {
-        Map<String, String> params = new HashMap<>();
-        params.put("account-id", accountId + "");
-        String body = httpService.doHuobiSpotGet(accountId,
-                HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
-        return body;
-    }
-
-    private List<QuanAccountAsset> parseAccount(String body) {
-        HuobiSpotAccountResponse response = JSON.parseObject(body, HuobiSpotAccountResponse.class);
+    private void saveSpotAccount(HuobiSpotAccountResponse response, Long accountId, Long accountSourceId) {
         List<QuanAccountAsset> accountAssets = new ArrayList<>();
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             List<HuobiSpotAccountResponse.DataBean.ListBean> listBeans = response.getData().getList();
@@ -104,9 +85,25 @@ public class SpotAccountServiceImpl implements SpotAccountService {
                     accountAssets.add(accountAsset);
                 });
             }
+            boolean isSave = StorageSupport.getInstance("saveSpotAccount").checkSavepoint();
+            accountAssets.stream().forEach(e -> {
+                e.setAccountId(accountId);
+                if (isSave) {
+                    quanAccountAssetMapper.insert(e);
+                }
+            });
+            redisService.saveAccountSpot(accountAssets, ExchangeEnum.HUOBI.getExId(), accountSourceId);
         }
-        return accountAssets;
     }
+
+    private HuobiSpotAccountResponse queryAccountByAPI(Long accountId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("account-id", accountId + "");
+        String body = httpService.doHuobiSpotGet(accountId,
+                HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
+        return JSON.parseObject(body, HuobiSpotAccountResponse.class);
+    }
+
 
     @Override
     public List<QuanAccount> selectByExId(int exId) {

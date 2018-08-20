@@ -8,11 +8,9 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.dao.QuanDepthDetailMapper;
 import com.huobi.quantification.dao.QuanDepthMapper;
-import com.huobi.quantification.dao.QuanKlineMapper;
 import com.huobi.quantification.dao.QuanTradeMapper;
 import com.huobi.quantification.entity.QuanDepth;
 import com.huobi.quantification.entity.QuanDepthDetail;
-import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
@@ -124,11 +122,11 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         logger.info("[HuobiSpotCurrentPrice][symbol={}]任务开始", symbol);
         TradeResponse trade = queryCurrentPriceByApi(symbol);
-        parseAndSaveTrade(trade, symbol);
+        saveSpotTrade(trade, symbol);
         logger.info("[HuobiSpotCurrentPrice][symbol={}]任务结束，耗时：" + stopwatch, symbol);
     }
 
-    private void parseAndSaveTrade(TradeResponse trade, String symbol) {
+    private void saveSpotTrade(TradeResponse trade, String symbol) {
         Trade tick = trade.getTick();
         TradeDetail data = tick.getData();
         QuanTrade quanTrade = new QuanTrade();

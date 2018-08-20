@@ -25,16 +25,11 @@ public class HttpConstant {
     /********HUOBI 现货********/
     public static final String HUOBI_HOST = "https://api.huobipro.com";
     //火币market相关
-    ///market/detail/merged 获取聚合行情(Ticker)
-    public static final String HUOBI_TICKER = HUOBI_HOST + "/market/detail/merged";
-    //GET /market/depth
-    public static final String HUOBI_DEPTH = HUOBI_HOST + "/market/depth";
-    ///market/history/kline
-    public static final String HUOBI_KLINE = HUOBI_HOST + "/market/history/kline";
-    //GET /market/trade 获取 Trade Detail 数据
-    public static final String HUOBI_TRADE = HUOBI_HOST + "/market/trade";
 
-    //火币账户相关 /v1/account/accounts/{account-id}/balance
+    public static final String HUOBI_TICKER = HUOBI_HOST + "/market/detail/merged";
+    public static final String HUOBI_DEPTH = HUOBI_HOST + "/market/depth";
+    public static final String HUOBI_KLINE = HUOBI_HOST + "/market/history/kline";
+    public static final String HUOBI_TRADE = HUOBI_HOST + "/market/trade";
     public static final String HUOBI_ACCOUNT = HUOBI_HOST + "/v1/account/accounts/{account-id}/balance";
 
     //火币订单相关    

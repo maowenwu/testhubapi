@@ -6,6 +6,7 @@ import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanContractCodeMapper;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.response.future.HuobiFutureContractCodeResponse;
 import com.huobi.quantification.service.contract.ContractService;
 import com.huobi.quantification.service.http.HttpService;
@@ -59,7 +60,7 @@ public class ContractServiceImpl implements ContractService {
                 return data.get(0).getContractCode();
             }
         }
-        return null;
+        throw new APIException(body);
     }
 
     @Override

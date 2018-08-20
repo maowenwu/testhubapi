@@ -39,6 +39,5 @@ public interface HuobiFutureMarketService {
     void updateHuobiDepth(String symbol, String contractType, String depthType);
 
 
-    void updateHuobiIndex(String symbol);
 
 }
