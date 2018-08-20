@@ -137,7 +137,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         logger.info("[Huobi深度][symbol={},contractType={}]任务开始", symbol, contractType);
         HuobiFutureDepthResponse response = queryDepthByAPI(symbol, contractType, depthType);
         if ("ok".equalsIgnoreCase(response.getStatus())) {
-            parseAndSaveDepth(response, symbol, contractType);
+            parseAndSaveDepth(response, symbol, contractType, depthType);
         } else {
             logger.error("获取火币深度异常，api返回为：{}", JSON.toJSONString(response));
         }
@@ -145,7 +145,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
     }
 
 
-    private void parseAndSaveDepth(HuobiFutureDepthResponse response, String symbol, String contractType) {
+    private void parseAndSaveDepth(HuobiFutureDepthResponse response, String symbol, String contractType, String depthType) {
         QuanDepthFuture quanDepthFuture = new QuanDepthFuture();
         quanDepthFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         quanDepthFuture.setDepthTs(new Date());
@@ -194,7 +194,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
                 quanDepthFutureDetailMapper.insert(detail);
             }
         }
-        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, list);
+        redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, depthType, list);
     }
 
 

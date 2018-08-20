@@ -263,8 +263,8 @@ public class CommContext {
     }
 
     public BigDecimal getExchangeRateOfUSDT2USD() {
-        return BigDecimal.ONE;
         // todo
+        return BigDecimal.ONE;
         /*for (int i = 0; i < 3; i++) {
             ServiceResult<BigDecimal> result = futureContractService.getExchangeRateOfUSDT2USD();
             if (result.isSuccess()) {

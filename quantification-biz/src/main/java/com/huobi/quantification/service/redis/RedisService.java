@@ -14,8 +14,8 @@ public interface RedisService {
     void savePositionFuture(int exchangeId, Long accountId, List<QuanAccountFuturePosition> futurePositions);
     List<QuanAccountFuturePosition> getPositionFuture(int exchangeId, Long accountId);
 
-    void saveDepthFuture(int exchangeId, String symbol, String contractType, List<QuanDepthFutureDetail> list);
-    List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType);
+    void saveDepthFuture(int exchangeId, String symbol, String contractType, String depthType, List<QuanDepthFutureDetail> list);
+    List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType,String depthType);
 
     void saveKlineFuture(int exchangeId, String symbol, String type, String contractType, List<QuanKlineFuture> redisKline);
     List<QuanKlineFuture> getKlineFuture(int exchangeId, String symbol, String type, String contractType);

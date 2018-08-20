@@ -66,8 +66,9 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
                 }
             });
             thread.setDaemon(true);
-            thread.setName("Instance-Lifecycle线程");
+            thread.setName("实例控制线程");
             thread.start();
+            logger.info("实例控制线程启动");
         }
     }
 

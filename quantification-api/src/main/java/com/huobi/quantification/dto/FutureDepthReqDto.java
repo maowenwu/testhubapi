@@ -8,6 +8,7 @@ public class FutureDepthReqDto implements Serializable {
     private String baseCoin;
     private String quoteCoin;
     private String contractType;
+    private String depthType;
     private long timeout = 100;
     private long maxDelay = 1000;
 
@@ -57,5 +58,13 @@ public class FutureDepthReqDto implements Serializable {
 
     public void setMaxDelay(long maxDelay) {
         this.maxDelay = maxDelay;
+    }
+
+    public String getDepthType() {
+        return depthType;
+    }
+
+    public void setDepthType(String depthType) {
+        this.depthType = depthType;
     }
 }

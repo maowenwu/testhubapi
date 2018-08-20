@@ -63,24 +63,6 @@ public class TestController {
     }
 
 
-    @RequestMapping("/cancelOrder")
-    public String cancelOrder() {
-        FutureCancelOrderReqDto orderReqDto = new FutureCancelOrderReqDto();
-        orderReqDto.setExchangeId(2);
-        orderReqDto.setAccountId(1L);
-
-        List<FutureCancelOrder> orderList = new ArrayList<>();
-        FutureCancelOrder order = new FutureCancelOrder();
-        order.setInnerOrderId(21L);
-        orderList.add(order);
-
-        orderReqDto.setOrders(orderList);
-        orderReqDto.setTimeInterval(100);
-        orderReqDto.setParallel(false);
-        orderReqDto.setSync(true);
-        ServiceResult serviceResult = futureOrderService.cancelOrder(orderReqDto);
-        return JSON.toJSONString(serviceResult);
-    }
 
     @RequestMapping("/placeOrder")
     public String placeOrder() {

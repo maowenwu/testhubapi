@@ -42,16 +42,16 @@ public class RedisServiceImpl implements RedisService {
 
 
     @Override
-    public void saveDepthFuture(int exchangeId, String symbol, String contractType, List<QuanDepthFutureDetail> list) {
+    public void saveDepthFuture(int exchangeId, String symbol, String contractType, String depthType, List<QuanDepthFutureDetail> list) {
         RMap<String, List<QuanDepthFutureDetail>> map = client
-                .getMap("quan:future:depth:" + exchangeId + ":" + symbol);
+                .getMap("quan:future:depth:" + exchangeId + ":" + symbol + ":" + depthType);
         map.put(contractType, list);
     }
 
     @Override
-    public List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType) {
+    public List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType, String depthType) {
         RMap<String, List<QuanDepthFutureDetail>> map = client
-                .getMap("quan:future:depth:" + exchangeId + ":" + symbol);
+                .getMap("quan:future:depth:" + exchangeId + ":" + symbol + ":" + depthType);
         return map.get(contractType);
     }
 

@@ -231,13 +231,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
     }
 
-    @Override
-    public ServiceResult<List<FutureBatchOrderRespDto>> placeBatchOrders(FutureBatchOrderReqDto reqDto) {
-        if (reqDto.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
-            return placeOkBatchOrder(reqDto);
-        }
-        return null;
-    }
+
 
     /**
      * 因为接口定义为可以下不同symbol的单，那么不能使用ok的批量接口，ok仅支持同一symbol批量下单
@@ -274,88 +268,6 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         return ServiceResult.buildSuccessResult(list);
     }
 
-    @Override
-    public ServiceResult<FutureQueryOrderRespDto> getOrderByInnerOrderId(FutureQueryOrderInnerReqDto reqDto) {
-        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectByInnerOrderIds(reqDto.getInnerOrderId());
-        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
-        orderFutures.forEach(e -> {
-            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
-            BeanUtils.copyProperties(e, dataBean);
-            data.put(e.getInnerOrderId(), dataBean);
-        });
-
-        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
-        respDto.setData(data);
-        return ServiceResult.buildSuccessResult(respDto);
-    }
-
-    @Override
-    public ServiceResult<FutureQueryOrderRespDto> getOrderByExOrderId(FutureQueryOrderExOrderIdReqDto reqDto) {
-        Map params = new HashMap();
-        BeanUtils.copyProperties(reqDto, params);
-        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectByExOrderIds(params);
-        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
-        orderFutures.forEach(e -> {
-            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
-            BeanUtils.copyProperties(e, dataBean);
-            data.put(e.getInnerOrderId(), dataBean);
-        });
-
-        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
-        respDto.setData(data);
-        return ServiceResult.buildSuccessResult(respDto);
-    }
-
-    @Override
-    public ServiceResult<FutureQueryOrderRespDto> getOrderByLinkOrderId(FutureQueryOrderLinkReqDto reqDto) {
-        Map params = new HashMap();
-        BeanUtils.copyProperties(reqDto, params);
-        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectByLinkOrderIds(params);
-        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
-        orderFutures.forEach(e -> {
-            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
-            BeanUtils.copyProperties(e, dataBean);
-            data.put(e.getInnerOrderId(), dataBean);
-        });
-
-        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
-        respDto.setData(data);
-        return ServiceResult.buildSuccessResult(respDto);
-    }
-
-    @Override
-    public ServiceResult<FutureQueryOrderRespDto> getOrderByStatus(FutureQueryOrderStatusReqDto reqDto) {
-        QuanOrderFuture orderFuture = new QuanOrderFuture();
-        BeanUtils.copyProperties(reqDto, orderFuture);
-        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectBySelective(orderFuture);
-        Map<Long, FutureQueryOrderRespDto.DataBean> data = new HashMap<>();
-        orderFutures.forEach(e -> {
-            FutureQueryOrderRespDto.DataBean dataBean = new FutureQueryOrderRespDto.DataBean();
-            BeanUtils.copyProperties(e, dataBean);
-            data.put(e.getInnerOrderId(), dataBean);
-        });
-
-        FutureQueryOrderRespDto respDto = new FutureQueryOrderRespDto();
-        respDto.setData(data);
-        return ServiceResult.buildSuccessResult(respDto);
-    }
-
-    @Override
-    public ServiceResult cancelOrder(FutureCancelOrderReqDto reqDto) {
-        // 查询待撤销订单
-        List<FutureCancelOrder> cancelOrders = reqDto.getOrders();
-        List<QuanOrderFuture> uncompleteOrders = new ArrayList<>();
-        for (FutureCancelOrder cancelOrder : cancelOrders) {
-            cancelOrder.setExchangeId(reqDto.getExchangeId());
-            cancelOrder.setAccountId(reqDto.getAccountId());
-            uncompleteOrders.addAll(queryOrderFuture(cancelOrder));
-        }
-        // 开始撤销订单
-        CancelOrderContext orderContext = new CancelOrderContext(reqDto.getExchangeId(),
-                reqDto.getAccountId(), uncompleteOrders, reqDto.isParallel(), reqDto.getTimeInterval());
-        doCancelOrder(orderContext);
-        return null;
-    }
 
     private void doCancelOrder(CancelOrderContext orderContext) {
         if (orderContext.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
@@ -411,18 +323,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         return orderFutures;
     }
 
-    @Override
-    public ServiceResult cancelActiveOrder(FutureActiveOrderReqDto reqDto) {
-        // 查询待撤销订单
-        QuanOrderFuture orderFuture = new QuanOrderFuture();
-        BeanUtils.copyProperties(reqDto, orderFuture);
-        List<QuanOrderFuture> uncompleteOrders = quanOrderFutureMapper.selectBySelective(orderFuture);
-        // 开始撤销订单
-        CancelOrderContext orderContext = new CancelOrderContext(reqDto.getExchangeId(),
-                reqDto.getAccountId(), uncompleteOrders, reqDto.isParallel(), reqDto.getTimeInterval());
-        doCancelOrder(orderContext);
-        return null;
-    }
+
 
     static class CancelOrderContext {
         private int exchangeId;
