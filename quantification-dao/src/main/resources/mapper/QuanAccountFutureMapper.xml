@@ -90,4 +90,17 @@
     <select id="selectAccountFutureId" resultType="java.lang.Long">
         select id from quan_account_future where exchange_id=#{exId} and account_source_id=#{accountSourceId}
     </select>
+    <select id="selectList" parameterType="com.huobi.quantification.entity.QuanAccountFuture" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_account_future
+        <where>
+            <if test="exchangeId != null">
+                and exchange_id = #{exchangeId,jdbcType=INTEGER}
+            </if>
+            <if test="accountName != null">
+                and account_name like concat(concat('%',#{accountName,jdbcType=VARCHAR}),'%')
+            </if>
+        </where>
+    </select>
 </mapper>

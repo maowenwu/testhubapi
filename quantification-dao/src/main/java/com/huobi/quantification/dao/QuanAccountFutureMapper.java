@@ -22,4 +22,6 @@ public interface QuanAccountFutureMapper {
     List<QuanAccountFuture> selectByExId(@Param("exId") int exId);
 
     Long selectAccountFutureId(@Param("exId")int exId, @Param("accountSourceId")Long accountSourceId);
+
+    List<QuanAccountFuture> selectList(QuanAccountFuture account);
 }

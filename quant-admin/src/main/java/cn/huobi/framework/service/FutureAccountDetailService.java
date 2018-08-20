@@ -1,13 +1,14 @@
 package cn.huobi.framework.service;
 
+import cn.huobi.framework.model.FutureAccount;
+import com.github.pagehelper.PageInfo;
 import com.huobi.quantification.entity.QuanAccountFuture;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
-
-import java.util.List;
+import com.huobi.quantification.entity.QuanAccountFuturePosition;
 
 public interface FutureAccountDetailService {
 
-    QuanAccountFuture selectAccountById(int id);
+    PageInfo<QuanAccountFutureAsset> selectAccountDetail(QuanAccountFuture quanAccountFuture, PageInfo<QuanAccountFutureAsset> page);
 
-    List<QuanAccountFutureAsset> selectAccountDetail(Integer accountId);
+    PageInfo<QuanAccountFuturePosition> selectAccountPosition(QuanAccountFuturePosition quanAccountFuturePosition, PageInfo<QuanAccountFuturePosition> page);
 }

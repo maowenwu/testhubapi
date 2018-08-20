@@ -4,12 +4,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.QuanAccountFutureMapper;
+import com.huobi.quantification.entity.QuanAccountFuture;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import cn.huobi.framework.dao.FutureAccountDao;
-import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.model.FutureAccount;
 import cn.huobi.framework.service.FutureAccountService;
 
 @Service("FutureAccountService")
@@ -17,26 +18,29 @@ import cn.huobi.framework.service.FutureAccountService;
 public class FutureAccountServiceImpl implements FutureAccountService{
 	
 	@Resource
-	private FutureAccountDao FutureAccountDao;
+	private QuanAccountFutureMapper quanAccountFutureMapper;
 
 	@Override
-	public List<FutureAccount> selectByCondition(FutureAccount account, Page<FutureAccount> page) {
-		return FutureAccountDao.selectByCondition(account, page);
+	public int insert(QuanAccountFuture account) {
+		return quanAccountFutureMapper.insertSelective(account);
 	}
 
 	@Override
-	public int insert(FutureAccount account) {
-		return FutureAccountDao.insert(account);
+	public int update(QuanAccountFuture account) {
+		return quanAccountFutureMapper.updateByPrimaryKeySelective(account);
 	}
 
 	@Override
-	public int update(FutureAccount account) {
-		return FutureAccountDao.update(account);
+	public int deleteById(Long id) {
+		return quanAccountFutureMapper.deleteByPrimaryKey(id);
 	}
 
 	@Override
-	public int deleteById(Integer id) {
-		return FutureAccountDao.delete(id);
+	public PageInfo<QuanAccountFuture> selectByCondition(QuanAccountFuture account, PageInfo<QuanAccountFuture> page) {
+		PageHelper.startPage(page.getPageNum(),page.getPageSize());
+		List<QuanAccountFuture> quanAccountFutures = quanAccountFutureMapper.selectList(account);
+		page = new PageInfo<>(quanAccountFutures);
+		return page;
 	}
 
 }

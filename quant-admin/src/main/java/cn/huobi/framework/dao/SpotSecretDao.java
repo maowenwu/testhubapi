@@ -33,6 +33,18 @@ public interface SpotSecretDao {
 	
 	public class SqlProvider{
 		
+		public String selectByCondition(Map<String, Object> param){
+			final QuanAccountSecret secret = (QuanAccountSecret) param.get("secret");
+			return new SQL(){
+				{
+					SELECT("*");
+					FROM("quan_account_secret");
+//					if(secret!=null && secret.getAccountSourceId() != null){
+//						WHERE("account_source_id = #{secret.accountSourceId}");
+//					}
+				}
+			}.toString();
+		}
 	}
 
 	

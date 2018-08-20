@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.huobi.quantification.dao.QuanAccountFutureAssetMapper">
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.QuanAccountFutureAsset">
-        <id column="id" jdbcType="BIGINT" property="id" />
-        <result column="account_future_id" jdbcType="BIGINT" property="accountFutureId" />
-        <result column="query_id" jdbcType="BIGINT" property="queryId" />
-        <result column="coin_type" jdbcType="VARCHAR" property="coinType" />
-        <result column="margin_balance" jdbcType="DECIMAL" property="marginBalance" />
-        <result column="margin_position" jdbcType="DECIMAL" property="marginPosition" />
-        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen" />
-        <result column="margin_available" jdbcType="DECIMAL" property="marginAvailable" />
-        <result column="profit_real" jdbcType="DECIMAL" property="profitReal" />
-        <result column="profit_unreal" jdbcType="DECIMAL" property="profitUnreal" />
-        <result column="risk_rate" jdbcType="DECIMAL" property="riskRate" />
-        <result column="liquidation_price" jdbcType="DECIMAL" property="liquidationPrice" />
-        <result column="init" jdbcType="INTEGER" property="init" />
-        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="account_future_id" jdbcType="BIGINT" property="accountFutureId"/>
+        <result column="query_id" jdbcType="BIGINT" property="queryId"/>
+        <result column="coin_type" jdbcType="VARCHAR" property="coinType"/>
+        <result column="margin_balance" jdbcType="DECIMAL" property="marginBalance"/>
+        <result column="margin_position" jdbcType="DECIMAL" property="marginPosition"/>
+        <result column="margin_frozen" jdbcType="DECIMAL" property="marginFrozen"/>
+        <result column="margin_available" jdbcType="DECIMAL" property="marginAvailable"/>
+        <result column="profit_real" jdbcType="DECIMAL" property="profitReal"/>
+        <result column="profit_unreal" jdbcType="DECIMAL" property="profitUnreal"/>
+        <result column="risk_rate" jdbcType="DECIMAL" property="riskRate"/>
+        <result column="liquidation_price" jdbcType="DECIMAL" property="liquidationPrice"/>
+        <result column="init" jdbcType="INTEGER" property="init"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, account_future_id, query_id, coin_type, margin_balance, margin_position, margin_frozen,
@@ -25,7 +25,7 @@
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from quan_account_future_asset
         where id = #{id,jdbcType=BIGINT}
     </select>
@@ -217,5 +217,16 @@
         FROM quan_account_future as a, quan_account_future_asset as b
         where a.id=b.account_future_id and a.account_source_id=#{accountSourceId} and b.coin_type=#{coinType} and
         b.init='1'
+    </select>
+    <select id="selectByQuanAccountFuture" resultMap="BaseResultMap"
+            parameterType="com.huobi.quantification.entity.QuanAccountFuture">
+        select
+        b.id, b.account_future_id, b.query_id, b.coin_type,b.margin_balance, b.margin_position, b.margin_frozen,
+        b.margin_available, b.profit_real, b.profit_unreal, b.risk_rate , b.init, b.create_time, b.update_time
+        FROM quan_account_future_asset as b
+        left join quan_account_future as a
+        on  a.id = b.account_future_id
+        where a.account_source_id = #{accountSourceId,jdbcType=BIGINT}
+        and a.exchange_id = #{exchangeId,jdbcType=INTEGER}
     </select>
 </mapper>
