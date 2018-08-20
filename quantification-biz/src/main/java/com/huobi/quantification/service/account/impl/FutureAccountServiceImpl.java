@@ -94,7 +94,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
             for (HuobiFutureUserInfoResponse.DataBean dataBean : dataBeans) {
                 data.put(dataBean.getSymbol().toLowerCase(), convertToDto(dataBean));
             }
-            boolean isSave = StorageSupport.getInstance("updateHuobiAccount").checkSavepoint();
+            boolean isSave = StorageSupport.getInstance("saveFutureAccount").checkSavepoint();
             data.forEach((k, v) -> {
                 v.setCoinType(k);
                 v.setQueryId(queryId);

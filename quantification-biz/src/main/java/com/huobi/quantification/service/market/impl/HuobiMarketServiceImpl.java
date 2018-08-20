@@ -73,7 +73,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
             quanDepth.setBaseCoin(quots[0]);
             quanDepth.setQuoteCoin(quots[1]);
             quanDepth.setDepthTs(response.getTs());
-            boolean isSave = StorageSupport.getInstance("getSpotDepth").checkSavepoint();
+            boolean isSave = StorageSupport.getInstance("saveSpotDepth").checkSavepoint();
             if (isSave) {
                 quanDepthMapper.insertAndGetId(quanDepth);
             }
@@ -143,7 +143,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         quanTrade.setSymbol(symbol);
         quanTrade.setTradeId(data.getId());
         quanTrade.setTs(data.getTs());
-        boolean isSave = StorageSupport.getInstance("updateSpotCurrentPrice").checkSavepoint();
+        boolean isSave = StorageSupport.getInstance("saveSpotTrade").checkSavepoint();
         if (isSave) {
             quanTradeMapper.insert(quanTrade);
         }

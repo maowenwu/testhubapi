@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.huobi.quantification.common.util.StorageSupport;
+import com.huobi.quantification.dao.QuanTradeFutureMapper;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.execeptions.APIException;
 import org.apache.commons.collections.CollectionUtils;
@@ -52,6 +53,10 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
     @Autowired
     private QuanDepthFutureDetailMapper quanDepthFutureDetailMapper;
 
+    @Autowired
+    private QuanTradeFutureMapper tradeFutureMapper;
+
+
     @Override
     public HuobiFutureTickerResponse queryTickerByAPI(String symbol, String contractType) {
         Map<String, String> params = new HashMap<>();
@@ -85,7 +90,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         params.put("type", type);
         String body = httpService.doGet(HttpConstant.HUOBI_FUTURE_DEPTH, params);
         HuobiFutureDepthResponse response = JSON.parseObject(body, HuobiFutureDepthResponse.class);
-        if("ok".equalsIgnoreCase(response.getStatus())){
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
             return response;
         }
         throw new APIException(body);
@@ -112,6 +117,10 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         tradeFuture.setAmount(dataBean.getAmount());
         tradeFuture.setCreateDate(new Date());
         tradeFuture.setUpdateTime(response.getTs());
+        boolean isSave = StorageSupport.getInstance("saveFutureCurrentPrice").checkSavepoint();
+        if (isSave) {
+            tradeFutureMapper.insert(tradeFuture);
+        }
         redisService.saveCurrentPriceFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, tradeFuture);
     }
 
@@ -159,7 +168,7 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
             quanDepthFuture.setQuoteCoin(split[1]);
             quanDepthFuture.setSymbol(symbol);
             quanDepthFuture.setContractType(contractType);
-            boolean isSave = StorageSupport.getInstance("SaveFutureDepth").checkSavepoint();
+            boolean isSave = StorageSupport.getInstance("saveFutureDepth").checkSavepoint();
             if (isSave) {
                 quanDepthFutureMapper.insertAndGetId(quanDepthFuture);
             }
