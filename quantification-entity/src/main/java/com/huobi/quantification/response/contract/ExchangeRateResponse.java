@@ -1,4 +1,4 @@
-package com.huobi.quantification.response.future;
+package com.huobi.quantification.response.contract;
 
 import java.math.BigDecimal;
 

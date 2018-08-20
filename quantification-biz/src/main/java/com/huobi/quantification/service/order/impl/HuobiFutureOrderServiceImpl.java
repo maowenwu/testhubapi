@@ -27,7 +27,7 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.enums.SideEnum;
-import com.huobi.quantification.request.future.FutureHuobiOrderRequest;
+import com.huobi.quantification.bo.HuobiFutureOrderBO;
 import com.huobi.quantification.response.future.FutureHuobiOrderCancelResponse;
 import com.huobi.quantification.response.future.FutureHuobiOrderInfoResponse;
 import com.huobi.quantification.response.future.FutureHuobiOrderPageInfoResponse;
@@ -49,7 +49,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
     private QuanOrderFutureMapper quanOrderFutureMapper;
 
     @Override
-    public Long placeOrder(FutureHuobiOrderRequest order) {
+    public Long placeOrder(HuobiFutureOrderBO order) {
         Map<String, String> params = new HashMap<>();
         if (StringUtils.isNotEmpty(order.getSymbol())) {
             params.put("symbol", order.getSymbol());

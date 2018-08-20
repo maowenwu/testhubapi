@@ -5,16 +5,12 @@ import com.google.common.base.Stopwatch;
 import com.huobi.quantification.common.constant.HttpConstant;
 import com.huobi.quantification.dao.QuanContractCodeMapper;
 import com.huobi.quantification.entity.QuanContractCode;
-import com.huobi.quantification.entity.QuanTradeFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.response.future.HuobiFutureContractCodeResponse;
-import com.huobi.quantification.response.future.HuobiFutureTradeResponse;
-import com.huobi.quantification.response.future.OKFutureContractCodeResponse;
 import com.huobi.quantification.service.contract.ContractService;
 import com.huobi.quantification.service.http.HttpService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,22 +30,6 @@ public class ContractServiceImpl implements ContractService {
 
     @Autowired
     private HttpService httpService;
-
-    @Override
-    public void updateOkContractCode() {
-        Stopwatch started = Stopwatch.createStarted();
-        logger.info("[OkContractCode]任务开始");
-        List<QuanContractCode> contractCodeList = contractCodeMapper.selectByExchangeId(ExchangeEnum.OKEX.getExId());
-        for (QuanContractCode contractCode : contractCodeList) {
-            String code = queryOkContractCodeByAPI(contractCode.getSymbol(), contractCode.getContractType());
-            if (StringUtils.isNotEmpty(code)) {
-                contractCode.setContractCode(code);
-                contractCode.setUpdateTime(new Date());
-                contractCodeMapper.updateByPrimaryKey(contractCode);
-            }
-        }
-        logger.info("[OkContractCode]任务结束，耗时：" + started);
-    }
 
     @Override
     public void updateHuobiContractCode() {
@@ -80,19 +60,6 @@ public class ContractServiceImpl implements ContractService {
             }
         }
         return null;
-    }
-
-    private String queryOkContractCodeByAPI(String symbol, String contractType) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
-        params.put("contractType", contractType);
-        String body = httpService.doGet(HttpConstant.OK_CONTRACE_CODE, params);
-        List<OKFutureContractCodeResponse> codeResponses = JSON.parseArray(body, OKFutureContractCodeResponse.class);
-        if (CollectionUtils.isNotEmpty(codeResponses)) {
-            return codeResponses.get(0).getContractCode();
-        } else {
-            return null;
-        }
     }
 
     @Override

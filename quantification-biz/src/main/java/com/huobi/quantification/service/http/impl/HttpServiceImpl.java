@@ -42,9 +42,6 @@ public class HttpServiceImpl implements HttpService {
     private QuanProxyIpMapper quanProxyIpMapper;
 
     @Autowired
-    private OkFutureSecretHolder okFutureSecretHolder;
-
-    @Autowired
     private HuobiSpotSecretHolder huobiSpotSecretHolder;
 
     @Autowired
@@ -127,18 +124,11 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doHuobiFuturePostJson(Long accountSourceId, String url, Map<String, String> params) throws HttpRequestException {
-        params.put("userId","156233");
-        return doPostJson(url,params);
+        params.put("userId", "156233");
+        return doPostJson(url, params);
         /*HuobiSignature signature = huobiFutureSecretHolder.getHuobiFutureSignature(accountSourceId);
         return OkHttpClientUtils.getInstance(null).call(signature.getAccessKey(), signature.getSecretKey(),
                 "POST", url, params, new HashMap<>());*/
-    }
-
-    @Override
-    public String doOkFuturePost(Long accountId, String url, Map<String, String> params) throws HttpRequestException {
-        OkSignature signature = okFutureSecretHolder.getOkSignatureById(accountId);
-        params = signature.sign(params);
-        return getHttpClientUtils().doPost(url, params);
     }
 
     @Override

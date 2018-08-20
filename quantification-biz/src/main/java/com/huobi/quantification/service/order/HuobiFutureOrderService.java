@@ -1,6 +1,6 @@
 package com.huobi.quantification.service.order;
 
-import com.huobi.quantification.request.future.FutureHuobiOrderRequest;
+import com.huobi.quantification.bo.HuobiFutureOrderBO;
 
 import java.util.List;
 
@@ -10,19 +10,11 @@ import java.util.List;
  */
 public interface HuobiFutureOrderService {
 
+    List<Long> updateHuobiOrderInfo(Long accountId, String contractCode);
 
-    /**
-     * 合约下单
-     *
-     * @return
-     */
-    Long placeOrder(FutureHuobiOrderRequest order);
-
+    Long placeOrder(HuobiFutureOrderBO order);
 
     Long cancelOrder(Long accountId,Long orderId, Long clientOrderId);
-
-
-    List<Long> updateHuobiOrderInfo(Long accountId, String contractCode);
 
     void cancelAllOrder(Long accountId,String symbol);
 

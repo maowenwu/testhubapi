@@ -1,26 +1,26 @@
 package com.huobi.quantification.provider;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Throwables;
 import com.huobi.quantification.api.spot.SpotOrderService;
+import com.huobi.quantification.bo.HuobiSpotCancelAllOrderBO;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.constant.HttpConstant;
+import com.huobi.quantification.common.exception.ApiException;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.common.util.AsyncUtils;
 import com.huobi.quantification.dao.QuanOrderMapper;
 import com.huobi.quantification.dto.*;
-import com.huobi.quantification.dto.SpotOrderCancelReqDto.Orders;
 import com.huobi.quantification.entity.QuanOrder;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.response.spot.HuobiBatchCancelOpenOrdersResponse;
 import com.huobi.quantification.service.http.HttpService;
-import com.huobi.quantification.service.order.HuobiOrderService;
-import com.xiaoleilu.hutool.json.JSONObject;
-import com.xiaoleilu.hutool.json.JSONUtil;
-import org.apache.commons.lang3.StringUtils;
+import com.huobi.quantification.service.order.HuobiSpotOrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +35,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
     private QuanOrderMapper quanOrderMapper;
 
     @Autowired
-    private HuobiOrderService huobiOrderService;
+    private HuobiSpotOrderService huobiSpotOrderService;
 
     @Autowired
     private HttpService httpService;
@@ -78,7 +78,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
         serviceResult.setCode(ServiceErrorEnum.SUCCESS.getCode());
         SpotPlaceOrderRespDto respDto = new SpotPlaceOrderRespDto();
         if (reqDto.isSync()) {
-            Long orderId = huobiOrderService.placeHuobiOrder(orderDto);
+            Long orderId = huobiSpotOrderService.placeHuobiOrder(orderDto);
             quanOrder.setOrderSourceId(orderId);
             respDto.setExOrderId(orderId);
             respDto.setLinkOrderId(reqDto.getLinkOrderId());
@@ -86,7 +86,7 @@ public class SpotOrderServiceImpl implements SpotOrderService {
             serviceResult.setData(respDto);
             logger.info("同步下单成功，订单号:{}", orderId);
         } else {
-            Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiOrderService.placeHuobiOrder(orderDto));
+            Future<Long> orderIdFuture = AsyncUtils.submit(() -> huobiSpotOrderService.placeHuobiOrder(orderDto));
             try {
                 quanOrder.setOrderSourceId(orderIdFuture.get());
                 logger.info("异步下单成功，订单号:{}", orderIdFuture.get());
@@ -113,22 +113,17 @@ public class SpotOrderServiceImpl implements SpotOrderService {
 
     @Override
     public ServiceResult cancelAllOrder(SpotCancleAllOrderReqDto reqDto) {
+        HuobiSpotCancelAllOrderBO cancelAllOrderBO = new HuobiSpotCancelAllOrderBO();
+        BeanUtils.copyProperties(reqDto, cancelAllOrderBO);
         try {
-            Map<String, Object> param = new HashMap<>();
-            param.put("account-id", reqDto.getAccountId());
-            param.put("symbol", reqDto.getBaseCoin() + reqDto.getQuoteCoin());
-            String body = httpService.doHuobiSpotPost(reqDto.getAccountId(), HttpConstant.HUOBI_BATCHCANCELOPENORDERS, param);
-            HuobiBatchCancelOpenOrdersResponse response = JSON.parseObject(body, HuobiBatchCancelOpenOrdersResponse.class);
-            String status = response.getStatus();
-            if ("ok".equalsIgnoreCase(status)) {
-                int failedCount = response.getData().getFailedCount();
-                if (failedCount == 0) {
-                    return ServiceResult.buildSuccessResult(null);
-                }
+            huobiSpotOrderService.cancelAllOrder(cancelAllOrderBO);
+            return ServiceResult.buildSuccessResult(null);
+        } catch (Throwable e) {
+            if (e instanceof ApiException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
+            } else {
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
             }
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.HTTP_REQUEST_ERROR);
-        } catch (HttpRequestException e) {
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.HTTP_REQUEST_ERROR);
         }
     }
 

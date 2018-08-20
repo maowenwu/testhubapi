@@ -36,7 +36,6 @@ public class JobServiceImpl implements JobService {
     private static Map<Integer, Map<Integer, Class>> jobMap = new HashMap<>();
 
     static {
-
         Map<Integer, Class> huobiFutureTypeClass = new HashMap<>();
         huobiFutureTypeClass.put(JobTypeEnum.Depth.getJobType(), HuobiFutureDepthJob.class);
         huobiFutureTypeClass.put(JobTypeEnum.Account.getJobType(),HuobiFutureAccountJob.class);

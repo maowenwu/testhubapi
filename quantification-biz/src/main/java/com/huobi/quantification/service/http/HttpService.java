@@ -20,8 +20,6 @@ public interface HttpService {
 
     String doHuobiFuturePostJson(Long accountSourceId, String url, Map<String, String> params) throws HttpRequestException;
 
-    String doOkFuturePost(Long accountId, String url, Map<String, String> params) throws HttpRequestException;
-
     String doHuobiSpotGet(Long accountId, String uri, Map<String, String> params) throws HttpRequestException;
     
     String doHuobiSpotPost(Long accountId, String uri , Object object) throws HttpRequestException;

@@ -6,7 +6,7 @@ import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.ContractCodeDto;
 import com.huobi.quantification.entity.QuanContractCode;
 import com.huobi.quantification.enums.ServiceErrorEnum;
-import com.huobi.quantification.response.future.ExchangeRateResponse;
+import com.huobi.quantification.response.contract.ExchangeRateResponse;
 import com.huobi.quantification.service.contract.ContractService;
 import com.huobi.quantification.service.http.HttpService;
 import org.slf4j.Logger;

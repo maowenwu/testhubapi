@@ -4,7 +4,6 @@ import com.huobi.quantification.common.context.ApplicationContextHolder;
 import com.huobi.quantification.dto.JobParamDto;
 import com.huobi.quantification.job.AbstractQuartzJob;
 import com.huobi.quantification.service.order.HuobiFutureOrderService;
-import com.huobi.quantification.service.order.OkOrderService;
 import org.quartz.DisallowConcurrentExecution;
 
 @DisallowConcurrentExecution

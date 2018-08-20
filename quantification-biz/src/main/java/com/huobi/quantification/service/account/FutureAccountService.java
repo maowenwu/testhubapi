@@ -15,7 +15,6 @@ public interface FutureAccountService {
 
     void updateHuobiPosition(Long accountId);
 
-
     List<QuanAccountFuture> selectByExId(int exId);
 
     List<QuanAccountFutureSecret> selectSecretById(Long id);

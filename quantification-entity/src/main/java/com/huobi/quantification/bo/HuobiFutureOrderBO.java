@@ -1,6 +1,6 @@
-package com.huobi.quantification.request.future;
+package com.huobi.quantification.bo;
 
-public class FutureHuobiOrderRequest {
+public class HuobiFutureOrderBO {
 
     private Long accountId;
 

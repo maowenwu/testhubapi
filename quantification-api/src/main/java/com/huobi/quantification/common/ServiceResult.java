@@ -64,6 +64,13 @@ public class ServiceResult<T> implements Serializable {
         return serviceResult;
     }
 
+    public static ServiceResult buildSystemErrorResult(String message) {
+        ServiceResult serviceResult = new ServiceResult();
+        serviceResult.setCode(1102);
+        serviceResult.setMessage("系统异常：" + message);
+        return serviceResult;
+    }
+
     public boolean isSuccess() {
         return code == ServiceErrorEnum.SUCCESS.getCode();
     }
