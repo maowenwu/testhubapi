@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import com.google.common.base.Throwables;
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
@@ -37,7 +38,6 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 
     @Override
     public ServiceResult<SpotCurrentPriceRespDto> getCurrentPrice(SpotCurrentPriceReqDto currentPriceReqDto) {
-        ServiceResult<SpotCurrentPriceRespDto> serviceResult = null;
         try {
             SpotCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -62,22 +62,18 @@ public class SpotMarketServiceImpl implements SpotMarketService {
                 }
                 return null;
             }, currentPriceReqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildSuccessResult(currentPriceRespDto);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
-        return serviceResult;
     }
 
     private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
         if (exchangeId == ExchangeEnum.HUOBI.getExId() || exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
             return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
         } else {
-            throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
+            throw new UnsupportedOperationException(String.format("交易所%s,还不支持", exchangeId));
         }
     }
 
@@ -87,33 +83,36 @@ public class SpotMarketServiceImpl implements SpotMarketService {
             SpotDepthRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新深度
-                    List<QuanDepthDetail> huobiDepths = redisService.getDepthSpot(depthReqDto.getExchangeId(),
-                            getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()), depthReqDto.getDepthType());
+                    List<QuanDepthDetail> depth = redisService.getDepthSpot(depthReqDto.getExchangeId(),
+                            getSymbol(depthReqDto.getExchangeId(), depthReqDto.getBaseCoin(), depthReqDto.getQuoteCoin()),
+                            depthReqDto.getDepthType());
 
-                    if (CollectionUtils.isEmpty(huobiDepths)) {
+                    if (depth == null) {
                         ThreadUtils.sleep10();
                         continue;
-                    }
-                    Date ts = huobiDepths.get(0).getDateUpdate();
-                    if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
-                        SpotDepthRespDto respDto = new SpotDepthRespDto();
-                        respDto.setTs(ts);
-                        respDto.setData(convertDepthToDto(huobiDepths));
-                        return respDto;
                     } else {
-                        ThreadUtils.sleep10();
-                        continue;
+                        if (depth.size() == 0) {
+                            return new SpotDepthRespDto();
+                        } else {
+                            Date ts = depth.get(0).getDateUpdate();
+                            if (DateUtils.withinMaxDelay(ts, depthReqDto.getMaxDelay())) {
+                                SpotDepthRespDto respDto = new SpotDepthRespDto();
+                                respDto.setTs(ts);
+                                respDto.setData(convertDepthToDto(depth));
+                                return respDto;
+                            } else {
+                                ThreadUtils.sleep10();
+                                continue;
+                            }
+                        }
                     }
                 }
                 return null;
             }, depthReqDto.getTimeout());
             return ServiceResult.buildSuccessResult(currentPriceRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import com.google.common.base.Throwables;
 import com.huobi.quantification.api.spot.SpotAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
@@ -36,7 +37,6 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 
     @Override
     public ServiceResult<SpotBalanceRespDto> getBalance(SpotBalanceReqDto reqDto) {
-        ServiceResult<SpotBalanceRespDto> serviceResult = null;
         try {
             SpotBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -57,15 +57,11 @@ public class SpotAccountServiceImpl implements SpotAccountService {
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(balanceRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildSuccessResult(balanceRespDto);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
-        return serviceResult;
     }
 
     private SpotBalanceRespDto parseBalance(String coinType, List<QuanAccountAsset> assets) {

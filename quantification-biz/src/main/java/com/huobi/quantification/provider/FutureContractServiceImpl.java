@@ -37,7 +37,7 @@ public class FutureContractServiceImpl implements FutureContractService {
             QuanContractCode contractCode = contractService.getContractCode(exchangeId, symbol, contractType);
             BeanUtils.copyProperties(contractCode, contractCodeDto);
             return ServiceResult.buildSuccessResult(contractCodeDto);
-        } catch (BeansException e) {
+        } catch (Throwable e) {
             return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         }
     }
@@ -49,7 +49,7 @@ public class FutureContractServiceImpl implements FutureContractService {
             QuanContractCode quanContractCode = contractService.getContractCode(exchangeId, contractCode);
             BeanUtils.copyProperties(quanContractCode, contractCodeDto);
             return ServiceResult.buildSuccessResult(contractCodeDto);
-        } catch (BeansException e) {
+        } catch (Throwable e) {
             return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
         }
     }

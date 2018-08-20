@@ -32,11 +32,6 @@ public class TestController {
     private JobManageService jobManageService;
 
     @Autowired
-    private FutureOrderService futureOrderService;
-
-
-
-    @Autowired
     private SpotAccountService spotAccountService;
 
     @RequestMapping("/getBalance")
@@ -139,4 +134,6 @@ public class TestController {
         ServiceResult<FutureDepthRespDto> depth = futureMarketService.getDepth(reqDto);
         return JSON.toJSONString(depth);
     }
+
+
 }

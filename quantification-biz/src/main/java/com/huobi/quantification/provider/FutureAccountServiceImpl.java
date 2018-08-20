@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import com.google.common.base.Throwables;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
@@ -58,12 +59,9 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 return null;
             }, reqDto.getTimeout());
             return ServiceResult.buildSuccessResult(balanceRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
     }
 
@@ -123,12 +121,9 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 return null;
             }, reqDto.getTimeout());
             return ServiceResult.buildSuccessResult(positionRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
     }
 

@@ -1,5 +1,6 @@
 package com.huobi.quantification.provider;
 
+import com.google.common.base.Throwables;
 import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
@@ -36,7 +37,6 @@ public class FutureMarketServiceImpl implements FutureMarketService {
 
     @Override
     public ServiceResult<FutureCurrentPriceRespDto> getCurrentPrice(FutureCurrentPriceReqDto reqDto) {
-        ServiceResult<FutureCurrentPriceRespDto> serviceResult = null;
         try {
             FutureCurrentPriceRespDto currentPriceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -60,20 +60,15 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(currentPriceRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildSuccessResult(currentPriceRespDto);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
-        return serviceResult;
     }
 
     @Override
     public ServiceResult<FutureDepthRespDto> getDepth(FutureDepthReqDto reqDto) {
-        ServiceResult<FutureDepthRespDto> serviceResult = null;
         try {
             FutureDepthRespDto depthRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -101,15 +96,11 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(depthRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildSuccessResult(depthRespDto);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
-        return serviceResult;
     }
 
     private FutureDepthRespDto.DataBean convertDepthToDto(List<QuanDepthFutureDetail> depthFuture) {
@@ -136,7 +127,6 @@ public class FutureMarketServiceImpl implements FutureMarketService {
 
     @Override
     public ServiceResult<FutureCurrentIndexRespDto> getCurrentIndexPrice(FutureCurrentIndexReqDto reqDto) {
-        ServiceResult<FutureCurrentIndexRespDto> serviceResult = null;
         try {
             FutureCurrentIndexRespDto indexRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
@@ -157,13 +147,11 @@ public class FutureMarketServiceImpl implements FutureMarketService {
                 }
                 return null;
             }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(indexRespDto);
-        } catch (ExecutionException e) {
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
+            return ServiceResult.buildSuccessResult(indexRespDto);
+        } catch (Throwable e) {
+            logger.error("系统内部异常：", e);
+            return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
         }
-        return serviceResult;
     }
 
     private String getSymbol(String baseCoin, String quoteCoin) {
