@@ -1,17 +1,5 @@
 package com.huobi.quantification.provider;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.AsyncUtils;
@@ -21,15 +9,23 @@ import com.huobi.quantification.dto.SpotCurrentPriceReqDto;
 import com.huobi.quantification.dto.SpotCurrentPriceRespDto;
 import com.huobi.quantification.dto.SpotDepthReqDto;
 import com.huobi.quantification.dto.SpotDepthRespDto;
-import com.huobi.quantification.dto.SpotKlineReqDto;
-import com.huobi.quantification.dto.SpotKlineRespDto;
 import com.huobi.quantification.entity.QuanDepthDetail;
-import com.huobi.quantification.entity.QuanKline;
 import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.redis.RedisService;
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 @Service
 public class SpotMarketServiceImpl implements SpotMarketService {

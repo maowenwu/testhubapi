@@ -63,26 +63,6 @@ public class TestController {
     }
 
 
-
-    @RequestMapping("/placeOrder")
-    public String placeOrder() {
-        FuturePlaceOrderReqDto orderReqDto = new FuturePlaceOrderReqDto();
-        orderReqDto.setExchangeId(2);
-        orderReqDto.setAccountId(1L);
-        orderReqDto.setBaseCoin("btc");
-        orderReqDto.setQuoteCoin("usd");
-        orderReqDto.setContractType("this_week");
-        orderReqDto.setSide(1);
-        orderReqDto.setOffset(1);
-        orderReqDto.setPrice(BigDecimal.valueOf(7800));
-        orderReqDto.setQuantity(BigDecimal.ONE);
-        orderReqDto.setLever(10);
-        orderReqDto.setSync(true);
-        ServiceResult<FuturePlaceOrderRespDto> serviceResult = futureOrderService.placeOrder(orderReqDto);
-        return JSON.toJSONString(serviceResult);
-    }
-
-
     @RequestMapping("/testFutureIndex")
     public String testFutureIndex() {
         FutureCurrentIndexReqDto reqDto = new FutureCurrentIndexReqDto();
@@ -96,22 +76,6 @@ public class TestController {
         return JSON.toJSONString(currentIndexPrice);
     }
 
-    @RequestMapping("/testFutureKline")
-    public String testFutureKline() {
-        FutureKlineReqDto reqDto = new FutureKlineReqDto();
-        reqDto.setExchangeId(2);
-        reqDto.setBaseCoin("btc");
-        reqDto.setQuoteCoin("usd");
-
-        reqDto.setPeriod("1min");
-        reqDto.setContractType("this_week");
-
-        reqDto.setTimeout(100);
-        reqDto.setMaxDelay(60);
-        ServiceResult<FutureKlineRespDto> kline = futureMarketService.getKline(reqDto);
-        System.out.println(kline);
-        return JSON.toJSONString(kline);
-    }
 
     @RequestMapping("/testFutureDepth")
     public String testFutureDepth() {
@@ -164,21 +128,6 @@ public class TestController {
         return JSON.toJSONString(balance);
     }
 
-
-    @RequestMapping("/testGetPosition")
-    public String testGetPosition() {
-        FuturePositionReqDto reqDto = new FuturePositionReqDto();
-        reqDto.setExchangeId(0);
-        reqDto.setAccountId(101L);
-
-        reqDto.setCoinType("btc");
-        reqDto.setTimeout(100);
-        reqDto.setMaxDelay(3);
-
-        ServiceResult<FuturePositionRespDto> position = futureAccountService.getPosition(reqDto);
-        System.out.println(position);
-        return JSON.toJSONString(position);
-    }
 
     @RequestMapping("/getDepth")
     public String getDepth(){

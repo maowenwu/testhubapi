@@ -2,7 +2,7 @@ package com.huobi.quantification.enums;
 
 public enum JobTypeEnum {
 
-    Depth(1), Kline(2), Ticker(3), Account(4), Position(5), Order(6), CurrentPrice(7), Index(8), ContractCode(9);
+    Depth(1), Ticker(3), Account(4), Position(5), Order(6), CurrentPrice(7), Index(8), ContractCode(9);
 
 
     private int jobType;

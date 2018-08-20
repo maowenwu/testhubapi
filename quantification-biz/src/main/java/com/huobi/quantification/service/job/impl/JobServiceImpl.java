@@ -9,11 +9,9 @@ import com.huobi.quantification.entity.QuanJobFuture;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.JobTypeEnum;
 import com.huobi.quantification.job.huobi.future.*;
-import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
-import com.huobi.quantification.job.huobi.spot.HuobiKlineJob;
 import com.huobi.quantification.job.huobi.spot.HuobiAccountJob;
 import com.huobi.quantification.job.huobi.spot.HuobiCurrentPriceJob;
-import com.huobi.quantification.job.okcoin.future.*;
+import com.huobi.quantification.job.huobi.spot.HuobiDepthJob;
 import com.huobi.quantification.quartz.QuartzManager;
 import com.huobi.quantification.service.job.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,20 +36,9 @@ public class JobServiceImpl implements JobService {
     private static Map<Integer, Map<Integer, Class>> jobMap = new HashMap<>();
 
     static {
-        Map<Integer, Class> okFutureTypeClass = new HashMap<>();
-        okFutureTypeClass.put(JobTypeEnum.Depth.getJobType(), OkFutureDepthJob.class);
-        okFutureTypeClass.put(JobTypeEnum.Kline.getJobType(), OkFutureKlineJob.class);
-        okFutureTypeClass.put(JobTypeEnum.Account.getJobType(), OkFutureUserInfoJob.class);
-        okFutureTypeClass.put(JobTypeEnum.Position.getJobType(), OkFuturePositionJob.class);
-        okFutureTypeClass.put(JobTypeEnum.Order.getJobType(), OkFutureOrderJob.class);
-        okFutureTypeClass.put(JobTypeEnum.Index.getJobType(), OkFutureIndexJob.class);
-        okFutureTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(), OkFutureCurrentPriceJob.class);
-        okFutureTypeClass.put(JobTypeEnum.ContractCode.getJobType(), OkFutureContractCodeJob.class);
-        jobMap.put(ExchangeEnum.OKEX.getExId(), okFutureTypeClass);
 
         Map<Integer, Class> huobiFutureTypeClass = new HashMap<>();
         huobiFutureTypeClass.put(JobTypeEnum.Depth.getJobType(), HuobiFutureDepthJob.class);
-        huobiFutureTypeClass.put(JobTypeEnum.Kline.getJobType(), HuobiFutureKlineJob.class);
         huobiFutureTypeClass.put(JobTypeEnum.Account.getJobType(),HuobiFutureAccountJob.class);
         huobiFutureTypeClass.put(JobTypeEnum.Order.getJobType(),HuobiFutureOrderJob .class);
         huobiFutureTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(),HuobiFutureCurrentPriceJob .class);
@@ -63,7 +50,6 @@ public class JobServiceImpl implements JobService {
 
         Map<Integer, Class> huobiSpotTypeClass = new HashMap<>();
         huobiSpotTypeClass.put(JobTypeEnum.Depth.getJobType(), HuobiDepthJob.class);
-        huobiSpotTypeClass.put(JobTypeEnum.Kline.getJobType(), HuobiKlineJob.class);
         huobiSpotTypeClass.put(JobTypeEnum.Account.getJobType(), HuobiAccountJob.class);
         huobiSpotTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(), HuobiCurrentPriceJob.class);
         jobMap.put(ExchangeEnum.HUOBI.getExId(), huobiSpotTypeClass);
