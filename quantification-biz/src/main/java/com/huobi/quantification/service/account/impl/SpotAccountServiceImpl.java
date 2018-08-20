@@ -11,6 +11,7 @@ import com.huobi.quantification.entity.QuanAccount;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import com.huobi.quantification.entity.QuanAccountSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.response.spot.HuobiSpotAccountResponse;
 import com.huobi.quantification.service.account.SpotAccountService;
 import com.huobi.quantification.service.http.HttpService;
@@ -101,7 +102,11 @@ public class SpotAccountServiceImpl implements SpotAccountService {
         params.put("account-id", accountId + "");
         String body = httpService.doHuobiSpotGet(accountId,
                 HttpConstant.HUOBI_ACCOUNT.replaceAll("\\{account-id\\}", accountId + ""), params);
-        return JSON.parseObject(body, HuobiSpotAccountResponse.class);
+        HuobiSpotAccountResponse response = JSON.parseObject(body, HuobiSpotAccountResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return response;
+        }
+        throw new APIException(body);
     }
 
 

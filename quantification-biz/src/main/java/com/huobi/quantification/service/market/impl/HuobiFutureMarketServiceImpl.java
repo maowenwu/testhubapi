@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.huobi.quantification.common.util.StorageSupport;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.execeptions.APIException;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +84,12 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         params.put("symbol", baseCoin + "_" + contractType);
         params.put("type", type);
         String body = httpService.doGet(HttpConstant.HUOBI_FUTURE_DEPTH, params);
-        return JSON.parseObject(body, HuobiFutureDepthResponse.class);
+        HuobiFutureDepthResponse response = JSON.parseObject(body, HuobiFutureDepthResponse.class);
+        if("ok".equalsIgnoreCase(response.getStatus())){
+            return response;
+        }
+        throw new APIException(body);
+
     }
 
     @Override
@@ -114,7 +120,11 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
         params.put("symbol", getHuobiSymbol(symbol, contractType));
         params.put("size", "1");
         String body = httpService.doGet(HttpConstant.HUOBI_FUTURE_TRADE, params);
-        return JSON.parseObject(body, HuobiFutureTradeResponse.class);
+        HuobiFutureTradeResponse response = JSON.parseObject(body, HuobiFutureTradeResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return response;
+        }
+        throw new APIException(body);
     }
 
     private String getHuobiSymbol(String symbol, String contractType) {

@@ -14,6 +14,7 @@ import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
+import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
 import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
 import com.huobi.quantification.service.account.FutureAccountService;
@@ -47,14 +48,22 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     public HuobiFutureUserInfoResponse queryUserInfoByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
         String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ACCOUNT_INFO, params);
-        return JSON.parseObject(body, HuobiFutureUserInfoResponse.class);
+        HuobiFutureUserInfoResponse response = JSON.parseObject(body, HuobiFutureUserInfoResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return response;
+        }
+        throw new APIException(body);
     }
 
     @Override
     public HuobiFuturePositionResponse queryPositionByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
         String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_POSITION_INFO, params);
-        return JSON.parseObject(body, HuobiFuturePositionResponse.class);
+        HuobiFuturePositionResponse response = JSON.parseObject(body, HuobiFuturePositionResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return response;
+        }
+        throw new APIException(body);
     }
 
     @Autowired

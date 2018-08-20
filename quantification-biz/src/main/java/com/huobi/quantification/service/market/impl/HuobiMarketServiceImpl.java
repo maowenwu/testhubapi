@@ -14,6 +14,7 @@ import com.huobi.quantification.entity.QuanDepthDetail;
 import com.huobi.quantification.entity.QuanTrade;
 import com.huobi.quantification.enums.DepthEnum;
 import com.huobi.quantification.enums.ExchangeEnum;
+import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.huobi.response.Trade;
 import com.huobi.quantification.huobi.response.TradeDetail;
 import com.huobi.quantification.huobi.response.TradeResponse;
@@ -57,7 +58,11 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         params.put("symbol", symbol.replace("_", ""));
         params.put("type", type);
         String body = httpService.doGet(HttpConstant.HUOBI_DEPTH, params);
-        return JSON.parseObject(body, HuobiSpotDepthResponse.class);
+        HuobiSpotDepthResponse response = JSON.parseObject(body, HuobiSpotDepthResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return response;
+        }
+        throw new APIException(body);
     }
 
     private void saveSpotDepth(HuobiSpotDepthResponse response, String symbol) {
