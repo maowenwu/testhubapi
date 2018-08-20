@@ -33,18 +33,6 @@ public interface FutureSecretDao {
 	
 	public class SqlProvider{
 		
-		public String selectByCondition(Map<String, Object> param){
-			final QuanAccountFutureSecret secret = (QuanAccountFutureSecret) param.get("secret");
-			return new SQL(){
-				{
-					SELECT("*");
-					FROM("quan_account_future_secret");
-					if(secret!=null && secret.getAccountSourceId() != null){
-						WHERE("account_source_id = #{secret.accountSourceId}");
-					}
-				}
-			}.toString();
-		}
 	}
 
 	

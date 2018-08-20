@@ -7,9 +7,14 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
+import com.huobi.quantification.dao.StrategyRiskConfigMapper;
+import com.huobi.quantification.entity.StrategyOrderConfig;
+import com.huobi.quantification.entity.StrategyRiskConfig;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +38,9 @@ public class HedgeAction {
 
     @Resource
     private HedgeService hedgeService;
+
+    @Autowired
+    StrategyHedgeConfigMapper strategyHedgeConfigMapper;
 
     @DataSource(Constants.DATA_SOURCE_SLAVE)
     @RequestMapping(value = "/selectByCondition.do")
@@ -59,5 +67,12 @@ public class HedgeAction {
             msg.put("msg", "更新失败");
         }
         return msg;
+    }
+
+    @DataSource(Constants.DATA_SOURCE_SLAVE)
+    @RequestMapping(value = "/selectBySymbolContractType.do")
+    @ResponseBody
+    public StrategyHedgeConfig selectBySymbolContractType(@RequestParam("symbol") String symbol, @RequestParam("contractType") String contractType) {
+        return strategyHedgeConfigMapper.selectBySymbolContractType(symbol, contractType);
     }
 }
