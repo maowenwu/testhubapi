@@ -37,13 +37,25 @@ public class HuobiSpotOrderServiceImpl implements HuobiSpotOrderService {
      */
     public Long placeHuobiOrder(HuobiTradeOrderDto orderDto) {
         // todo
-        //return System.currentTimeMillis();
-        HuobiSpotOrderResponse response = placeOkOrderByAPI(orderDto);
-        if (response.getStatus().equals("ok")) {
-            return response.getOrderId();
-        } else {
-            throw new RuntimeException(response.getErrorCode());
+        return System.currentTimeMillis();
+        /*HuobiSpotOrderResponse response = placeOkOrderByAPI(orderDto);
+        return response.getOrderId();*/
+    }
+
+    private HuobiSpotOrderResponse placeOkOrderByAPI(HuobiTradeOrderDto orderDto) {
+        CreateOrderRequest createOrderReq = new CreateOrderRequest();
+        createOrderReq.accountId = String.valueOf(orderDto.getAccountId());
+        createOrderReq.amount = orderDto.getAmount().toString();
+        createOrderReq.price = orderDto.getPrice().toString();
+        createOrderReq.symbol = orderDto.getSymbol();
+        createOrderReq.type = orderDto.getType();
+        createOrderReq.source = orderDto.getSource();
+        String body = httpService.doHuobiSpotPost(orderDto.getAccountId(), HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
+        HuobiSpotOrderResponse response = JSON.parseObject(body, HuobiSpotOrderResponse.class);
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return response;
         }
+        throw new APIException(body);
     }
 
     @Override
@@ -61,18 +73,6 @@ public class HuobiSpotOrderServiceImpl implements HuobiSpotOrderService {
             }
         }
         throw new APIException(body);
-    }
-
-    private HuobiSpotOrderResponse placeOkOrderByAPI(HuobiTradeOrderDto orderDto) {
-        CreateOrderRequest createOrderReq = new CreateOrderRequest();
-        createOrderReq.accountId = String.valueOf(orderDto.getAccountId());
-        createOrderReq.amount = orderDto.getAmount().toString();
-        createOrderReq.price = orderDto.getPrice().toString();
-        createOrderReq.symbol = orderDto.getSymbol();
-        createOrderReq.type = orderDto.getType();
-        createOrderReq.source = orderDto.getSource();
-        String body = httpService.doHuobiSpotPost(orderDto.getAccountId(), HttpConstant.HUOBI_ORDER_PLACE, createOrderReq);
-        return JSON.parseObject(body, HuobiSpotOrderResponse.class);
     }
 
 

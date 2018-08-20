@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.huobi.quantification.execeptions.APIException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             return response.getData().getOrderId();
         } else {
-            throw new RuntimeException(body);
+            throw new APIException(body);
         }
     }
 
@@ -87,19 +88,12 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if (clientOrderId != null) {
             params.put("client_order_id", clientOrderId.toString());
         }
-        String body = null;
-        try {
-            body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ORDER_CANCEL, params);
-        } catch (HttpRequestException e) {
-            logger.error("取消订单http执行异常", e);
-            return null;
-        }
+        String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ORDER_CANCEL, params);
         FutureHuobiOrderCancelResponse response = JSON.parseObject(body, FutureHuobiOrderCancelResponse.class);
-        if (response.isSuccess() && StringUtils.isNotEmpty(response.getData().getSuccesses())) {
-            Long cancelOrderId = Long.valueOf(response.getData().getSuccesses());
-            return cancelOrderId;
+        if ("ok".equalsIgnoreCase(response.getStatus())) {
+            return Long.valueOf(response.getData().getSuccesses());
         }
-        return null;
+        throw new APIException(body);
     }
 
     @Override
@@ -200,7 +194,7 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
         if ("ok".equalsIgnoreCase(response.getStatus()) || Integer.valueOf(1051).equals(response.getErrCode())) {
             return;
         }
-        throw new RuntimeException(body);
+        throw new APIException(body);
     }
 
     @Override

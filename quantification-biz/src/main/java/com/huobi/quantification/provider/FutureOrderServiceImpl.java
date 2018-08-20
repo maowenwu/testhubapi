@@ -1,7 +1,9 @@
 package com.huobi.quantification.provider;
 
+import com.google.common.base.Throwables;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.common.ServiceResult;
+import com.huobi.quantification.common.exception.ApiException;
 import com.huobi.quantification.dao.QuanOrderFutureMapper;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.QuanContractCode;
@@ -10,6 +12,7 @@ import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OrderStatusEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.bo.HuobiFutureOrderBO;
+import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.service.contract.ContractService;
 import com.huobi.quantification.service.order.HuobiFutureOrderService;
 import org.apache.commons.collections.CollectionUtils;
@@ -41,59 +44,62 @@ public class FutureOrderServiceImpl implements FutureOrderService {
 
     @Override
     public ServiceResult<FuturePlaceOrderRespDto> placeOrder(FuturePlaceOrderReqDto reqDto) {
-        if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
-            return placeHuobiFutureOrder(reqDto);
+        try {
+            if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+                return placeHuobiFutureOrder(reqDto);
+            }
+            throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
+        } catch (Exception e) {
+            if (e instanceof ApiException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
+            } else {
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
+            }
         }
-        return null;
     }
 
     private ServiceResult<FuturePlaceOrderRespDto> placeHuobiFutureOrder(FuturePlaceOrderReqDto reqDto) {
-        try {
-            // 插入order表生成内部订单id
-            QuanOrderFuture orderFuture = new QuanOrderFuture();
-            orderFuture.setStrategyName(reqDto.getStrategyName());
-            orderFuture.setInstanceId(reqDto.getInstanceId());
-            orderFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-            orderFuture.setAccountId(reqDto.getAccountId());
-            orderFuture.setLinkOrderId(reqDto.getLinkOrderId());
-            if (StringUtils.isEmpty(reqDto.getContractCode())) {
-                // 通过symbol+ContractType找ContractCode
-                QuanContractCode quanContractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getContractType());
-                orderFuture.setBaseCoin(reqDto.getBaseCoin());
-                orderFuture.setQuoteCoin(reqDto.getQuoteCoin());
-                orderFuture.setContractType(reqDto.getContractType());
-                orderFuture.setContractCode(quanContractCode.getContractCode());
-            } else {
-                // 通过ContractCode找symbol+ContractType
-                QuanContractCode quanContractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
-                orderFuture.setBaseCoin(quanContractCode.getSymbol());
-                // 火币期货下单默认QuoteCoin为usd所以就写死了
-                orderFuture.setQuoteCoin("usd");
-                orderFuture.setContractType(quanContractCode.getContractType());
-                orderFuture.setContractCode(reqDto.getContractCode());
-            }
-            orderFuture.setStatus(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
-            orderFuture.setCreateDate(new Date());
-            orderFuture.setUpdateDate(new Date());
-            quanOrderFutureMapper.insert(orderFuture);
-
-            FuturePlaceOrderRespDto respDto = new FuturePlaceOrderRespDto();
-            respDto.setInnerOrderId(orderFuture.getInnerOrderId());
-            respDto.setLinkOrderId(reqDto.getLinkOrderId());
-            reqDto.setClientOrderId(orderFuture.getInnerOrderId());
-            Long exOrderId = doPlaceHuobiOrder(reqDto);
-            // 下单完成后更新exOrderId到order表
-            if (exOrderId != null) {
-                orderFuture.setExOrderId(exOrderId);
-                orderFuture.setStatus(OrderStatusEnum.SUBMITTED.getOrderStatus());
-                quanOrderFutureMapper.updateByPrimaryKeySelective(orderFuture);
-            }
-            respDto.setExOrderId(exOrderId);
-            return ServiceResult.buildSuccessResult(respDto);
-        } catch (Exception e) {
-            logger.error("下单异常，订单：" + reqDto);
-            return ServiceResult.buildAPIErrorResult(e.getMessage());
+        // 插入order表生成内部订单id
+        QuanOrderFuture orderFuture = new QuanOrderFuture();
+        orderFuture.setStrategyName(reqDto.getStrategyName());
+        orderFuture.setInstanceId(reqDto.getInstanceId());
+        orderFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+        orderFuture.setAccountId(reqDto.getAccountId());
+        orderFuture.setLinkOrderId(reqDto.getLinkOrderId());
+        if (StringUtils.isEmpty(reqDto.getContractCode())) {
+            // 通过symbol+ContractType找ContractCode
+            QuanContractCode quanContractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getBaseCoin(), reqDto.getContractType());
+            orderFuture.setBaseCoin(reqDto.getBaseCoin());
+            orderFuture.setQuoteCoin(reqDto.getQuoteCoin());
+            orderFuture.setContractType(reqDto.getContractType());
+            orderFuture.setContractCode(quanContractCode.getContractCode());
+        } else {
+            // 通过ContractCode找symbol+ContractType
+            QuanContractCode quanContractCode = contractService.getContractCode(reqDto.getExchangeId(), reqDto.getContractCode());
+            orderFuture.setBaseCoin(quanContractCode.getSymbol());
+            // 火币期货下单默认QuoteCoin为usd所以就写死了
+            orderFuture.setQuoteCoin("usd");
+            orderFuture.setContractType(quanContractCode.getContractType());
+            orderFuture.setContractCode(reqDto.getContractCode());
         }
+        orderFuture.setStatus(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
+        orderFuture.setCreateDate(new Date());
+        orderFuture.setUpdateDate(new Date());
+        quanOrderFutureMapper.insert(orderFuture);
+
+        FuturePlaceOrderRespDto respDto = new FuturePlaceOrderRespDto();
+        respDto.setInnerOrderId(orderFuture.getInnerOrderId());
+        respDto.setLinkOrderId(reqDto.getLinkOrderId());
+        reqDto.setClientOrderId(orderFuture.getInnerOrderId());
+        Long exOrderId = doPlaceHuobiOrder(reqDto);
+        // 下单完成后更新exOrderId到order表
+        if (exOrderId != null) {
+            orderFuture.setExOrderId(exOrderId);
+            orderFuture.setStatus(OrderStatusEnum.SUBMITTED.getOrderStatus());
+            quanOrderFutureMapper.updateByPrimaryKeySelective(orderFuture);
+        }
+        respDto.setExOrderId(exOrderId);
+        return ServiceResult.buildSuccessResult(respDto);
     }
 
     private Long doPlaceHuobiOrder(FuturePlaceOrderReqDto reqDto) {
@@ -119,19 +125,18 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         request.setLeverRate(reqDto.getLever() + "");
         request.setOrderPriceType("limit");
         request.setClientOrderId(reqDto.getClientOrderId() + "");
-        Long exOrderId = huobiFutureOrderService.placeOrder(request);
-        return exOrderId;
+        return huobiFutureOrderService.placeOrder(request);
     }
 
 
     @Override
     public ServiceResult<FuturePriceOrderRespDto> getActiveOrderMap(FuturePriceOrderReqDto reqDto) {
-        List<Integer> statusList = new ArrayList<>();
-        statusList.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
-        statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
-        // 活跃订单中不应该包含撤单中的订单
-        //statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
         try {
+            List<Integer> statusList = new ArrayList<>();
+            statusList.add(OrderStatusEnum.SUBMITTED.getOrderStatus());
+            statusList.add(OrderStatusEnum.PARTIAL_FILLED.getOrderStatus());
+            // 活跃订单中不应该包含撤单中的订单
+            //statusList.add(OrderStatusEnum.CANCELING.getOrderStatus());
             List<QuanOrderFuture> list = quanOrderFutureMapper.selectOrderByStatus(reqDto.getExchangeId(), reqDto.getAccountId(), reqDto.getContractCode(), statusList);
             Map<BigDecimal, List<QuanOrderFuture>> result = list.stream().collect(Collectors.groupingBy(e -> e.getOrderPrice()));
             FuturePriceOrderRespDto respDto = new FuturePriceOrderRespDto();
@@ -148,22 +153,29 @@ public class FutureOrderServiceImpl implements FutureOrderService {
             respDto.setPriceOrderMap(priceOrderMap);
             return ServiceResult.buildSuccessResult(respDto);
         } catch (Exception e) {
-            logger.error("获取活跃订单价格分组Map失败，exchangeId={}，accountId={}", reqDto.getExchangeId(), reqDto.getAccountId());
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            if (e instanceof ApiException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
+            } else {
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
+            }
         }
     }
 
     @Override
     public ServiceResult<Long> cancelSingleOrder(FutureCancelSingleOrderReqDto reqDto) {
-        if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
-            Long exOrderId = huobiFutureOrderService.cancelOrder(reqDto.getAccountId(), reqDto.getExOrderId(), null);
-            if (exOrderId != null) {
+        try {
+            if (reqDto.getExchangeId() == ExchangeEnum.HUOBI_FUTURE.getExId()) {
+                Long exOrderId = huobiFutureOrderService.cancelOrder(reqDto.getAccountId(), reqDto.getExOrderId(), null);
                 return ServiceResult.buildSuccessResult(exOrderId);
+            }
+            throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
+        } catch (Exception e) {
+            if (e instanceof ApiException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
             } else {
-                return ServiceResult.buildErrorResult(ServiceErrorEnum.CANCEL_ORDER_ERROR);
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
             }
         }
-        return null;
     }
 
     @Override
@@ -173,10 +185,13 @@ public class FutureOrderServiceImpl implements FutureOrderService {
                 huobiFutureOrderService.cancelAllOrder(reqDto.getAccountId(), reqDto.getSymbol());
                 return ServiceResult.buildSuccessResult(null);
             }
-            return null;
+            throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
         } catch (Throwable e) {
-            logger.error("取消火币期货所有订单失败", e);
-            return ServiceResult.buildAPIErrorResult(e.getMessage());
+            if (e instanceof APIException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
+            } else {
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
+            }
         }
     }
 
@@ -187,14 +202,16 @@ public class FutureOrderServiceImpl implements FutureOrderService {
                 List<Long> failedOrderIds = huobiFutureOrderService.updateHuobiOrderInfo(reqDto.getAccountId(), reqDto.getContractCode());
                 if (CollectionUtils.isEmpty(failedOrderIds)) {
                     return ServiceResult.buildSuccessResult(null);
-                } else {
-                    return ServiceResult.buildAPIErrorResult("更新失败的订单：" + failedOrderIds);
                 }
+                throw new RuntimeException("更新失败的订单：" + failedOrderIds);
             }
-            return null;
+            throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
         } catch (Exception e) {
-            logger.error("updateOrderInfo失败", e);
-            return ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
+            if (e instanceof ApiException) {
+                return ServiceResult.buildAPIErrorResult(e.getMessage());
+            } else {
+                return ServiceResult.buildSystemErrorResult(Throwables.getStackTraceAsString(e));
+            }
         }
     }
 
