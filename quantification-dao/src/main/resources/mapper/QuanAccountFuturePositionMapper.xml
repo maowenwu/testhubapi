@@ -245,4 +245,10 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+    <select id="selectByBaseCoin" resultMap="BaseResultMap" parameterType="com.huobi.quantification.entity.QuanAccountFuturePosition">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_account_future_position
+        where base_coin = #{baseCoin,jdbcType=VARCHAR}
+    </select>
 </mapper>

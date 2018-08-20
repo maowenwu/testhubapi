@@ -16,10 +16,8 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 		columnDefs: [
             {field: 'exchangeId', displayName: '交易所id'},
             {field: 'accountSourceId', displayName: '用户id'},
-            {field: 'accountsType', displayName: '账号类型'},
-            {field: 'accountsName', displayName: '账号名'},
-            {field: 'state', displayName: '账号状态'},
-            {field: 'id', displayName: '操作', cellTemplate: 
+            {field: 'accountName', displayName: '账号名'},
+            {field: 'id', displayName: '操作', cellTemplate:
            	 '<div class="lh30"><a ng-show="grid.appScope.hasPermit(\'futureAccount.update\')"  ng-click="grid.appScope.toDetail(row.entity)">详情</a></div> '
             }
         ],
@@ -35,14 +33,14 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 	
 	//查询
 	$scope.query = function(){
-		$http.post('futureAccount/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNo="+$scope.paginationOptions.pageNo+"&pageSize="+
+		$http.post('futureAccount/selectByCondition.do',"baseInfo="+angular.toJson($scope.baseInfo)+"&pageNum="+$scope.paginationOptions.pageNo+"&pageSize="+
 			$scope.paginationOptions.pageSize,{headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
 				.success(function(page){
 					if(!page){
 						return;
 					}
-					$scope.futureAccountData = page.result;
-					$scope.futureAccountGrid.totalItems = page.totalCount;
+					$scope.futureAccountData = page.list;
+					$scope.futureAccountGrid.totalItems = page.total;
 				}).error(function(){
 				});
 	}
@@ -53,7 +51,7 @@ angular.module('inspinia',['uiSwitch']).controller('futureAccountCtrl',function(
 	}
 	//修改任务
 	$scope.toDetail = function(entity){
-        $state.go('config.futureAccountDetail', {accountId: entity.id});
+        $state.go('config.futureAccountDetail', {futureAccount:angular.toJson(entity)});
 	}
 	
 	$scope.submit = function(){

@@ -2,6 +2,8 @@ package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 
+import java.util.List;
+
 public interface QuanAccountFuturePositionMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,6 @@ public interface QuanAccountFuturePositionMapper {
     int updateByPrimaryKeySelective(QuanAccountFuturePosition record);
 
     int updateByPrimaryKey(QuanAccountFuturePosition record);
+
+    List<QuanAccountFuturePosition> selectByBaseCoin(QuanAccountFuturePosition quanAccountFuturePosition);
 }

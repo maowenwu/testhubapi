@@ -1,13 +1,13 @@
 package cn.huobi.boss.action;
 
 import cn.huobi.boss.system.DataSource;
-import cn.huobi.framework.db.pagination.Page;
-import cn.huobi.framework.model.FutureAccount;
 import cn.huobi.framework.service.FutureAccountDetailService;
 import cn.huobi.framework.util.Constants;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageInfo;
 import com.huobi.quantification.entity.QuanAccountFuture;
+import com.huobi.quantification.entity.QuanAccountFutureAsset;
+import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/futureAccountDetail")
@@ -31,25 +30,33 @@ public class FutureAccountDetailAction {
     @DataSource(Constants.DATA_SOURCE_SLAVE)
     @RequestMapping(value = "/selectAccount.do")
     @ResponseBody
-    public Page<QuanAccountFuture> selectAccount(@RequestParam("baseInfo") String baseInfo,
-                                                 @Param("page") Page<QuanAccountFuture> page) throws Exception {
-        JSONObject baseInfoObject = JSON.parseObject(baseInfo);
-        Integer accountId = baseInfoObject.getInteger("accountId");
-        QuanAccountFuture quanAccountFuture = futureAccountDetailService.selectAccountById(accountId);
-        List<QuanAccountFuture> quanAccountFutures = new ArrayList<>();
-        quanAccountFutures.add(quanAccountFuture);
-        page.setResult(quanAccountFutures);
+    public PageInfo<QuanAccountFuture> selectAccount(@RequestParam("futureAccount") String futureAccount,
+                                                     @Param("page") PageInfo<QuanAccountFuture> page) throws Exception {
+        QuanAccountFuture quanFutureAccount = JSON.parseObject(futureAccount, QuanAccountFuture.class);
+        ArrayList<QuanAccountFuture> arrayList = new ArrayList<>();
+        arrayList.add(quanFutureAccount);
+        page = new PageInfo<>(arrayList);
         return page;
     }
 
     @DataSource(Constants.DATA_SOURCE_SLAVE)
     @RequestMapping(value = "/selectAccountDetail.do")
     @ResponseBody
-    public Page<FutureAccount> selectAccountDetail(@RequestParam("baseInfo") String baseInfo,
-                                                   @Param("page") Page<FutureAccount> page) throws Exception {
-        JSONObject baseInfoObject = JSON.parseObject(baseInfo);
-        Integer accountId = baseInfoObject.getInteger("accountId");
-        futureAccountDetailService.selectAccountDetail(accountId);
+    public PageInfo<QuanAccountFutureAsset> selectAccountDetail(@RequestParam("futureAccount") String futureAccount,
+                                                     @Param("page") PageInfo<QuanAccountFutureAsset> page) throws Exception {
+        QuanAccountFuture quanAccountFuture = JSON.parseObject(futureAccount,QuanAccountFuture.class);
+        page = futureAccountDetailService.selectAccountDetail(quanAccountFuture, page);
+        return page;
+    }
+
+    @DataSource(Constants.DATA_SOURCE_SLAVE)
+    @RequestMapping(value = "/selectAccountPosition.do")
+    @ResponseBody
+    public PageInfo<QuanAccountFuturePosition> selectAccountPosition(@RequestParam("positionInfo") String positionInfo,
+                                                                     @Param("page") PageInfo<QuanAccountFuturePosition> page) throws Exception {
+        System.err.println(positionInfo);
+        QuanAccountFuturePosition quanAccountFuturePosition = JSON.parseObject(positionInfo,QuanAccountFuturePosition.class);
+        page = futureAccountDetailService.selectAccountPosition(quanAccountFuturePosition, page);
         return page;
     }
 

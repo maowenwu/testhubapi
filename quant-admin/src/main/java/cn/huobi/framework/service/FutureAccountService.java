@@ -4,15 +4,16 @@ import java.util.List;
 
 import cn.huobi.framework.db.pagination.Page;
 import cn.huobi.framework.model.FutureAccount;
+import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.entity.QuanAccountFuture;
 
 public interface FutureAccountService {
 
-	List<FutureAccount> selectByCondition(FutureAccount account, Page<FutureAccount> page);
+	int insert(QuanAccountFuture account);
 
-	int insert(FutureAccount account);
+	int update(QuanAccountFuture account);
 
-	int update(FutureAccount account);
+	int deleteById(Long id);
 
-	int deleteById(Integer id);
-
+	PageInfo<QuanAccountFuture> selectByCondition(QuanAccountFuture account, PageInfo<QuanAccountFuture> page);
 }
