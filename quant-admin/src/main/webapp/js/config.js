@@ -600,6 +600,34 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
         		}]
         	}
         })
+
+
+        // ========================================================================
+        /* 策略配置 */
+        .state('strategy', {
+            abstract: true,
+            url: "/strategy",
+            templateUrl: "views/common/content.html",
+        })
+
+        .state('config.edit', {
+            url: "/order/edit",
+            templateUrl: "views/strategy/order.html",
+            data: {pageTitle: '摆盘参数设置'},
+            controller: "orderTestCtrl",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    $ocLazyLoad.load('ui-switch');
+                    $ocLazyLoad.load('oitozero.ngSweetAlert');
+                },
+                deps: ["$ocLazyLoad",function($ocLazyLoad){
+                    return $ocLazyLoad.load({
+                        name: "inspinia",
+                        files: ["js/controllers/strategy/orderCtrl.js?ver="+verNo]
+                    });
+                }]
+            }
+        })
 }
 
 

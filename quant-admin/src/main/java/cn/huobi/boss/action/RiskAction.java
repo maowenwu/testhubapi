@@ -7,9 +7,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.github.pagehelper.PageInfo;
+import com.huobi.quantification.dao.StrategyRiskConfigMapper;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +34,9 @@ public class RiskAction {
 
     @Resource
     private RiskService riskService;
+
+    @Autowired
+    StrategyRiskConfigMapper strategyRiskConfigMapper;
 
     @DataSource(Constants.DATA_SOURCE_SLAVE)
     @RequestMapping(value = "/selectByCondition.do")
@@ -58,5 +63,13 @@ public class RiskAction {
             msg.put("msg", "更新失败");
         }
         return msg;
+    }
+
+    @DataSource(Constants.DATA_SOURCE_SLAVE)
+    @RequestMapping(value = "/selectBySymbolContractType.do")
+    @ResponseBody
+    public StrategyRiskConfig selectBySymbolContractType(@RequestParam("symbol") String symbol, @RequestParam("contractType") String contractType) {
+        StrategyRiskConfig strategyRiskConfig=strategyRiskConfigMapper.selectBySymbolContractType(symbol, contractType);
+        return strategyRiskConfig;
     }
 }
