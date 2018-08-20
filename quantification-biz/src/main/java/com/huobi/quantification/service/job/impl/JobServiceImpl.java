@@ -39,10 +39,8 @@ public class JobServiceImpl implements JobService {
         Map<Integer, Class> huobiFutureTypeClass = new HashMap<>();
         huobiFutureTypeClass.put(JobTypeEnum.Depth.getJobType(), HuobiFutureDepthJob.class);
         huobiFutureTypeClass.put(JobTypeEnum.Account.getJobType(),HuobiFutureAccountJob.class);
-        huobiFutureTypeClass.put(JobTypeEnum.Order.getJobType(),HuobiFutureOrderJob .class);
         huobiFutureTypeClass.put(JobTypeEnum.CurrentPrice.getJobType(),HuobiFutureCurrentPriceJob .class);
         huobiFutureTypeClass.put(JobTypeEnum.Position.getJobType(),HuobiFuturePositionJob .class);
-        huobiFutureTypeClass.put(JobTypeEnum.Index.getJobType(),HuobiFutureIndexJob .class);
         huobiFutureTypeClass.put(JobTypeEnum.ContractCode.getJobType(),HuobiFutureContractCodeJob .class);
         jobMap.put(ExchangeEnum.HUOBI_FUTURE.getExId(), huobiFutureTypeClass);
 
