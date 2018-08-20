@@ -17,42 +17,41 @@ public class RedisServiceImpl implements RedisService {
     private RedissonClient client;
 
     @Override
-    public void saveUserInfoFuture(int exchangeId, Long accountId, Map<String, QuanAccountFutureAsset> assetMap) {
-        RMap<Long, Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.account." + exchangeId);
+    public void saveAccountFuture(int exchangeId, Long accountId, Map<String, QuanAccountFutureAsset> assetMap) {
+        RMap<Long, Map<String, QuanAccountFutureAsset>> map = client.getMap("quan:future:account:" + exchangeId);
         map.put(accountId, assetMap);
     }
 
     @Override
-    public  Map<String, QuanAccountFutureAsset> getUserInfoFuture(int exchangeId, Long accountId) {
-        RMap<Long,  Map<String, QuanAccountFutureAsset>> map = client.getMap("quan.account.future.account." + exchangeId);
+    public Map<String, QuanAccountFutureAsset> getAccountFuture(int exchangeId, Long accountId) {
+        RMap<Long, Map<String, QuanAccountFutureAsset>> map = client.getMap("quan:future:account:" + exchangeId);
         return map.get(accountId);
     }
 
     @Override
     public void savePositionFuture(int exchangeId, Long accountId, List<QuanAccountFuturePosition> futurePositions) {
-        RMap<Long,  List<QuanAccountFuturePosition>> map = client.getMap("quan.account.future.position." + exchangeId);
+        RMap<Long, List<QuanAccountFuturePosition>> map = client.getMap("quan:future:position:" + exchangeId);
         map.put(accountId, futurePositions);
     }
 
     @Override
     public List<QuanAccountFuturePosition> getPositionFuture(int exchangeId, Long accountId) {
-        RMap<Long, List<QuanAccountFuturePosition>> map = client.getMap("quan.account.future.position." + exchangeId);
+        RMap<Long, List<QuanAccountFuturePosition>> map = client.getMap("quan:future:position:" + exchangeId);
         return map.get(accountId);
     }
-
 
 
     @Override
     public void saveDepthFuture(int exchangeId, String symbol, String contractType, List<QuanDepthFutureDetail> list) {
         RMap<String, List<QuanDepthFutureDetail>> map = client
-                .getMap("quan.market.future.depth." + exchangeId + "." + symbol);
+                .getMap("quan:future:depth:" + exchangeId + ":" + symbol);
         map.put(contractType, list);
     }
 
     @Override
     public List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType) {
         RMap<String, List<QuanDepthFutureDetail>> map = client
-                .getMap("quan.market.future.depth." + exchangeId + "." + symbol);
+                .getMap("quan:future:depth:" + exchangeId + ":" + symbol);
         return map.get(contractType);
     }
 
@@ -60,41 +59,41 @@ public class RedisServiceImpl implements RedisService {
     public void saveKlineFuture(int exchangeId, String symbol, String type, String contractType,
                                 List<QuanKlineFuture> redisKline) {
         RMap<String, List<QuanKlineFuture>> map = client
-                .getMap("quan.market.future.kline." + exchangeId + "." + type + "." + symbol);
+                .getMap("quan:future:kline:" + exchangeId + ":" + type + ":" + symbol);
         map.put(contractType, redisKline);
     }
 
     @Override
     public List<QuanKlineFuture> getKlineFuture(int exchangeId, String symbol, String type, String contractType) {
         RMap<String, List<QuanKlineFuture>> map = client
-                .getMap("quan.market.future.kline." + exchangeId + "." + type + "." + symbol);
+                .getMap("quan:future:kline:" + exchangeId + ":" + type + ":" + symbol);
         return map.get(contractType);
     }
 
 
     @Override
-    public void saveAccountSpot(List<QuanAccountAsset> quanAssetList, int exchangId, long accountId) {
-        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.account." + exchangId);
+    public void saveAccountSpot(List<QuanAccountAsset> quanAssetList, int exchangeId, long accountId) {
+        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan:spot:account:" + exchangeId);
         map.put(accountId, quanAssetList);
     }
 
 
     @Override
     public List<QuanAccountAsset> getAccountSpot(long accountId, int exchangeId) {
-        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan.account.spot.account." + exchangeId);
+        RMap<Long, List<QuanAccountAsset>> map = client.getMap("quan:spot:account:" + exchangeId);
         return map.get(accountId);
     }
 
     @Override
     public void saveIndexFuture(QuanIndexFuture quanIndexFuture) {
         RMap<String, QuanIndexFuture> map = client
-                .getMap("quan.market.future.index." + quanIndexFuture.getExchangeId());
+                .getMap("quan:future:index:" + quanIndexFuture.getExchangeId());
         map.put(quanIndexFuture.getSymbol(), quanIndexFuture);
     }
 
     @Override
     public QuanIndexFuture getIndexFuture(int exchangeId, String symbol) {
-        RMap<String, QuanIndexFuture> map = client.getMap("quan.market.future.index." + exchangeId);
+        RMap<String, QuanIndexFuture> map = client.getMap("quan:future:index:" + exchangeId);
         QuanIndexFuture indexFuture = map.get(symbol);
         if (indexFuture != null) {
             return indexFuture;
@@ -105,53 +104,51 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void saveCurrentPriceFuture(int exId, String symbol, String contractType, QuanTradeFuture tradeFuture) {
-        RMap<String, QuanTradeFuture> map = client.getMap("quan.market.future.trade." + exId + "." + symbol);
+        RMap<String, QuanTradeFuture> map = client.getMap("quan:future:trade:" + exId + ":" + symbol);
         map.put(contractType, tradeFuture);
     }
 
     @Override
     public QuanTradeFuture getCurrentPriceFuture(int exId, String symbol, String contractType) {
-        RMap<String, QuanTradeFuture> map = client.getMap("quan.market.future.trade." + exId + "." + symbol);
+        RMap<String, QuanTradeFuture> map = client.getMap("quan:future:trade:" + exId + ":" + symbol);
         return map.get(contractType);
     }
 
     @Override
     public void saveCurrentPriceSpot(int exId, String symbol, QuanTrade trade) {
-        RMap<String, QuanTrade> map = client.getMap("quan.market.spot.trade." + exId);
+        RMap<String, QuanTrade> map = client.getMap("quan:spot:trade:" + exId);
         map.put(symbol, trade);
     }
 
     @Override
     public QuanTrade getCurrentPriceSpot(int exchangeId, String symbol) {
-        RMap<String, QuanTrade> map = client.getMap("quan.market.spot.trade." + exchangeId);
+        RMap<String, QuanTrade> map = client.getMap("quan:spot:trade:" + exchangeId);
         return map.get(symbol);
     }
 
     @Override
     public void saveDepthSpot(int exchangeId, String symbol, List<QuanDepthDetail> list) {
-        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan.market.spot.depth." + exchangeId);
+        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId);
         map.put(symbol, list);
     }
 
     @Override
     public List<QuanDepthDetail> getDepthSpot(int exchangeId, String symbol) {
-        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan.market.spot.depth." + exchangeId);
+        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId);
         return map.get(symbol);
     }
 
     @Override
     public void saveKlineSpot(int exchangeId, String symbol, String period, List<QuanKline> quanKline) {
-        RMap<String, List<QuanKline>> map = client.getMap("quan.market.spot.kline." + exchangeId + "." + period);
+        RMap<String, List<QuanKline>> map = client.getMap("quan:spot:kline:" + exchangeId + ":" + period);
         map.put(symbol, quanKline);
     }
 
     @Override
     public List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period) {
-        RMap<String, List<QuanKline>> map = client.getMap("quan.market.spot.kline." + exchangeId + "." + period);
+        RMap<String, List<QuanKline>> map = client.getMap("quan:spot:kline:" + exchangeId + ":" + period);
         return map.get(symbol);
     }
-
-
 
 
 }

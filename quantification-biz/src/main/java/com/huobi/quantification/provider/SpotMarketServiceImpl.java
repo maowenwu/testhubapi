@@ -79,7 +79,7 @@ public class SpotMarketServiceImpl implements SpotMarketService {
 
     private String getSymbol(int exchangeId, String baseCoin, String quoteCoin) {
         if (exchangeId == ExchangeEnum.HUOBI.getExId() || exchangeId == ExchangeEnum.HUOBI_FUTURE.getExId()) {
-            return baseCoin.toLowerCase() + quoteCoin.toLowerCase();
+            return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
         } else {
             throw new UnsupportedOperationException("交易所" + exchangeId + ",还不支持");
         }

@@ -11,10 +11,8 @@ import com.huobi.quantification.dto.FuturePositionReqDto;
 import com.huobi.quantification.dto.FuturePositionRespDto;
 import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.ServiceErrorEnum;
 import com.huobi.quantification.service.redis.RedisService;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +42,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
             FutureBalanceRespDto balanceRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     // 从redis读取最新资产
-                    Map<String, QuanAccountFutureAsset> assetMap = redisService.getUserInfoFuture(reqDto.getExchangeId(), reqDto.getAccountId());
+                    Map<String, QuanAccountFutureAsset> assetMap = redisService.getAccountFuture(reqDto.getExchangeId(), reqDto.getAccountId());
                     if (assetMap == null) {
                         ThreadUtils.sleep10();
                         continue;

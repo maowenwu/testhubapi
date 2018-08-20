@@ -180,8 +180,11 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         quanTrade.setSymbol(symbol);
         quanTrade.setTradeId(data.getId());
         quanTrade.setTs(data.getTs());
+        boolean isSave = StorageSupport.getInstance("updateSpotCurrentPrice").checkSavepoint();
+        if (isSave) {
+            quanTradeMapper.insert(quanTrade);
+        }
         redisService.saveCurrentPriceSpot(ExchangeEnum.HUOBI.getExId(), symbol, quanTrade);
-        quanTradeMapper.insert(quanTrade);
     }
 
     /**
@@ -192,7 +195,7 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
      */
     private TradeResponse queryCurrentPriceByApi(String symbol) {
         Map<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
+        params.put("symbol", symbol.replace("_", ""));
         String body = httpService.doGet(HttpConstant.HUOBI_TRADE, params);
         TradeResponse trade = new TradeResponse();
         Trade tick = new Trade();

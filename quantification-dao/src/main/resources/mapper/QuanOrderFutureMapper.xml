@@ -365,8 +365,8 @@
             <if test="strategyName != null">
                 and strategy_name=#{strategyName}
             </if>
-            <if test="strategyVersion != null">
-                and strategy_version=#{strategyVersion}
+            <if test="instanceId != null">
+                and instance_id=#{instanceId}
             </if>
             <if test="exchangeId != null">
                 and exchange_id=#{exchangeId}
@@ -455,8 +455,8 @@
             <if test="strategyName != null">
                 strategy_name = #{strategyName,jdbcType=VARCHAR},
             </if>
-            <if test="strategyVersion != null">
-                strategy_version = #{strategyVersion,jdbcType=BIGINT},
+            <if test="instanceId != null">
+                instance_id = #{instanceId,jdbcType=BIGINT},
             </if>
             <if test="exchangeId != null">
                 exchange_id = #{exchangeId,jdbcType=INTEGER},
@@ -626,7 +626,7 @@
 	<insert id="insertBatch" parameterType="java.util.List"
 		useGeneratedKeys="true" keyProperty="innerOrderId">
 		insert ignore into quan_order_future (inner_order_id, strategy_name,
-		strategy_version,
+        instance_id,
 		exchange_id, account_id, ex_order_id,
 		link_order_id, base_coin, quote_coin,
 		contract_type, contract_code, status,
@@ -639,7 +639,7 @@
 		<foreach collection="list" item="item" index="index"
 			separator=",">
 			(#{item.innerOrderId,jdbcType=BIGINT}, #{item.strategyName,jdbcType=VARCHAR},
-			#{item.strategyVersion,jdbcType=BIGINT},
+			#{item.instanceId,jdbcType=BIGINT},
 			#{item.exchangeId,jdbcType=INTEGER},
 			#{item.accountId,jdbcType=BIGINT}, #{item.exOrderId,jdbcType=BIGINT},
 			#{item.linkOrderId,jdbcType=BIGINT},

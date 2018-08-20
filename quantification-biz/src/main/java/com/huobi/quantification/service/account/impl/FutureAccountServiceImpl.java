@@ -17,7 +17,6 @@ import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,7 +82,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 quanAccountFutureAssetMapper.insert(v);
             }
         });
-        redisService.saveUserInfoFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, assetMap);
+        redisService.saveAccountFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, assetMap);
         logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountSourceId);
     }
 
