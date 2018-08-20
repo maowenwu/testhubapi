@@ -104,13 +104,6 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         }
     }
 
-    /**
-     * 下单失败订单id返回null
-     *
-     * @param reqDto
-     * @param orderFuture
-     * @return
-     */
     private Long doPlaceHuobiOrder(FuturePlaceOrderReqDto reqDto) {
         FutureHuobiOrderRequest request = new FutureHuobiOrderRequest();
         if (StringUtils.isEmpty(reqDto.getContractCode())) {
@@ -138,12 +131,6 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         return exOrderId;
     }
 
-    /**
-     * ok 单笔下单
-     *
-     * @param reqDto
-     * @return
-     */
     public ServiceResult<FuturePlaceOrderRespDto> placeOkOrder(FuturePlaceOrderReqDto reqDto) {
         // 插入order表生成内部订单id
         QuanOrderFuture orderFuture = new QuanOrderFuture();
@@ -169,7 +156,6 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         }
         return ServiceResult.buildSuccessResult(respDto);
     }
-
 
     private Long doPlaceOkOrder(FuturePlaceOrderReqDto reqDto, QuanOrderFuture orderFuture) {
         FutureOkOrderRequest orderRequest = new FutureOkOrderRequest();
@@ -206,7 +192,6 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         return orderId;
     }
 
-
     private int getOkOrderType(int side, int offset) {
         if (side == 1) {
             // 买入开仓
@@ -229,136 +214,6 @@ public class FutureOrderServiceImpl implements FutureOrderService {
 
     private String concatSymbol(String baseCoin, String quoteCoin) {
         return baseCoin.toLowerCase() + "_" + quoteCoin.toLowerCase();
-    }
-
-
-
-    /**
-     * 因为接口定义为可以下不同symbol的单，那么不能使用ok的批量接口，ok仅支持同一symbol批量下单
-     * 所以先实现为循环调用
-     *
-     * @param reqDto
-     * @return
-     */
-    private ServiceResult<List<FutureBatchOrderRespDto>> placeOkBatchOrder(FutureBatchOrderReqDto reqDto) {
-        List<FutureBatchOrderRespDto> list = new ArrayList<>();
-        for (FutureBatchOrder order : reqDto.getOrders()) {
-            FuturePlaceOrderReqDto orderReqDto = new FuturePlaceOrderReqDto();
-            orderReqDto.setExchangeId(reqDto.getExchangeId());
-            orderReqDto.setAccountId(reqDto.getAccountId());
-            orderReqDto.setSync(reqDto.isSync());
-
-            orderReqDto.setBaseCoin(order.getBaseCoin());
-            orderReqDto.setQuoteCoin(order.getQuoteCoin());
-            orderReqDto.setContractType(order.getContractType());
-            orderReqDto.setContractCode(order.getContractCode());
-            orderReqDto.setSide(order.getSide());
-            orderReqDto.setOffset(order.getOffset());
-            orderReqDto.setOrderType(order.getOrderType());
-            orderReqDto.setPrice(order.getPrice());
-            orderReqDto.setQuantity(order.getQuantity());
-            orderReqDto.setLever(order.getLever());
-
-            ServiceResult<FuturePlaceOrderRespDto> serviceResult = placeOrder(orderReqDto);
-            FutureBatchOrderRespDto orderRespDto = new FutureBatchOrderRespDto();
-            BeanUtils.copyProperties(serviceResult.getData(), orderRespDto);
-            list.add(orderRespDto);
-            sleep(reqDto.getTimeInterval());
-        }
-        return ServiceResult.buildSuccessResult(list);
-    }
-
-
-    private void doCancelOrder(CancelOrderContext orderContext) {
-        if (orderContext.getExchangeId() == ExchangeEnum.OKEX.getExId()) {
-            cancelOkOrder(orderContext);
-        }
-    }
-
-    /**
-     * 循环方式取消???
-     *
-     * @param orderContext
-     */
-    private void cancelOkOrder(CancelOrderContext orderContext) {
-        // 调用批量接口进行撤单
-        if (orderContext.isParallel()) {
-            List<QuanOrderFuture> orders = orderContext.getOrders();
-            String orderIds = orders.stream().map(e -> e.getExOrderId().toString()).collect(Collectors.joining(","));
-            QuanOrderFuture order = orders.get(0);
-            FutureOkCancelOrderRequest orderRequest = new FutureOkCancelOrderRequest();
-            orderRequest.setAccountId(orderContext.getAccountId());
-            orderRequest.setSymbol(concatSymbol(order.getBaseCoin(), order.getQuoteCoin()));
-            orderRequest.setContractType(order.getContractType());
-            orderRequest.setOrderId(orderIds);
-            okOrderService.cancelOkOrder(orderRequest);
-        } else {
-            // 串行撤单
-            for (QuanOrderFuture order : orderContext.getOrders()) {
-                FutureOkCancelOrderRequest orderRequest = new FutureOkCancelOrderRequest();
-                orderRequest.setAccountId(order.getAccountId());
-                orderRequest.setSymbol(concatSymbol(order.getBaseCoin(), order.getQuoteCoin()));
-                orderRequest.setContractType(order.getContractType());
-                orderRequest.setOrderId(order.getExOrderId() + "");
-                okOrderService.cancelOkOrder(orderRequest);
-                // 暂停一个时间间隔
-                sleep(orderContext.getTimeInterval());
-            }
-        }
-
-    }
-
-    private void sleep(long millis) {
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private List<QuanOrderFuture> queryOrderFuture(FutureCancelOrder cancelOrder) {
-        QuanOrderFuture orderFuture = new QuanOrderFuture();
-        BeanUtils.copyProperties(cancelOrder, orderFuture);
-        List<QuanOrderFuture> orderFutures = quanOrderFutureMapper.selectBySelective(orderFuture);
-        return orderFutures;
-    }
-
-
-
-    static class CancelOrderContext {
-        private int exchangeId;
-        private long accountId;
-        private List<QuanOrderFuture> orders;
-        private boolean parallel;
-        private int timeInterval;
-
-        public CancelOrderContext(int exchangeId, long accountId, List<QuanOrderFuture> orders, boolean parallel, int timeInterval) {
-            this.exchangeId = exchangeId;
-            this.accountId = accountId;
-            this.orders = orders;
-            this.parallel = parallel;
-            this.timeInterval = timeInterval;
-        }
-
-        public int getExchangeId() {
-            return exchangeId;
-        }
-
-        public long getAccountId() {
-            return accountId;
-        }
-
-        public List<QuanOrderFuture> getOrders() {
-            return orders;
-        }
-
-        public boolean isParallel() {
-            return parallel;
-        }
-
-        public int getTimeInterval() {
-            return timeInterval;
-        }
     }
 
     @Override

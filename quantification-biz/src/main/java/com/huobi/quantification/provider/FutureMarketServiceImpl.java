@@ -34,9 +34,6 @@ public class FutureMarketServiceImpl implements FutureMarketService {
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private ContractService contractService;
-
     @Override
     public ServiceResult<FutureCurrentPriceRespDto> getCurrentPrice(FutureCurrentPriceReqDto reqDto) {
         ServiceResult<FutureCurrentPriceRespDto> serviceResult = null;
@@ -81,7 +78,7 @@ public class FutureMarketServiceImpl implements FutureMarketService {
             FutureDepthRespDto depthRespDto = AsyncUtils.supplyAsync(() -> {
                 while (!Thread.interrupted()) {
                     List<QuanDepthFutureDetail> depthFuture = redisService.getDepthFuture(reqDto.getExchangeId(),
-                            getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()), reqDto.getContractType());
+                            getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()), reqDto.getContractType(), reqDto.getDepthType());
                     if (depthFuture == null) {
                         // 任务没有启动
                         ThreadUtils.sleep10();
@@ -135,62 +132,6 @@ public class FutureMarketServiceImpl implements FutureMarketService {
             }
         }
         return dataBean;
-    }
-
-    @Override
-    public ServiceResult<FutureKlineRespDto> getKline(FutureKlineReqDto reqDto) {
-        ServiceResult<FutureKlineRespDto> serviceResult = null;
-        try {
-            FutureKlineRespDto klineRespDto = AsyncUtils.supplyAsync(() -> {
-                while (!Thread.interrupted()) {
-                    // 从redis读取最新K线
-                    List<QuanKlineFuture> klineFutures = redisService.getKlineFuture(reqDto.getExchangeId(), getSymbol(reqDto.getBaseCoin(), reqDto.getQuoteCoin()),
-                            reqDto.getPeriod(), reqDto.getContractType());
-                    if (CollectionUtils.isEmpty(klineFutures)) {
-                        ThreadUtils.sleep10();
-                        continue;
-                    }
-                    Date ts = klineFutures.get(klineFutures.size() - 1).getTs();
-                    if (DateUtils.withinMaxDelay(ts, reqDto.getMaxDelay())) {
-                        FutureKlineRespDto respDto = new FutureKlineRespDto();
-                        respDto.setTs(ts);
-                        respDto.setData(convertToDto(klineFutures, reqDto.getSize()));
-                        return respDto;
-                    } else {
-                        ThreadUtils.sleep10();
-                        continue;
-                    }
-                }
-                return null;
-            }, reqDto.getTimeout());
-            serviceResult = ServiceResult.buildSuccessResult(klineRespDto);
-        } catch (ExecutionException e) {
-            logger.error("执行异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.EXECUTION_ERROR);
-        } catch (TimeoutException e) {
-            logger.error("超时异常：", e);
-            serviceResult = ServiceResult.buildErrorResult(ServiceErrorEnum.TIMEOUT_ERROR);
-        }
-        return serviceResult;
-    }
-
-    private List<FutureKlineRespDto.DataBean> convertToDto(List<QuanKlineFuture> klineFutures, int size) {
-        List<FutureKlineRespDto.DataBean> dataBeans = new ArrayList<>();
-        for (int i = 0; i < klineFutures.size(); i++) {
-            QuanKlineFuture future = klineFutures.get(i);
-            FutureKlineRespDto.DataBean bean = new FutureKlineRespDto.DataBean();
-            bean.setId(future.getId());
-            bean.setAmount(future.getAmount());
-            bean.setOpen(future.getOpen());
-            bean.setClose(future.getClose());
-            bean.setLow(future.getLow());
-            bean.setHigh(future.getHigh());
-            dataBeans.add(bean);
-            if (i + 1 >= size) {
-                break;
-            }
-        }
-        return dataBeans;
     }
 
     @Override

@@ -18,18 +18,6 @@ public interface HuobiMarketService {
 	HuobiSpotDepthResponse queryDepthByAPI(String symbol, String type);
 
 	/**
-	 * GET /market/history/kline 获取K线数据
-	 * 
-	 * @param symbol
-	 * @param period
-	 * @param size
-	 * @return
-	 */
-	Object getKline(String symbol, String period, String size);
-
-
-
-	/**
 	 * 获取所提供的所有Depth数据，保存到数据库
 	 * 
 	 * @param symbol
@@ -38,6 +26,5 @@ public interface HuobiMarketService {
 	void updateHuobiDepth(String symbol,String type);
 	
 	void updateCurrentPrice(String symbol);
-	
-	void updateKline(String symbol, String KlineType, String size);
+
 }

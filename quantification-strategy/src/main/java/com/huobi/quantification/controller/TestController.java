@@ -82,18 +82,6 @@ public class TestController {
         return JSON.toJSONString(serviceResult);
     }
 
-    @RequestMapping("/testStartFutureJob")
-    public String testStartFutureJob() {
-       /* jobManageService.addOkFutureCurrentPriceJob("bch_usd", "next_week", "0/1 * * * * ?", false);
-        jobManageService.addOkFutureDepthJob("bch_usd", "next_week", "0/1 * * * * ?", false);
-        jobManageService.addOkFutureIndexJob("bch_usd", "0/1 * * * * ?", false);
-        jobManageService.addOkFutureKlineJob("bch_usd", "5min", "next_week", "0/1 * * * * ?", false);
-        jobManageService.addOkFutureOrderJob(1L, "bch_usd", "next_week", "0/1 * * * * ?", false);
-        jobManageService.addOkFuturePositionJob(1L, "0/1 * * * * ?", false);
-        jobManageService.addOkFutureUserInfoJob(1L, "0/1 * * * * ?", false);*/
-        jobManageService.addOkFutureOrderJob(1L, "btc_usd", "this_week", "0/1 * * * * ?", true);
-        return JSON.toJSONString(true);
-    }
 
     @RequestMapping("/testFutureIndex")
     public String testFutureIndex() {

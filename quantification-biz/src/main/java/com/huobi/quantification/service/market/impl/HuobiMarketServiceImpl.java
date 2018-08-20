@@ -49,8 +49,6 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
     @Autowired
     private QuanDepthMapper quanDepthMapper;
     @Autowired
-    private QuanKlineMapper quanKlineMapper;
-    @Autowired
     private QuanTradeMapper quanTradeMapper;
     @Autowired
     private RedisService redisService;
@@ -111,44 +109,6 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
 
     }
 
-    public Object getKline(String symbol, String period, String size) {
-        Map<String, String> params = new HashMap<>();
-        params.put("symbol", symbol);
-        params.put("period", period);
-        params.put("size", size);
-        String body = httpService.doGet(HttpConstant.HUOBI_KLINE, params);
-        parseAndSaveKline(body, symbol, ExchangeEnum.HUOBI.getExId(), period, size);
-        return null;
-    }
-
-    private void parseAndSaveKline(String jsonStr, String symbol, int exchangeId, String period, String size) {
-        JSONObject jsonObject = JSON.parseObject(jsonStr);
-        ArrayList<QuanKline> klineList = new ArrayList<QuanKline>();
-        if (jsonObject.getString("status").equals("ok")) {
-            JSONArray jsonArray = jsonObject.getJSONArray("data");
-            QuanKline quanKline = new QuanKline();
-            for (int i = 0; i < jsonArray.size(); i++) {
-                JSONObject klineObject = jsonArray.getJSONObject(i);
-                quanKline.setId(klineObject.getLong("id"));
-                quanKline.setAmount(klineObject.getBigDecimal("amount"));
-                quanKline.setClose(klineObject.getBigDecimal("close"));
-                quanKline.setCount(klineObject.getBigDecimal("count"));
-                quanKline.setExchangeId(exchangeId);
-                quanKline.setHigh(klineObject.getBigDecimal("high"));
-                quanKline.setLow(klineObject.getBigDecimal("low"));
-                quanKline.setOpen(klineObject.getBigDecimal("open"));
-                quanKline.setPeriod(period);
-                quanKline.setSize(Long.parseLong(size));
-                quanKline.setSymbol(symbol);
-                quanKline.setTs(jsonObject.getDate("ts"));
-                quanKline.setVol(klineObject.getBigDecimal("vol"));
-                quanKlineMapper.insert(quanKline);
-                klineList.add(quanKline);
-            }
-            redisService.saveKlineSpot(exchangeId, symbol, period, klineList);
-        }
-
-    }
 
     @Override
     public void updateHuobiDepth(String symbol, String type) {
@@ -219,11 +179,4 @@ public class HuobiMarketServiceImpl implements HuobiMarketService {
         return trade;
     }
 
-    @Override
-    public void updateKline(String symbol, String KlineType, String size) {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        logger.info("[HuobiSpotKline][symbol={},KlineType={},size={}]任务开始", symbol, KlineType, size);
-        getKline(symbol, KlineType, size);
-        logger.info("[HuobiSpotKline][symbol={},KlineType={},size={}]任务结束，耗时：" + stopwatch, symbol, KlineType, size);
-    }
 }

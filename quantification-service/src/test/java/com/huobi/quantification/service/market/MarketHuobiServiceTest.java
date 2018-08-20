@@ -129,37 +129,5 @@ public class MarketHuobiServiceTest {
 		System.err.println("ch:"+trade.getCh());
 	}
 	
-	@Test
-	public void getKline() {
-		Map<String, String> params = new HashMap<>();
-		params.put("symbol", "btcusdt");
-		params.put("period", "5min");
-		params.put("size", "200");
-		String body = httpService.doGet(HttpConstant.HUOBI_KLINE, params);
-		JSONObject jsonObject = JSON.parseObject(body);
-		if (jsonObject.getString("status").equals("ok")) {
-			JSONArray jsonArray = jsonObject.getJSONArray("data");
-			QuanKline quanKline = new QuanKline();
-			List<QuanKline> arrayList = new ArrayList<>();
-			for (int i = 0; i < jsonArray.size(); i++) {
-				JSONObject klineObject = jsonArray.getJSONObject(i);
-				quanKline.setId(klineObject.getLong("id"));
-				quanKline.setAmount(klineObject.getBigDecimal("amount"));
-				quanKline.setClose(klineObject.getBigDecimal("close"));
-				quanKline.setCount(klineObject.getBigDecimal("count"));
-				quanKline.setExchangeId(1);
-				quanKline.setHigh(klineObject.getBigDecimal("high"));
-				quanKline.setLow(klineObject.getBigDecimal("low"));
-				quanKline.setOpen(klineObject.getBigDecimal("open"));
-				quanKline.setPeriod("1day");
-				quanKline.setSize(Long.parseLong("200"));
-				quanKline.setSymbol("btcusdt");
-				quanKline.setTs(jsonObject.getDate("ts"));
-				quanKline.setVol(klineObject.getBigDecimal("vol"));
-				quanKlineMapper.insert(quanKline);
-				arrayList.add(quanKline);
-			}
-			redisService.saveKlineSpot(ExchangeEnum.HUOBI.getExId(), "btcusdt", "5min", arrayList);
-		}
-	}
+
 }

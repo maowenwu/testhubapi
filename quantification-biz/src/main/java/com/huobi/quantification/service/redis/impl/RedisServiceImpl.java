@@ -55,21 +55,6 @@ public class RedisServiceImpl implements RedisService {
         return map.get(contractType);
     }
 
-    @Override
-    public void saveKlineFuture(int exchangeId, String symbol, String type, String contractType,
-                                List<QuanKlineFuture> redisKline) {
-        RMap<String, List<QuanKlineFuture>> map = client
-                .getMap("quan:future:kline:" + exchangeId + ":" + type + ":" + symbol);
-        map.put(contractType, redisKline);
-    }
-
-    @Override
-    public List<QuanKlineFuture> getKlineFuture(int exchangeId, String symbol, String type, String contractType) {
-        RMap<String, List<QuanKlineFuture>> map = client
-                .getMap("quan:future:kline:" + exchangeId + ":" + type + ":" + symbol);
-        return map.get(contractType);
-    }
-
 
     @Override
     public void saveAccountSpot(List<QuanAccountAsset> quanAssetList, int exchangeId, long accountId) {
@@ -137,18 +122,5 @@ public class RedisServiceImpl implements RedisService {
         RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId);
         return map.get(symbol);
     }
-
-    @Override
-    public void saveKlineSpot(int exchangeId, String symbol, String period, List<QuanKline> quanKline) {
-        RMap<String, List<QuanKline>> map = client.getMap("quan:spot:kline:" + exchangeId + ":" + period);
-        map.put(symbol, quanKline);
-    }
-
-    @Override
-    public List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period) {
-        RMap<String, List<QuanKline>> map = client.getMap("quan:spot:kline:" + exchangeId + ":" + period);
-        return map.get(symbol);
-    }
-
 
 }

@@ -24,14 +24,6 @@ public interface FutureMarketService {
 
 
     /**
-     * 获取K线信息
-     *
-     * @param klineReqDto
-     * @return
-     */
-    ServiceResult<FutureKlineRespDto> getKline(FutureKlineReqDto klineReqDto);
-
-    /**
      * 获取最新指数价格
      *
      * @param currentIndexReqDto

@@ -199,36 +199,6 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
 
 
     @Override
-    public void updateHuobiKline(String symbol, String contractType, String period) {
-        Stopwatch started = Stopwatch.createStarted();
-        logger.info("[HuobiKline][symbol={},contractType={}]任务开始", symbol, contractType);
-        HuobiFutureKlineResponse klineResponse = queryKlineByAPI(symbol, contractType, period, 100);
-        List<QuanKlineFuture> redisKline = genRedisKline(klineResponse);
-        for (QuanKlineFuture klineFuture : redisKline) {
-            klineFuture.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
-            klineFuture.setType(period);
-            klineFuture.setSymbol(symbol);
-            klineFuture.setContractType(contractType);
-        }
-        redisService.saveKlineFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, period, contractType, redisKline);
-        logger.info("[HuobiKline][symbol={},contractType={}]任务结束，耗时：" + started, symbol, contractType);
-    }
-
-    private List<QuanKlineFuture> genRedisKline(HuobiFutureKlineResponse klineResponse) {
-        List<QuanKlineFuture> futures = new ArrayList<>();
-        for (HuobiFutureKlineResponse.DataBean dataBean : klineResponse.getData()) {
-            QuanKlineFuture klineFuture = new QuanKlineFuture();
-            klineFuture.setTs(klineResponse.getTs());
-            klineFuture.setOpen(dataBean.getOpen());
-            klineFuture.setHigh(dataBean.getHigh());
-            klineFuture.setLow(dataBean.getLow());
-            klineFuture.setClose(dataBean.getClose());
-            klineFuture.setAmount(dataBean.getAmount());
-        }
-        return futures;
-    }
-
-    @Override
     public void updateHuobiIndex(String symbol) {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("[HuobiIndex][symbol={}]任务开始", symbol);

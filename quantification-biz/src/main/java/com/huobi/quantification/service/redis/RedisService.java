@@ -17,8 +17,6 @@ public interface RedisService {
     void saveDepthFuture(int exchangeId, String symbol, String contractType, String depthType, List<QuanDepthFutureDetail> list);
     List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType,String depthType);
 
-    void saveKlineFuture(int exchangeId, String symbol, String type, String contractType, List<QuanKlineFuture> redisKline);
-    List<QuanKlineFuture> getKlineFuture(int exchangeId, String symbol, String type, String contractType);
 
     void saveIndexFuture(QuanIndexFuture quanIndexFuture);
     QuanIndexFuture getIndexFuture(int exchangeId, String symbol);
@@ -36,8 +34,6 @@ public interface RedisService {
     void saveCurrentPriceSpot(int exId, String symbol, QuanTrade trade);
     QuanTrade getCurrentPriceSpot(int exchangeId, String symbol);
 
-    void saveKlineSpot(int exchangeId, String symbol, String period, List<QuanKline> quanKline);
-    List<QuanKline> getKlineSpot(int exchangeId, String symbol, String period);
 
 
 }
