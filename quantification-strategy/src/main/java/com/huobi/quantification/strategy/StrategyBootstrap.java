@@ -27,10 +27,11 @@ public class StrategyBootstrap {
     @Autowired
     private RiskMonitor riskMonitor;
 
+    private StrategyInstanceConfig config;
 
     public void startInstance(StrategyInstanceConfig config) {
+        this.config = config;
         logger.info("开始启动实例：{}，实例id：{}", config.getStrategyName(), config.getInstanceId());
-
         logger.info("注册job开始");
         // percent10
         jobManageService.addHuobiSpotDepthJob(getSymbol(config.getSpotBaseCoin(), config.getSpotQuotCoin()), "step0", "0/1 * * * * ?", true);
@@ -69,9 +70,22 @@ public class StrategyBootstrap {
     }
 
     public void stopInstance() {
+        logger.info("开始停止实例：{}，实例id：{}", config.getStrategyName(), config.getInstanceId());
         orderCopier.stop();
         hedger.stop();
         riskMonitor.stop();
+        logger.info("反注册job开始");
+        // percent10
+        jobManageService.addHuobiSpotDepthJob(getSymbol(config.getSpotBaseCoin(), config.getSpotQuotCoin()), "step0", "0/1 * * * * ?", false);
+        jobManageService.addHuobiSpotCurrentPriceJob(getSymbol(config.getSpotBaseCoin(), config.getSpotQuotCoin()), "0/1 * * * * ?", false);
+        jobManageService.addHuobiSpotAccountJob(config.getSpotAccountId(), "0/1 * * * * ?", false);
+
+        jobManageService.addHuobiFuturePositionJob(config.getFutureAccountId(), "0/1 * * * * ?", false);
+        jobManageService.addHuobiFutureAccountJob(config.getFutureAccountId(), "0/1 * * * * ?", false);
+        jobManageService.addHuobiFutureDepthJob(getSymbol(config.getFutureBaseCoin(), config.getFutureQuotCoin()), "this_week", "step0", "0/1 * * * * ?", false);
+        jobManageService.addHuobiFutureDepthJob(getSymbol(config.getFutureBaseCoin(), config.getFutureQuotCoin()), "next_week", "step0", "0/1 * * * * ?", false);
+        jobManageService.addHuobiFutureDepthJob(getSymbol(config.getFutureBaseCoin(), config.getFutureQuotCoin()), "quarter", "step0", "0/1 * * * * ?", false);
+        logger.info("反注册job完成");
         logger.info("停止当前运行实例");
     }
 
