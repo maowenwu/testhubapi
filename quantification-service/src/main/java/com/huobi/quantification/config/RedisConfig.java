@@ -25,15 +25,32 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+    @Value("${spring.redis.useCluster}")
+    private Boolean useCluster;
+
+
     @Bean
     public RedissonClient redissonClient() {
+        logger.info("redis连接字符串：redis://{}:{}，是否启用集群：", host, port, useCluster);
         Config config = new Config();
-        logger.info("redis连接：" + "redis://" + host + ":" + port);
-        SingleServerConfig singleServerConfig = config.useSingleServer();
-        singleServerConfig.setAddress("redis://" + host + ":" + port);
-        if (StringUtils.isNotEmpty(password)) {
-            singleServerConfig.setPassword(password);
+        if (useCluster) {
+            config.useClusterServers()
+                    // 集群状态扫描间隔时间，单位是毫秒
+                    .setScanInterval(2000)
+                    //可以用"rediss://"来启用SSL连接
+                    .addNodeAddress(String.format("redis://%s:%s", host, port));
+        } else {
+            SingleServerConfig singleServerConfig = config.useSingleServer();
+            singleServerConfig.setAddress(String.format("redis://%s:%s", host, port));
+            if (StringUtils.isNotEmpty(password)) {
+                singleServerConfig.setPassword(password);
+            }
         }
-        return Redisson.create(config);
+        RedissonClient redissonClient = Redisson.create(config);
+        if (redissonClient == null) {
+            throw new RuntimeException("redisson 连接redis失败");
+        }
+        return redissonClient;
     }
+
 }

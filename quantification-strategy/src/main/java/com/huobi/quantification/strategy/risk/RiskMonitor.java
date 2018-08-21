@@ -1,8 +1,11 @@
 package com.huobi.quantification.strategy.risk;
 
 import com.google.common.base.Stopwatch;
+import com.huobi.quantification.api.email.EmailService;
+import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.common.util.BigDecimalUtils;
 import com.huobi.quantification.common.util.ThreadUtils;
+import com.huobi.quantification.dto.SimpleMailReqDto;
 import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.strategy.CommContext;
@@ -13,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -30,6 +35,8 @@ public class RiskMonitor {
     private RiskContext riskContext;
     @Autowired
     private CommContext commContext;
+    @Autowired
+    private EmailService emailService;
 
     private StrategyRiskConfig riskConfig;
 
@@ -114,11 +121,15 @@ public class RiskMonitor {
         if (BigDecimalUtils.lessThanOrEquals(riskRate, level3)) {
             // 停止摆盘，发出警报，撤销所有订单，强平，直至保证金率恢复正常
             riskContext.updateRiskCtrl(3);
-            warn();
+            String warnSubject = String.format("保证金率警报-严重-低于%s", level3);
+            String warnText = String.format("当前保证金为%s, 低于%s，系统将进行撤单与强平。警报时间%s", riskRate, level3, LocalDateTime.now());
+            warn(warnSubject, warnText);
         } else if (BigDecimalUtils.lessThanOrEquals(riskRate, level2)) {
             // 撤销所有未成交订单，停止借深度策略，还会发出警报；
+            String warnSubject = String.format("保证金率警报-严重-低于%s", level2);
+            String warnText = String.format("当前保证金为%s, 低于%s，系统将进行撤单与停止借深度。警报时间%s", riskRate, level2, LocalDateTime.now());
             riskContext.updateRiskCtrl(2);
-            warn();
+            warn(warnSubject, warnText);
         } else if (BigDecimalUtils.lessThanOrEquals(riskRate, level1)) {
             // 借深度策略会停止下开仓单，只下平仓单，并撤销当前所有开仓订单；
             riskContext.updateRiskCtrl(1);
@@ -128,6 +139,7 @@ public class RiskMonitor {
         }
         return riskRate;
     }
+
 
     /**
      * 净头寸监控(合约+币币账户组)：
@@ -143,7 +155,9 @@ public class RiskMonitor {
         if (BigDecimalUtils.moreThanOrEquals(netPosition, level2)) {
             // 会停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateNetCtrl(2, 2);
-            warn();
+            String warnSubject = String.format("净头寸警报-严重-高于%s", level2);
+            String warnText = String.format("当前净头寸为%s，高于%s， 系统将停止摆盘对冲以及撤销未成交订单。警报时间%s", netPosition, level2, LocalDateTime.now());
+            warn(warnSubject, warnText);
         } else if (BigDecimalUtils.moreThanOrEquals(netPosition, level1)) {
             // 会停止合约摆盘，撤销合约账户所有未成交订单，对冲程序继续执行，直至低于阈值，重新恢复合约摆盘
             riskContext.updateNetCtrl(2, 0);
@@ -174,10 +188,14 @@ public class RiskMonitor {
         if (BigDecimalUtils.lessThanOrEquals(currProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateProfitCtrl(2, 2);
-            warn();
+            String warnSubject = String.format("本次盈亏警报-严重-高于%s", level2);
+            String warnText = String.format("本次盈亏为%s, 高于%s, 系统将停止摆盘对冲以及撤销未成交订单。警报时间%s", currProfit, level2, LocalDateTime.now());
+            warn(warnSubject, warnText);
         } else if (BigDecimalUtils.lessThanOrEquals(currProfit, level1)) {
             // 发出警报
-            warn();
+            String warnSubject = String.format("本次盈亏警报-中等-高于%s", level1);
+            String warnText = String.format("本次盈亏为%s, 高于%s。警报时间%s", currProfit, level1, LocalDateTime.now());
+            warn(warnSubject, warnText);
         } else {
             // 正常，忽略
             riskContext.updateProfitCtrl(0, 0);
@@ -195,10 +213,14 @@ public class RiskMonitor {
         if (BigDecimalUtils.lessThanOrEquals(totalProfit, level2)) {
             // 停止合约摆盘， 停止对冲程序，撤销两账户所有未成交订单，并发出警报
             riskContext.updateProfitCtrl(2, 2);
-            warn();
+            String warnSubject = String.format("总盈亏警报-严重-高于%s", level2);
+            String warnText = String.format("总盈亏为%s, 高于%s, 系统将停止摆盘对冲以及撤销未成交订单。警报时间%s", totalProfit, level2, LocalDateTime.now());
+            warn(warnSubject, warnText);
         } else if (BigDecimalUtils.lessThanOrEquals(totalProfit, level1)) {
             // 发出警报
-            warn();
+            String warnSubject = String.format("总盈亏警报-中等-高于%s", level1);
+            String warnText = String.format("总盈亏为%s, 高于%s。警报时间%s", totalProfit, level1, LocalDateTime.now());
+            warn(warnSubject, warnText);
         } else {
             // 正常，忽略
             riskContext.updateProfitCtrl(0, 0);
@@ -207,8 +229,14 @@ public class RiskMonitor {
     }
 
 
-    private void warn() {
-
+    private void warn(String subject, String text) {
+        SimpleMailReqDto reqDto = new SimpleMailReqDto();
+        reqDto.setSubject(subject);
+        reqDto.setText(text);
+        ServiceResult result = emailService.sendSimpleMail(reqDto);
+        if (!result.isSuccess()) {
+            logger.error("发送告警邮件失败");
+        }
     }
 
     static class RiskProfit {
