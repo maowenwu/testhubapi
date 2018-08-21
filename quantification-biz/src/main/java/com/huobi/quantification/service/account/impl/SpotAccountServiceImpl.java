@@ -50,7 +50,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
 
     @Override
     public void updateAccount(Long accountSourceId) {
-        logger.info("[HuobiUserInfo]任务开始");
+        logger.info("[HuobiSpotAccount]任务开始");
         Stopwatch started = Stopwatch.createStarted();
         Long accountId = quanAccountMapper.selectAccountId(ExchangeEnum.HUOBI.getExId(), accountSourceId);
         if (accountId == null) {
@@ -59,7 +59,7 @@ public class SpotAccountServiceImpl implements SpotAccountService {
         }
         HuobiSpotAccountResponse response = queryAccountByAPI(accountSourceId);
         saveSpotAccount(response, accountId, accountSourceId);
-        logger.info("[HuobiUserInfo]任务结束，耗时：" + started);
+        logger.info("[HuobiSpotAccount]任务结束，耗时：" + started);
     }
 
     private void saveSpotAccount(HuobiSpotAccountResponse response, Long accountId, Long accountSourceId) {

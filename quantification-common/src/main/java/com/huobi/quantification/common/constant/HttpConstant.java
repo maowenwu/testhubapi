@@ -28,13 +28,13 @@ public class HttpConstant {
     public static final String HUOBI_FUTURE_TRADE = "http://172.18.6.16:8882/market/history/trade";
 
     // account相关
-    public static final String HUOBI_FUTURE_ACCOUNT_INFO = "http://www.huobiapps.com/contract-query/v1/contract_account_info";
-    public static final String HUOBI_FUTURE_POSITION_INFO = "http://www.huobiapps.com/contract-query/v1/contract_position_info";
-    public static final String HUOBI_FUTURE_ORDER = "http://www.huobiapps.com/contract-order/v1/contract_order";
-    public static final String HUOBI_FUTURE_ORDER_CANCEL = "http://www.huobiapps.com/contract-order/v1/contract_cancel";
-    public static final String HUOBI_FUTURE_ORDER_INFO = "http://www.huobiapps.com/contract-query/v1/contract_order_info";
-    public static final String HUOBI_FUTURE_ORDER_CANCEL_ALL = "http://www.huobiapps.com/contract-order/v1/contract_cancelall";
-    public static final String HUOBI_CONTRACE_CODE = "http://www.huobiapps.com/contract-query/v1/contract_open_interest";
-    public static final String HUOBI_CONTRACE_OPENORDERS="http://www.huobiapps.com/contract-query/v1/contract_openorders";
+    public static final String HUOBI_FUTURE_ACCOUNT_INFO = "http://www.huobiapps.com/api/v1/contract_account_info";
+    public static final String HUOBI_FUTURE_POSITION_INFO = "http://www.huobiapps.com/api/v1/contract_position_info";
+    public static final String HUOBI_FUTURE_ORDER = "http://www.huobiapps.com/api/v1/contract_order";
+    public static final String HUOBI_FUTURE_ORDER_CANCEL = "http://www.huobiapps.com/api/v1/contract_cancel";
+    public static final String HUOBI_FUTURE_ORDER_INFO = "http://www.huobiapps.com/api/v1/contract_order_info";
+    public static final String HUOBI_FUTURE_ORDER_CANCEL_ALL = "http://www.huobiapps.com/api/v1/contract_cancelall";
+    public static final String HUOBI_CONTRACE_CODE = "http://www.huobiapps.com/api/v1/contract_open_interest";
+    public static final String HUOBI_CONTRACE_OPENORDERS="http://www.huobiapps.com/api/v1/contract_openorders";
 
 }

@@ -265,7 +265,7 @@ public class CommContext {
                 return depthBook;
             }
         } else {
-            throw new RuntimeException(String.format("获取火币现货深度失败，失败原因：%s", result.getMessage()));
+            throw new RuntimeException(String.format("获取火币期货深度失败，失败原因：%s", result.getMessage()));
         }
     }
 
