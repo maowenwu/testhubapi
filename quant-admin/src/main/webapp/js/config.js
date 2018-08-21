@@ -651,7 +651,7 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
 
 
         .state('strategy.queryDetail', {
-            url: "/strategy/queryDetail/",
+            url: "/strategy/queryDetail/:param",
             templateUrl: "views/strategy/queryDetail.html",
             data: {pageTitle: '详情'},
             controller: "queryDetailCtrl",

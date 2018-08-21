@@ -2,8 +2,8 @@
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-md-12">
         <ol class="breadcrumb">
-            <li><a>主页</a></li>
-            <li><a>用户中心</a></li>
+            <li><a>合约币币借深度策略</a></li>
+            <li><a>参数设置</a></li>
             <li class="active"><strong>合约币币借深度详情</strong></li>
         </ol>
     </div>
@@ -66,43 +66,45 @@
                                         <strong class="font-bold">策略</strong>
                                      </span>
                                 </uib-tab-heading>
-                                <ul>
-                                    <li>
-                                        <button ng-click="profitCount() ">收益统计</button>
-                                    </li>
-                                    <li>
-                                        <button ng-click="riskCount()">风控统计</button>
-                                    </li>
-                                </ul>
 
 
-                                <div class="panel-body" ng-show="profitCountShow">
+                                <div>
+                                    <ul>
+                                        <li>
+                                            <button ng-click="strategyProfitCount() ">收益统计</button>
+                                        </li>
+                                        <li>
+                                            <button ng-click="strategyRiskCount()">风控统计</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="panel-body" ng-show="strategyProfitCountShow">
                                     <h1>收益数据</h1>
-                                    <table>
+                                    <table class="table">
                                         <tr>
                                             <th>总盈亏（USDT）</th>
                                             <th>收益率</th>
                                             <th>年化收益率</th>
                                         </tr>
                                         <tr>
-                                            <td>{{profitCountData.xxx}}</td>
-                                            <td>{{profitCountData.yyy}}</td>
-                                            <td>{{profitCountData.zzz}}</td>
+                                            <td>{{strategyProfitCountData.totalProfit}}</td>
+                                            <td>{{strategyProfitCountData.yieldRate}}  %</td>
+                                            <td>{{strategyProfitCountData.annualizedReturn}}  %</td>
                                         </tr>
                                     </table>
                                 </div>
 
 
-                                <div class="panel-body" ng-show="riskCountShow">
+                                <div class="panel-body" ng-show="strategyRiskCountShow">
                                     <h1>风控数据</h1>
-                                    <table>
+                                    <table class="table">
                                         <tr>
                                             <th>净头寸（USDT）</th>
                                             <th>保证金率</th>
                                         </tr>
                                         <tr>
-                                            <td>{{riskCountData.xxx}}</td>
-                                            <td>{{riskCountData.yyy}}</td>
+                                            <td>{{strategyRiskCountData.netPositionUSDT}} </td>
+                                            <td>{{strategyRiskCountData.riskRate}} %</td>
                                         </tr>
                                     </table>
 

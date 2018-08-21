@@ -2,6 +2,8 @@ package com.huobi.quantification.dao;
 
 import com.huobi.quantification.entity.StrategyInstanceConfig;
 
+import java.util.List;
+
 public interface StrategyInstanceConfigMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface StrategyInstanceConfigMapper {
     int updateByPrimaryKeySelective(StrategyInstanceConfig record);
 
     int updateByPrimaryKey(StrategyInstanceConfig record);
+
+    List<StrategyInstanceConfig> selectList(StrategyInstanceConfig record);
 }
