@@ -2,16 +2,12 @@ package cn.huobi.framework.service.impl;
 
 import cn.huobi.framework.dao.FeeDao;
 import cn.huobi.framework.db.pagination.Page;
+import cn.huobi.framework.dto.StrategyInstanceInfo;
 import cn.huobi.framework.model.TradeFee;
 import cn.huobi.framework.service.FeeService;
 import cn.huobi.framework.service.sysUser.CommonService;
-import com.huobi.quantification.dao.QuanAccountAssetMapper;
-import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
-import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
-import com.huobi.quantification.entity.QuanAccountAsset;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.entity.StrategyTradeFee;
+import com.huobi.quantification.dao.*;
+import com.huobi.quantification.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +31,36 @@ public class CommonServiceImpl implements CommonService {
     @Autowired
     QuanAccountFuturePositionMapper quanAccountFuturePositionMapper;
 
+    @Autowired
+    StrategyInstanceConfigMapper strategyInstanceConfigMapper;
+
+    @Autowired
+    StrategyRiskHistoryMapper strategyRiskHistoryMapper;
+
+
+    @Override
+    public List<StrategyInstanceInfo> findStrategyInstanceInfo(String futureBaseCoin) {
+        List<StrategyInstanceInfo> resultList=new ArrayList<>();
+        StrategyInstanceConfig strategyInstanceConfig=new StrategyInstanceConfig();
+        strategyInstanceConfig.setFutureBaseCoin(futureBaseCoin);
+        //获取到一组实例
+        List<StrategyInstanceConfig> list=strategyInstanceConfigMapper.selectList(strategyInstanceConfig);
+        //查询每一个实例总盈亏
+        for(StrategyInstanceConfig temp:list){
+            StrategyInstanceInfo strategyInstanceInfo=new StrategyInstanceInfo();
+            StrategyRiskHistory entity=strategyRiskHistoryMapper.selectLatestByInstanceIdCoin(temp.getInstanceId(),temp.getFutureBaseCoin());
+            //todo 运行状态要根据心跳判断
+            if(null==entity){
+                continue;
+            }
+            strategyInstanceInfo.setInstanceGroup(temp.getInstanceGroup());//账户组别
+            strategyInstanceInfo.setInstanceEnable(temp.getInstanceEnable());//运行状态
+            strategyInstanceInfo.setTotalProfit(entity.getTotalProfit());////总盈亏
+            strategyInstanceInfo.setFutureContractCode(temp.getFutureContractCode());//合约代码
+            resultList.add(strategyInstanceInfo);
+        }
+        return resultList;
+    }
 
     //todo
     @Override

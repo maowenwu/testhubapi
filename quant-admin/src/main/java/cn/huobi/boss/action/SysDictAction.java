@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -38,7 +39,7 @@ public class SysDictAction {
     public PageInfo<SysDict> selectDicByCondition(@RequestParam("baseInfo") String baseInfo,
                                                   @Param("page") PageInfo<SysDict> page) throws Exception {
         SysDict dict = JSONObject.parseObject(baseInfo, SysDict.class);
-        page=sysDictService.selectPage(dict, page);
+        page = sysDictService.selectPage(dict, page);
         return page;
     }
 
@@ -178,4 +179,15 @@ public class SysDictAction {
         }
         return msg;
     }
+
+    @RequestMapping(value = "selectListByType.do")
+    @ResponseBody
+    public List<SysDict> selectListByType(@Param("type") String type) {
+        SysDict entity = new SysDict();
+        entity.setSysKey(type);
+        List<SysDict> list = sysDictService.selectList(entity);
+        return list;
+
+    }
+
 }

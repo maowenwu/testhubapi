@@ -137,4 +137,10 @@ public class SysDictServiceImpl implements SysDictService {
         pageInfo = new PageInfo<>(list);
         return pageInfo;
     }
+
+    @Override
+    public List<SysDict> selectList(SysDict entity) {
+        List<SysDict> list = sysDictMapper.selectList(entity);
+        return list;
+    }
 }

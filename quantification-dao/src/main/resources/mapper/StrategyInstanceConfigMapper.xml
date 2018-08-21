@@ -342,4 +342,17 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+
+  <select id="selectList" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig"
+          resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from strategy_instance_config
+    <where>
+      <if test="futureBaseCoin != null">
+        and future_base_coin =#{futureBaseCoin,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
 </mapper>
