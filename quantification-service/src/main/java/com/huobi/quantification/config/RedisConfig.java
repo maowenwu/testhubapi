@@ -31,7 +31,7 @@ public class RedisConfig {
 
     @Bean
     public RedissonClient redissonClient() {
-        logger.info("redis连接字符串：redis://{}:{}，是否启用集群：", host, port, useCluster);
+        logger.info("redis连接字符串：redis://{}:{}，是否启用集群：{}", host, port, useCluster);
         Config config = new Config();
         if (useCluster) {
             config.useClusterServers()
@@ -46,11 +46,7 @@ public class RedisConfig {
                 singleServerConfig.setPassword(password);
             }
         }
-        RedissonClient redissonClient = Redisson.create(config);
-        if (redissonClient == null) {
-            throw new RuntimeException("redisson 连接redis失败");
-        }
-        return redissonClient;
+        return Redisson.create(config);
     }
 
 }
