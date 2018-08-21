@@ -14,6 +14,7 @@ import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import com.huobi.quantification.entity.QuanAccountFutureSecret;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
+import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
 import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
@@ -148,7 +149,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 futurePosition.setQuoteCoin("usdt");
                 futurePosition.setContractType(e.getContractType());
                 if ("buy".equalsIgnoreCase(e.getDirection())) {
-                    futurePosition.setOffset(OffsetEnum.OPEN.getOffset());
+                    futurePosition.setSide(SideEnum.BUY.getSideType());
                     futurePosition.setAmount(e.getVolume());
                     futurePosition.setAvailable(e.getAvailable());
                     // 多仓冻结张数
@@ -157,7 +158,7 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                     // 多仓持仓均价
                     futurePosition.setCostHold(e.getCostHold());
                 } else {
-                    futurePosition.setOffset(OffsetEnum.CLOSE.getOffset());
+                    futurePosition.setSide(SideEnum.SELL.getSideType());
                     futurePosition.setAmount(e.getVolume());
                     futurePosition.setAvailable(e.getAvailable());
                     // 多仓冻结张数

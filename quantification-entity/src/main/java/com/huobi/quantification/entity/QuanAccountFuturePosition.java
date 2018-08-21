@@ -5,93 +5,102 @@ import java.util.Date;
 
 public class QuanAccountFuturePosition {
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private Long id;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private Long accountFutureId;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private Long queryId;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private String baseCoin;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private String quoteCoin;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private String contractType;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private String contractCode;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 1 多仓，2 空仓
+     * @mbg.generated 2018-08-21 16:38:31
      */
-    private Integer offset;
+    private Integer side;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 张数
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal amount;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 可平张数
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal available;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 冻结张数
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal frozen;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 开仓均价
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal costOpen;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 持仓均价
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal costHold;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 未实现盈亏
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal profitUnreal;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 收益率
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal profitRate;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * 杠杆倍数
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private BigDecimal leverRate;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-19 11:14:17
+     * @mbg.generated 2018-08-21 16:38:31
      */
     private Date updateTime;
 
@@ -151,12 +160,12 @@ public class QuanAccountFuturePosition {
         this.contractCode = contractCode;
     }
 
-    public Integer getOffset() {
-        return offset;
+    public Integer getSide() {
+        return side;
     }
 
-    public void setOffset(Integer offset) {
-        this.offset = offset;
+    public void setSide(Integer side) {
+        this.side = side;
     }
 
     public BigDecimal getAmount() {

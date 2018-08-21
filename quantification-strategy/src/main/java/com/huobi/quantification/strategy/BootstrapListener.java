@@ -1,9 +1,12 @@
 package com.huobi.quantification.strategy;
 
 
+import com.google.common.base.Throwables;
+import com.huobi.quantification.api.email.EmailService;
 import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.dao.StrategyInstanceConfigMapper;
 import com.huobi.quantification.dao.StrategyInstanceHistoryMapper;
+import com.huobi.quantification.dto.SimpleMailReqDto;
 import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyInstanceHistory;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +29,8 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
     private StrategyBootstrap bootstrap;
     @Autowired
     private InstanceConfiger instanceConfiger;
+    @Autowired
+    private EmailService emailService;
 
     private AtomicBoolean instanceEnable = new AtomicBoolean(false);
 
@@ -34,8 +39,9 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
         if (contextRefreshedEvent.getApplicationContext().getParent() == null) {
             Thread thread = new Thread(() -> {
                 while (true) {
+                    StrategyInstanceConfig config = null;
                     try {
-                        StrategyInstanceConfig config = instanceConfiger.getInstanceConfig();
+                        config = instanceConfiger.getInstanceConfig();
                         if (config.getInstanceEnable().equals(1) && !instanceEnable.get()) {
                             // 启动
                             instanceEnable.set(true);
@@ -51,6 +57,14 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
                         ThreadUtils.sleep(1000);
                     } catch (Throwable e) {
                         logger.error("实例控制线程异常，系统退出", e);
+                        String subject = "策略实例警报-严重-实例异常退出";
+                        String text;
+                        if (instanceEnable.get()) {
+                            text = String.format("策略实例启动异常，instanceConfigId：%s，contractCode：%s，异常原因：%s", config.getId(), config.getFutureContractCode(), Throwables.getStackTraceAsString(e));
+                        } else {
+                            text = String.format("策略实例停止异常，instanceConfigId：%s，contractCode：%s，异常原因：%s", config.getId(), config.getFutureContractCode(), Throwables.getStackTraceAsString(e));
+                        }
+                        errorMail(subject, text);
                         System.exit(1);
                     }
                 }
@@ -63,5 +77,11 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
     }
 
 
+    private void errorMail(String subject, String text) {
+        SimpleMailReqDto reqDto = new SimpleMailReqDto();
+        reqDto.setSubject(subject);
+        reqDto.setText(text);
+        emailService.sendSimpleMail(reqDto);
+    }
 
 }

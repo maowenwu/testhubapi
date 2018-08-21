@@ -28,7 +28,7 @@ public class FuturePositionRespDto implements Serializable {
         private String contractType;
         private String contractCode;
 
-        private int offset;
+        private int side;
         private BigDecimal amount;
         private BigDecimal available;
         private BigDecimal frozen;
@@ -68,12 +68,12 @@ public class FuturePositionRespDto implements Serializable {
             this.contractCode = contractCode;
         }
 
-        public int getOffset() {
-            return offset;
+        public int getSide() {
+            return side;
         }
 
-        public void setOffset(int offset) {
-            this.offset = offset;
+        public void setSide(int side) {
+            this.side = side;
         }
 
         public BigDecimal getAmount() {

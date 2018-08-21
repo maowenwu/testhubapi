@@ -9,7 +9,7 @@
         <result column="quote_coin" jdbcType="VARCHAR" property="quoteCoin"/>
         <result column="contract_type" jdbcType="VARCHAR" property="contractType"/>
         <result column="contract_code" jdbcType="VARCHAR" property="contractCode"/>
-        <result column="offset" jdbcType="INTEGER" property="offset"/>
+        <result column="side" jdbcType="INTEGER" property="side"/>
         <result column="amount" jdbcType="DECIMAL" property="amount"/>
         <result column="available" jdbcType="DECIMAL" property="available"/>
         <result column="frozen" jdbcType="DECIMAL" property="frozen"/>
@@ -23,7 +23,7 @@
     </resultMap>
     <sql id="Base_Column_List">
     id, account_future_id, query_id, base_coin, quote_coin, contract_type, contract_code,
-    offset, amount, available, frozen, cost_open, cost_hold, profit_unreal, profit_rate,
+    side, amount, available, frozen, cost_open, cost_hold, profit_unreal, profit_rate,
     lever_rate, create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -39,14 +39,14 @@
     <insert id="insert" parameterType="com.huobi.quantification.entity.QuanAccountFuturePosition">
     insert into quan_account_future_position (id, account_future_id, query_id,
       base_coin, quote_coin, contract_type,
-      contract_code, offset, amount,
+      contract_code, side, amount,
       available, frozen, cost_open,
       cost_hold, profit_unreal, profit_rate,
       lever_rate, create_time, update_time
       )
     values (#{id,jdbcType=BIGINT}, #{accountFutureId,jdbcType=BIGINT}, #{queryId,jdbcType=BIGINT},
       #{baseCoin,jdbcType=VARCHAR}, #{quoteCoin,jdbcType=VARCHAR}, #{contractType,jdbcType=VARCHAR},
-      #{contractCode,jdbcType=VARCHAR}, #{offset,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL},
+      #{contractCode,jdbcType=VARCHAR}, #{side,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL},
       #{available,jdbcType=DECIMAL}, #{frozen,jdbcType=DECIMAL}, #{costOpen,jdbcType=DECIMAL},
       #{costHold,jdbcType=DECIMAL}, #{profitUnreal,jdbcType=DECIMAL}, #{profitRate,jdbcType=DECIMAL},
       #{leverRate,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
@@ -76,8 +76,8 @@
             <if test="contractCode != null">
                 contract_code,
             </if>
-            <if test="offset != null">
-                offset,
+            <if test="side != null">
+                side,
             </if>
             <if test="amount != null">
                 amount,
@@ -132,8 +132,8 @@
             <if test="contractCode != null">
                 #{contractCode,jdbcType=VARCHAR},
             </if>
-            <if test="offset != null">
-                #{offset,jdbcType=INTEGER},
+            <if test="side != null">
+                #{side,jdbcType=INTEGER},
             </if>
             <if test="amount != null">
                 #{amount,jdbcType=DECIMAL},
@@ -188,8 +188,8 @@
             <if test="contractCode != null">
                 contract_code = #{contractCode,jdbcType=VARCHAR},
             </if>
-            <if test="offset != null">
-                offset = #{offset,jdbcType=INTEGER},
+            <if test="side != null">
+                side = #{side,jdbcType=INTEGER},
             </if>
             <if test="amount != null">
                 amount = #{amount,jdbcType=DECIMAL},
@@ -232,7 +232,7 @@
       quote_coin = #{quoteCoin,jdbcType=VARCHAR},
       contract_type = #{contractType,jdbcType=VARCHAR},
       contract_code = #{contractCode,jdbcType=VARCHAR},
-      offset = #{offset,jdbcType=INTEGER},
+      side = #{side,jdbcType=INTEGER},
       amount = #{amount,jdbcType=DECIMAL},
       available = #{available,jdbcType=DECIMAL},
       frozen = #{frozen,jdbcType=DECIMAL},
@@ -245,14 +245,15 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-    <select id="selectByBaseCoin" resultMap="BaseResultMap" parameterType="com.huobi.quantification.entity.QuanAccountFuturePosition">
+    <select id="selectByBaseCoin" resultMap="BaseResultMap"
+            parameterType="com.huobi.quantification.entity.QuanAccountFuturePosition">
         select
         <include refid="Base_Column_List"/>
         from quan_account_future_position
         where base_coin = #{baseCoin,jdbcType=VARCHAR}
     </select>
 
-    <select id="selectByAccountSourceIdCoinType" resultMap="BaseResultMap">
+    <select id="selectLatestByAccountSourceIdBaseCoin" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM quan_account_future_position where

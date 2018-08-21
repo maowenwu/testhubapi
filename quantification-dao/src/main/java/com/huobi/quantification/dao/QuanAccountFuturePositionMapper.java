@@ -1,6 +1,5 @@
 package com.huobi.quantification.dao;
 
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
 import com.huobi.quantification.entity.QuanAccountFuturePosition;
 import org.apache.ibatis.annotations.Param;
 

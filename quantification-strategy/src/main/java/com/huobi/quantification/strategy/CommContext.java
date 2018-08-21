@@ -16,6 +16,7 @@ import com.huobi.quantification.dto.*;
 import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.ExchangeEnum;
 import com.huobi.quantification.enums.OffsetEnum;
+import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.strategy.config.ExchangeConfig;
 import com.huobi.quantification.strategy.entity.DepthBook;
 import com.huobi.quantification.strategy.entity.FutureBalance;
@@ -110,7 +111,7 @@ public class CommContext {
 
         this.futureExchangeConfig = ExchangeConfig.getExchangeConfig(futureExchangeId, futureBaseCoin, futureQuoteCoin);
         if (futureExchangeConfig == null) {
-            throw new RuntimeException("获取交易所配置失败，futureExchangeId=" + futureExchangeId + "，futureBaseCoin=" + futureBaseCoin + "，futureQuoteCoin=" + futureQuoteCoin);
+            throw new RuntimeException(String.format("获取交易所配置失败，futureExchangeId：%s，futureBaseCoin：%s，futureQuoteCoin：%s", futureExchangeId, futureBaseCoin, futureQuoteCoin));
         }
         loadInitialUsdt();
     }
@@ -297,13 +298,13 @@ public class CommContext {
             if (dataMap != null && CollectionUtils.isNotEmpty(dataMap.get(this.futureBaseCoin))) {
                 List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureBaseCoin);
                 positionList.stream().forEach(e -> {
-                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.OPEN.getOffset()) {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getSide() == SideEnum.BUY.getSideType()) {
                         FuturePosition.Position longPosi = new FuturePosition.Position();
                         BeanUtils.copyProperties(e, longPosi);
                         futurePosition.setLongPosi(longPosi);
                     }
 
-                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getOffset() == OffsetEnum.CLOSE.getOffset()) {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getSide() == SideEnum.SELL.getSideType()) {
                         FuturePosition.Position shortPosi = new FuturePosition.Position();
                         BeanUtils.copyProperties(e, shortPosi);
                         futurePosition.setShortPosi(shortPosi);
