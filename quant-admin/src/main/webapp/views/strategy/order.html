@@ -33,14 +33,17 @@
                                         <div class="col-lg-12">
                                             <div class="panel-body ibox float-e-margins">
                                                 品种1：
-                                                <select ng-model="orderSymbol" ng-init="orderSymbol = orderSymbols[0].key"   ng-change="queryOrderConfig()">
-                                                    <option ng-repeat="x in orderSymbols">{{x.key}}</option>
+                                                <select ng-model="queryOrderConfig.symbol" ng-change="queryOrderConfig()">
+                                                    <option ng-selected="1" value="BTC">BTC
+                                                    <option value="ETH">ETH
+                                                    <option value="LTC">LTC
+                                                    <option value="test">test
                                                 </select>
 
 
 
                                                 合约类型：
-                                                <select ng-model="orderContractType" ng-change="queryOrderConfig()">
+                                                <select ng-model="queryOrderConfig.contractType" ng-change="queryOrderConfig(queryOrderConfig)">
                                                     <option ng-selected="1" value="this_week">当周
                                                     <option value="next_week">次周
                                                     <option value="quarter">季度

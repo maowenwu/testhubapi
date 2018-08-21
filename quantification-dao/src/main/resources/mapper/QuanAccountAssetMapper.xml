@@ -146,4 +146,14 @@
         b.account_source_id=#{accountSourceId} and
         a.coin_type=#{coinType} and init='1'
     </select>
+
+    <select id="selectLatestByAccountIdCoinType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM quan_account_asset where
+        account_id=#{accountId} and
+        coin_type=#{coinType}
+        order by id desc
+        limit 1
+    </select>
 </mapper>

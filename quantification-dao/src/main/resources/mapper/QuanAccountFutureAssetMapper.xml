@@ -229,4 +229,14 @@
         where a.account_source_id = #{accountSourceId,jdbcType=BIGINT}
         and a.exchange_id = #{exchangeId,jdbcType=INTEGER}
     </select>
+
+    <select id="selectLatestByAccountSourceIdCoinType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM quan_account_future_asset where
+        account_source_id=#{accountSourceId} and
+        coin_type=#{coinType}
+        order by id desc
+        limit 1
+    </select>
 </mapper>
