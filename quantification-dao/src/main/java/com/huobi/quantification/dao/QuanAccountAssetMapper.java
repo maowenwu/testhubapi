@@ -17,4 +17,7 @@ public interface QuanAccountAssetMapper {
     int updateByPrimaryKey(QuanAccountAsset record);
 
     QuanAccountAsset selectByAccountSourceIdCoinType(@Param("accountSourceId") Long accountSourceId, @Param("coinType") String coinType);
+
+    //通过accountId和coinType查询最新的资产信息
+    QuanAccountAsset selectLatestByAccountIdCoinType(@Param("accountId") Long accountId, @Param("coinType") String coinType);
 }

@@ -251,4 +251,14 @@
         from quan_account_future_position
         where base_coin = #{baseCoin,jdbcType=VARCHAR}
     </select>
+
+    <select id="selectByAccountSourceIdCoinType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM quan_account_future_position where
+        account_source_id=#{accountSourceId} and
+        base_coin=#{baseCoin}
+        order by id desc
+        limit 1
+    </select>
 </mapper>

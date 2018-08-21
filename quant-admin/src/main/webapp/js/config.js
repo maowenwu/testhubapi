@@ -628,6 +628,46 @@ function config($stateProvider, $urlRouterProvider, $ocLazyLoadProvider, IdlePro
                 }]
             }
         })
+
+        .state('strategy.query', {
+            url: "/strategy/query",
+            templateUrl: "views/strategy/query.html",
+            data: {pageTitle: '合约币币借深度策略'},
+            controller: "queryCtrl",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    $ocLazyLoad.load('ui-switch');
+                    $ocLazyLoad.load('oitozero.ngSweetAlert');
+                },
+                deps: ["$ocLazyLoad",function($ocLazyLoad){
+                    return $ocLazyLoad.load({
+                        name: "inspinia",
+                        files: ["js/controllers/strategy/queryCtrl.js?ver="+verNo]
+                    });
+                }]
+            }
+        })
+
+
+
+        .state('strategy.queryDetail', {
+            url: "/strategy/queryDetail/",
+            templateUrl: "views/strategy/queryDetail.html",
+            data: {pageTitle: '详情'},
+            controller: "queryDetailCtrl",
+            resolve: {
+                loadPlugin: function ($ocLazyLoad) {
+                    $ocLazyLoad.load('ui-switch');
+                    $ocLazyLoad.load('oitozero.ngSweetAlert');
+                },
+                deps: ["$ocLazyLoad",function($ocLazyLoad){
+                    return $ocLazyLoad.load({
+                        name: "inspinia",
+                        files: ["js/controllers/strategy/queryDetailCtrl.js?ver="+verNo]
+                    });
+                }]
+            }
+        })
 }
 
 

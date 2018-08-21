@@ -4,6 +4,7 @@
 angular.module('inspinia', ['uiSwitch']).controller('orderTestCtrl', function ($scope, $http, $state, $stateParams, i18nService, SweetAlert, $document) {
     i18nService.setCurrentLang('zh-cn');
     $scope.paginationOptions = angular.copy($scope.paginationOptions);
+    $scope.queryOrderConfig = "";
 
     $scope.orderSymbols = [
         {key : "BTC", value : "BTC"},
@@ -15,9 +16,8 @@ angular.module('inspinia', ['uiSwitch']).controller('orderTestCtrl', function ($
 
     //查询摆单配置      摆单开始===========================================
     $scope.queryOrderConfig = function () {
-        debugger;
-        var symbol = $scope.orderSymbol;
-        var contractType = $scope.orderContractType;
+        var symbol = $scope.queryOrderConfig.symbol;
+        var contractType = $scope.queryOrderConfig.contractType;
         if (symbol == null || "" == symbol) {
             symbol = "BTC";
         }

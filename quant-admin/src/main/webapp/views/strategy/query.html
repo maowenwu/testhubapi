@@ -1,0 +1,50 @@
+<!-- 导航URL -->
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-md-12">
+        <ol class="breadcrumb">
+            <li><a>主页</a></li>
+            <li><a>合约币币借深度策略</a></li>
+            <li class="active"><strong>策略查询</strong></li>
+        </ol>
+    </div>
+</div>
+<!-- 主要内容 -->
+<div class="wrapper wrapper-content animated fadeIn" ng-app
+     ng-controller="queryCtrl">
+    <form class="form-horizontal" id="form1">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">币种：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control"
+                                       ng-model='baseInfo.symbol'>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2"></label>
+                            <div class="col-sm-8">
+                                <button class="btn btn-primary6 btn-mr20" type="button" ng-click='query()'>查询</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>配置列表</h5>
+                        <!--<div ibox-tools="" class="ng-scope"></div>-->
+                    </div>
+                    <div class="gridStyle" ui-grid="hedgeGrid"></div>
+                </div>
+            </div>
+            <div style="height: 50px"></div>
+        </div>
+
+    </form>
+</div>
+
+
+</div>
