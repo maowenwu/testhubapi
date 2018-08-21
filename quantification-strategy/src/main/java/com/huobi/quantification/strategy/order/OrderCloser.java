@@ -56,7 +56,6 @@ public class OrderCloser {
     private void closeOrder() {
         OrderActionEnum orderAction = commContext.getOrderAction();
         if (orderAction == OrderActionEnum.STOP_FORCE_CLOSE_ORDER) {
-
             StrategyOrderConfig orderConfig = commContext.getStrategyOrderConfig();
             StrategyRiskConfig riskConfig = commContext.getStrategyRiskConfig();
 

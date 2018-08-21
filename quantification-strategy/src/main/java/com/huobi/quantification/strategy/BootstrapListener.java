@@ -25,9 +25,7 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
     @Autowired
     private StrategyBootstrap bootstrap;
     @Autowired
-    private StrategyInstanceConfigMapper instanceConfigMapper;
-    @Autowired
-    private StrategyInstanceHistoryMapper instanceHistoryMapper;
+    private InstanceConfiger instanceConfiger;
 
     private AtomicBoolean instanceEnable = new AtomicBoolean(false);
 
@@ -37,27 +35,19 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
             Thread thread = new Thread(() -> {
                 while (true) {
                     try {
-                        String id = System.getProperty("instanceConfigId");
-                        if (StringUtils.isEmpty(id)) {
-                            logger.error("未指定系统属性[instanceConfigId]，系统退出");
-                            System.exit(1);
-                        }
-                        StrategyInstanceConfig config = instanceConfigMapper.selectByPrimaryKey(Integer.valueOf(id));
-                        if (config == null) {
-                            logger.error("未找到指定配置instanceConfigId={}，系统退出", id);
-                            System.exit(1);
-                        }
+                        StrategyInstanceConfig config = instanceConfiger.getInstanceConfig();
                         if (config.getInstanceEnable().equals(1) && !instanceEnable.get()) {
                             // 启动
                             instanceEnable.set(true);
                             bootstrap.startInstance(config);
-                            saveInstanceStatus(config);
+                            instanceConfiger.saveInstanceStatus(config);
                         } else if (config.getInstanceEnable().equals(0) && instanceEnable.get()) {
                             // 停止
                             instanceEnable.set(false);
                             bootstrap.stopInstance();
-                            updateInstanceStatus(config);
+                            instanceConfiger.updateInstanceStatus(config);
                         }
+                        instanceConfiger.updateInstanceHeartbeat();
                         ThreadUtils.sleep(1000);
                     } catch (Throwable e) {
                         logger.error("实例控制线程异常，系统退出", e);
@@ -72,27 +62,6 @@ public class BootstrapListener implements ApplicationListener<ContextRefreshedEv
         }
     }
 
-    private void saveInstanceStatus(StrategyInstanceConfig config) {
-        StrategyInstanceHistory history = new StrategyInstanceHistory();
-        history.setStrategyName(config.getStrategyName());
-        history.setInstanceConfigId(config.getId());
-        history.setInstanceId(config.getInstanceId());
-        history.setBaseCoin(config.getFutureBaseCoin());
-        history.setContractCode(config.getFutureContractCode());
-        Date nowDate = new Date();
-        history.setInstanceStartupTime(nowDate);
-        history.setCreateTime(nowDate);
-        history.setUpdateTime(nowDate);
-        instanceHistoryMapper.insert(history);
-    }
 
-    private void updateInstanceStatus(StrategyInstanceConfig config) {
-        StrategyInstanceHistory history = new StrategyInstanceHistory();
-        history.setInstanceId(config.getInstanceId());
-        Date nowDate = new Date();
-        history.setInstanceStopTime(new Date());
-        history.setUpdateTime(nowDate);
-        instanceHistoryMapper.updateByInstanceId(history);
-    }
 
 }

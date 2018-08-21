@@ -3,9 +3,7 @@ package com.huobi.quantification.dto;
 import java.io.Serializable;
 
 public class SpotPlaceOrderRespDto implements Serializable {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -623021564258986102L;
 	private long innerOrderId;
 	private long exOrderId;

@@ -1,29 +1,21 @@
 package com.huobi.quantification.service.http.impl;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.PostConstruct;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.huobi.quantification.common.api.HuobiSignature;
-import com.huobi.quantification.common.api.OkSignature;
 import com.huobi.quantification.common.exception.HttpRequestException;
 import com.huobi.quantification.common.util.OkHttpClientUtils;
 import com.huobi.quantification.common.util.ProxyConfig;
 import com.huobi.quantification.dao.QuanProxyIpMapper;
 import com.huobi.quantification.entity.QuanProxyIp;
 import com.huobi.quantification.service.http.HttpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author zhangl
@@ -124,8 +116,6 @@ public class HttpServiceImpl implements HttpService {
 
     @Override
     public String doHuobiFuturePostJson(Long accountSourceId, String url, Map<String, String> params) throws HttpRequestException {
-       /* params.put("userId", "156233");
-        return doPostJson(url, params);*/
         HuobiSignature signature = huobiFutureSecretHolder.getHuobiFutureSignature(accountSourceId);
         return OkHttpClientUtils.getInstance(null).call(signature.getAccessKey(), signature.getSecretKey(),
                 "POST", url, params, new HashMap<>());

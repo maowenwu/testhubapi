@@ -7,6 +7,7 @@ import com.huobi.quantification.entity.StrategyHedgeConfig;
 import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
+import com.huobi.quantification.strategy.InstanceConfiger;
 import com.huobi.quantification.strategy.enums.HedgerActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,8 @@ public class Hedger {
     private CommContext commContext;
     @Autowired
     private HedgerContext hedgerContext;
+    @Autowired
+    private InstanceConfiger instanceConfiger;
 
     private AtomicBoolean hedgePhase1Enable;
     private AtomicBoolean hedgePhase2Enable;
@@ -96,6 +99,12 @@ public class Hedger {
     private void hedgePhase1() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
+        boolean b = instanceConfiger.getHedgeThreadEnable();
+        if (!b) {
+            logger.error("对冲1阶段线程暂停摆单");
+            ThreadUtils.sleep(1000);
+            return;
+        }
         HedgerActionEnum hedgeAction = commContext.getHedgeAction();
         switch (hedgeAction) {
             case STOP_HEDGER:
@@ -117,6 +126,7 @@ public class Hedger {
         // 3. 下单
         hedgerContext.placeHedgeOrder(netPosition, false);
         logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
+        instanceConfiger.updateHedgeThreadHeartbeat();
         ThreadUtils.sleep(hedgeConfig.getHedgeInterval() * 1000);
     }
 
@@ -152,6 +162,12 @@ public class Hedger {
     }
 
     private void hedgePhase2() {
+        boolean b = instanceConfiger.getHedgeThreadEnable();
+        if (!b) {
+            logger.error("对冲2阶段线程暂停摆单");
+            ThreadUtils.sleep(1000);
+            return;
+        }
         StrategyHedgeConfig hedgeConfig = commContext.getStrategyHedgeConfig();
         String stopTime2 = hedgeConfig.getStopTime2();
         Integer deliveryInterval = hedgeConfig.getDeliveryInterval();
@@ -167,6 +183,7 @@ public class Hedger {
 
         BigDecimal netPosition = m.divide(BigDecimal.valueOf(count), 18, BigDecimal.ROUND_DOWN);
         hedgerContext.placeHedgeOrder(netPosition, true);
+        instanceConfiger.updateHedgeThreadHeartbeat();
         ThreadUtils.sleep(deliveryInterval * 1000);
     }
 
@@ -203,6 +220,12 @@ public class Hedger {
     private void hedgePhase3() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约对冲第{}轮 开始", counter.incrementAndGet());
+        boolean b = instanceConfiger.getHedgeThreadEnable();
+        if (!b) {
+            logger.error("对冲3阶段线程暂停摆单");
+            ThreadUtils.sleep(1000);
+            return;
+        }
         HedgerActionEnum hedgeAction = commContext.getHedgeAction();
         switch (hedgeAction) {
             case STOP_HEDGER:
@@ -224,6 +247,7 @@ public class Hedger {
         // 3. 下单
         hedgerContext.placeHedgeOrder(netPosition, false);
         logger.info("========>合约对冲第{}轮 结束，耗时：{}", counter.get(), started);
+        instanceConfiger.updateHedgeThreadHeartbeat();
         ThreadUtils.sleep(hedgeConfig.getHedgeInterval() * 1000);
     }
 

@@ -11,20 +11,13 @@ public interface FutureAccountService {
 
     /**
      * 获取账户余额(权益)
-     *
-     * @param balanceReqDto
-     * @return
      */
     ServiceResult<FutureBalanceRespDto> getBalance(FutureBalanceReqDto balanceReqDto);
 
     /**
      * 获取账户持仓
-     *
-     * @param positionReqDto
-     * @return
      */
     ServiceResult<FuturePositionRespDto> getPosition(FuturePositionReqDto positionReqDto);
-    
 
 
 }

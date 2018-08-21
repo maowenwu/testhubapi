@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class SpotPlaceOrderReqDto implements Serializable{
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -1123551434598744637L;
 	private int exchangeId;//交易所id
 	private long accountId;//用户id

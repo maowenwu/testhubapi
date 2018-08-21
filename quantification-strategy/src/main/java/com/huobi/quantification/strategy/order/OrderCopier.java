@@ -9,6 +9,7 @@ import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyOrderConfig;
 import com.huobi.quantification.entity.StrategyTradeFee;
 import com.huobi.quantification.strategy.CommContext;
+import com.huobi.quantification.strategy.InstanceConfiger;
 import com.huobi.quantification.strategy.entity.*;
 import com.huobi.quantification.strategy.enums.OrderActionEnum;
 import org.slf4j.Logger;
@@ -37,6 +38,8 @@ public class OrderCopier {
     private DepthBookAdjuster depthBookAdjuster;
     @Autowired
     private OrderCloser orderCloser;
+    @Autowired
+    private InstanceConfiger instanceConfiger;
 
     private Thread copyOrderThread;
 
@@ -140,6 +143,12 @@ public class OrderCopier {
     public void copyOrder() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约借深度第{}轮 开始", counter.incrementAndGet());
+        boolean b = instanceConfiger.getOrderThreadEnable();
+        if (!b) {
+            logger.error("摆单线程暂停摆单");
+            ThreadUtils.sleep(1000);
+            return;
+        }
         // 更新订单信息
         orderContext.replenishOrder();
         orderContext.updateOrderInfo();
@@ -238,6 +247,7 @@ public class OrderCopier {
             }
         }
         orderContext.metricSellOrder();
+        instanceConfiger.updateOrderThreadHeartbeat();
         logger.info("========>合约借深度第{}轮 结束，耗时：{}", counter.get(), started);
         ThreadUtils.sleep(orderConfig.getPlaceOrderInterval() * 1000);
     }

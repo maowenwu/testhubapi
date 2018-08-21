@@ -6,6 +6,7 @@ import com.huobi.quantification.common.util.ThreadUtils;
 import com.huobi.quantification.entity.StrategyInstanceConfig;
 import com.huobi.quantification.entity.StrategyRiskConfig;
 import com.huobi.quantification.strategy.CommContext;
+import com.huobi.quantification.strategy.InstanceConfiger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +66,18 @@ public class RiskMonitor {
         }
     }
 
+    @Autowired
+    private InstanceConfiger instanceConfiger;
+
     public void check() {
         Stopwatch started = Stopwatch.createStarted();
         logger.info("========>合约监控第{}轮 开始", counter.incrementAndGet());
+        boolean b = instanceConfiger.getRiskThreadEnable();
+        if (!b) {
+            logger.error("风控线程暂停");
+            ThreadUtils.sleep(1000);
+            return;
+        }
         this.riskConfig = commContext.getStrategyRiskConfig();
 
         BigDecimal currentPrice = commContext.getSpotCurrentPrice();
@@ -79,6 +89,7 @@ public class RiskMonitor {
         RiskProfit riskProfit = checkProfit();
         riskContext.saveRiskResult(riskRate, netPosition, riskProfit);
         logger.info("========>合约监控第{}轮 结束，耗时：{}", counter.get(), started);
+        instanceConfiger.updateRiskThreadHeartbeat();
         ThreadUtils.sleep(riskConfig.getRiskInterval() * 1000);
     }
 

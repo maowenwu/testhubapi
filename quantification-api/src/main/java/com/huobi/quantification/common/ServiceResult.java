@@ -13,9 +13,7 @@ public class ServiceResult<T> implements Serializable {
     private T data;
 
     public ServiceResult() {
-        this.code = code;
-        this.message = message;
-        this.data = data;
+
     }
 
     public int getCode() {
