@@ -25,5 +25,7 @@
     <dubbo:service interface="com.huobi.quantification.api.spot.SpotMarketService" ref="spotMarketServiceImpl"/>
     <dubbo:service interface="com.huobi.quantification.api.spot.SpotOrderService" ref="spotOrderServiceImpl"/>
 
+    <dubbo:service interface="com.huobi.quantification.api.email.EmailService" ref="emailServiceImpl"/>
+
     
 </beans>

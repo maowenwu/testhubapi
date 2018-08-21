@@ -5,7 +5,7 @@
 
     <dubbo:application name="strategy-consumer"/>
 
-    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}" />
+    <dubbo:registry protocol="zookeeper" address="${zookeeper.address}"/>
 
     <dubbo:reference id="contractService" interface="com.huobi.quantification.api.future.FutureContractService"/>
     <dubbo:reference id="accountService" interface="com.huobi.quantification.api.future.FutureAccountService"/>
@@ -17,5 +17,7 @@
     <dubbo:reference id="spotAccountService" interface="com.huobi.quantification.api.spot.SpotAccountService"/>
     <dubbo:reference id="spotMarketService" interface="com.huobi.quantification.api.spot.SpotMarketService"/>
     <dubbo:reference id="spotOrderService" interface="com.huobi.quantification.api.spot.SpotOrderService"/>
+
+    <dubbo:reference id="emailService" interface="com.huobi.quantification.api.email.EmailService"/>
 
 </beans>

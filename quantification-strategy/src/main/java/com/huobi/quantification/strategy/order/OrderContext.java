@@ -475,6 +475,9 @@ public class OrderContext {
         boolean b = StorageSupport.getInstance("replenishOrder", 120).checkSavepoint();
         if (b) {
             FutureReplenishOrderReqDto reqDto = new FutureReplenishOrderReqDto();
+            reqDto.setExchangeId(futureExchangeId);
+            reqDto.setAccountId(futureAccountId);
+            reqDto.setBaseCoin(futureBaseCoin);
             futureOrderService.replenishOrder(reqDto);
         }
     }

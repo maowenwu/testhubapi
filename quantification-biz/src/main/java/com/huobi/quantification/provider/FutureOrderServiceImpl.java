@@ -221,10 +221,13 @@ public class FutureOrderServiceImpl implements FutureOrderService {
     @Override
     public ServiceResult replenishOrder(FutureReplenishOrderReqDto reqDto) {
         try {
-            if (ExchangeEnum.HUOBI_FUTURE.getExId() == reqDto.getExchangeId()) {
-                huobiFutureOrderService.replenishOrder(reqDto.getAccountId(), reqDto.getBaseCoin());
+            switch (ExchangeEnum.valueOf(reqDto.getExchangeId())) {
+                case HUOBI_FUTURE:
+                    huobiFutureOrderService.replenishOrder(reqDto.getAccountId(), reqDto.getBaseCoin());
+                    return ServiceResult.buildSuccessResult(null);
+                default:
+                    throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
             }
-            throw new RuntimeException(String.format("交易所id：%s不支持", reqDto.getExchangeId()));
         } catch (Exception e) {
             if (e instanceof ApiException) {
                 return ServiceResult.buildAPIErrorResult(e.getMessage());

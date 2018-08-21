@@ -6,6 +6,9 @@
     <result column="strategy_name" jdbcType="VARCHAR" property="strategyName" />
     <result column="instance_id" jdbcType="BIGINT" property="instanceId" />
     <result column="instance_enable" jdbcType="INTEGER" property="instanceEnable" />
+    <result column="order_thread_enable" jdbcType="INTEGER" property="orderThreadEnable" />
+    <result column="hedge_thread_enable" jdbcType="INTEGER" property="hedgeThreadEnable" />
+    <result column="risk_thread_enable" jdbcType="INTEGER" property="riskThreadEnable" />
     <result column="instance_group" jdbcType="VARCHAR" property="instanceGroup" />
     <result column="future_exchange_id" jdbcType="INTEGER" property="futureExchangeId" />
     <result column="future_account_id" jdbcType="BIGINT" property="futureAccountId" />
@@ -19,14 +22,20 @@
     <result column="spot_quot_coin" jdbcType="VARCHAR" property="spotQuotCoin" />
     <result column="spot_depth_type" jdbcType="VARCHAR" property="spotDepthType" />
     <result column="future_depth_type" jdbcType="VARCHAR" property="futureDepthType" />
+    <result column="instance_heartbeat" jdbcType="TIMESTAMP" property="instanceHeartbeat" />
+    <result column="order_thread_heartbeat" jdbcType="TIMESTAMP" property="orderThreadHeartbeat" />
+    <result column="hedge_thread_heartbeat" jdbcType="TIMESTAMP" property="hedgeThreadHeartbeat" />
+    <result column="risk_thread_heartbeat" jdbcType="TIMESTAMP" property="riskThreadHeartbeat" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, strategy_name, instance_id, instance_enable, instance_group, future_exchange_id, 
-    future_account_id, future_base_coin, future_quot_coin, future_contract_code, future_lever, 
-    spot_exchange_id, spot_account_id, spot_base_coin, spot_quot_coin, spot_depth_type, 
-    future_depth_type, create_time, update_time
+    id, strategy_name, instance_id, instance_enable, order_thread_enable, hedge_thread_enable, 
+    risk_thread_enable, instance_group, future_exchange_id, future_account_id, future_base_coin, 
+    future_quot_coin, future_contract_code, future_lever, spot_exchange_id, spot_account_id, 
+    spot_base_coin, spot_quot_coin, spot_depth_type, future_depth_type, instance_heartbeat, 
+    order_thread_heartbeat, hedge_thread_heartbeat, risk_thread_heartbeat, create_time, 
+    update_time
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -40,19 +49,25 @@
   </delete>
   <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
     insert into strategy_instance_config (id, strategy_name, instance_id, 
-      instance_enable, instance_group, future_exchange_id, 
+      instance_enable, order_thread_enable, hedge_thread_enable, 
+      risk_thread_enable, instance_group, future_exchange_id, 
       future_account_id, future_base_coin, future_quot_coin, 
       future_contract_code, future_lever, spot_exchange_id, 
       spot_account_id, spot_base_coin, spot_quot_coin, 
-      spot_depth_type, future_depth_type, create_time, 
-      update_time)
+      spot_depth_type, future_depth_type, instance_heartbeat, 
+      order_thread_heartbeat, hedge_thread_heartbeat, 
+      risk_thread_heartbeat, create_time, update_time
+      )
     values (#{id,jdbcType=INTEGER}, #{strategyName,jdbcType=VARCHAR}, #{instanceId,jdbcType=BIGINT}, 
-      #{instanceEnable,jdbcType=INTEGER}, #{instanceGroup,jdbcType=VARCHAR}, #{futureExchangeId,jdbcType=INTEGER}, 
+      #{instanceEnable,jdbcType=INTEGER}, #{orderThreadEnable,jdbcType=INTEGER}, #{hedgeThreadEnable,jdbcType=INTEGER}, 
+      #{riskThreadEnable,jdbcType=INTEGER}, #{instanceGroup,jdbcType=VARCHAR}, #{futureExchangeId,jdbcType=INTEGER}, 
       #{futureAccountId,jdbcType=BIGINT}, #{futureBaseCoin,jdbcType=VARCHAR}, #{futureQuotCoin,jdbcType=VARCHAR}, 
       #{futureContractCode,jdbcType=VARCHAR}, #{futureLever,jdbcType=INTEGER}, #{spotExchangeId,jdbcType=INTEGER}, 
       #{spotAccountId,jdbcType=BIGINT}, #{spotBaseCoin,jdbcType=VARCHAR}, #{spotQuotCoin,jdbcType=VARCHAR}, 
-      #{spotDepthType,jdbcType=VARCHAR}, #{futureDepthType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{spotDepthType,jdbcType=VARCHAR}, #{futureDepthType,jdbcType=VARCHAR}, #{instanceHeartbeat,jdbcType=TIMESTAMP}, 
+      #{orderThreadHeartbeat,jdbcType=TIMESTAMP}, #{hedgeThreadHeartbeat,jdbcType=TIMESTAMP}, 
+      #{riskThreadHeartbeat,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.huobi.quantification.entity.StrategyInstanceConfig">
     insert into strategy_instance_config
@@ -68,6 +83,15 @@
       </if>
       <if test="instanceEnable != null">
         instance_enable,
+      </if>
+      <if test="orderThreadEnable != null">
+        order_thread_enable,
+      </if>
+      <if test="hedgeThreadEnable != null">
+        hedge_thread_enable,
+      </if>
+      <if test="riskThreadEnable != null">
+        risk_thread_enable,
       </if>
       <if test="instanceGroup != null">
         instance_group,
@@ -108,6 +132,18 @@
       <if test="futureDepthType != null">
         future_depth_type,
       </if>
+      <if test="instanceHeartbeat != null">
+        instance_heartbeat,
+      </if>
+      <if test="orderThreadHeartbeat != null">
+        order_thread_heartbeat,
+      </if>
+      <if test="hedgeThreadHeartbeat != null">
+        hedge_thread_heartbeat,
+      </if>
+      <if test="riskThreadHeartbeat != null">
+        risk_thread_heartbeat,
+      </if>
       <if test="createTime != null">
         create_time,
       </if>
@@ -127,6 +163,15 @@
       </if>
       <if test="instanceEnable != null">
         #{instanceEnable,jdbcType=INTEGER},
+      </if>
+      <if test="orderThreadEnable != null">
+        #{orderThreadEnable,jdbcType=INTEGER},
+      </if>
+      <if test="hedgeThreadEnable != null">
+        #{hedgeThreadEnable,jdbcType=INTEGER},
+      </if>
+      <if test="riskThreadEnable != null">
+        #{riskThreadEnable,jdbcType=INTEGER},
       </if>
       <if test="instanceGroup != null">
         #{instanceGroup,jdbcType=VARCHAR},
@@ -167,6 +212,18 @@
       <if test="futureDepthType != null">
         #{futureDepthType,jdbcType=VARCHAR},
       </if>
+      <if test="instanceHeartbeat != null">
+        #{instanceHeartbeat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderThreadHeartbeat != null">
+        #{orderThreadHeartbeat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hedgeThreadHeartbeat != null">
+        #{hedgeThreadHeartbeat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="riskThreadHeartbeat != null">
+        #{riskThreadHeartbeat,jdbcType=TIMESTAMP},
+      </if>
       <if test="createTime != null">
         #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -186,6 +243,15 @@
       </if>
       <if test="instanceEnable != null">
         instance_enable = #{instanceEnable,jdbcType=INTEGER},
+      </if>
+      <if test="orderThreadEnable != null">
+        order_thread_enable = #{orderThreadEnable,jdbcType=INTEGER},
+      </if>
+      <if test="hedgeThreadEnable != null">
+        hedge_thread_enable = #{hedgeThreadEnable,jdbcType=INTEGER},
+      </if>
+      <if test="riskThreadEnable != null">
+        risk_thread_enable = #{riskThreadEnable,jdbcType=INTEGER},
       </if>
       <if test="instanceGroup != null">
         instance_group = #{instanceGroup,jdbcType=VARCHAR},
@@ -226,6 +292,18 @@
       <if test="futureDepthType != null">
         future_depth_type = #{futureDepthType,jdbcType=VARCHAR},
       </if>
+      <if test="instanceHeartbeat != null">
+        instance_heartbeat = #{instanceHeartbeat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderThreadHeartbeat != null">
+        order_thread_heartbeat = #{orderThreadHeartbeat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="hedgeThreadHeartbeat != null">
+        hedge_thread_heartbeat = #{hedgeThreadHeartbeat,jdbcType=TIMESTAMP},
+      </if>
+      <if test="riskThreadHeartbeat != null">
+        risk_thread_heartbeat = #{riskThreadHeartbeat,jdbcType=TIMESTAMP},
+      </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -240,6 +318,9 @@
     set strategy_name = #{strategyName,jdbcType=VARCHAR},
       instance_id = #{instanceId,jdbcType=BIGINT},
       instance_enable = #{instanceEnable,jdbcType=INTEGER},
+      order_thread_enable = #{orderThreadEnable,jdbcType=INTEGER},
+      hedge_thread_enable = #{hedgeThreadEnable,jdbcType=INTEGER},
+      risk_thread_enable = #{riskThreadEnable,jdbcType=INTEGER},
       instance_group = #{instanceGroup,jdbcType=VARCHAR},
       future_exchange_id = #{futureExchangeId,jdbcType=INTEGER},
       future_account_id = #{futureAccountId,jdbcType=BIGINT},
@@ -253,6 +334,10 @@
       spot_quot_coin = #{spotQuotCoin,jdbcType=VARCHAR},
       spot_depth_type = #{spotDepthType,jdbcType=VARCHAR},
       future_depth_type = #{futureDepthType,jdbcType=VARCHAR},
+      instance_heartbeat = #{instanceHeartbeat,jdbcType=TIMESTAMP},
+      order_thread_heartbeat = #{orderThreadHeartbeat,jdbcType=TIMESTAMP},
+      hedge_thread_heartbeat = #{hedgeThreadHeartbeat,jdbcType=TIMESTAMP},
+      risk_thread_heartbeat = #{riskThreadHeartbeat,jdbcType=TIMESTAMP},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}

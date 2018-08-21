@@ -2,6 +2,7 @@ package com.huobi.quantification.controller;
 
 
 import com.alibaba.fastjson.JSON;
+import com.huobi.quantification.api.email.EmailService;
 import com.huobi.quantification.api.future.FutureAccountService;
 import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.api.future.FutureOrderService;
@@ -33,6 +34,19 @@ public class TestController {
 
     @Autowired
     private SpotAccountService spotAccountService;
+
+    @Autowired
+    private EmailService emailService;
+
+
+    @RequestMapping("/sendMail")
+    public String sendMail() {
+        SimpleMailReqDto reqDto = new SimpleMailReqDto();
+        reqDto.setSubject("来一个主体");
+        reqDto.setText("来一段内容");
+        ServiceResult serviceResult = emailService.sendSimpleMail(reqDto);
+        return JSON.toJSONString(serviceResult);
+    }
 
     @RequestMapping("/getBalance")
     public String getBalance() {
