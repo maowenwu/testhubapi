@@ -68,7 +68,7 @@ public class CommonServiceImpl implements CommonService {
         //查询每一个实例总盈亏
         for (StrategyInstanceConfig temp : list) {
             StrategyInstanceInfo strategyInstanceInfo = new StrategyInstanceInfo();
-            StrategyRiskHistory entity = strategyRiskHistoryMapper.selectLatestByInstanceIdCoin(temp.getInstanceId(), temp.getFutureBaseCoin());
+            StrategyRiskHistory entity = strategyRiskHistoryMapper.selectLatestByInstanceIdCoin(temp.getInstanceId());
             //todo 运行状态要根据心跳判断
             if (null == entity) {
                 continue;
@@ -273,4 +273,36 @@ public class CommonServiceImpl implements CommonService {
         resultMap.put("bid1", 14);
         return resultMap;
     }
+
+
+    //根据策略主键id查询策略统计信息
+    @Override
+    public Map<String, Object> strategyRiskProfitCount(Integer id) {
+        Map<String, Object> map = new HashMap<>();
+        StrategyInstanceConfig strategyInstanceConfig = strategyInstanceConfigMapper.selectByPrimaryKey(id);
+        //根据实例id(InstanceId)查询最新的风控数据
+        StrategyRiskHistory strategyRiskHistory = strategyRiskHistoryMapper.selectLatestByInstanceIdCoin(strategyInstanceConfig.getInstanceId());
+        //todo
+        map.put("strategyTotalProfit", strategyRiskHistory.getTotalProfit());//总盈亏（USDT）
+        map.put("strategyYieldRate", "???1");//收益率
+        map.put("strategyAnnualizedReturn", "???2");//年化收益率
+        map.put("strategyNetPositionUSDT", strategyRiskHistory.getNetPosition());//净头寸（USDT）
+        map.put("strategyRiskRate", "???3");//保证金率
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> instanceRiskProfitCount(Long getInstanceId) {
+        //根据实例id(InstanceId)查询最新的风控数据
+        StrategyRiskHistory strategyRiskHistory = strategyRiskHistoryMapper.selectLatestByInstanceIdCoin(getInstanceId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("instanceTotalProfit", strategyRiskHistory.getTotalProfit());//总盈亏（USDT）
+        map.put("instanceYieldRate", "???4");//收益率
+        map.put("instanceAnnualizedReturn", "???5");//年化收益率
+        map.put("instanceNetPositionUSDT", strategyRiskHistory.getNetPosition());//净头寸（USDT）
+        map.put("instanceRiskRate", "???6");//保证金率
+        return map;
+    }
+
+
 }

@@ -17,6 +17,6 @@ public interface StrategyRiskHistoryMapper {
     int updateByPrimaryKey(StrategyRiskHistory record);
 
     //通过 instanceId  和 baseCoin  查询最新的一条数据
-    StrategyRiskHistory selectLatestByInstanceIdCoin(@Param("instanceId") Long instanceId, @Param("baseCoin") String baseCoin);
+    StrategyRiskHistory selectLatestByInstanceIdCoin(@Param("instanceId") Long instanceId);
 
 }

@@ -167,8 +167,7 @@
     SELECT
     <include refid="Base_Column_List"/>
     FROM strategy_risk_history where
-    instance_id=#{instanceId} and
-    base_coin=#{baseCoin}
+    instance_id=#{instanceId}
     order by id desc
     limit 1
   </select>
