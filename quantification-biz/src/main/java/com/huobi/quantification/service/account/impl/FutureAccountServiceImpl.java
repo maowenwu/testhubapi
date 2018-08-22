@@ -182,13 +182,13 @@ public class FutureAccountServiceImpl implements FutureAccountService {
                 beanList.add(futurePosition);
             });
             boolean isSave = StorageSupport.getInstance("saveFuturePosition").checkSavepoint();
-            beanList.forEach(e -> {
-                e.setAccountFutureId(accountFutureId);
-                e.setQueryId(queryId);
-                if (isSave) {
+            if (isSave) {
+                beanList.forEach(e -> {
+                    e.setAccountFutureId(accountFutureId);
+                    e.setQueryId(queryId);
                     quanAccountFuturePositionMapper.insert(e);
-                }
-            });
+                });
+            }
             redisService.savePositionFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, beanList);
         }
 

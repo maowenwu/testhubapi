@@ -29,7 +29,7 @@ public class OkHttpClientUtils {
     private OkHttpClientUtils(ProxyConfig proxyConfig) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .connectionPool(new ConnectionPool(200, 10, TimeUnit.SECONDS))
-                .connectTimeout(1, TimeUnit.SECONDS)
+                .connectTimeout(3, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS);
         if (proxyConfig == null) {
             httpClient = builder.build();

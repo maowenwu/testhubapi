@@ -44,14 +44,14 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public void saveDepthFuture(int exchangeId, String symbol, String contractType, String depthType, List<QuanDepthFutureDetail> list) {
         RMap<String, List<QuanDepthFutureDetail>> map = client
-                .getMap("quan:future:depth:" + exchangeId + ":" + symbol + ":" + depthType);
+                .getMap("quan:future:depth:" + exchangeId + ":" + depthType + ":" + symbol);
         map.put(contractType, list);
     }
 
     @Override
     public List<QuanDepthFutureDetail> getDepthFuture(int exchangeId, String symbol, String contractType, String depthType) {
         RMap<String, List<QuanDepthFutureDetail>> map = client
-                .getMap("quan:future:depth:" + exchangeId + ":" + symbol + ":" + depthType);
+                .getMap("quan:future:depth:" + exchangeId + ":" + depthType + ":" + symbol);
         return map.get(contractType);
     }
 
@@ -112,14 +112,14 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void saveDepthSpot(int exchangeId, String symbol,String depthType, List<QuanDepthDetail> list) {
-        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId+":"+depthType);
+    public void saveDepthSpot(int exchangeId, String symbol, String depthType, List<QuanDepthDetail> list) {
+        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId + ":" + depthType);
         map.put(symbol, list);
     }
 
     @Override
-    public List<QuanDepthDetail> getDepthSpot(int exchangeId,String depthType, String symbol) {
-        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId+":"+depthType);
+    public List<QuanDepthDetail> getDepthSpot(int exchangeId, String depthType, String symbol) {
+        RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId + ":" + depthType);
         return map.get(symbol);
     }
 
