@@ -20,6 +20,6 @@ public interface QuanAccountFuturePositionMapper {
 
     List<QuanAccountFuturePosition> selectByBaseCoin(QuanAccountFuturePosition quanAccountFuturePosition);
 
-    //通过accountSourceId 和 baseCoin 查询最新的资产信息
-    QuanAccountFuturePosition selectLatestByAccountSourceIdBaseCoin(@Param("accountSourceId") Long accountSourceId, @Param("baseCoin") String baseCoin);
+    //通过 accountFutureId 和 baseCoin 查询最新的资产信息
+    QuanAccountFuturePosition selectLatestByAccountFutureIdBaseCoin(@Param("accountFutureId") Long accountFutureId, @Param("baseCoin") String baseCoin);
 }

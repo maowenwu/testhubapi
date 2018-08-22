@@ -37,4 +37,7 @@ public interface QuanOrderFutureMapper {
     List<Long> selectExOrderIdByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
 
     List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
+
+
+    List<QuanOrderFuture> selectUnfinishList();
 }

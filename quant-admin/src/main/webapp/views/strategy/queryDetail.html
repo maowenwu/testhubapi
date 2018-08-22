@@ -24,15 +24,15 @@
                     <div class="ibox-content">
                         <table class="table center">
                             <tr>
-                                <th>品种?</th>
-                                <th>策略ID?</th>
-                                <th>账户组别?</th>
+                                <th>品种</th>
+                                <th>策略ID</th>
+                                <th>账户组别</th>
                                 <th>账户组别总盈亏?</th>
                             <tr>
+                                <td ng-bind="baseInfoData.futureBaseCoin"></td>
                                 <td ng-bind="baseInfoData.id"></td>
-                                <td ng-bind="baseInfoData.id"></td>
-                                <td ng-bind="baseInfoData.id"></td>
-                                <td ng-bind="baseInfoData.id"></td>
+                                <td ng-bind="baseInfoData.instanceGroup"></td>
+                                <td></td>
                             </tr>
                         </table>
                     </div>
@@ -43,8 +43,33 @@
                         <!--<div ibox-tools="" class="ng-scope"></div>-->
                     </div>
                     <div class="ibox-content">
-                        <div class="gridStyle" ui-grid="accountInfoGrid" ui-grid-selection
-                             ui-grid-resize-columns style="height: 400px"></div>
+                        <table class="table">
+                            <tr>
+                                <th>交易所</th>
+                                <th>账户ID</th>
+                                <th>持仓量（张）</th>
+                                <th>持币量 （BTC）</th>
+                                <th>资金量（USDT）</th>
+                                <th>操作</th>
+                            </tr>
+                            <tr>
+                                <td>火币-现货</td>
+                                <td ng-bind="baseInfoData.spotAccountId"></td>
+                                <td>-</td>
+                                <td ng-bind="accountInfoData.spotQuoteCoinAmount"></td>
+                                <td ng-bind="accountInfoData.spotBaseCoinAmount"></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>火币-期货</td>
+                                <td ng-bind="baseInfoData.futureAccountId"></td>
+                                <td ng-bind="accountInfoData.futurePositionAmount"></td>
+                                <td ng-bind="accountInfoData.futureAssetAmount"></td>
+                                <td>-</td>
+                                <td></td>
+                            </tr>
+                        </table>
+
                     </div>
                 </div>
             </div>
@@ -88,8 +113,8 @@
                                         </tr>
                                         <tr>
                                             <td>{{strategyProfitCountData.totalProfit}}</td>
-                                            <td>{{strategyProfitCountData.yieldRate}}  %</td>
-                                            <td>{{strategyProfitCountData.annualizedReturn}}  %</td>
+                                            <td>{{strategyProfitCountData.yieldRate}} %</td>
+                                            <td>{{strategyProfitCountData.annualizedReturn}} %</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -103,7 +128,7 @@
                                             <th>保证金率</th>
                                         </tr>
                                         <tr>
-                                            <td>{{strategyRiskCountData.netPositionUSDT}} </td>
+                                            <td>{{strategyRiskCountData.netPositionUSDT}}</td>
                                             <td>{{strategyRiskCountData.riskRate}} %</td>
                                         </tr>
                                     </table>
