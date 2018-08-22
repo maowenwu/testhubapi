@@ -82,8 +82,6 @@
                 <div class="col-lg-12">
                     <div class="tabs-container tab_other">
                         <uib-tabset>
-
-
                             <uib-tab>
                                 <uib-tab-heading>
                                      <span class="block m-t-xs">
@@ -93,16 +91,14 @@
                                 </uib-tab-heading>
 
 
-                                <div>
-                                    <ul>
-                                        <li>
-                                            <button ng-click="strategyProfitCount() ">收益统计</button>
-                                        </li>
-                                        <li>
-                                            <button ng-click="strategyRiskCount()">风控统计</button>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <ul>
+                                    <li>
+                                        <button ng-click="strategyProfitCount() ">收益统计</button>
+                                    </li>
+                                    <li>
+                                        <button ng-click="strategyRiskCount()">风控统计</button>
+                                    </li>
+                                </ul>
                                 <div class="panel-body" ng-show="strategyProfitCountShow">
                                     <h1>收益数据</h1>
                                     <table class="table">
@@ -150,6 +146,8 @@
                                         <button>启动新实例</button>
                                         <button>历史实例</button>
                                     </h1>
+
+
 
 
                                     <table class="table">

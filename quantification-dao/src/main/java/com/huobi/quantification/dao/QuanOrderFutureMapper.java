@@ -13,6 +13,8 @@ public interface QuanOrderFutureMapper {
     int insert(QuanOrderFuture record);
 
     int insertSelective(QuanOrderFuture record);
+    
+    int insertBatch(List<QuanOrderFuture> list);
 
     QuanOrderFuture selectByPrimaryKey(Long innerOrderId);
 
@@ -41,4 +43,6 @@ public interface QuanOrderFutureMapper {
     List<QuanOrderFuture> selectUnfinishList();
 
     int insertGetId(QuanOrderFuture record);
+
+    List<QuanOrderFuture> selectList(QuanOrderFuture quanOrderFuture);
 }

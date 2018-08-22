@@ -17,7 +17,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
 
 
     @Override
-    public List<QuanOrderFuture> selectUnfinishedList() {
+    public List<QuanOrderFuture> selectUnfinishedByInstanceId(Long instanceId){
         List<QuanOrderFuture> list = quanOrderFutureMapper.selectUnfinishList();
         return list;
     }

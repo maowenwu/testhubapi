@@ -439,6 +439,14 @@
             </if>
         </where>
     </select>
+    <select id="selectOrderIdBySourceStatus" resultType="java.lang.Long">
+        select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId}
+        and source_status in
+        <foreach item="item" index="index" collection="sourceStatus" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
 
     <update id="updateByExIdAccountIdExOrderId">

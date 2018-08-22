@@ -55,46 +55,29 @@ public class CommonAction {
     }
 
 
-    //策略 实例--   收益统计
+    //策略    风控统计 收益统计
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/strategyProfitCount.do")
+    @RequestMapping(value = "/strategyRiskProfitCount.do")
     @ResponseBody
-    public Map<String, Object> strategyProfitCount() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("totalProfit", "1111");//总盈亏（USDT）
-        map.put("yieldRate", "12");//收益率
-        map.put("annualizedReturn", "20");//年化收益率
-        return map;
+    public Map<String, Object> strategyRiskCount(Integer id) {
+        return commonService.strategyRiskProfitCount(id);
     }
 
-    //策略    风控统计
+    //实例  风控统计 收益统计
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/strategyRiskCount.do")
+    @RequestMapping(value = "/instanceRiskProfitCount.do")
     @ResponseBody
-    public Map<String, Object> strategyRiskCount() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("netPositionUSDT", "123323");//净头寸（USDT）
-        map.put("riskRate", "89");//保证金率
-        return map;
+    public Map<String, Object> strategyRiskProfitCount(Long instanceId) {
+        return commonService.instanceRiskProfitCount(instanceId);
     }
 
-    //实例
+    //运行中实例  基本信息
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/test6.do")
+    @RequestMapping(value = "/runningInstance.do")
     @ResponseBody
-    public Map<String, Object> test6() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("", "");//实例ID
-        map.put("", "");//策略实例启动时间
-        map.put("", "");//合约代码
-        map.put("", "");//策略实例运行时间
-
-        map.put("", "");//摆盘
-        map.put("", "");
-        map.put("", "");
-        map.put("", "");
-        map.put("", "");
-        return map;
+    public Map<String, Object> runningInstance(Long instanceId) {
+        return commonService.instanceRiskProfitCount(instanceId);
     }
+
 
 }

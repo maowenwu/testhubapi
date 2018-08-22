@@ -26,7 +26,7 @@ public class FinanceServiceImpl implements FinanceService {
 
     private FinanceHistory convertStrategyFinanceHistory(StrategyFinanceHistory strategyFinanceHistory) {
         FinanceHistory financeHistory = new FinanceHistory();
-        financeHistory.setAccountId(strategyFinanceHistory.getAccountId());
+        financeHistory.setAccountId(strategyFinanceHistory.getAccountSourceId());
         financeHistory.setCoinType(strategyFinanceHistory.getCoinType());
         financeHistory.setExchangeId(ExchangeEnum.valueOf(strategyFinanceHistory.getExchangeId()).getExName());
         if (strategyFinanceHistory.getMoneyType() == 1) {
@@ -43,7 +43,7 @@ public class FinanceServiceImpl implements FinanceService {
 
     private StrategyFinanceHistory convertFinanceHistory(FinanceHistory history) {
         StrategyFinanceHistory strategyFinanceHistory = new StrategyFinanceHistory();
-        strategyFinanceHistory.setAccountId(history.getAccountId());
+        strategyFinanceHistory.setAccountSourceId(history.getAccountId());
         strategyFinanceHistory.setCoinType(history.getCoinType());
         if (StringUtils.isNotBlank(history.getExchangeId())) {
             strategyFinanceHistory.setExchangeId(Integer.parseInt(history.getExchangeId()));
@@ -63,15 +63,15 @@ public class FinanceServiceImpl implements FinanceService {
     public PageInfo<FinanceHistory> selectByCondition(FinanceHistory history, PageInfo<FinanceHistory> page) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
         StrategyFinanceHistory strategyFinanceHistory = convertFinanceHistory(history);
-        List<StrategyFinanceHistory> histories = strategyFinanceHistoryMapper.selectList(strategyFinanceHistory);
-        List<FinanceHistory> financeHistories = new ArrayList<>();
-        histories.stream().forEach(e->{
-            financeHistories.add(convertStrategyFinanceHistory(e));
-
-        });
-        page = new PageInfo<>(financeHistories);
-        com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) histories;
-        page.setTotal(totalPage.getTotal());
+//        List<StrategyFinanceHistory> histories = strategyFinanceHistoryMapper.selectList(strategyFinanceHistory);
+//        List<FinanceHistory> financeHistories = new ArrayList<>();
+//        histories.stream().forEach(e->{
+//            financeHistories.add(convertStrategyFinanceHistory(e));
+//
+//        });
+//        page = new PageInfo<>(financeHistories);
+//        com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) histories;
+//        page.setTotal(totalPage.getTotal());
         return page;
     }
 

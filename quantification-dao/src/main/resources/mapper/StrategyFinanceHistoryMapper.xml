@@ -154,8 +154,7 @@
         </where>
     </select>
 
-    <select id="selectList" parameterType="com.huobi.quantification.entity.StrategyFinanceHistory"
-            resultMap="BaseResultMap">
+    <select id="selectList" parameterType="com.huobi.quantification.entity.BossFinanceQuery" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from strategy_finance_history
@@ -163,11 +162,17 @@
             <if test="exchangeId != null">
                 and exchange_id = #{exchangeId,jdbcType=INTEGER}
             </if>
-            <if test="accountSourceId != null">
-                and account_source_id = #{accountSourceId,jdbcType=BIGINT}
+            <if test="accountId != null">
+                and account_source_id = #{accountId,jdbcType=BIGINT}
             </if>
             <if test="coinType != null">
-                and coin_type like concat(concat('%',#{coinType,jdbcType=VARCHAR}),'%')
+                and coin_type = #{coinType,jdbcType=VARCHAR}
+            </if>
+            <if test="moneyType != null">
+                and money_type = #{moneyType,jdbcType=INTEGER}
+            </if>
+            <if test="startDate != null and endDate !=null">
+                and create_time between #{startDate,jdbcType=TIMESTAMP} and #{endDate,jdbcType=TIMESTAMP}
             </if>
         </where>
     </select>
