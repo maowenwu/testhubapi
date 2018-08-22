@@ -353,6 +353,8 @@
   </update>
 
 
+
+
     <select id="selectBySelective" parameterType="com.huobi.quantification.entity.QuanOrderFuture"
             resultMap="BaseResultMap">
         select
@@ -439,6 +441,8 @@
             </if>
         </where>
     </select>
+
+
     <select id="selectOrderIdBySourceStatus" resultType="java.lang.Long">
         select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId}
         and source_status in
@@ -447,7 +451,6 @@
             #{item}
         </foreach>
     </select>
-
 
     <update id="updateByExIdAccountIdExOrderId">
         update quan_order_future
@@ -541,6 +544,7 @@
             #{item}
         </foreach>
     </select>
+
     <select id="selectByExOrderIds" resultType="com.huobi.quantification.entity.QuanOrderFuture">
         select
         <include refid="Base_Column_List"/>
@@ -571,6 +575,7 @@
             </foreach>
         </where>
     </select>
+
     <select id="selectByLinkOrderIds" resultType="com.huobi.quantification.entity.QuanOrderFuture">
         select
         <include refid="Base_Column_List"/>
@@ -601,6 +606,7 @@
             </foreach>
         </where>
     </select>
+
     <select id="selectExOrderIdByStatus" resultType="java.lang.Long">
         select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId} and
         contract_code=#{contractCode}
@@ -681,16 +687,6 @@
             #{item.orderSource,jdbcType=VARCHAR})
         </foreach>
     </insert>
-
-    <select id="selectOrderIdBySourceStatus" resultType="java.lang.Long">
-        select ex_order_id from quan_order_future where exchange_id=#{exchangeId} and account_id=#{accountId}
-        and source_status in
-        <foreach item="item" index="index" collection="sourceStatus" open="("
-                 separator="," close=")">
-            #{item}
-        </foreach>
-    </select>
-
     <insert id="insertGetId" parameterType="com.huobi.quantification.entity.QuanOrderFuture" useGeneratedKeys="true"
             keyProperty="innerOrderId">
      insert into quan_order_future (inner_order_id, strategy_name, instance_id,
@@ -714,7 +710,6 @@
           #{orderSource,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
           )
     </insert>
-
     <select id="selectList" resultMap="BaseResultMap" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
         select
         <include refid="Base_Column_List"/>
@@ -749,4 +744,6 @@
             </if>
         </where>
     </select>
+
+
 </mapper>
