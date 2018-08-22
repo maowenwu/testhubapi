@@ -5,7 +5,7 @@ import cn.huobi.framework.dto.StrategyInstanceInfo;
 import cn.huobi.framework.service.sysUser.CommonService;
 import cn.huobi.framework.util.Constants;
 import com.huobi.quantification.dao.StrategyHedgeConfigMapper;
-import com.huobi.quantification.entity.StrategyHedgeConfig;
+import com.huobi.quantification.entity.StrategyInstanceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,26 +40,26 @@ public class CommonAction {
 
 
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/test2.do")
+    @RequestMapping(value = "/findStrategyInstanceBaseInfo.do")
     @ResponseBody
-    public StrategyHedgeConfig selectBySymbolContractType(String contractType) {
-        return strategyHedgeConfigMapper.selectBySymbolContractType("btc", "this_week");
+    public StrategyInstanceConfig findStrategyInstanceBaseInfo(Integer id) {
+        return commonService.findStrategyInstanceBaseInfo(id);
     }
 
 
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/test3.do")
+    @RequestMapping(value = "/findAccountInfo.do")
     @ResponseBody
-    public Map<String, Object> test3() {
-        return commonService.findAccountInfo();
+    public Map<String, Object> findAccountInfo(Integer id) {
+        return commonService.findAccountInfo(id);
     }
 
 
-    //策略    收益统计
+    //策略 实例--   收益统计
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/test4.do")
+    @RequestMapping(value = "/strategyProfitCount.do")
     @ResponseBody
-    public Map<String, Object> test4() {
+    public Map<String, Object> strategyProfitCount() {
         Map<String, Object> map = new HashMap<>();
         map.put("totalProfit", "1111");//总盈亏（USDT）
         map.put("yieldRate", "12");//收益率
@@ -69,9 +69,9 @@ public class CommonAction {
 
     //策略    风控统计
     @DataSource(Constants.DATA_SOURCE_SLAVE)
-    @RequestMapping(value = "/test5.do")
+    @RequestMapping(value = "/strategyRiskCount.do")
     @ResponseBody
-    public Map<String, Object> test5() {
+    public Map<String, Object> strategyRiskCount() {
         Map<String, Object> map = new HashMap<>();
         map.put("netPositionUSDT", "123323");//净头寸（USDT）
         map.put("riskRate", "89");//保证金率
@@ -94,8 +94,6 @@ public class CommonAction {
         map.put("", "");
         map.put("", "");
         map.put("", "");
-
-
         return map;
     }
 
