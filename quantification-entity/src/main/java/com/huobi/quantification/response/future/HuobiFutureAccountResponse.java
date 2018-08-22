@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * https://api.hcontract.com/contract/v1/contract_accountinfo
  */
-public class HuobiFutureUserInfoResponse {
+public class HuobiFutureAccountResponse {
 
     private String status;
     private long ts;

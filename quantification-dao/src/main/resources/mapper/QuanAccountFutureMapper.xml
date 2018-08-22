@@ -103,4 +103,9 @@
             </if>
         </where>
     </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_account_future
+    </select>
 </mapper>

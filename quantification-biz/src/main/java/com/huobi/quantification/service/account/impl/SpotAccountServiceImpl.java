@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -63,8 +64,19 @@ public class SpotAccountServiceImpl implements SpotAccountService {
     }
 
     private void saveSpotAccount(HuobiSpotAccountResponse response, Long accountId, Long accountSourceId) {
-        List<QuanAccountAsset> accountAssets = new ArrayList<>();
+        List<QuanAccountAsset> accountAssets = parseSpotAccountAsset(response, accountId);
+        boolean isSave = StorageSupport.getInstance("saveSpotAccount").checkSavepoint();
+        if (isSave) {
+            accountAssets.stream().forEach(e -> {
+                quanAccountAssetMapper.insert(e);
+            });
+        }
+        redisService.saveAccountSpot(accountAssets, ExchangeEnum.HUOBI.getExId(), accountSourceId);
+    }
+
+    public List<QuanAccountAsset> parseSpotAccountAsset(HuobiSpotAccountResponse response, Long accountId) {
         if ("ok".equalsIgnoreCase(response.getStatus())) {
+            List<QuanAccountAsset> accountAssets = new ArrayList<>();
             List<HuobiSpotAccountResponse.DataBean.ListBean> listBeans = response.getData().getList();
             if (CollectionUtils.isNotEmpty(listBeans)) {
                 Map<String, List<HuobiSpotAccountResponse.DataBean.ListBean>> listMap = listBeans.stream().collect(Collectors.groupingBy(e -> e.getCurrency()));
@@ -86,14 +98,12 @@ public class SpotAccountServiceImpl implements SpotAccountService {
                     accountAssets.add(accountAsset);
                 });
             }
-            boolean isSave = StorageSupport.getInstance("saveSpotAccount").checkSavepoint();
             accountAssets.stream().forEach(e -> {
                 e.setAccountId(accountId);
-                if (isSave) {
-                    quanAccountAssetMapper.insert(e);
-                }
             });
-            redisService.saveAccountSpot(accountAssets, ExchangeEnum.HUOBI.getExId(), accountSourceId);
+            return accountAssets;
+        } else {
+            throw new RuntimeException("HuobiSpotAccountResponse 返回状态不为ok");
         }
     }
 
@@ -121,4 +131,30 @@ public class SpotAccountServiceImpl implements SpotAccountService {
     }
 
 
+    @Override
+    public void initSpotAccountAsset() {
+        List<QuanAccount> accountList = quanAccountMapper.selectAll();
+        Map<Integer, List<QuanAccount>> accountMap = accountList.stream().collect(Collectors.groupingBy(e -> e.getExchangeId()));
+        accountMap.forEach((k, v) -> {
+            switch (ExchangeEnum.valueOf(k)) {
+                case HUOBI:
+                    initHuobiSpotAccountAsset(v);
+                    break;
+            }
+        });
+    }
+
+    private void initHuobiSpotAccountAsset(List<QuanAccount> accountList) {
+        accountList.forEach(e -> {
+            List<QuanAccountAsset> assetList = quanAccountAssetMapper.selectInitedAssetByAccountId(e.getId());
+            if (CollectionUtils.isEmpty(assetList)) {
+                HuobiSpotAccountResponse response = queryAccountByAPI(e.getAccountSourceId());
+                List<QuanAccountAsset> accountAssets = parseSpotAccountAsset(response, e.getId());
+                accountAssets.stream().forEach(e2 -> {
+                    e2.setInit(1);
+                    quanAccountAssetMapper.insert(e2);
+                });
+            }
+        });
+    }
 }

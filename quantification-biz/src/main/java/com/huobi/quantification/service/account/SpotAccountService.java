@@ -18,4 +18,6 @@ public interface SpotAccountService {
     List<QuanAccount> selectByExId(int exId);
 
     List<QuanAccountSecret> selectSecretById(Long accountId);
+
+    void initSpotAccountAsset();
 }

@@ -156,4 +156,9 @@
         order by id desc
         limit 1
     </select>
+    <select id="selectInitedAssetByAccountId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM quan_account_asset where account_id=#{accountId} and init='1'
+    </select>
 </mapper>

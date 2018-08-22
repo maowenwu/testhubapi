@@ -27,4 +27,5 @@ public interface QuanAccountFutureAssetMapper {
     //通过 accountSourceId 和 coinType 查询最新的资产信息
     QuanAccountFutureAsset selectLatestByAccountSourceIdCoinType(@Param("accountSourceId") Long accountSourceId, @Param("coinType") String coinType);
 
+    List<QuanAccountFutureAsset> selectInitedAssetByAccountFutureId(@Param("accountFutureId") Long accountFutureId);
 }

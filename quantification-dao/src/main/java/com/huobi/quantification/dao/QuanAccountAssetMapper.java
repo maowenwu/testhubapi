@@ -3,6 +3,8 @@ package com.huobi.quantification.dao;
 import com.huobi.quantification.entity.QuanAccountAsset;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface QuanAccountAssetMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -20,4 +22,6 @@ public interface QuanAccountAssetMapper {
 
     //通过accountId和coinType查询最新的资产信息
     QuanAccountAsset selectLatestByAccountIdCoinType(@Param("accountId") Long accountId, @Param("coinType") String coinType);
+
+    List<QuanAccountAsset> selectInitedAssetByAccountId(@Param("accountId") Long accountId);
 }

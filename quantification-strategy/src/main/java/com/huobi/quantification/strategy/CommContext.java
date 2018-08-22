@@ -121,9 +121,9 @@ public class CommContext {
      */
     private void loadInitialUsdt() {
         initialSpotUsdt = getCurrSpotUsdt();
-        logger.info("币币账户期初余额：{}Usdt", initialSpotUsdt);
+        logger.info("加载币币账户期初净空仓金额：{}Usdt", initialSpotUsdt);
         initialFutureUsdt = getCurrFutureUsdt();
-        logger.info("合约账户期初净空仓金额：{}Usdt", initialFutureUsdt);
+        logger.info("加载合约账户期初净空仓金额：{}Usdt", initialFutureUsdt);
     }
 
     public void cancelAllSpotOrder() {
@@ -298,13 +298,13 @@ public class CommContext {
             if (dataMap != null && CollectionUtils.isNotEmpty(dataMap.get(this.futureBaseCoin))) {
                 List<FuturePositionRespDto.Position> positionList = dataMap.get(this.futureBaseCoin);
                 positionList.stream().forEach(e -> {
-                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getSide() == SideEnum.BUY.getSideType()) {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && SideEnum.valueOf(e.getSide()) == SideEnum.BUY) {
                         FuturePosition.Position longPosi = new FuturePosition.Position();
                         BeanUtils.copyProperties(e, longPosi);
                         futurePosition.setLongPosi(longPosi);
                     }
 
-                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && e.getSide() == SideEnum.SELL.getSideType()) {
+                    if (e.getContractCode().equalsIgnoreCase(this.futureContractCode) && SideEnum.valueOf(e.getSide()) == SideEnum.SELL) {
                         FuturePosition.Position shortPosi = new FuturePosition.Position();
                         BeanUtils.copyProperties(e, shortPosi);
                         futurePosition.setShortPosi(shortPosi);
@@ -347,6 +347,7 @@ public class CommContext {
     private SpotAccountService spotAccountService;
 
     public SpotBalance getSpotBalance() {
+        //todo 如有问题直接抛出异常
         logger.info("获取现货资产信息成功");
         return SpotBalanceMock.getSpotBalance();
         /*SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
@@ -390,15 +391,11 @@ public class CommContext {
     }
 
     public String getContractTypeFromCode() {
-        try {
-            ServiceResult<ContractCodeDto> result = futureContractService.getContractCode(futureExchangeId, futureContractCode);
-            if (result.isSuccess()) {
-                return result.getData().getContractType();
-            } else {
-                throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务");
-            }
-        } catch (Throwable e) {
-            throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务", e);
+        ServiceResult<ContractCodeDto> result = futureContractService.getContractCode(futureExchangeId, futureContractCode);
+        if (result.isSuccess()) {
+            return result.getData().getContractType();
+        } else {
+            throw new RuntimeException("初始化异常，获取ContractType失败，请检查是否未启动定时任务");
         }
     }
 

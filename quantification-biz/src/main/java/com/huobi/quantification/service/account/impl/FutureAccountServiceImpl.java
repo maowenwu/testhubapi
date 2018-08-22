@@ -8,19 +8,16 @@ import com.huobi.quantification.dao.QuanAccountFutureAssetMapper;
 import com.huobi.quantification.dao.QuanAccountFutureMapper;
 import com.huobi.quantification.dao.QuanAccountFuturePositionMapper;
 import com.huobi.quantification.dao.QuanAccountFutureSecretMapper;
-import com.huobi.quantification.entity.QuanAccountFuture;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.QuanAccountFuturePosition;
-import com.huobi.quantification.entity.QuanAccountFutureSecret;
+import com.huobi.quantification.entity.*;
 import com.huobi.quantification.enums.ExchangeEnum;
-import com.huobi.quantification.enums.OffsetEnum;
 import com.huobi.quantification.enums.SideEnum;
 import com.huobi.quantification.execeptions.APIException;
 import com.huobi.quantification.response.future.HuobiFuturePositionResponse;
-import com.huobi.quantification.response.future.HuobiFutureUserInfoResponse;
+import com.huobi.quantification.response.future.HuobiFutureAccountResponse;
 import com.huobi.quantification.service.account.FutureAccountService;
 import com.huobi.quantification.service.http.HttpService;
 import com.huobi.quantification.service.redis.RedisService;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service("futureAccountService")
 @Transactional
@@ -46,10 +44,10 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public HuobiFutureUserInfoResponse queryUserInfoByAPI(Long accountId) {
+    public HuobiFutureAccountResponse queryAccountByAPI(Long accountId) {
         HashMap<String, String> params = new HashMap<>();
         String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_FUTURE_ACCOUNT_INFO, params);
-        HuobiFutureUserInfoResponse response = JSON.parseObject(body, HuobiFutureUserInfoResponse.class);
+        HuobiFutureAccountResponse response = JSON.parseObject(body, HuobiFutureAccountResponse.class);
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             return response;
         }
@@ -82,33 +80,42 @@ public class FutureAccountServiceImpl implements FutureAccountService {
             logger.error("更新火币期货账户信息失败，不存在该账户：accountSourceId={}", accountSourceId);
             return;
         }
-        HuobiFutureUserInfoResponse response = queryUserInfoByAPI(accountSourceId);
+        HuobiFutureAccountResponse response = queryAccountByAPI(accountSourceId);
         saveFutureAccount(response, accountFutureId, accountSourceId);
         logger.info("[HuobiUserInfo][accountId={}]任务结束，耗时：" + started, accountSourceId);
     }
 
-    private void saveFutureAccount(HuobiFutureUserInfoResponse response, Long accountFutureId, Long accountSourceId) {
+    private void saveFutureAccount(HuobiFutureAccountResponse response, Long accountFutureId, Long accountSourceId) {
+        Map<String, QuanAccountFutureAsset> dataMap = parseFutureAccountAsset(response, accountFutureId);
+        boolean isSave = StorageSupport.getInstance("saveFutureAccount").checkSavepoint();
+        if (isSave) {
+            dataMap.forEach((k, v) -> {
+                quanAccountFutureAssetMapper.insert(v);
+            });
+        }
+        redisService.saveAccountFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, dataMap);
+    }
+
+    public Map<String, QuanAccountFutureAsset> parseFutureAccountAsset(HuobiFutureAccountResponse response, Long accountFutureId) {
         if ("ok".equalsIgnoreCase(response.getStatus())) {
             long queryId = System.currentTimeMillis();
-            Map<String, QuanAccountFutureAsset> data = new ConcurrentHashMap<>();
-            List<HuobiFutureUserInfoResponse.DataBean> dataBeans = response.getData();
-            for (HuobiFutureUserInfoResponse.DataBean dataBean : dataBeans) {
-                data.put(dataBean.getSymbol().toLowerCase(), convertToDto(dataBean));
+            Map<String, QuanAccountFutureAsset> dataMap = new ConcurrentHashMap<>();
+            List<HuobiFutureAccountResponse.DataBean> dataBeans = response.getData();
+            for (HuobiFutureAccountResponse.DataBean dataBean : dataBeans) {
+                dataMap.put(dataBean.getSymbol().toLowerCase(), convertToDto(dataBean));
             }
-            boolean isSave = StorageSupport.getInstance("saveFutureAccount").checkSavepoint();
-            data.forEach((k, v) -> {
+            dataMap.forEach((k, v) -> {
                 v.setCoinType(k);
                 v.setQueryId(queryId);
                 v.setAccountFutureId(accountFutureId);
-                if (isSave) {
-                    quanAccountFutureAssetMapper.insert(v);
-                }
             });
-            redisService.saveAccountFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), accountSourceId, data);
+            return dataMap;
+        } else {
+            throw new RuntimeException("FutureAccountAsset 返回状态不为ok");
         }
     }
 
-    private QuanAccountFutureAsset convertToDto(HuobiFutureUserInfoResponse.DataBean dataBean) {
+    private QuanAccountFutureAsset convertToDto(HuobiFutureAccountResponse.DataBean dataBean) {
         QuanAccountFutureAsset futureAsset = new QuanAccountFutureAsset();
         futureAsset.setMarginBalance(dataBean.getMarginBalance());
         // 持仓保证金
@@ -196,5 +203,32 @@ public class FutureAccountServiceImpl implements FutureAccountService {
     @Override
     public List<QuanAccountFutureSecret> selectSecretById(Long id) {
         return quanAccountFutureSecretMapper.selectSecretById(id);
+    }
+
+    @Override
+    public void initFutureAccountAsset() {
+        List<QuanAccountFuture> accountList = quanAccountFutureMapper.selectAll();
+        Map<Integer, List<QuanAccountFuture>> accountMap = accountList.stream().collect(Collectors.groupingBy(e -> e.getExchangeId()));
+        accountMap.forEach((k, v) -> {
+            switch (ExchangeEnum.valueOf(k)) {
+                case HUOBI_FUTURE:
+                    initHuobiFutureAccountAsset(v);
+                    break;
+            }
+        });
+    }
+
+    private void initHuobiFutureAccountAsset(List<QuanAccountFuture> accountList) {
+        accountList.forEach(e -> {
+            List<QuanAccountFutureAsset> assetList = quanAccountFutureAssetMapper.selectInitedAssetByAccountFutureId(e.getId());
+            if (CollectionUtils.isEmpty(assetList)) {
+                HuobiFutureAccountResponse response = queryAccountByAPI(e.getAccountSourceId());
+                Map<String, QuanAccountFutureAsset> dataMap = parseFutureAccountAsset(response, e.getId());
+                dataMap.forEach((k, v) -> {
+                    v.setInit(1);
+                    quanAccountFutureAssetMapper.insert(v);
+                });
+            }
+        });
     }
 }

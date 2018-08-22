@@ -88,4 +88,9 @@
     <select id="selectAccountId" resultType="java.lang.Long">
         SELECT id FROM quan_account WHERE exchange_id=#{exchangeId} and account_source_id=#{accountSourceId}
     </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM quan_account
+    </select>
 </mapper>

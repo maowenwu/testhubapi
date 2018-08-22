@@ -21,4 +21,7 @@ public interface QuanAccountMapper {
     List<QuanAccount> selectByExId(@Param("exId") int exId);
 
     Long selectAccountId(@Param("exchangeId") int exchangeId, @Param("accountSourceId") Long accountSourceId);
+
+    List<QuanAccount> selectAll();
+
 }
