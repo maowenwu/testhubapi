@@ -40,9 +40,9 @@ public interface FinanceDao {
 					if(config!=null && config.getExchangeId() != null){
 						WHERE("exchange_id = #{config.exchangeId}");
 					}
-					if(config!=null && config.getAccountId() != null){
-						WHERE("account_id = #{config.accountId}");
-					}
+//					if(config!=null && config.getAccountId() != null){
+//						WHERE("account_id = #{config.accountId}");
+//					}
 					if (config!=null && !StringUtils.isBlank(config.getCoinType())) {
 						config.setCoinType(config.getCoinType() + "%");
 						WHERE("coin_type like #{config.coinType}");
