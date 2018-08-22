@@ -63,15 +63,15 @@ public class FinanceServiceImpl implements FinanceService {
     public PageInfo<FinanceHistory> selectByCondition(FinanceHistory history, PageInfo<FinanceHistory> page) {
         PageHelper.startPage(page.getPageNum(), page.getPageSize());
         StrategyFinanceHistory strategyFinanceHistory = convertFinanceHistory(history);
-        List<StrategyFinanceHistory> histories = strategyFinanceHistoryMapper.selectList(strategyFinanceHistory);
-        List<FinanceHistory> financeHistories = new ArrayList<>();
-        histories.stream().forEach(e->{
-            financeHistories.add(convertStrategyFinanceHistory(e));
-
-        });
-        page = new PageInfo<>(financeHistories);
-        com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) histories;
-        page.setTotal(totalPage.getTotal());
+//        List<StrategyFinanceHistory> histories = strategyFinanceHistoryMapper.selectList(strategyFinanceHistory);
+//        List<FinanceHistory> financeHistories = new ArrayList<>();
+//        histories.stream().forEach(e->{
+//            financeHistories.add(convertStrategyFinanceHistory(e));
+//
+//        });
+//        page = new PageInfo<>(financeHistories);
+//        com.github.pagehelper.Page totalPage = (com.github.pagehelper.Page) histories;
+//        page.setTotal(totalPage.getTotal());
         return page;
     }
 

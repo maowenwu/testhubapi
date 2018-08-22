@@ -18,7 +18,7 @@ public interface QuanAccountFuturePositionMapper {
 
     int updateByPrimaryKey(QuanAccountFuturePosition record);
 
-    List<QuanAccountFuturePosition> selectByBaseCoin(QuanAccountFuturePosition quanAccountFuturePosition);
+    List<QuanAccountFuturePosition> selectByCondition(QuanAccountFuturePosition quanAccountFuturePosition);
 
     //通过 accountFutureId 和 baseCoin 查询最新的资产信息
     QuanAccountFuturePosition selectLatestByAccountFutureIdBaseCoin(@Param("accountFutureId") Long accountFutureId, @Param("baseCoin") String baseCoin);

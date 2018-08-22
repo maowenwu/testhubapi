@@ -28,4 +28,6 @@ public interface QuanAccountFutureAssetMapper {
     QuanAccountFutureAsset selectLastByAccountFutureIdCoinType(@Param("accountFutureId") Long accountFutureId, @Param("coinType") String coinType);
 
     List<QuanAccountFutureAsset> selectInitedAssetByAccountFutureId(@Param("accountFutureId") Long accountFutureId);
+
+    List<QuanAccountFutureAsset> selectNewestAssets(QuanAccountFuture quanAccountFuture);
 }

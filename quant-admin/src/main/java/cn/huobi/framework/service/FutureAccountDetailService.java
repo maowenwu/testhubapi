@@ -2,13 +2,23 @@ package cn.huobi.framework.service;
 
 import cn.huobi.framework.model.FutureAccount;
 import com.github.pagehelper.PageInfo;
-import com.huobi.quantification.entity.QuanAccountFuture;
-import com.huobi.quantification.entity.QuanAccountFutureAsset;
-import com.huobi.quantification.entity.QuanAccountFuturePosition;
+import com.huobi.quantification.entity.*;
+
+import java.util.List;
 
 public interface FutureAccountDetailService {
 
-    PageInfo<QuanAccountFutureAsset> selectAccountDetail(QuanAccountFuture quanAccountFuture, PageInfo<QuanAccountFutureAsset> page);
-
     PageInfo<QuanAccountFuturePosition> selectAccountPosition(QuanAccountFuturePosition quanAccountFuturePosition, PageInfo<QuanAccountFuturePosition> page);
+
+    int insertFinance(StrategyFinanceHistory history);
+
+    PageInfo<StrategyFinanceHistory> selectFinanceHistory(BossFinanceQuery bossFinanceQuery, PageInfo<StrategyFinanceHistory> page);
+
+    PageInfo<QuanOrderFuture> selectAccountOrder(QuanOrderFuture quanOrderFuture, PageInfo<QuanOrderFuture> page);
+
+    List<QuanAccountFutureAsset> selectAccountDetail(QuanAccountFuture quanAccountFuture);
+
+    QuanAccountFuture selectAccountId(QuanAccountFuture quanAccountFuture);
+
+    PageInfo<QuanOrderFuture> selectAccountOrder(List<Integer> sourceStatus, QuanOrderFuture quanOrderFuture, PageInfo<QuanOrderFuture> page);
 }

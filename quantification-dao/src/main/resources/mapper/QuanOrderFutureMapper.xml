@@ -622,6 +622,40 @@
         </foreach>
     </select>
 
+    <select id="selectList" resultMap="BaseResultMap" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_order_future
+        <where>
+            <if test="innerOrderId != null">
+                and inner_order_id = #{innerOrderId}
+            </if>
+            <if test="exOrderId != null">
+                and ex_order_id = #{exOrderId}
+            </if>
+            <if test="linkOrderId != null">
+                and link_order_id = #{linkOrderId}
+            </if>
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="baseCoin != null">
+                and base_coin = #{baseCoin}
+            </if>
+            <if test="contractCode != null">
+                and contract_code = #{contractCode}
+            </if>
+            <if test="side != null">
+                and side = #{side}
+            </if>
+            <if test="sourceStatus != null">
+                and source_status = #{sourceStatus}
+            </if>
+            <if test="offset != null">
+                and offset = #{offset}
+            </if>
+        </where>
+    </select>
 
 	<insert id="insertBatch" parameterType="java.util.List"
 		useGeneratedKeys="true" keyProperty="innerOrderId">

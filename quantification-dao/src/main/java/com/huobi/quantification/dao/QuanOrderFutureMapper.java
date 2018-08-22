@@ -40,4 +40,6 @@ public interface QuanOrderFutureMapper {
 
 
     List<QuanOrderFuture> selectUnfinishList();
+
+    List<QuanOrderFuture> selectList(QuanOrderFuture quanOrderFuture);
 }

@@ -244,4 +244,14 @@
         <include refid="Base_Column_List"/>
         FROM quan_account_future_asset where account_future_id=#{accountFutureId} and init='1'
     </select>
+    <select id="selectNewestAssets" resultMap="BaseResultMap"
+            parameterType="com.huobi.quantification.entity.QuanAccountFuture">
+        select
+        <include refid="Base_Column_List"/>
+        FROM quan_account_future_asset
+        where query_id =(
+        SELECT MAX(query_id) FROM quan_account_future_asset
+        where account_future_id = #{accountSourceId,jdbcType=BIGINT}
+        )
+    </select>
 </mapper>

@@ -1,5 +1,7 @@
 package com.huobi.quantification.dao;
 
+import com.huobi.quantification.entity.BossFinanceQuery;
+import com.huobi.quantification.entity.QuanAccountFuture;
 import com.huobi.quantification.entity.StrategyFinanceHistory;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,5 +23,5 @@ public interface StrategyFinanceHistoryMapper {
 
     BigDecimal getNetBorrow(@Param("exchangeId") int exchangeId, @Param("accountSourceId") Long accountSourceId, @Param("coinType") String coinType, @Param("initialOnly") boolean initialOnly);
 
-    List<StrategyFinanceHistory> selectList(StrategyFinanceHistory strategyFinanceHistory);
+    List<StrategyFinanceHistory> selectList(BossFinanceQuery bossFinanceQuery);
 }
