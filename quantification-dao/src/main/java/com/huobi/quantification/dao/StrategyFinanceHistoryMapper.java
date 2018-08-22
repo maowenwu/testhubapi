@@ -19,7 +19,7 @@ public interface StrategyFinanceHistoryMapper {
 
     int updateByPrimaryKey(StrategyFinanceHistory record);
 
-    BigDecimal getNetBorrow(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("coinType") String coinType, @Param("initialOnly") boolean initialOnly);
+    BigDecimal getNetBorrow(@Param("exchangeId") int exchangeId, @Param("accountSourceId") Long accountSourceId, @Param("coinType") String coinType, @Param("initialOnly") boolean initialOnly);
 
     List<StrategyFinanceHistory> selectList(StrategyFinanceHistory strategyFinanceHistory);
 }

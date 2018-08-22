@@ -10,11 +10,11 @@ public class SpotBalanceMock {
 
     static {
         SpotBalance.Coin coin = new SpotBalance.Coin();
-        coin.setTotal(BigDecimal.valueOf(10000 * 100));
-        coin.setAvailable(BigDecimal.valueOf(10000 * 100));
+        coin.setTotal(BigDecimal.valueOf(100000));
+        coin.setAvailable(BigDecimal.valueOf(100000));
         SpotBalance.Usdt usdt = new SpotBalance.Usdt();
-        usdt.setTotal(BigDecimal.valueOf(10000 * 100));
-        usdt.setAvailable(BigDecimal.valueOf(10000 * 100));
+        usdt.setTotal(BigDecimal.valueOf(100000));
+        usdt.setAvailable(BigDecimal.valueOf(100000));
         spotBalance.setCoin(coin);
         spotBalance.setUsdt(usdt);
     }

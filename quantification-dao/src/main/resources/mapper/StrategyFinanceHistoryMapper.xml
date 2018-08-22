@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.huobi.quantification.entity.StrategyFinanceHistory">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="exchange_id" jdbcType="INTEGER" property="exchangeId"/>
-        <result column="account_id" jdbcType="BIGINT" property="accountId"/>
+        <result column="account_source_id" jdbcType="BIGINT" property="accountSourceId"/>
         <result column="coin_type" jdbcType="VARCHAR" property="coinType"/>
         <result column="transfer_amount" jdbcType="DECIMAL" property="transferAmount"/>
         <result column="money_type" jdbcType="INTEGER" property="moneyType"/>
@@ -13,8 +13,8 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, exchange_id, account_id, coin_type, transfer_amount, money_type, init, create_time, 
-    update_time
+    id, exchange_id, account_source_id, coin_type, transfer_amount, money_type, init,
+    create_time, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -27,12 +27,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
     <insert id="insert" parameterType="com.huobi.quantification.entity.StrategyFinanceHistory">
-    insert into strategy_finance_history (id, exchange_id, account_id, 
-      coin_type, transfer_amount, money_type, 
+    insert into strategy_finance_history (id, exchange_id, account_source_id,
+      coin_type, transfer_amount, money_type,
       init, create_time, update_time
       )
-    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{accountId,jdbcType=BIGINT}, 
-      #{coinType,jdbcType=VARCHAR}, #{transferAmount,jdbcType=DECIMAL}, #{moneyType,jdbcType=INTEGER}, 
+    values (#{id,jdbcType=BIGINT}, #{exchangeId,jdbcType=INTEGER}, #{accountSourceId,jdbcType=BIGINT},
+      #{coinType,jdbcType=VARCHAR}, #{transferAmount,jdbcType=DECIMAL}, #{moneyType,jdbcType=INTEGER},
       #{init,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -45,8 +45,8 @@
             <if test="exchangeId != null">
                 exchange_id,
             </if>
-            <if test="accountId != null">
-                account_id,
+            <if test="accountSourceId != null">
+                account_source_id,
             </if>
             <if test="coinType != null">
                 coin_type,
@@ -74,8 +74,8 @@
             <if test="exchangeId != null">
                 #{exchangeId,jdbcType=INTEGER},
             </if>
-            <if test="accountId != null">
-                #{accountId,jdbcType=BIGINT},
+            <if test="accountSourceId != null">
+                #{accountSourceId,jdbcType=BIGINT},
             </if>
             <if test="coinType != null">
                 #{coinType,jdbcType=VARCHAR},
@@ -103,8 +103,8 @@
             <if test="exchangeId != null">
                 exchange_id = #{exchangeId,jdbcType=INTEGER},
             </if>
-            <if test="accountId != null">
-                account_id = #{accountId,jdbcType=BIGINT},
+            <if test="accountSourceId != null">
+                account_source_id = #{accountSourceId,jdbcType=BIGINT},
             </if>
             <if test="coinType != null">
                 coin_type = #{coinType,jdbcType=VARCHAR},
@@ -130,7 +130,7 @@
     <update id="updateByPrimaryKey" parameterType="com.huobi.quantification.entity.StrategyFinanceHistory">
     update strategy_finance_history
     set exchange_id = #{exchangeId,jdbcType=INTEGER},
-      account_id = #{accountId,jdbcType=BIGINT},
+      account_source_id = #{accountSourceId,jdbcType=BIGINT},
       coin_type = #{coinType,jdbcType=VARCHAR},
       transfer_amount = #{transferAmount,jdbcType=DECIMAL},
       money_type = #{moneyType,jdbcType=INTEGER},
@@ -146,14 +146,16 @@
         strategy_finance_history
         <where>
             exchange_id = #{exchangeId}
-            AND account_id = #{accountId}
+            AND account_source_id = #{accountSourceId}
             AND coin_type = #{coinType}
             <if test="initialOnly == true">
                 AND init = '1'
             </if>
         </where>
     </select>
-    <select id="selectList" parameterType="com.huobi.quantification.entity.StrategyFinanceHistory" resultMap="BaseResultMap">
+
+    <select id="selectList" parameterType="com.huobi.quantification.entity.StrategyFinanceHistory"
+            resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from strategy_finance_history
@@ -161,8 +163,8 @@
             <if test="exchangeId != null">
                 and exchange_id = #{exchangeId,jdbcType=INTEGER}
             </if>
-            <if test="accountId != null">
-                and account_id = #{accountId,jdbcType=BIGINT}
+            <if test="accountSourceId != null">
+                and account_source_id = #{accountSourceId,jdbcType=BIGINT}
             </if>
             <if test="coinType != null">
                 and coin_type like concat(concat('%',#{coinType,jdbcType=VARCHAR}),'%')

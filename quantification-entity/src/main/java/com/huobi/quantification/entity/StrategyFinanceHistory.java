@@ -5,53 +5,53 @@ import java.util.Date;
 
 public class StrategyFinanceHistory {
     /**
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private Long id;
 
     /**
      * 交易所id
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private Integer exchangeId;
 
     /**
      * 账号ID
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
-    private Long accountId;
+    private Long accountSourceId;
 
     /**
      * 币种
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private String coinType;
 
     /**
      * 充值提现金额
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private BigDecimal transferAmount;
 
     /**
-     * 1.充值  -1. 提现
-     * @mbg.generated 2018-08-03 15:13:17
+     * 1.充值  2. 提现
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private Integer moneyType;
 
     /**
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private Integer init;
 
     /**
      * 创建时间
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private Date createTime;
 
     /**
-     * @mbg.generated 2018-08-03 15:13:17
+     * @mbg.generated 2018-08-22 15:09:17
      */
     private Date updateTime;
 
@@ -71,12 +71,12 @@ public class StrategyFinanceHistory {
         this.exchangeId = exchangeId;
     }
 
-    public Long getAccountId() {
-        return accountId;
+    public Long getAccountSourceId() {
+        return accountSourceId;
     }
 
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
+    public void setAccountSourceId(Long accountSourceId) {
+        this.accountSourceId = accountSourceId;
     }
 
     public String getCoinType() {
