@@ -691,7 +691,8 @@
         </foreach>
     </select>
 
-    <insert id="insertGetId" parameterType="com.huobi.quantification.entity.QuanOrderFuture" useGeneratedKeys="true" keyProperty="innerOrderId">
+    <insert id="insertGetId" parameterType="com.huobi.quantification.entity.QuanOrderFuture" useGeneratedKeys="true"
+            keyProperty="innerOrderId">
      insert into quan_order_future (inner_order_id, strategy_name, instance_id,
           exchange_id, account_id, ex_order_id,
           link_order_id, base_coin, quote_coin,
@@ -713,4 +714,39 @@
           #{orderSource,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP}
           )
     </insert>
+
+    <select id="selectList" resultMap="BaseResultMap" parameterType="com.huobi.quantification.entity.QuanOrderFuture">
+        select
+        <include refid="Base_Column_List"/>
+        from quan_order_future
+        <where>
+            <if test="innerOrderId != null">
+                and inner_order_id = #{innerOrderId}
+            </if>
+            <if test="exOrderId != null">
+                and ex_order_id = #{exOrderId}
+            </if>
+            <if test="linkOrderId != null">
+                and link_order_id = #{linkOrderId}
+            </if>
+            <if test="accountId != null">
+                and account_id = #{accountId}
+            </if>
+            <if test="baseCoin != null">
+                and base_coin = #{baseCoin}
+            </if>
+            <if test="contractCode != null">
+                and contract_code = #{contractCode}
+            </if>
+            <if test="side != null">
+                and side = #{side}
+            </if>
+            <if test="sourceStatus != null">
+                and source_status = #{sourceStatus}
+            </if>
+            <if test="offset != null">
+                and offset = #{offset}
+            </if>
+        </where>
+    </select>
 </mapper>
