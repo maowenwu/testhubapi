@@ -132,46 +132,19 @@ public class RiskContext {
     }
 
     private SpotCoin getCurrSpotCoin() {
-        SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
-        reqDto.setExchangeId(spotExchangeId);
-        reqDto.setAccountId(spotAccountId);
-        reqDto.setCoinType(spotBaseCoin);
-        ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(reqDto);
-        SpotBalance.Coin coin = new SpotBalance.Coin();
-        if (result.isSuccess()) {
-            SpotBalanceRespDto.DataBean dataBean = result.getData().getData().get(spotBaseCoin);
-            BeanUtils.copyProperties(dataBean, coin);
-        }
+        SpotBalance spotBalance = commContext.getSpotBalance();
         BigDecimal coinNetBorrow = commContext.getNetBorrow(spotExchangeId, spotAccountId, spotBaseCoin, false);
-        return new SpotCoin(coin, coinNetBorrow);
+        return new SpotCoin(spotBalance.getCoin(), coinNetBorrow);
     }
 
     private SpotUsdt getCurrSpotUsdt() {
-        SpotBalanceReqDto reqDto = new SpotBalanceReqDto();
-        reqDto.setExchangeId(spotExchangeId);
-        reqDto.setAccountId(spotAccountId);
-        reqDto.setCoinType(spotQuoteCoin);
-        ServiceResult<SpotBalanceRespDto> result = spotAccountService.getBalance(reqDto);
-        SpotBalance.Usdt usdt = new SpotBalance.Usdt();
-        if (result.isSuccess()) {
-            SpotBalanceRespDto.DataBean dataBean = result.getData().getData().get(spotQuoteCoin);
-            BeanUtils.copyProperties(dataBean, usdt);
-        }
+        SpotBalance spotBalance = commContext.getSpotBalance();
         BigDecimal usdtNetBorrow = commContext.getNetBorrow(spotExchangeId, spotAccountId, spotQuoteCoin, false);
-        return new SpotUsdt(usdt, usdtNetBorrow);
+        return new SpotUsdt(spotBalance.getUsdt(), usdtNetBorrow);
     }
 
     private FutureRight getCurrFutureRight() {
-        FutureBalanceReqDto reqDto = new FutureBalanceReqDto();
-        reqDto.setExchangeId(futureExchangeId);
-        reqDto.setAccountId(futureAccountId);
-        reqDto.setCoinType(futureBaseCoin);
-        ServiceResult<FutureBalanceRespDto> result = futureAccountService.getBalance(reqDto);
-        FutureBalance futureBalance = new FutureBalance();
-        if (result.isSuccess()) {
-            FutureBalanceRespDto.DataBean dataBean = result.getData().getData().get(futureBaseCoin);
-            BeanUtils.copyProperties(dataBean, futureBalance);
-        }
+        FutureBalance futureBalance = commContext.getFutureBalance();
         BigDecimal futureNetBorrow = commContext.getNetBorrow(futureExchangeId, futureAccountId, futureBaseCoin, false);
         return new FutureRight(futureBalance, futureNetBorrow);
     }

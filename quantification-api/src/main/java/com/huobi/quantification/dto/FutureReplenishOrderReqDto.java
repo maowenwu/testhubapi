@@ -1,6 +1,8 @@
 package com.huobi.quantification.dto;
 
-public class FutureReplenishOrderReqDto {
+import java.io.Serializable;
+
+public class FutureReplenishOrderReqDto implements Serializable {
 
     private int exchangeId;
     private Long accountId;

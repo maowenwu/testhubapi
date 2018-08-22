@@ -206,21 +206,29 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
             Map<String, String> params = new HashMap<>();
             params.put("symbol", symbol.toUpperCase());
             params.put("page_size", String.valueOf(pageSize));
-            params.put("page_index", String.valueOf(pageIndex++));
+            params.put("page_index", String.valueOf(pageIndex));
             String body = httpService.doHuobiFuturePostJson(accountId, HttpConstant.HUOBI_CONTRACE_OPENORDERS, params);
             FutureHuobiOrderPageInfoResponse response = JSON.parseObject(body, FutureHuobiOrderPageInfoResponse.class);
-            List<QuanOrderFuture> list = parseRespToList(response);
-            orderList.addAll(list);
-            if (response.getData().getOrders().isEmpty() || response.getData().getOrders().size() < pageSize) {
-                break;
+            if ("ok".equalsIgnoreCase(response.getStatus())) {
+                List<QuanOrderFuture> list = parseRespToList(response);
+                orderList.addAll(list);
+                pageIndex++;
+                if (response.getData().getOrders().isEmpty() || response.getData().getOrders().size() < pageSize) {
+                    break;
+                }
+            } else {
+                throw new APIException(body);
             }
+
         }
         orderList.stream().forEach(e -> {
-            e.setAccountId(accountId);
             e.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
+            e.setAccountId(accountId);
         });
-        int count = quanOrderFutureMapper.insertBatch(orderList);
-        logger.info("本次补单量：{}", count);
+        if (CollectionUtils.isNotEmpty(orderList)) {
+            int count = quanOrderFutureMapper.insertBatch(orderList);
+            logger.info("本次补单量：{}", count);
+        }
     }
 
     /**
@@ -231,53 +239,48 @@ public class HuobiFutureOrderServiceImpl implements HuobiFutureOrderService {
      */
     private List<QuanOrderFuture> parseRespToList(FutureHuobiOrderPageInfoResponse resp) {
         List<QuanOrderFuture> list = new ArrayList<>();
-        if (resp.getStatus().equalsIgnoreCase("ok")) {
-            resp.getData().getOrders().forEach(e -> {
-                QuanOrderFuture orderFuture = new QuanOrderFuture();
-                // 交易所订单id
-                orderFuture.setExOrderId(e.getOrderId());
-                // 下单前已填充?????
-                // orderFuture.setLinkOrderId();
-                orderFuture.setCreateDate(e.getCreatedAt());
-                orderFuture.setUpdateDate(new Date());
-                orderFuture.setStatus(
-                        OrderStatusTable.HuobiFutureOrderStatus.getOrderStatus(e.getStatus()).getOrderStatus());
-                orderFuture.setBaseCoin(e.getSymbol().toLowerCase());
-                orderFuture.setQuoteCoin("usd");
-                orderFuture.setContractType(e.getContractType());
-                orderFuture.setContractCode(e.getContractCode());
-                if ("buy".equalsIgnoreCase(e.getDirection())) {
-                    orderFuture.setSide(SideEnum.BUY.getSideType());
-                } else {
-                    orderFuture.setSide(SideEnum.SELL.getSideType());
-                }
-                if ("open".equalsIgnoreCase(e.getOffset())) {
-                    orderFuture.setOffset(OffsetEnum.OPEN.getOffset());
-                } else {
-                    orderFuture.setOffset(OffsetEnum.CLOSE.getOffset());
-                }
-                // 杠杆率
-                orderFuture.setLever(e.getLeverRate());
-                orderFuture.setOrderType(e.getOrderPriceType());
-                // 订单价格
-                orderFuture.setOrderPrice(e.getPrice());
-                // 成交均价
-                orderFuture.setDealPrice(e.getTradeAvgPrice());
-                // 委托量
-                orderFuture.setOrderQty(e.getVolume());
-                // 成交量
-                orderFuture.setDealQty(e.getTradeVolume());
-                // 未成交量
-                orderFuture.setRemainingQty(e.getVolume().subtract(e.getTradeVolume()));
-                // 冻结保证金
-                orderFuture.setMarginFrozen(e.getMarginFrozen());
-                orderFuture.setContractCode(e.getContractCode());
-                orderFuture.setFees(e.getFee());
-                orderFuture.setSourceStatus(e.getStatus());
-                orderFuture.setOrderSource(e.getOrderSource());
-                list.add(orderFuture);
-            });
-        }
+        resp.getData().getOrders().forEach(e -> {
+            QuanOrderFuture orderFuture = new QuanOrderFuture();
+            // 交易所订单id
+            orderFuture.setExOrderId(e.getOrderId());
+            orderFuture.setBaseCoin(e.getSymbol().toLowerCase());
+            orderFuture.setQuoteCoin("usd");
+            orderFuture.setContractType(e.getContractType());
+            orderFuture.setContractCode(e.getContractCode());
+            orderFuture.setStatus(OrderStatusTable.HuobiFutureOrderStatus.getOrderStatus(e.getStatus()).getOrderStatus());
+            orderFuture.setSourceStatus(e.getStatus());
+            if ("buy".equalsIgnoreCase(e.getDirection())) {
+                orderFuture.setSide(SideEnum.BUY.getSideType());
+            } else {
+                orderFuture.setSide(SideEnum.SELL.getSideType());
+            }
+            if ("open".equalsIgnoreCase(e.getOffset())) {
+                orderFuture.setOffset(OffsetEnum.OPEN.getOffset());
+            } else {
+                orderFuture.setOffset(OffsetEnum.CLOSE.getOffset());
+            }
+            // 杠杆率
+            orderFuture.setLever(e.getLeverRate());
+            orderFuture.setOrderType(e.getOrderPriceType());
+            // 订单价格
+            orderFuture.setOrderPrice(e.getPrice());
+            // 成交均价
+            orderFuture.setDealPrice(e.getTradeAvgPrice());
+            // 委托量
+            orderFuture.setOrderQty(e.getVolume());
+            // 成交量
+            orderFuture.setDealQty(e.getTradeVolume());
+            // 未成交量
+            orderFuture.setRemainingQty(e.getVolume().subtract(e.getTradeVolume()));
+            // 冻结保证金
+            orderFuture.setMarginFrozen(e.getMarginFrozen());
+            orderFuture.setContractCode(e.getContractCode());
+            orderFuture.setFees(e.getFee());
+            orderFuture.setOrderSource("replenish");
+            orderFuture.setCreateDate(new Date());
+            orderFuture.setUpdateDate(new Date());
+            list.add(orderFuture);
+        });
         return list;
     }
 }

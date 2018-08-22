@@ -118,7 +118,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public List<QuanDepthDetail> getDepthSpot(int exchangeId, String depthType, String symbol) {
+    public List<QuanDepthDetail> getDepthSpot(int exchangeId, String symbol, String depthType) {
         RMap<String, List<QuanDepthDetail>> map = client.getMap("quan:spot:depth:" + exchangeId + ":" + depthType);
         return map.get(symbol);
     }

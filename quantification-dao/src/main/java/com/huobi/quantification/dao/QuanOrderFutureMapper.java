@@ -13,8 +13,6 @@ public interface QuanOrderFutureMapper {
     int insert(QuanOrderFuture record);
 
     int insertSelective(QuanOrderFuture record);
-    
-    int insertBatch(List<QuanOrderFuture> list);
 
     QuanOrderFuture selectByPrimaryKey(Long innerOrderId);
 
@@ -38,6 +36,9 @@ public interface QuanOrderFutureMapper {
 
     List<QuanOrderFuture> selectOrderByStatus(@Param("exchangeId") int exchangeId, @Param("accountId") Long accountId, @Param("contractCode") String contractCode, @Param("statusList") List<Integer> statusList);
 
+    int insertBatch(List<QuanOrderFuture> list);
 
     List<QuanOrderFuture> selectUnfinishList();
+
+    int insertGetId(QuanOrderFuture record);
 }

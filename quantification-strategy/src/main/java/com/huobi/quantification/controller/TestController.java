@@ -8,6 +8,7 @@ import com.huobi.quantification.api.future.FutureMarketService;
 import com.huobi.quantification.api.future.FutureOrderService;
 import com.huobi.quantification.api.future.JobManageService;
 import com.huobi.quantification.api.spot.SpotAccountService;
+import com.huobi.quantification.api.spot.SpotMarketService;
 import com.huobi.quantification.common.ServiceResult;
 import com.huobi.quantification.dto.*;
 import com.huobi.quantification.enums.ExchangeEnum;
@@ -38,6 +39,32 @@ public class TestController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private SpotMarketService spotMarketService;
+
+    @Autowired
+    private FutureOrderService futureOrderService;
+
+    @RequestMapping("/replenishOrder")
+    public String replenishOrder() {
+        FutureReplenishOrderReqDto reqDto = new FutureReplenishOrderReqDto();
+        reqDto.setExchangeId(0);
+        reqDto.setAccountId(101L);
+        reqDto.setBaseCoin("btc");
+        ServiceResult depth = futureOrderService.replenishOrder(reqDto);
+        return JSON.toJSONString(depth);
+    }
+
+    @RequestMapping("/getDepth2")
+    public String getDepth2() {
+        SpotDepthReqDto reqDto = new SpotDepthReqDto();
+        reqDto.setExchangeId(1);
+        reqDto.setBaseCoin("btc");
+        reqDto.setQuoteCoin("usdt");
+        reqDto.setDepthType("step0");
+        ServiceResult<SpotDepthRespDto> depth = spotMarketService.getDepth(reqDto);
+        return JSON.toJSONString(depth);
+    }
 
     @RequestMapping("/sendMail")
     public String sendMail() {
@@ -139,7 +166,7 @@ public class TestController {
 
 
     @RequestMapping("/getDepth")
-    public String getDepth(){
+    public String getDepth() {
         FutureDepthReqDto reqDto = new FutureDepthReqDto();
         reqDto.setExchangeId(ExchangeEnum.HUOBI_FUTURE.getExId());
         reqDto.setBaseCoin("btc");

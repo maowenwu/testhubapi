@@ -88,7 +88,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
         orderFuture.setStatus(OrderStatusEnum.PRE_SUBMITTED.getOrderStatus());
         orderFuture.setCreateDate(new Date());
         orderFuture.setUpdateDate(new Date());
-        quanOrderFutureMapper.insert(orderFuture);
+        quanOrderFutureMapper.insertGetId(orderFuture);
 
         FuturePlaceOrderRespDto respDto = new FuturePlaceOrderRespDto();
         respDto.setInnerOrderId(orderFuture.getInnerOrderId());
@@ -107,6 +107,7 @@ public class FutureOrderServiceImpl implements FutureOrderService {
 
     private Long doPlaceHuobiOrder(FuturePlaceOrderReqDto reqDto) {
         HuobiFutureOrderBO request = new HuobiFutureOrderBO();
+        request.setAccountId(reqDto.getAccountId());
         if (StringUtils.isEmpty(reqDto.getContractCode())) {
             request.setSymbol(reqDto.getBaseCoin().toUpperCase());
             request.setContractType(reqDto.getContractType());

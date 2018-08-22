@@ -175,37 +175,39 @@ public class HuobiFutureMarketServiceImpl implements HuobiFutureMarketService {
 
             List<QuanDepthFutureDetail> list = new ArrayList<>();
             HuobiFutureDepthResponse.TickBean tickBean = response.getTick();
-            List<List<BigDecimal>> asks = tickBean.getAsks();
-            List<List<BigDecimal>> bids = tickBean.getBids();
+            if (tickBean != null) {
+                List<List<BigDecimal>> asks = tickBean.getAsks();
+                List<List<BigDecimal>> bids = tickBean.getBids();
 
-            if (CollectionUtils.isNotEmpty(asks)) {
-                for (int i = 0; i < asks.size(); i++) {
-                    List<BigDecimal> askItem = asks.get(i);
-                    QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
-                    depthDetail.setDepthFutureId(quanDepthFuture.getId());
-                    depthDetail.setDetailType(DepthEnum.ASKS.getIntType());
-                    depthDetail.setDetailPrice(askItem.get(0));
-                    depthDetail.setDetailAmount(askItem.get(1));
-                    depthDetail.setDateUpdate(new Date());
-                    list.add(depthDetail);
+                if (CollectionUtils.isNotEmpty(asks)) {
+                    for (int i = 0; i < asks.size(); i++) {
+                        List<BigDecimal> askItem = asks.get(i);
+                        QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
+                        depthDetail.setDepthFutureId(quanDepthFuture.getId());
+                        depthDetail.setDetailType(DepthEnum.ASKS.getIntType());
+                        depthDetail.setDetailPrice(askItem.get(0));
+                        depthDetail.setDetailAmount(askItem.get(1));
+                        depthDetail.setDateUpdate(new Date());
+                        list.add(depthDetail);
+                    }
                 }
-            }
 
-            if (CollectionUtils.isNotEmpty(bids)) {
-                for (int i = 0; i < bids.size(); i++) {
-                    List<BigDecimal> bidItem = bids.get(i);
-                    QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
-                    depthDetail.setDepthFutureId(quanDepthFuture.getId());
-                    depthDetail.setDetailType(DepthEnum.BIDS.getIntType());
-                    depthDetail.setDetailPrice(bidItem.get(0));
-                    depthDetail.setDetailAmount(bidItem.get(1));
-                    depthDetail.setDateUpdate(new Date());
-                    list.add(depthDetail);
+                if (CollectionUtils.isNotEmpty(bids)) {
+                    for (int i = 0; i < bids.size(); i++) {
+                        List<BigDecimal> bidItem = bids.get(i);
+                        QuanDepthFutureDetail depthDetail = new QuanDepthFutureDetail();
+                        depthDetail.setDepthFutureId(quanDepthFuture.getId());
+                        depthDetail.setDetailType(DepthEnum.BIDS.getIntType());
+                        depthDetail.setDetailPrice(bidItem.get(0));
+                        depthDetail.setDetailAmount(bidItem.get(1));
+                        depthDetail.setDateUpdate(new Date());
+                        list.add(depthDetail);
+                    }
                 }
-            }
-            if (isSave) {
-                for (QuanDepthFutureDetail detail : list) {
-                    quanDepthFutureDetailMapper.insert(detail);
+                if (isSave) {
+                    for (QuanDepthFutureDetail detail : list) {
+                        quanDepthFutureDetailMapper.insert(detail);
+                    }
                 }
             }
             redisService.saveDepthFuture(ExchangeEnum.HUOBI_FUTURE.getExId(), symbol, contractType, depthType, list);
